@@ -2,6 +2,10 @@ module texture
   use :: hashmap_str
   use :: vector_2i
   use :: texture_gc
+  use :: forterm
+  use :: stb_image
+  use :: string_f90
+  use :: opengl
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -43,10 +47,6 @@ contains
 
   !* Create a texture from a file path.
   subroutine texture_create(texture_file_path)
-    use :: stb_image
-    use :: string_f90
-    use :: opengl
-    use :: terminal
     implicit none
 
     character(len = *, kind = c_char), intent(in) :: texture_file_path
@@ -70,10 +70,6 @@ contains
 
   !* Upload an array of unsigned bytes. 4 channels per element. RGBA.
   subroutine texture_create_from_memory(texture_name, raw_data, width, height)
-    use :: stb_image
-    use :: string_f90
-    use :: opengl
-    use :: terminal
     implicit none
 
     character(len = *, kind = c_char), intent(in) :: texture_name
@@ -130,8 +126,6 @@ contains
 
   !* Tell OpenGL to use a texture
   subroutine texture_use(texture_name)
-    use :: opengl
-    use :: terminal
     implicit none
 
     character(len = *, kind = c_char), intent(in) :: texture_name
@@ -176,7 +170,6 @@ contains
 
   !* Internal only. Get a texture from the database. Returns if it exists.
   function get_texture(texture_name, texture_id) result(exists)
-    use :: terminal
     implicit none
 
     character(len = *, kind = c_char), intent(in) :: texture_name
@@ -201,7 +194,6 @@ contains
 
   !* This is mainly used by the texture packer to get the dimensions of the texture.
   function texture_get_size(texture_name, texture_size) result(exists)
-    use :: terminal
     implicit none
 
     character(len = *, kind = c_char), intent(in) :: texture_name
@@ -245,8 +237,6 @@ contains
 
   !* Completely wipe out all existing textures. This might be slow.
   subroutine texture_destroy_database()
-    use :: string_f90
-    use :: terminal
     implicit none
 
     call texture_database%destroy()
