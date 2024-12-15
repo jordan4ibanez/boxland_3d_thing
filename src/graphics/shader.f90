@@ -154,6 +154,7 @@ contains
 
     UNIFORM_CAMERA_MATRIX = gl_get_uniform_location(program_id, "camera_matrix"//achar(0))
     UNIFORM_OBJECT_MATRIX = gl_get_uniform_location(program_id, "object_matrix"//achar(0))
+    UNIFORM_COLOR_VEC3 = gl_get_uniform_location(program_id, "color"//achar(0))
 
     print"(A)","[Shader]: Shader ["//shader_name//"] created successfully."
 
