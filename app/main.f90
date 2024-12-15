@@ -6,6 +6,7 @@ program main
   use :: texture
   use :: mesh
   use :: forterm
+  use :: camera
   use, intrinsic :: iso_c_binding
   implicit none
 
