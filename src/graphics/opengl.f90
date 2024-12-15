@@ -63,6 +63,7 @@ module opengl
   public :: gl_vertex_attrib_pointer
   public :: gl_draw_elements
   public :: gl_uniform_mat4f
+  public :: gl_uniform_vec3f
   public :: gl_view_port
   public :: gl_is_buffer
   public :: gl_is_vertex_array
@@ -457,6 +458,20 @@ contains
 
     call internal_gl_uniform_matrix_4_fv(location, 1, transpose, c_loc(value))
   end subroutine gl_uniform_mat4f
+
+
+  subroutine gl_uniform_vec3f(location, value)
+    use :: vector_3f
+    implicit none
+
+    integer(c_int32_t), intent(in), value :: location
+    type(vec3f), intent(in), target :: value
+    logical(c_bool) :: transpose
+
+    transpose = .false.
+
+    call internal_gl_uniform_3_fv(location, 1, transpose, c_loc(value))
+  end subroutine gl_uniform_vec3f
 
 
   !* Special note: I only use 1 at a time. So we're only going to use one at a time.

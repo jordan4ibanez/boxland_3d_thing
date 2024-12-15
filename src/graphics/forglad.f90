@@ -99,6 +99,7 @@ module forglad
   procedure(gl_vertex_attrib_pointer_c_interface), public, pointer :: internal_gl_vertex_attrib_pointer
   procedure(gl_draw_elements_c_interface), public, pointer :: internal_gl_draw_elements
   procedure(gl_uniform_matrix_4_fv_c_interface), public, pointer :: internal_gl_uniform_matrix_4_fv
+  procedure(gl_uniform_3_fv_c_interface), public, pointer :: internal_gl_uniform_3_fv
   procedure(gl_view_port_c_interface), public, pointer :: gl_view_port
   procedure(gl_is_buffer_c_interface), public, pointer :: gl_is_buffer
   procedure(gl_is_vertex_array_c_interface), public, pointer :: gl_is_vertex_array
@@ -497,6 +498,18 @@ module forglad
 
 
 !! DONE.
+    subroutine gl_uniform_3_fv_c_interface(location, count, transpose, value) bind(c)
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      integer(c_int), intent(in), value :: location, count
+      logical(c_bool), intent(in), value :: transpose
+      type(c_ptr), intent(in), value :: value
+    end subroutine gl_uniform_3_fv_c_interface
+
+
+
+!! DONE.
     subroutine gl_view_port_c_interface(x, y, width, height) bind(c)
       use, intrinsic :: iso_c_binding
       implicit none
@@ -870,6 +883,9 @@ contains
 
     function_pointer = proc_address_finder("glUniformMatrix4fv"//achar(0))
     call c_f_procpointer(function_pointer, internal_gl_uniform_matrix_4_fv)
+
+    function_pointer = proc_address_finder("glUniform3fv"//achar(0))
+    call c_f_procpointer(function_pointer, internal_gl_uniform_3_fv)
 
     function_pointer = proc_address_finder("glViewport"//achar(0))
     call c_f_procpointer(function_pointer, gl_view_port)
