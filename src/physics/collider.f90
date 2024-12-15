@@ -23,8 +23,6 @@ module collider_mod
 
   ! Don't try to raw initialize this lol.
   type, abstract :: collider
-  contains
-    ! procedure ::
   end type collider
 
 
@@ -33,7 +31,6 @@ module collider_mod
     type(vec3d), dimension(:), pointer :: transformed_vertices => null()
     type(collider_convex_hull_face), dimension(:), pointer :: faces => null()
     type(collider_convex_hull_face), dimension(:), pointer :: transformed_faces => null()
-
     integer(c_int32_t), dimension(:,:), pointer :: vertex_to_faces => null()
     integer(c_int32_t), dimension(:,:), pointer :: vertex_to_neighbors => null()
     integer(c_int32_t), dimension(:,:), pointer :: face_to_neighbors => null()
@@ -58,6 +55,17 @@ contains
     sph%radius = radius
   end function new_collider_sphere
 
+
+  function do_triangles_share_same_vertex(t1, t2) result(truth)
+    implicit none
+
+    type(vec3d), intent(in) :: t1, t2
+    logical :: truth
+
+    truth = t1%x == t2%x .or. t1%x == t2%y .or. t1%x == t2%z .or. &
+      t1%y == t2%x .or. t1%y == t2%y .or. t1%y == t2%z .or. &
+      t1%z == t2%x .or. t1%z == t2%y .or. t1%z == t2%z
+  end function do_triangles_share_same_vertex
 
 
 
