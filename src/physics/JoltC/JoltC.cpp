@@ -118,7 +118,7 @@ DESTRUCTOR(JPC_IndexedTriangleList)
 OPAQUE_WRAPPER(JPC_String, JPH::String)
 DESTRUCTOR(JPC_String)
 
-LAYOUT_COMPATIBLE(JPC_BodyManager_DrawSettings, JPH::BodyManager::DrawSettings)
+// LAYOUT_COMPATIBLE(JPC_BodyManager_DrawSettings, JPH::BodyManager::DrawSettings)
 
 LAYOUT_COMPATIBLE(JPC_BodyID, JPH::BodyID)
 
@@ -713,47 +713,47 @@ JPC_API void JPC_CastShapeCollector_UpdateEarlyOutFraction(JPC_CastShapeCollecto
 ////////////////////////////////////////////////////////////////////////////////
 // BodyManager::DrawSettings
 
-JPC_API void JPC_BodyManager_DrawSettings_default(JPC_BodyManager_DrawSettings *object)
-{
-	*object = to_jpc(JPH::BodyManager::DrawSettings());
-}
+// JPC_API void JPC_BodyManager_DrawSettings_default(JPC_BodyManager_DrawSettings *object)
+// {
+// 	*object = to_jpc(JPH::BodyManager::DrawSettings());
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 // DebugRendererSimple
 
-class JPC_DebugRendererSimpleBridge final : public JPH::DebugRendererSimple
-{
-public:
-	explicit JPC_DebugRendererSimpleBridge(const void *self, JPC_DebugRendererSimpleFns fns) : self(self), fns(fns) {}
+// class JPC_DebugRendererSimpleBridge final : public JPH::DebugRendererSimple
+// {
+// public:
+// 	explicit JPC_DebugRendererSimpleBridge(const void *self, JPC_DebugRendererSimpleFns fns) : self(self), fns(fns) {}
 
-	virtual void DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JPH::ColorArg inColor) override
-	{
-		fns.DrawLine(self, to_jpc(inFrom), to_jpc(inTo), to_jpc(inColor));
-	}
+// 	virtual void DrawLine(JPH::RVec3Arg inFrom, JPH::RVec3Arg inTo, JPH::ColorArg inColor) override
+// 	{
+// 		fns.DrawLine(self, to_jpc(inFrom), to_jpc(inTo), to_jpc(inColor));
+// 	}
 
-	virtual void DrawText3D(
-			[[maybe_unused]] JPH::RVec3Arg inPosition,
-			[[maybe_unused]] const std::string_view &inString,
-			[[maybe_unused]] JPH::ColorArg inColor = JPH::Color::sWhite,
-			[[maybe_unused]] float inHeight = 0.5f) override
-	{
-		// TODO
-	}
+// 	virtual void DrawText3D(
+// 			[[maybe_unused]] JPH::RVec3Arg inPosition,
+// 			[[maybe_unused]] const std::string_view &inString,
+// 			[[maybe_unused]] JPH::ColorArg inColor = JPH::Color::sWhite,
+// 			[[maybe_unused]] float inHeight = 0.5f) override
+// 	{
+// 		// TODO
+// 	}
 
-private:
-	const void *self;
-	JPC_DebugRendererSimpleFns fns;
-};
+// private:
+// 	const void *self;
+// 	JPC_DebugRendererSimpleFns fns;
+// };
 
-OPAQUE_WRAPPER(JPC_DebugRendererSimple, JPC_DebugRendererSimpleBridge)
-DESTRUCTOR(JPC_DebugRendererSimple)
+// OPAQUE_WRAPPER(JPC_DebugRendererSimple, JPC_DebugRendererSimpleBridge)
+// DESTRUCTOR(JPC_DebugRendererSimple)
 
-JPC_API JPC_DebugRendererSimple *JPC_DebugRendererSimple_new(
-		const void *self,
-		JPC_DebugRendererSimpleFns fns)
-{
-	return to_jpc(new JPC_DebugRendererSimpleBridge(self, fns));
-}
+// JPC_API JPC_DebugRendererSimple *JPC_DebugRendererSimple_new(
+// 		const void *self,
+// 		JPC_DebugRendererSimpleFns fns)
+// {
+// 	return to_jpc(new JPC_DebugRendererSimpleBridge(self, fns));
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 // String
@@ -2139,11 +2139,11 @@ JPC_API JPC_PhysicsUpdateError JPC_PhysicsSystem_Update(
 	return to_integral(res);
 }
 
-JPC_API void JPC_PhysicsSystem_DrawBodies(
-		JPC_PhysicsSystem *self,
-		JPC_BodyManager_DrawSettings *inSettings,
-		JPC_DebugRendererSimple *inRenderer,
-		[[maybe_unused]] const void *inBodyFilter)
-{
-	to_jph(self)->DrawBodies(to_jph(*inSettings), to_jph(inRenderer), nullptr);
-}
+// JPC_API void JPC_PhysicsSystem_DrawBodies(
+// 		JPC_PhysicsSystem *self,
+// 		JPC_BodyManager_DrawSettings *inSettings,
+// 		JPC_DebugRendererSimple *inRenderer,
+// 		[[maybe_unused]] const void *inBodyFilter)
+// {
+// 	to_jph(self)->DrawBodies(to_jph(*inSettings), to_jph(inRenderer), nullptr);
+// }
