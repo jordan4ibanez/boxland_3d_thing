@@ -11,13 +11,22 @@ module collider_mod
   end type collider_contact
 
 
-  type collider_convex_hull_face
+  integer(1) :: COLLIDER_TYPE_SPHERE = 0
+  integer(1) :: COLLIDER_TYPE_CONVEX_HULL = 1
+
+
+  type :: collider_convex_hull_face
     integer(c_int32_t), dimension(:), pointer :: elements => null()
     type(vec3f) :: normal
   end type collider_convex_hull_face
 
 
-  type collider_convex_hull
+  ! Don't try to raw initialize this lol.
+  type, abstract :: collider
+  end type collider
+
+
+  type, extends(collider) :: collider_convex_hull
     type(vec3f), dimension(:), pointer :: vertices => null()
     type(vec3f), dimension(:), pointer :: transformed_vertices => null()
     type(collider_convex_hull_face), dimension(:), pointer :: faces => null()
@@ -29,20 +38,15 @@ module collider_mod
   end type collider_convex_hull
 
 
-  type collider_sphere
+  type, extends(collider) :: collider_sphere
     real(c_float) :: radius = 0
     type(vec3f) :: center
   end type collider_sphere
 
 
-  integer(1) :: COLLIDER_TYPE_SPHERE = 0
-  integer(1) :: COLLIDER_TYPE_CONVEX_HULL = 1
+contains
 
 
-  type collider
-
-
-  end type collider
 
 
 end module collider_mod
