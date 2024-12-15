@@ -18,6 +18,7 @@ module shader
 
   public :: UNIFORM_CAMERA_MATRIX
   public :: UNIFORM_OBJECT_MATRIX
+  public :: UNIFORM_COLOR_VEC3
 
 
   integer(c_int), parameter :: ATTRIBUTE_POSITION = 0
