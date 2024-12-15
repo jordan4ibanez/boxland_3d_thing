@@ -46,6 +46,21 @@ program main
   call shader_create("main", "./shaders/vertex.vert", "./shaders/fragment.frag")
   call shader_start("main")
   call keyboard_module_initialize()
+  call mesh_module_initialize()
+
+
+  ! Time to draw le square.
+
+  call mesh_create_3d_named("car", &
+    [ &
+    0.0, 0.0, 0.0, &
+    0.0, 1.0, 0.0, &
+    1.0, 1.0, 0.0, &
+    1.0, 0.0, 0.0  &
+    ], &
+    [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], &
+    [0,1,2, 2,3,0] &
+    )
 
 
 
@@ -53,18 +68,19 @@ program main
     call gl_clear_color_scalar(0.0)
     call gl_clear_color_and_depth_buffer()
     call mouse_update()
+    call camera_update_3d()
+    call camera_freecam_hackjob()
 
-    ! do stuff here
+    call camera_set_object_color(1.0, 1.0, 1.0)
+
+    call mesh_draw_by_name("car")
 
     call glfw_swap_buffers()
     call glfw_poll_events()
   end do
-
-
-
   call texture_destroy_database()
   call mesh_destroy_database()
   call shader_destroy_database()
   call glfw_terminate()
-  call print_color(NOTIFICATION, "[jordan4ibanez]: Why you running this piece of crap?")
+  ! call print_color(NOTIFICATION, "[jordan4ibanez]: Why you running this piece of crap?")
 end program main
