@@ -51,6 +51,7 @@ program main
   call shader_start("main")
   call keyboard_module_initialize()
   call mesh_module_initialize()
+  call mouse_initialize()
 
 
   ! Time to draw le square.
@@ -66,24 +67,40 @@ program main
     )
 
 
+  call mesh_create_3d_named("ground", &
+    [ &
+    -10.0, 0.0, -10.0, &
+    -10.0, 0.0, 10.0, &
+    10.0, 0.0, 10.0, &
+    10.0, 0.0, -10.0 &
+    ], &
+    [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], &
+    [0,1,2, 2,3,0] &
+    )
 
-  do while (glfw_window_should_close())
+
+  do while (.not. glfw_window_should_close())
     call delta_tick()
     call gl_clear_color_scalar(0.0)
     call gl_clear_color_and_depth_buffer()
+    call camera_freecam_hackjob()
     call mouse_update()
     call camera_update_3d()
-    call camera_freecam_hackjob()
+
 
     blah = blah + delta_get_f32() * 2.0
 
     call camera_set_object_color(clamp_f32(cos(cos(mod(blah, 6.28))), 0.0, 1.0), clamp_f32(tan(mod(blah, 6.28)), 0.2, 1.0), clamp_f32(sin(mod(blah, 6.28)), 0.1, 1.0))
 
-    ! print*,blah
-
     call camera_set_object_matrix_f32(0.0, sin(blah) / 2.21, 1.0, 0.0, blah, 0.0, 1.0, 1.0, 1.0)
 
     call mesh_draw_by_name("car")
+
+    call camera_set_object_color(0.5, 0.5, 0.5)
+    call camera_set_object_matrix_f32(0.0, -2.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+
+    call mesh_draw_by_name("ground")
+
 
     call glfw_swap_buffers()
     call glfw_poll_events()

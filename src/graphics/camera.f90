@@ -322,6 +322,7 @@ contains
     real(c_double) :: delta
     type(vec3d) :: movement
     real(c_double) :: movement_speed
+    real(c_double), parameter :: mouse_acceleration = 4.0
 
     delta = delta_get_f64()
 
@@ -329,7 +330,7 @@ contains
 
     movement_speed = 30.0d0 * delta
 
-    call camera_rotate(mouse_delta%y, mouse_delta%x, 0.0d0)
+    call camera_rotate(mouse_delta%y * mouse_acceleration, mouse_delta%x * mouse_acceleration, 0.0d0)
 
     if (keyboard_key_down(GLFW_KEY_W)) then
       movement%x = sin(camera_rotation%y) * movement_speed
