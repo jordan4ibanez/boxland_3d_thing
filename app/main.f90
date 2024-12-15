@@ -10,7 +10,7 @@ program main
   use :: mouse
   use :: keyboard
   use :: math_helpers
-  use :: jolt_physics_bindings
+  ! use :: jolt_physics_bindings
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -94,5 +94,5 @@ program main
   call glfw_terminate()
   ! call print_color(NOTIFICATION, "[jordan4ibanez]: Why you running this piece of crap?")
 
-  call print_hi()
+  ! call print_hi()
 end program main

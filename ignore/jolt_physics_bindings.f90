@@ -6,10 +6,6 @@ module jolt_physics_bindings
   interface
 
 
-    subroutine print_hi() bind(c, name = "print_hi")
-    end subroutine print_hi
-
-
   end interface
 
 
