@@ -274,6 +274,7 @@ contains
 
     call mesh_database%destroy()
     call mesh_name_to_id_database%destroy()
+    print"(A)","[Mesh]: Successfully freed the database."
   end subroutine mesh_destroy_database
 
 
