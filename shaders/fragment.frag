@@ -10,5 +10,6 @@ uniform sampler2D texture_sampler;
 out vec4 frag_color;
 
 void main() {
-   frag_color = texture(texture_sampler, output_texture_coordinate) * vec4(pixel_color, 1.0);
+   // texture(texture_sampler, output_texture_coordinate) *
+   frag_color = vec4(pixel_color, 1.0);
 }
