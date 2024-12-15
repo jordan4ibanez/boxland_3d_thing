@@ -21,6 +21,7 @@ module camera
   public :: camera_set_object_matrix_f32
   public :: camera_set_object_matrix_f64
   public :: camera_set_gui_matrix_f32
+  public :: camera_set_object_color
   public :: camera_get_pos_x
   public :: camera_get_pos_y
   public :: camera_get_pos_z
@@ -257,7 +258,7 @@ contains
 
     real(c_float), intent(in), value :: r,g,b
 
-    call gl_uniform_vec3f(UNIFORM_COLOR_VEC3, vec3f(r,g,b))
+    call gl_uniform_vec3f(UNIFORM_COLOR_VEC3, r,g,b)
   end subroutine camera_set_object_color
 
 
