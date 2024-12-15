@@ -6,6 +6,12 @@ Listen, I say I don't know what I'm doing in my other repos as a joke.
 
 But this time, I literally have NO IDEA what I'm doing.
 
+# Notes
+https://github.com/jslee02/awesome-collision-detection
+
+https://perso.liris.cnrs.fr/nicolas.pronost/UUCourses/GamePhysics/lectures/lecture%207%20Collision%20Resolution.pdf
+
+
 todo: figure out how this works lol.
 https://github.com/SimonDarksideJ/XNAGameStudio/wiki/OrientedBoundingBox(OBB)Collision
 ```c#
