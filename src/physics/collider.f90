@@ -68,5 +68,26 @@ contains
   end function do_triangles_share_same_vertex
 
 
+  function do_faces_share_same_vertex(e1, e2) result(truth)
+    implicit none
+
+    integer(c_int32_t), intent(in), dimension(:) :: e1, e2
+    logical :: truth
+    integer(c_int32_t) :: i, j, i1, i2
+
+    truth = .false.
+
+    do i = 1, size(e1)
+      i1 = e1(i)
+      do j = 1, size(e2)
+        i2 = e2(j)
+        if (i1 == i2) then
+          truth = .true.
+          return
+        end if
+      end do
+    end do
+  end function do_faces_share_same_vertex
+
 
 end module collider_mod
