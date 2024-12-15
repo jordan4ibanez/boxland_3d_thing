@@ -7,6 +7,8 @@ program main
   use :: mesh
   use :: forterm
   use :: camera
+  use :: mouse
+  use :: keyboard
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -42,18 +44,19 @@ program main
   call gl_clear_error_data()
   call shader_module_initialize()
   call shader_create("main", "./shaders/vertex.vert", "./shaders/fragment.frag")
-
   call shader_start("main")
+  call keyboard_module_initialize()
+
 
 
   do while (.not. glfw_window_should_close())
-
     call gl_clear_color_scalar(0.0)
-
     call gl_clear_color_and_depth_buffer()
+    call mouse_update()
+
+    ! do stuff here
 
     call glfw_swap_buffers()
-
     call glfw_poll_events()
   end do
 
