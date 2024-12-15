@@ -1,6 +1,8 @@
 module opengl
   use :: forglad
   use, intrinsic :: iso_c_binding
+  use :: constants_f90
+  use :: string_f90
   implicit none
 
 
@@ -172,8 +174,6 @@ contains
   !* NOTE: This function passed into C as a pointer!
   subroutine debug_message_callback(source, type, id, severity, message_pointer, user_param_pointer)
     use, intrinsic :: iso_c_binding
-    use :: string_f90
-    use :: terminal
     implicit none
 
     integer, intent(in), value :: source, type, id, severity
@@ -242,8 +242,6 @@ contains
 
 
   subroutine gl_shader_source(shader_id, source_code_file_path)
-    use :: string_f90
-    use :: files_f90
     implicit none
 
     integer(c_int) :: shader_id
@@ -266,7 +264,6 @@ contains
 
   subroutine gl_get_version()
     use, intrinsic :: iso_c_binding
-    use :: string_f90
     implicit none
 
     integer(c_int) :: major, minor
@@ -293,7 +290,6 @@ contains
 
   subroutine gl_get_shader_info_log(shader)
     use,intrinsic :: iso_c_binding
-    use :: string_f90
     implicit none
 
     integer(c_int), intent(in), value :: shader
@@ -315,7 +311,6 @@ contains
 
 
   function gl_get_program_iv(program_id, pname) result(status)
-    use :: string_f90
     implicit none
 
     integer(c_int), intent(in), value :: program_id, pname
@@ -326,7 +321,6 @@ contains
 
 
   integer function gl_get_uniform_location(program_id, uniform_name) result(location)
-    use :: string_f90
     implicit none
 
     integer, intent(in), value :: program_id
@@ -338,7 +332,6 @@ contains
 
 
   integer function gl_get_attrib_location(program_id, uniform_name) result(location)
-    use :: string_f90
     implicit none
 
     integer, intent(in), value :: program_id
@@ -390,8 +383,6 @@ contains
 
   !* This is a custom command to allow gl_buffer_data to use specific types.
   subroutine gl_buffer_float_array(float_array)
-    use :: constants
-    use, intrinsic :: iso_c_binding
     implicit none
 
     real(c_float), dimension(:), target :: float_array
@@ -403,8 +394,6 @@ contains
 
   !* This is a custom command to allow gl_buffer_data to use specific types.
   subroutine gl_buffer_vec3f_array(vec3f_array)
-    use, intrinsic :: iso_c_binding
-    use :: constants
     use :: vector_3f
     implicit none
 
@@ -417,8 +406,6 @@ contains
 
   !* This is a custom command to allow gl_buffer_data to use specific types.
   subroutine gl_buffer_indices_array(indices_array)
-    use :: constants
-    use, intrinsic :: iso_c_binding
     implicit none
 
     integer(c_int), dimension(:), target :: indices_array
