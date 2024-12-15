@@ -5,6 +5,7 @@ program main
   use :: shader
   use :: texture
   use :: mesh
+  use :: forterm
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -61,7 +62,8 @@ program main
 
   call shader_destroy_database()
 
-
   call glfw_terminate()
+
+  call print_color(NOTIFICATION, "[jordan4ibanez]: Why you running this piece of crap?")
 
 end program main
