@@ -2,8 +2,11 @@ module camera
   use :: matrix_4f
   use :: vector_3f
   use :: vector_3d
-  use :: math_helpers, only: into_f32
-  use, intrinsic :: iso_c_binding, only: c_float, c_double
+  use :: math_helpers
+  use :: shader
+  use :: opengl
+  use :: glfw
+  use, intrinsic :: iso_c_binding
   implicit none
 
 
@@ -110,10 +113,6 @@ contains
   !* This creates the raw data of the camera matrix then uploads it into OpenGL.
   !* This sets the camera into "3D mode"
   subroutine camera_update_3d()
-    use :: glfw, only: glfw_get_aspect_ratio
-    use :: math_helpers, only: to_radians_f32
-    use :: shader
-    use :: opengl, only: gl_uniform_mat4f, gl_depth_range
     implicit none
 
     !* So the trick is, the camera actually never moves, but the world moves around it.
@@ -139,10 +138,6 @@ contains
   !* This creates the raw data of the camera matrix then uploads it into OpenGL.
   !* This sets the camera into "2D mode"
   subroutine camera_update_2d()
-    use :: glfw
-    use :: math_helpers, only: to_radians_f32
-    use :: shader
-    use :: opengl, only: gl_uniform_mat4f, gl_depth_range
     implicit none
 
     type(mat4f) :: camera_matrix
@@ -171,9 +166,6 @@ contains
 
   !* This creates the raw data of the object matrix then uploads it into OpenGL.
   subroutine camera_set_object_matrix_f32(position_x, position_y, position_z, rotation_x, rotation_y, rotation_z, scale_x, scale_y, scale_z)
-    use :: math_helpers, only: into_f32
-    use :: shader
-    use :: opengl, only: gl_uniform_mat4f
     implicit none
 
     real(c_float), intent(in), value :: position_x, position_y, position_z, rotation_x, rotation_y, rotation_z, scale_x, scale_y, scale_z
@@ -203,9 +195,6 @@ contains
 
   !* This creates the raw data of the object matrix then uploads it into OpenGL.
   subroutine camera_set_object_matrix_f64(position_x, position_y, position_z, rotation_x, rotation_y, rotation_z, scale_x, scale_y, scale_z)
-    use :: math_helpers, only: into_f32
-    use :: shader
-    use :: opengl, only: gl_uniform_mat4f
     implicit none
 
     real(c_double), intent(in), value :: position_x, position_y, position_z, rotation_x, rotation_y, rotation_z, scale_x, scale_y, scale_z
@@ -235,9 +224,6 @@ contains
 
   !* This creates the raw data of the gui matrix then uploads it into OpenGL.
   subroutine camera_set_gui_matrix_f32(position_x, position_y, position_z, rotation_x, rotation_y, rotation_z, scale_x, scale_y, scale_z)
-    use :: math_helpers, only: into_f32
-    use :: shader
-    use :: opengl, only: gl_uniform_mat4f
     implicit none
 
     real(c_float), intent(in), value :: position_x, position_y, position_z, rotation_x, rotation_y, rotation_z, scale_x, scale_y, scale_z
@@ -265,6 +251,16 @@ contains
   end subroutine camera_set_gui_matrix_f32
 
 
+  ! I have no idea why I put this here.
+  subroutine camera_set_object_color(r,g,b)
+    implicit none
+
+    real(c_float), intent(in), value :: r,g,b
+
+    call gl_uniform_vec3f(UNIFORM_COLOR_VEC3, vec3f(r,g,b))
+  end subroutine camera_set_object_color
+
+
   real(c_float) function camera_get_pos_x() result(x)
     implicit none
 
@@ -290,7 +286,6 @@ contains
 
 
   subroutine wrap_camera_rotation()
-    use :: constants_f90, only: PI_TIMES_2_F64, PI_OVER_2_F64
     implicit none
 
     if (camera_rotation%x < -PI_OVER_2_F64) then
@@ -370,6 +365,5 @@ contains
       camera_position%y = camera_position%y - movement_speed
     end if
   end subroutine camera_freecam_hackjob
-
 
 end module camera
