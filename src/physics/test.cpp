@@ -1,7 +1,15 @@
 // I never bound to C++ before so I am figuring this out.
-namespace blah
+#include <iostream>
+
+extern "C"
 {
+  namespace blah
+  {
 
+    void print_hi()
+    {
+      std::cout << "hi\n";
+    }
 
-
+  }
 }
