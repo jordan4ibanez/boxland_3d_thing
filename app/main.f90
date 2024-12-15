@@ -73,6 +73,8 @@ program main
 
     call camera_set_object_color(1.0, 1.0, 1.0)
 
+    call camera_set_object_matrix_f32(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+
     call mesh_draw_by_name("car")
 
     call glfw_swap_buffers()
