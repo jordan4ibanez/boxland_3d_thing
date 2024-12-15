@@ -20,7 +20,7 @@ program main
   call glfw_window_hint(GLFW_CONTEXT_VERSION_MINOR, 2)
   call glfw_window_hint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
   call glfw_window_hint(GLFW_SCALE_FRAMEBUFFER, GLFW_TRUE)
-  if (.not. glfw_create_window(1920, 1080, "boxland 3d")) then
+  if (.not. glfw_create_window(800, 600, "boxland 3d")) then
     error stop "Failed to create window."
   end if
   call glfw_make_context_current()
@@ -43,9 +43,18 @@ program main
   call shader_module_initialize()
   call shader_create("main", "./shaders/vertex.vert", "./shaders/fragment.frag")
 
+  call shader_start("main")
+
 
   do while (.not. glfw_window_should_close())
 
+    call gl_clear_color_scalar(0.0)
+
+    call gl_clear_color_and_depth_buffer()
+
+    call glfw_swap_buffers()
+
+    call glfw_poll_events()
   end do
 
 
