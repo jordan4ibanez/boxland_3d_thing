@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2024 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
 #ifdef JPH_DEBUG_RENDERER
 
-#include <Jolt/Renderer/DebugRendererSimple.h>
+#include "../Renderer/DebugRendererSimple.h"
 
 JPH_NAMESPACE_BEGIN
 

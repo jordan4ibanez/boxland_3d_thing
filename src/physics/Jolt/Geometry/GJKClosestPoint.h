@@ -4,15 +4,15 @@
 
 #pragma once
 
-#include <Jolt/Core/NonCopyable.h>
-#include <Jolt/Core/FPException.h>
-#include <Jolt/Geometry/ClosestPoint.h>
-#include <Jolt/Geometry/ConvexSupport.h>
+#include "../Core/NonCopyable.h"
+#include "../Core/FPException.h"
+#include "../Geometry/ClosestPoint.h"
+#include "../Geometry/ConvexSupport.h"
 
-//#define JPH_GJK_DEBUG
+// #define JPH_GJK_DEBUG
 #ifdef JPH_GJK_DEBUG
-	#include <Jolt/Core/StringTools.h>
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Core/StringTools.h"
+#include "../Renderer/DebugRenderer.h"
 #endif
 
 JPH_NAMESPACE_BEGIN
@@ -34,7 +34,7 @@ private:
 	/// @return True if new closest point was found.
 	/// False if the function failed, in this case the output variables are not modified
 	template <bool LastPointPartOfClosestFeature>
-	bool		GetClosest(float inPrevVLenSq, Vec3 &outV, float &outVLenSq, uint32 &outSet) const
+	bool GetClosest(float inPrevVLenSq, Vec3 &outV, float &outVLenSq, uint32 &outSet) const
 	{
 #ifdef JPH_GJK_DEBUG
 		for (int i = 0; i < mNumPoints; ++i)
@@ -94,7 +94,7 @@ private:
 	}
 
 	// Get max(|Y_0|^2 .. |Y_n|^2)
-	float		GetMaxYLengthSq() const
+	float GetMaxYLengthSq() const
 	{
 		float y_len_sq = mY[0].LengthSq();
 		for (int i = 1; i < mNumPoints; ++i)
@@ -103,7 +103,7 @@ private:
 	}
 
 	// Remove points that are not in the set, only updates mY
-	void		UpdatePointSetY(uint32 inSet)
+	void UpdatePointSetY(uint32 inSet)
 	{
 		int num_points = 0;
 		for (int i = 0; i < mNumPoints; ++i)
@@ -116,7 +116,7 @@ private:
 	}
 
 	// Remove points that are not in the set, only updates mP
-	void		UpdatePointSetP(uint32 inSet)
+	void UpdatePointSetP(uint32 inSet)
 	{
 		int num_points = 0;
 		for (int i = 0; i < mNumPoints; ++i)
@@ -129,7 +129,7 @@ private:
 	}
 
 	// Remove points that are not in the set, only updates mP and mQ
-	void		UpdatePointSetPQ(uint32 inSet)
+	void UpdatePointSetPQ(uint32 inSet)
 	{
 		int num_points = 0;
 		for (int i = 0; i < mNumPoints; ++i)
@@ -143,7 +143,7 @@ private:
 	}
 
 	// Remove points that are not in the set, updates mY, mP and mQ
-	void		UpdatePointSetYPQ(uint32 inSet)
+	void UpdatePointSetYPQ(uint32 inSet)
 	{
 		int num_points = 0;
 		for (int i = 0; i < mNumPoints; ++i)
@@ -158,7 +158,7 @@ private:
 	}
 
 	// Calculate closest points on A and B
-	void		CalculatePointAAndB(Vec3 &outPointA, Vec3 &outPointB) const
+	void CalculatePointAAndB(Vec3 &outPointA, Vec3 &outPointB) const
 	{
 		switch (mNumPoints)
 		{
@@ -168,28 +168,28 @@ private:
 			break;
 
 		case 2:
-			{
-				float u, v;
-				ClosestPoint::GetBaryCentricCoordinates(mY[0], mY[1], u, v);
-				outPointA = u * mP[0] + v * mP[1];
-				outPointB = u * mQ[0] + v * mQ[1];
-			}
-			break;
+		{
+			float u, v;
+			ClosestPoint::GetBaryCentricCoordinates(mY[0], mY[1], u, v);
+			outPointA = u * mP[0] + v * mP[1];
+			outPointB = u * mQ[0] + v * mQ[1];
+		}
+		break;
 
 		case 3:
-			{
-				float u, v, w;
-				ClosestPoint::GetBaryCentricCoordinates(mY[0], mY[1], mY[2], u, v, w);
-				outPointA = u * mP[0] + v * mP[1] + w * mP[2];
-				outPointB = u * mQ[0] + v * mQ[1] + w * mQ[2];
-			}
-			break;
+		{
+			float u, v, w;
+			ClosestPoint::GetBaryCentricCoordinates(mY[0], mY[1], mY[2], u, v, w);
+			outPointA = u * mP[0] + v * mP[1] + w * mP[2];
+			outPointB = u * mQ[0] + v * mQ[1] + w * mQ[2];
+		}
+		break;
 
 		case 4:
-		#ifdef JPH_DEBUG
+#ifdef JPH_DEBUG
 			memset(&outPointA, 0xcd, sizeof(outPointA));
 			memset(&outPointB, 0xcd, sizeof(outPointB));
-		#endif
+#endif
 			break;
 		}
 	}
@@ -205,7 +205,7 @@ public:
 	///	@return True if they intersect (in which case ioV = (0, 0, 0)).
 	///	False if they don't intersect in which case ioV is a separating axis in the direction from A to B (magnitude is meaningless)
 	template <typename A, typename B>
-	bool		Intersects(const A &inA, const B &inB, float inTolerance, Vec3 &ioV)
+	bool Intersects(const A &inA, const B &inB, float inTolerance, Vec3 &ioV)
 	{
 		float tolerance_sq = Square(inTolerance);
 
@@ -252,8 +252,8 @@ public:
 #endif
 
 			// Determine the new closest point
-			float v_len_sq;			// Length^2 of v
-			uint32 set;				// Set of points that form the new simplex
+			float v_len_sq; // Length^2 of v
+			uint32 set;			// Set of points that form the new simplex
 			if (!GetClosest<true>(prev_v_len_sq, ioV, v_len_sq, set))
 				return false;
 
@@ -325,7 +325,7 @@ public:
 	///
 	///	@return The squared distance between A and B or FLT_MAX when they are further away than inMaxDistSq.
 	template <typename A, typename B>
-	float		GetClosestPoints(const A &inA, const B &inB, float inTolerance, float inMaxDistSq, Vec3 &ioV, Vec3 &outPointA, Vec3 &outPointB)
+	float GetClosestPoints(const A &inA, const B &inB, float inTolerance, float inMaxDistSq, Vec3 &ioV, Vec3 &outPointA, Vec3 &outPointB)
 	{
 		float tolerance_sq = Square(inTolerance);
 
@@ -335,7 +335,8 @@ public:
 #ifdef JPH_GJK_DEBUG
 		// Generate the hull of the Minkowski difference for visualization
 		MinkowskiDifference diff(inA, inB);
-		mGeometry = DebugRenderer::sInstance->CreateTriangleGeometryForConvex([&diff](Vec3Arg inDirection) { return diff.GetSupport(inDirection); });
+		mGeometry = DebugRenderer::sInstance->CreateTriangleGeometryForConvex([&diff](Vec3Arg inDirection)
+																																					{ return diff.GetSupport(inDirection); });
 
 		for (int i = 0; i < 4; ++i)
 		{
@@ -493,7 +494,7 @@ public:
 
 	/// Get the resulting simplex after the GetClosestPoints algorithm finishes.
 	/// If it returned a squared distance of 0, the origin will be contained in the simplex.
-	void		GetClosestPointsSimplex(Vec3 *outY, Vec3 *outP, Vec3 *outQ, uint &outNumPoints) const
+	void GetClosestPointsSimplex(Vec3 *outY, Vec3 *outP, Vec3 *outQ, uint &outNumPoints) const
 	{
 		uint size = sizeof(Vec3) * mNumPoints;
 		memcpy(outY, mY, size);
@@ -514,7 +515,7 @@ public:
 	///
 	///	@return true if a hit was found, ioLambda is the solution for lambda.
 	template <typename A>
-	bool		CastRay(Vec3Arg inRayOrigin, Vec3Arg inRayDirection, float inTolerance, const A &inA, float &ioLambda)
+	bool CastRay(Vec3Arg inRayOrigin, Vec3Arg inRayDirection, float inTolerance, const A &inA, float &ioLambda)
 	{
 		float tolerance_sq = Square(inTolerance);
 
@@ -592,7 +593,7 @@ public:
 				mY[i] = x - mP[i];
 
 			// Determine the new closest point from Y to origin
-			uint32 set;						// Set of points that form the new simplex
+			uint32 set; // Set of points that form the new simplex
 			if (!GetClosest<false>(v_len_sq, v, v_len_sq, set))
 			{
 #ifdef JPH_GJK_DEBUG
@@ -656,7 +657,7 @@ public:
 	///
 	/// @return true if a hit was found, ioLambda is the solution for lambda.
 	template <typename A, typename B>
-	bool		CastShape(Mat44Arg inStart, Vec3Arg inDirection, float inTolerance, const A &inA, const B &inB, float &ioLambda)
+	bool CastShape(Mat44Arg inStart, Vec3Arg inDirection, float inTolerance, const A &inA, const B &inB, float &ioLambda)
 	{
 		// Transform the shape to be cast to the starting position
 		TransformedConvexObject transformed_a(inStart, inA);
@@ -687,7 +688,7 @@ public:
 	///
 	///	@return true if a hit was found, ioLambda is the solution for lambda and outPoint and outSeparatingAxis are valid.
 	template <typename A, typename B>
-	bool		CastShape(Mat44Arg inStart, Vec3Arg inDirection, float inTolerance, const A &inA, const B &inB, float inConvexRadiusA, float inConvexRadiusB, float &ioLambda, Vec3 &outPointA, Vec3 &outPointB, Vec3 &outSeparatingAxis)
+	bool CastShape(Mat44Arg inStart, Vec3Arg inDirection, float inTolerance, const A &inA, const B &inB, float inConvexRadiusA, float inConvexRadiusB, float &ioLambda, Vec3 &outPointA, Vec3 &outPointB, Vec3 &outSeparatingAxis)
 	{
 		float tolerance_sq = Square(inTolerance);
 
@@ -701,7 +702,7 @@ public:
 		mNumPoints = 0;
 
 		float lambda = 0.0f;
-		Vec3 x = Vec3::sZero(); // Since A is already transformed we can start the cast from zero
+		Vec3 x = Vec3::sZero();																														 // Since A is already transformed we can start the cast from zero
 		Vec3 v = -inB.GetSupport(Vec3::sZero()) + transformed_a.GetSupport(Vec3::sZero()); // See CastRay: v = x - inA.GetSupport(Vec3::sZero()) where inA is the Minkowski difference inB - transformed_a (see CastShape above) and x is zero
 		float v_len_sq = FLT_MAX;
 		bool allow_restart = false;
@@ -790,7 +791,7 @@ public:
 				mY[i] = x - (mQ[i] - mP[i]);
 
 			// Determine the new closest point from Y to origin
-			uint32 set;						// Set of points that form the new simplex
+			uint32 set; // Set of points that form the new simplex
 			if (!GetClosest<false>(v_len_sq, v, v_len_sq, set))
 			{
 #ifdef JPH_GJK_DEBUG
@@ -857,32 +858,32 @@ public:
 		{
 		case 1:
 			outPointB = mQ[0] + convex_radius_b;
-			outPointA = lambda > 0.0f? outPointB : mP[0] - convex_radius_a;
+			outPointA = lambda > 0.0f ? outPointB : mP[0] - convex_radius_a;
 			break;
 
 		case 2:
-			{
-				float bu, bv;
-				ClosestPoint::GetBaryCentricCoordinates(mY[0], mY[1], bu, bv);
-				outPointB = bu * mQ[0] + bv * mQ[1] + convex_radius_b;
-				outPointA = lambda > 0.0f? outPointB : bu * mP[0] + bv * mP[1] - convex_radius_a;
-			}
-			break;
+		{
+			float bu, bv;
+			ClosestPoint::GetBaryCentricCoordinates(mY[0], mY[1], bu, bv);
+			outPointB = bu * mQ[0] + bv * mQ[1] + convex_radius_b;
+			outPointA = lambda > 0.0f ? outPointB : bu * mP[0] + bv * mP[1] - convex_radius_a;
+		}
+		break;
 
 		case 3:
 		case 4: // A full simplex, we can't properly determine a contact point! As contact point we take the closest point of the previous iteration.
-			{
-				float bu, bv, bw;
-				ClosestPoint::GetBaryCentricCoordinates(mY[0], mY[1], mY[2], bu, bv, bw);
-				outPointB = bu * mQ[0] + bv * mQ[1] + bw * mQ[2] + convex_radius_b;
-				outPointA = lambda > 0.0f? outPointB : bu * mP[0] + bv * mP[1] + bw * mP[2] - convex_radius_a;
-			}
-			break;
+		{
+			float bu, bv, bw;
+			ClosestPoint::GetBaryCentricCoordinates(mY[0], mY[1], mY[2], bu, bv, bw);
+			outPointB = bu * mQ[0] + bv * mQ[1] + bw * mQ[2] + convex_radius_b;
+			outPointA = lambda > 0.0f ? outPointB : bu * mP[0] + bv * mP[1] + bw * mP[2] - convex_radius_a;
+		}
+		break;
 		}
 
 		// Store separating axis, in case we have a convex radius we can just return v,
 		// otherwise v will be very small and we resort to returning previous v as an approximation.
-		outSeparatingAxis = sum_convex_radius > 0.0f? -v : -prev_v;
+		outSeparatingAxis = sum_convex_radius > 0.0f ? -v : -prev_v;
 
 		// Store hit fraction
 		ioLambda = lambda;
@@ -892,7 +893,7 @@ public:
 private:
 #ifdef JPH_GJK_DEBUG
 	/// Draw state of algorithm
-	void		DrawState()
+	void DrawState()
 	{
 		RMat44 origin = RMat44::sTranslation(mOffset);
 
@@ -932,14 +933,14 @@ private:
 	}
 #endif // JPH_GJK_DEBUG
 
-	Vec3		mY[4];						///< Support points on A - B
-	Vec3		mP[4];						///< Support point on A
-	Vec3		mQ[4];						///< Support point on B
-	int			mNumPoints = 0;				///< Number of points in mY, mP and mQ that are valid
+	Vec3 mY[4];					///< Support points on A - B
+	Vec3 mP[4];					///< Support point on A
+	Vec3 mQ[4];					///< Support point on B
+	int mNumPoints = 0; ///< Number of points in mY, mP and mQ that are valid
 
 #ifdef JPH_GJK_DEBUG
-	DebugRenderer::GeometryRef	mGeometry;	///< A visualization of the minkowski difference for state drawing
-	RVec3		mOffset = RVec3::sZero();	///< Offset to use for state drawing
+	DebugRenderer::GeometryRef mGeometry; ///< A visualization of the minkowski difference for state drawing
+	RVec3 mOffset = RVec3::sZero();				///< Offset to use for state drawing
 #endif
 };
 

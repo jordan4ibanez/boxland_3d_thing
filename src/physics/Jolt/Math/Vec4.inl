@@ -2,15 +2,14 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Math/Trigonometry.h>
-#include <Jolt/Math/Vec3.h>
-#include <Jolt/Math/UVec4.h>
+#include "../Math/Trigonometry.h"
+#include "../Math/Vec3.h"
+#include "../Math/UVec4.h"
 
 JPH_NAMESPACE_BEGIN
 
 // Constructor
-Vec4::Vec4(Vec3Arg inRHS) :
-	mValue(inRHS.mValue)
+Vec4::Vec4(Vec3Arg inRHS) : mValue(inRHS.mValue)
 {
 }
 
@@ -43,7 +42,7 @@ Vec4::Vec4(float inX, float inY, float inZ, float inW)
 #endif
 }
 
-template<uint32 SwizzleX, uint32 SwizzleY, uint32 SwizzleZ, uint32 SwizzleW>
+template <uint32 SwizzleX, uint32 SwizzleY, uint32 SwizzleZ, uint32 SwizzleW>
 Vec4 Vec4::Swizzle() const
 {
 	static_assert(SwizzleX <= 3, "SwizzleX template parameter out of range");
@@ -113,18 +112,18 @@ template <const int Scale>
 Vec4 Vec4::sGatherFloat4(const float *inBase, UVec4Arg inOffsets)
 {
 #if defined(JPH_USE_SSE)
-	#ifdef JPH_USE_AVX2
-		return _mm_i32gather_ps(inBase, inOffsets.mValue, Scale);
-	#else
-		const uint8 *base = reinterpret_cast<const uint8 *>(inBase);
-		Type x = _mm_load_ss(reinterpret_cast<const float *>(base + inOffsets.GetX() * Scale));
-		Type y = _mm_load_ss(reinterpret_cast<const float *>(base + inOffsets.GetY() * Scale));
-		Type xy = _mm_unpacklo_ps(x, y);
-		Type z = _mm_load_ss(reinterpret_cast<const float *>(base + inOffsets.GetZ() * Scale));
-		Type w = _mm_load_ss(reinterpret_cast<const float *>(base + inOffsets.GetW() * Scale));
-		Type zw = _mm_unpacklo_ps(z, w);
-		return _mm_movelh_ps(xy, zw);
-	#endif
+#ifdef JPH_USE_AVX2
+	return _mm_i32gather_ps(inBase, inOffsets.mValue, Scale);
+#else
+	const uint8 *base = reinterpret_cast<const uint8 *>(inBase);
+	Type x = _mm_load_ss(reinterpret_cast<const float *>(base + inOffsets.GetX() * Scale));
+	Type y = _mm_load_ss(reinterpret_cast<const float *>(base + inOffsets.GetY() * Scale));
+	Type xy = _mm_unpacklo_ps(x, y);
+	Type z = _mm_load_ss(reinterpret_cast<const float *>(base + inOffsets.GetZ() * Scale));
+	Type w = _mm_load_ss(reinterpret_cast<const float *>(base + inOffsets.GetW() * Scale));
+	Type zw = _mm_unpacklo_ps(z, w);
+	return _mm_movelh_ps(xy, zw);
+#endif
 #else
 	const uint8 *base = reinterpret_cast<const uint8 *>(inBase);
 	float x = *reinterpret_cast<const float *>(base + inOffsets.GetX() * Scale);
@@ -143,9 +142,9 @@ Vec4 Vec4::sMin(Vec4Arg inV1, Vec4Arg inV2)
 	return vminq_f32(inV1.mValue, inV2.mValue);
 #else
 	return Vec4(min(inV1.mF32[0], inV2.mF32[0]),
-				min(inV1.mF32[1], inV2.mF32[1]),
-				min(inV1.mF32[2], inV2.mF32[2]),
-				min(inV1.mF32[3], inV2.mF32[3]));
+							min(inV1.mF32[1], inV2.mF32[1]),
+							min(inV1.mF32[2], inV2.mF32[2]),
+							min(inV1.mF32[3], inV2.mF32[3]));
 #endif
 }
 
@@ -157,9 +156,9 @@ Vec4 Vec4::sMax(Vec4Arg inV1, Vec4Arg inV2)
 	return vmaxq_f32(inV1.mValue, inV2.mValue);
 #else
 	return Vec4(max(inV1.mF32[0], inV2.mF32[0]),
-				max(inV1.mF32[1], inV2.mF32[1]),
-				max(inV1.mF32[2], inV2.mF32[2]),
-				max(inV1.mF32[3], inV2.mF32[3]));
+							max(inV1.mF32[1], inV2.mF32[1]),
+							max(inV1.mF32[2], inV2.mF32[2]),
+							max(inV1.mF32[3], inV2.mF32[3]));
 #endif
 }
 
@@ -170,10 +169,10 @@ UVec4 Vec4::sEquals(Vec4Arg inV1, Vec4Arg inV2)
 #elif defined(JPH_USE_NEON)
 	return vceqq_f32(inV1.mValue, inV2.mValue);
 #else
-	return UVec4(inV1.mF32[0] == inV2.mF32[0]? 0xffffffffu : 0,
-				 inV1.mF32[1] == inV2.mF32[1]? 0xffffffffu : 0,
-				 inV1.mF32[2] == inV2.mF32[2]? 0xffffffffu : 0,
-				 inV1.mF32[3] == inV2.mF32[3]? 0xffffffffu : 0);
+	return UVec4(inV1.mF32[0] == inV2.mF32[0] ? 0xffffffffu : 0,
+							 inV1.mF32[1] == inV2.mF32[1] ? 0xffffffffu : 0,
+							 inV1.mF32[2] == inV2.mF32[2] ? 0xffffffffu : 0,
+							 inV1.mF32[3] == inV2.mF32[3] ? 0xffffffffu : 0);
 #endif
 }
 
@@ -184,10 +183,10 @@ UVec4 Vec4::sLess(Vec4Arg inV1, Vec4Arg inV2)
 #elif defined(JPH_USE_NEON)
 	return vcltq_f32(inV1.mValue, inV2.mValue);
 #else
-	return UVec4(inV1.mF32[0] < inV2.mF32[0]? 0xffffffffu : 0,
-				 inV1.mF32[1] < inV2.mF32[1]? 0xffffffffu : 0,
-				 inV1.mF32[2] < inV2.mF32[2]? 0xffffffffu : 0,
-				 inV1.mF32[3] < inV2.mF32[3]? 0xffffffffu : 0);
+	return UVec4(inV1.mF32[0] < inV2.mF32[0] ? 0xffffffffu : 0,
+							 inV1.mF32[1] < inV2.mF32[1] ? 0xffffffffu : 0,
+							 inV1.mF32[2] < inV2.mF32[2] ? 0xffffffffu : 0,
+							 inV1.mF32[3] < inV2.mF32[3] ? 0xffffffffu : 0);
 #endif
 }
 
@@ -198,10 +197,10 @@ UVec4 Vec4::sLessOrEqual(Vec4Arg inV1, Vec4Arg inV2)
 #elif defined(JPH_USE_NEON)
 	return vcleq_f32(inV1.mValue, inV2.mValue);
 #else
-	return UVec4(inV1.mF32[0] <= inV2.mF32[0]? 0xffffffffu : 0,
-				 inV1.mF32[1] <= inV2.mF32[1]? 0xffffffffu : 0,
-				 inV1.mF32[2] <= inV2.mF32[2]? 0xffffffffu : 0,
-				 inV1.mF32[3] <= inV2.mF32[3]? 0xffffffffu : 0);
+	return UVec4(inV1.mF32[0] <= inV2.mF32[0] ? 0xffffffffu : 0,
+							 inV1.mF32[1] <= inV2.mF32[1] ? 0xffffffffu : 0,
+							 inV1.mF32[2] <= inV2.mF32[2] ? 0xffffffffu : 0,
+							 inV1.mF32[3] <= inV2.mF32[3] ? 0xffffffffu : 0);
 #endif
 }
 
@@ -212,10 +211,10 @@ UVec4 Vec4::sGreater(Vec4Arg inV1, Vec4Arg inV2)
 #elif defined(JPH_USE_NEON)
 	return vcgtq_f32(inV1.mValue, inV2.mValue);
 #else
-	return UVec4(inV1.mF32[0] > inV2.mF32[0]? 0xffffffffu : 0,
-				 inV1.mF32[1] > inV2.mF32[1]? 0xffffffffu : 0,
-				 inV1.mF32[2] > inV2.mF32[2]? 0xffffffffu : 0,
-				 inV1.mF32[3] > inV2.mF32[3]? 0xffffffffu : 0);
+	return UVec4(inV1.mF32[0] > inV2.mF32[0] ? 0xffffffffu : 0,
+							 inV1.mF32[1] > inV2.mF32[1] ? 0xffffffffu : 0,
+							 inV1.mF32[2] > inV2.mF32[2] ? 0xffffffffu : 0,
+							 inV1.mF32[3] > inV2.mF32[3] ? 0xffffffffu : 0);
 #endif
 }
 
@@ -226,28 +225,28 @@ UVec4 Vec4::sGreaterOrEqual(Vec4Arg inV1, Vec4Arg inV2)
 #elif defined(JPH_USE_NEON)
 	return vcgeq_f32(inV1.mValue, inV2.mValue);
 #else
-	return UVec4(inV1.mF32[0] >= inV2.mF32[0]? 0xffffffffu : 0,
-				 inV1.mF32[1] >= inV2.mF32[1]? 0xffffffffu : 0,
-				 inV1.mF32[2] >= inV2.mF32[2]? 0xffffffffu : 0,
-				 inV1.mF32[3] >= inV2.mF32[3]? 0xffffffffu : 0);
+	return UVec4(inV1.mF32[0] >= inV2.mF32[0] ? 0xffffffffu : 0,
+							 inV1.mF32[1] >= inV2.mF32[1] ? 0xffffffffu : 0,
+							 inV1.mF32[2] >= inV2.mF32[2] ? 0xffffffffu : 0,
+							 inV1.mF32[3] >= inV2.mF32[3] ? 0xffffffffu : 0);
 #endif
 }
 
 Vec4 Vec4::sFusedMultiplyAdd(Vec4Arg inMul1, Vec4Arg inMul2, Vec4Arg inAdd)
 {
 #if defined(JPH_USE_SSE)
-	#ifdef JPH_USE_FMADD
-		return _mm_fmadd_ps(inMul1.mValue, inMul2.mValue, inAdd.mValue);
-	#else
-		return _mm_add_ps(_mm_mul_ps(inMul1.mValue, inMul2.mValue), inAdd.mValue);
-	#endif
+#ifdef JPH_USE_FMADD
+	return _mm_fmadd_ps(inMul1.mValue, inMul2.mValue, inAdd.mValue);
+#else
+	return _mm_add_ps(_mm_mul_ps(inMul1.mValue, inMul2.mValue), inAdd.mValue);
+#endif
 #elif defined(JPH_USE_NEON)
 	return vmlaq_f32(inAdd.mValue, inMul1.mValue, inMul2.mValue);
 #else
 	return Vec4(inMul1.mF32[0] * inMul2.mF32[0] + inAdd.mF32[0],
-				inMul1.mF32[1] * inMul2.mF32[1] + inAdd.mF32[1],
-				inMul1.mF32[2] * inMul2.mF32[2] + inAdd.mF32[2],
-				inMul1.mF32[3] * inMul2.mF32[3] + inAdd.mF32[3]);
+							inMul1.mF32[1] * inMul2.mF32[1] + inAdd.mF32[1],
+							inMul1.mF32[2] * inMul2.mF32[2] + inAdd.mF32[2],
+							inMul1.mF32[3] * inMul2.mF32[3] + inAdd.mF32[3]);
 #endif
 }
 
@@ -349,7 +348,7 @@ void Vec4::sSort4Reverse(Vec4 &ioValue, UVec4 &ioIndex)
 	ioIndex = UVec4::sSelect(ioIndex, i3, c3);
 }
 
-bool Vec4::operator == (Vec4Arg inV2) const
+bool Vec4::operator==(Vec4Arg inV2) const
 {
 	return sEquals(*this, inV2).TestAllTrue();
 }
@@ -378,7 +377,7 @@ bool Vec4::IsNaN() const
 #endif
 }
 
-Vec4 Vec4::operator * (Vec4Arg inV2) const
+Vec4 Vec4::operator*(Vec4Arg inV2) const
 {
 #if defined(JPH_USE_SSE)
 	return _mm_mul_ps(mValue, inV2.mValue);
@@ -386,13 +385,13 @@ Vec4 Vec4::operator * (Vec4Arg inV2) const
 	return vmulq_f32(mValue, inV2.mValue);
 #else
 	return Vec4(mF32[0] * inV2.mF32[0],
-				mF32[1] * inV2.mF32[1],
-				mF32[2] * inV2.mF32[2],
-				mF32[3] * inV2.mF32[3]);
+							mF32[1] * inV2.mF32[1],
+							mF32[2] * inV2.mF32[2],
+							mF32[3] * inV2.mF32[3]);
 #endif
 }
 
-Vec4 Vec4::operator * (float inV2) const
+Vec4 Vec4::operator*(float inV2) const
 {
 #if defined(JPH_USE_SSE)
 	return _mm_mul_ps(mValue, _mm_set1_ps(inV2));
@@ -404,7 +403,7 @@ Vec4 Vec4::operator * (float inV2) const
 }
 
 /// Multiply vector with float
-Vec4 operator * (float inV1, Vec4Arg inV2)
+Vec4 operator*(float inV1, Vec4Arg inV2)
 {
 #if defined(JPH_USE_SSE)
 	return _mm_mul_ps(_mm_set1_ps(inV1), inV2.mValue);
@@ -412,13 +411,13 @@ Vec4 operator * (float inV1, Vec4Arg inV2)
 	return vmulq_n_f32(inV2.mValue, inV1);
 #else
 	return Vec4(inV1 * inV2.mF32[0],
-				inV1 * inV2.mF32[1],
-				inV1 * inV2.mF32[2],
-				inV1 * inV2.mF32[3]);
+							inV1 * inV2.mF32[1],
+							inV1 * inV2.mF32[2],
+							inV1 * inV2.mF32[3]);
 #endif
 }
 
-Vec4 Vec4::operator / (float inV2) const
+Vec4 Vec4::operator/(float inV2) const
 {
 #if defined(JPH_USE_SSE)
 	return _mm_div_ps(mValue, _mm_set1_ps(inV2));
@@ -429,7 +428,7 @@ Vec4 Vec4::operator / (float inV2) const
 #endif
 }
 
-Vec4 &Vec4::operator *= (float inV2)
+Vec4 &Vec4::operator*=(float inV2)
 {
 #if defined(JPH_USE_SSE)
 	mValue = _mm_mul_ps(mValue, _mm_set1_ps(inV2));
@@ -442,7 +441,7 @@ Vec4 &Vec4::operator *= (float inV2)
 	return *this;
 }
 
-Vec4 &Vec4::operator *= (Vec4Arg inV2)
+Vec4 &Vec4::operator*=(Vec4Arg inV2)
 {
 #if defined(JPH_USE_SSE)
 	mValue = _mm_mul_ps(mValue, inV2.mValue);
@@ -455,7 +454,7 @@ Vec4 &Vec4::operator *= (Vec4Arg inV2)
 	return *this;
 }
 
-Vec4 &Vec4::operator /= (float inV2)
+Vec4 &Vec4::operator/=(float inV2)
 {
 #if defined(JPH_USE_SSE)
 	mValue = _mm_div_ps(mValue, _mm_set1_ps(inV2));
@@ -468,7 +467,7 @@ Vec4 &Vec4::operator /= (float inV2)
 	return *this;
 }
 
-Vec4 Vec4::operator + (Vec4Arg inV2) const
+Vec4 Vec4::operator+(Vec4Arg inV2) const
 {
 #if defined(JPH_USE_SSE)
 	return _mm_add_ps(mValue, inV2.mValue);
@@ -476,13 +475,13 @@ Vec4 Vec4::operator + (Vec4Arg inV2) const
 	return vaddq_f32(mValue, inV2.mValue);
 #else
 	return Vec4(mF32[0] + inV2.mF32[0],
-				mF32[1] + inV2.mF32[1],
-				mF32[2] + inV2.mF32[2],
-				mF32[3] + inV2.mF32[3]);
+							mF32[1] + inV2.mF32[1],
+							mF32[2] + inV2.mF32[2],
+							mF32[3] + inV2.mF32[3]);
 #endif
 }
 
-Vec4 &Vec4::operator += (Vec4Arg inV2)
+Vec4 &Vec4::operator+=(Vec4Arg inV2)
 {
 #if defined(JPH_USE_SSE)
 	mValue = _mm_add_ps(mValue, inV2.mValue);
@@ -495,26 +494,26 @@ Vec4 &Vec4::operator += (Vec4Arg inV2)
 	return *this;
 }
 
-Vec4 Vec4::operator - () const
+Vec4 Vec4::operator-() const
 {
 #if defined(JPH_USE_SSE)
 	return _mm_sub_ps(_mm_setzero_ps(), mValue);
 #elif defined(JPH_USE_NEON)
-	#ifdef JPH_CROSS_PLATFORM_DETERMINISTIC
-		return vsubq_f32(vdupq_n_f32(0), mValue);
-	#else
-		return vnegq_f32(mValue);
-	#endif
+#ifdef JPH_CROSS_PLATFORM_DETERMINISTIC
+	return vsubq_f32(vdupq_n_f32(0), mValue);
 #else
-	#ifdef JPH_CROSS_PLATFORM_DETERMINISTIC
-		return Vec4(0.0f - mF32[0], 0.0f - mF32[1], 0.0f - mF32[2], 0.0f - mF32[3]);
-	#else
-		return Vec4(-mF32[0], -mF32[1], -mF32[2], -mF32[3]);
-	#endif
+	return vnegq_f32(mValue);
+#endif
+#else
+#ifdef JPH_CROSS_PLATFORM_DETERMINISTIC
+	return Vec4(0.0f - mF32[0], 0.0f - mF32[1], 0.0f - mF32[2], 0.0f - mF32[3]);
+#else
+	return Vec4(-mF32[0], -mF32[1], -mF32[2], -mF32[3]);
+#endif
 #endif
 }
 
-Vec4 Vec4::operator - (Vec4Arg inV2) const
+Vec4 Vec4::operator-(Vec4Arg inV2) const
 {
 #if defined(JPH_USE_SSE)
 	return _mm_sub_ps(mValue, inV2.mValue);
@@ -522,13 +521,13 @@ Vec4 Vec4::operator - (Vec4Arg inV2) const
 	return vsubq_f32(mValue, inV2.mValue);
 #else
 	return Vec4(mF32[0] - inV2.mF32[0],
-				mF32[1] - inV2.mF32[1],
-				mF32[2] - inV2.mF32[2],
-				mF32[3] - inV2.mF32[3]);
+							mF32[1] - inV2.mF32[1],
+							mF32[2] - inV2.mF32[2],
+							mF32[3] - inV2.mF32[3]);
 #endif
 }
 
-Vec4 &Vec4::operator -= (Vec4Arg inV2)
+Vec4 &Vec4::operator-=(Vec4Arg inV2)
 {
 #if defined(JPH_USE_SSE)
 	mValue = _mm_sub_ps(mValue, inV2.mValue);
@@ -541,7 +540,7 @@ Vec4 &Vec4::operator -= (Vec4Arg inV2)
 	return *this;
 }
 
-Vec4 Vec4::operator / (Vec4Arg inV2) const
+Vec4 Vec4::operator/(Vec4Arg inV2) const
 {
 #if defined(JPH_USE_SSE)
 	return _mm_div_ps(mValue, inV2.mValue);
@@ -549,9 +548,9 @@ Vec4 Vec4::operator / (Vec4Arg inV2) const
 	return vdivq_f32(mValue, inV2.mValue);
 #else
 	return Vec4(mF32[0] / inV2.mF32[0],
-				mF32[1] / inV2.mF32[1],
-				mF32[2] / inV2.mF32[2],
-				mF32[3] / inV2.mF32[3]);
+							mF32[1] / inV2.mF32[1],
+							mF32[2] / inV2.mF32[2],
+							mF32[3] / inV2.mF32[3]);
 #endif
 }
 
@@ -681,7 +680,6 @@ Vec4 Vec4::Sqrt() const
 #endif
 }
 
-
 Vec4 Vec4::GetSign() const
 {
 #if defined(JPH_USE_AVX512)
@@ -695,10 +693,10 @@ Vec4 Vec4::GetSign() const
 	Type one = vdupq_n_f32(1.0f);
 	return vreinterpretq_f32_u32(vorrq_u32(vandq_u32(vreinterpretq_u32_f32(mValue), vreinterpretq_u32_f32(minus_one)), vreinterpretq_u32_f32(one)));
 #else
-	return Vec4(std::signbit(mF32[0])? -1.0f : 1.0f,
-				std::signbit(mF32[1])? -1.0f : 1.0f,
-				std::signbit(mF32[2])? -1.0f : 1.0f,
-				std::signbit(mF32[3])? -1.0f : 1.0f);
+	return Vec4(std::signbit(mF32[0]) ? -1.0f : 1.0f,
+							std::signbit(mF32[1]) ? -1.0f : 1.0f,
+							std::signbit(mF32[2]) ? -1.0f : 1.0f,
+							std::signbit(mF32[3]) ? -1.0f : 1.0f);
 #endif
 }
 
@@ -757,7 +755,7 @@ int Vec4::GetSignBits() const
 	int32x4_t shift = JPH_NEON_INT32x4(0, 1, 2, 3);
 	return vaddvq_u32(vshlq_u32(vshrq_n_u32(vreinterpretq_u32_f32(mValue), 31), shift));
 #else
-	return (std::signbit(mF32[0])? 1 : 0) | (std::signbit(mF32[1])? 2 : 0) | (std::signbit(mF32[2])? 4 : 0) | (std::signbit(mF32[3])? 8 : 0);
+	return (std::signbit(mF32[0]) ? 1 : 0) | (std::signbit(mF32[1]) ? 2 : 0) | (std::signbit(mF32[2]) ? 4 : 0) | (std::signbit(mF32[3]) ? 8 : 0);
 #endif
 }
 
@@ -859,12 +857,11 @@ Vec4 Vec4::Tan() const
 	// Roughly equivalent to the Taylor expansion:
 	// Tan(x) = x + x^3/3 + 2*x^5/15 + 17*x^7/315 + 62*x^9/2835 + ...
 	Vec4 tan =
-		(((((9.38540185543e-3f * x2 + Vec4::sReplicate(3.11992232697e-3f)) * x2 + Vec4::sReplicate(2.44301354525e-2f)) * x2
-		+ Vec4::sReplicate(5.34112807005e-2f)) * x2 + Vec4::sReplicate(1.33387994085e-1f)) * x2 + Vec4::sReplicate(3.33331568548e-1f)) * x2 * x + x;
+			(((((9.38540185543e-3f * x2 + Vec4::sReplicate(3.11992232697e-3f)) * x2 + Vec4::sReplicate(2.44301354525e-2f)) * x2 + Vec4::sReplicate(5.34112807005e-2f)) * x2 + Vec4::sReplicate(1.33387994085e-1f)) * x2 + Vec4::sReplicate(3.33331568548e-1f)) * x2 * x + x;
 
 	// For the 2nd and 4th quadrant we need to invert the value
 	UVec4 bit1 = quadrant.LogicalShiftLeft<31>();
-	tan = Vec4::sSelect(tan, Vec4::sReplicate(-1.0f) / (tan JPH_IF_FLOATING_POINT_EXCEPTIONS_ENABLED(+ Vec4::sReplicate(FLT_MIN))), bit1); // Add small epsilon to prevent div by zero, works because tan is always positive
+	tan = Vec4::sSelect(tan, Vec4::sReplicate(-1.0f) / (tan JPH_IF_FLOATING_POINT_EXCEPTIONS_ENABLED(+Vec4::sReplicate(FLT_MIN))), bit1); // Add small epsilon to prevent div by zero, works because tan is always positive
 
 	// Put the sign back
 	return Vec4::sXor(tan, tan_sign.ReinterpretAsFloat());
@@ -927,7 +924,7 @@ Vec4 Vec4::ATan() const
 
 	// If x > Tan(3 * PI / 8)
 	UVec4 greater2 = Vec4::sGreater(x, Vec4::sReplicate(2.414213562373095f));
-	Vec4 x2 = Vec4::sReplicate(-1.0f) / (x JPH_IF_FLOATING_POINT_EXCEPTIONS_ENABLED(+ Vec4::sReplicate(FLT_MIN))); // Add small epsilon to prevent div by zero, works because x is always positive
+	Vec4 x2 = Vec4::sReplicate(-1.0f) / (x JPH_IF_FLOATING_POINT_EXCEPTIONS_ENABLED(+Vec4::sReplicate(FLT_MIN))); // Add small epsilon to prevent div by zero, works because x is always positive
 
 	// Apply first if
 	x = Vec4::sSelect(x, x1, greater1);

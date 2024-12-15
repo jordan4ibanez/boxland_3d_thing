@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Math/DVec3.h>
-#include <Jolt/Math/DMat44.h>
+#include "../Math/DVec3.h"
+#include "../Math/DMat44.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -37,8 +37,9 @@ using RMat44Arg = Mat44Arg;
 
 // Put the 'real' operator in a namespace so that users can opt in to use it:
 // using namespace JPH::literals;
-namespace literals {
-	constexpr Real operator ""_r (long double inValue) { return Real(inValue); }
+namespace literals
+{
+	constexpr Real operator""_r(long double inValue) { return Real(inValue); }
 };
 
 JPH_NAMESPACE_END

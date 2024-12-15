@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/TriangleGrouper/TriangleGrouperClosestCentroid.h>
-#include <Jolt/Geometry/MortonCode.h>
-#include <Jolt/Core/QuickSort.h>
+#include "../TriangleGrouper/TriangleGrouperClosestCentroid.h"
+#include "../Geometry/MortonCode.h"
+#include "../Core/QuickSort.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -59,10 +59,10 @@ void TriangleGrouperClosestCentroid::Group(const VertexList &inVertices, const I
 
 		// Sort remaining triangles in batch on distance to first triangle
 		QuickSort(batch_begin_plus_1, batch_end,
-			[&first_centroid, &centroids](uint inLHS, uint inRHS)
-			{
-				return (centroids[inLHS] - first_centroid).LengthSq() < (centroids[inRHS] - first_centroid).LengthSq();
-			});
+							[&first_centroid, &centroids](uint inLHS, uint inRHS)
+							{
+								return (centroids[inLHS] - first_centroid).LengthSq() < (centroids[inRHS] - first_centroid).LengthSq();
+							});
 
 		// Loop over remaining triangles
 		float furthest_dist = (centroids[*batch_end_minus_1] - first_centroid).LengthSq();
@@ -78,10 +78,10 @@ void TriangleGrouperClosestCentroid::Group(const VertexList &inVertices, const I
 
 				// Find first element that is bigger than this one and insert the current item before it
 				Array<uint>::iterator upper = std::upper_bound(batch_begin_plus_1, batch_end, dist,
-					[&first_centroid, &centroids](float inLHS, uint inRHS)
-					{
-						return inLHS < (centroids[inRHS] - first_centroid).LengthSq();
-					});
+																											 [&first_centroid, &centroids](float inLHS, uint inRHS)
+																											 {
+																												 return inLHS < (centroids[inRHS] - first_centroid).LengthSq();
+																											 });
 				std::copy_backward(upper, batch_end_minus_1, batch_end);
 				*upper = other_val;
 

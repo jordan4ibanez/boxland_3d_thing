@@ -2,26 +2,24 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/RotatedTranslatedShape.h"
+#include "../../Collision/CollisionDispatch.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/ShapeCast.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(RotatedTranslatedShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(RotatedTranslatedShapeSettings, DecoratedShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(RotatedTranslatedShapeSettings){
+		JPH_ADD_BASE_CLASS(RotatedTranslatedShapeSettings, DecoratedShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(RotatedTranslatedShapeSettings, mPosition)
-	JPH_ADD_ATTRIBUTE(RotatedTranslatedShapeSettings, mRotation)
-}
+				JPH_ADD_ATTRIBUTE(RotatedTranslatedShapeSettings, mPosition)
+						JPH_ADD_ATTRIBUTE(RotatedTranslatedShapeSettings, mRotation)}
 
 ShapeSettings::ShapeResult RotatedTranslatedShapeSettings::Create() const
 {
@@ -30,8 +28,7 @@ ShapeSettings::ShapeResult RotatedTranslatedShapeSettings::Create() const
 	return mCachedResult;
 }
 
-RotatedTranslatedShape::RotatedTranslatedShape(const RotatedTranslatedShapeSettings &inSettings, ShapeResult &outResult) :
-	DecoratedShape(EShapeSubType::RotatedTranslated, inSettings, outResult)
+RotatedTranslatedShape::RotatedTranslatedShape(const RotatedTranslatedShapeSettings &inSettings, ShapeResult &outResult) : DecoratedShape(EShapeSubType::RotatedTranslated, inSettings, outResult)
 {
 	if (outResult.HasError())
 		return;
@@ -46,8 +43,7 @@ RotatedTranslatedShape::RotatedTranslatedShape(const RotatedTranslatedShapeSetti
 	outResult.Set(this);
 }
 
-RotatedTranslatedShape::RotatedTranslatedShape(Vec3Arg inPosition, QuatArg inRotation, const Shape *inShape) :
-	DecoratedShape(EShapeSubType::RotatedTranslated, inShape)
+RotatedTranslatedShape::RotatedTranslatedShape(Vec3Arg inPosition, QuatArg inRotation, const Shape *inShape) : DecoratedShape(EShapeSubType::RotatedTranslated, inShape)
 {
 	// Calculate center of mass position
 	mCenterOfMass = inPosition + inRotation * mInnerShape->GetCenterOfMass();
@@ -315,7 +311,8 @@ Vec3 RotatedTranslatedShape::MakeScaleValid(Vec3Arg inScale) const
 void RotatedTranslatedShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::RotatedTranslated);
-	f.mConstruct = []() -> Shape * { return new RotatedTranslatedShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new RotatedTranslatedShape; };
 	f.mColor = Color::sBlue;
 
 	for (EShapeSubType s : sAllSubShapeTypes)

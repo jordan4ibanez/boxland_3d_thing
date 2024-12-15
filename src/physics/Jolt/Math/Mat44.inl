@@ -4,26 +4,23 @@
 
 #pragma once
 
-#include <Jolt/Math/Vec3.h>
-#include <Jolt/Math/Vec4.h>
-#include <Jolt/Math/Quat.h>
+#include "../Math/Vec3.h"
+#include "../Math/Vec4.h"
+#include "../Math/Quat.h"
 
 JPH_NAMESPACE_BEGIN
 
 #define JPH_EL(r, c) mCol[c].mF32[r]
 
-Mat44::Mat44(Vec4Arg inC1, Vec4Arg inC2, Vec4Arg inC3, Vec4Arg inC4) :
-	mCol { inC1, inC2, inC3, inC4 }
+Mat44::Mat44(Vec4Arg inC1, Vec4Arg inC2, Vec4Arg inC3, Vec4Arg inC4) : mCol{inC1, inC2, inC3, inC4}
 {
 }
 
-Mat44::Mat44(Vec4Arg inC1, Vec4Arg inC2, Vec4Arg inC3, Vec3Arg inC4) :
-	mCol { inC1, inC2, inC3, Vec4(inC4, 1.0f) }
+Mat44::Mat44(Vec4Arg inC1, Vec4Arg inC2, Vec4Arg inC3, Vec3Arg inC4) : mCol{inC1, inC2, inC3, Vec4(inC4, 1.0f)}
 {
 }
 
-Mat44::Mat44(Type inC1, Type inC2, Type inC3, Type inC4) :
-	mCol { inC1, inC2, inC3, inC4 }
+Mat44::Mat44(Type inC1, Type inC2, Type inC3, Type inC4) : mCol{inC1, inC2, inC3, inC4}
 {
 }
 
@@ -95,17 +92,17 @@ Mat44 Mat44::sRotation(QuatArg inQuat)
 	__m128 zxyw = _mm_shuffle_ps(xyzw, xyzw, _MM_SHUFFLE(3, 1, 0, 2));
 	__m128 two_zxyw = _mm_add_ps(zxyw, zxyw);
 	__m128 wwww = _mm_shuffle_ps(xyzw, xyzw, _MM_SHUFFLE(3, 3, 3, 3));
-	__m128 diagonal = _mm_sub_ps(_mm_sub_ps(_mm_set1_ps(1.0f), _mm_mul_ps(two_yzxw, yzxw)), _mm_mul_ps(two_zxyw, zxyw));	// (1 - 2 y^2 - 2 z^2, 1 - 2 x^2 - 2 z^2, 1 - 2 x^2 - 2 y^2, 1 - 4 w^2)
-	__m128 plus = _mm_add_ps(_mm_mul_ps(two_xyzw, zxyw), _mm_mul_ps(two_yzxw, wwww));										// 2 * (xz + yw, xy + zw, yz + xw, ww)
-	__m128 minus = _mm_sub_ps(_mm_mul_ps(two_yzxw, xyzw), _mm_mul_ps(two_zxyw, wwww));										// 2 * (xy - zw, yz - xw, xz - yw, 0)
+	__m128 diagonal = _mm_sub_ps(_mm_sub_ps(_mm_set1_ps(1.0f), _mm_mul_ps(two_yzxw, yzxw)), _mm_mul_ps(two_zxyw, zxyw)); // (1 - 2 y^2 - 2 z^2, 1 - 2 x^2 - 2 z^2, 1 - 2 x^2 - 2 y^2, 1 - 4 w^2)
+	__m128 plus = _mm_add_ps(_mm_mul_ps(two_xyzw, zxyw), _mm_mul_ps(two_yzxw, wwww));																		 // 2 * (xz + yw, xy + zw, yz + xw, ww)
+	__m128 minus = _mm_sub_ps(_mm_mul_ps(two_yzxw, xyzw), _mm_mul_ps(two_zxyw, wwww));																	 // 2 * (xy - zw, yz - xw, xz - yw, 0)
 
 	// Workaround for compiler changing _mm_sub_ps(_mm_mul_ps(...), ...) into a fused multiply sub instruction, resulting in w not being 0
 	// There doesn't appear to be a reliable way to turn this off in Clang
 	minus = _mm_insert_ps(minus, minus, 0b1000);
 
-	__m128 col0 = _mm_blend_ps(_mm_blend_ps(plus, diagonal, 0b0001), minus, 0b1100);	// (1 - 2 y^2 - 2 z^2, 2 xy + 2 zw, 2 xz - 2 yw, 0)
-	__m128 col1 = _mm_blend_ps(_mm_blend_ps(diagonal, minus, 0b1001), plus, 0b0100);	// (2 xy - 2 zw, 1 - 2 x^2 - 2 z^2, 2 yz + 2 xw, 0)
-	__m128 col2 = _mm_blend_ps(_mm_blend_ps(minus, plus, 0b0001), diagonal, 0b0100);	// (2 xz + 2 yw, 2 yz - 2 xw, 1 - 2 x^2 - 2 y^2, 0)
+	__m128 col0 = _mm_blend_ps(_mm_blend_ps(plus, diagonal, 0b0001), minus, 0b1100); // (1 - 2 y^2 - 2 z^2, 2 xy + 2 zw, 2 xz - 2 yw, 0)
+	__m128 col1 = _mm_blend_ps(_mm_blend_ps(diagonal, minus, 0b1001), plus, 0b0100); // (2 xy - 2 zw, 1 - 2 x^2 - 2 z^2, 2 yz + 2 xw, 0)
+	__m128 col2 = _mm_blend_ps(_mm_blend_ps(minus, plus, 0b0001), diagonal, 0b0100); // (2 xz + 2 yw, 2 yz - 2 xw, 1 - 2 x^2 - 2 y^2, 0)
 	__m128 col3 = _mm_set_ps(1, 0, 0, 0);
 
 	return Mat44(col0, col1, col2, col3);
@@ -130,9 +127,9 @@ Mat44 Mat44::sRotation(QuatArg inQuat)
 	float zw = tz * w;
 
 	return Mat44(Vec4((1.0f - yy) - zz, xy + zw, xz - yw, 0.0f), // Note: Added extra brackets to force this function to return the same value as the SSE4.1 version across platforms.
-				 Vec4(xy - zw, (1.0f - zz) - xx, yz + xw, 0.0f),
-				 Vec4(xz + yw, yz - xw, (1.0f - xx) - yy, 0.0f),
-				 Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+							 Vec4(xy - zw, (1.0f - zz) - xx, yz + xw, 0.0f),
+							 Vec4(xz + yw, yz - xw, (1.0f - xx) - yy, 0.0f),
+							 Vec4(0.0f, 0.0f, 0.0f, 1.0f));
 #endif
 }
 
@@ -187,20 +184,20 @@ Mat44 Mat44::sCrossProduct(Vec3Arg inV)
 	__m128 min_v = _mm_sub_ps(zero, v);
 
 	return Mat44(
-		_mm_shuffle_ps(v, min_v, _MM_SHUFFLE(3, 1, 2, 3)), // [0, z, -y, 0]
-		_mm_shuffle_ps(min_v, v, _MM_SHUFFLE(3, 0, 3, 2)), // [-z, 0, x, 0]
-		_mm_blend_ps(_mm_shuffle_ps(v, v, _MM_SHUFFLE(3, 3, 3, 1)), _mm_shuffle_ps(min_v, min_v, _MM_SHUFFLE(3, 3, 0, 3)), 0b0010), // [y, -x, 0, 0]
-		Vec4(0, 0, 0, 1));
+			_mm_shuffle_ps(v, min_v, _MM_SHUFFLE(3, 1, 2, 3)),																																					// [0, z, -y, 0]
+			_mm_shuffle_ps(min_v, v, _MM_SHUFFLE(3, 0, 3, 2)),																																					// [-z, 0, x, 0]
+			_mm_blend_ps(_mm_shuffle_ps(v, v, _MM_SHUFFLE(3, 3, 3, 1)), _mm_shuffle_ps(min_v, min_v, _MM_SHUFFLE(3, 3, 0, 3)), 0b0010), // [y, -x, 0, 0]
+			Vec4(0, 0, 0, 1));
 #else
 	float x = inV.GetX();
 	float y = inV.GetY();
 	float z = inV.GetZ();
 
 	return Mat44(
-		Vec4(0, z, -y, 0),
-		Vec4(-z, 0, x, 0),
-		Vec4(y, -x, 0, 0),
-		Vec4(0, 0, 0, 1));
+			Vec4(0, z, -y, 0),
+			Vec4(-z, 0, x, 0),
+			Vec4(y, -x, 0, 0),
+			Vec4(0, 0, 0, 1));
 #endif
 }
 
@@ -222,12 +219,12 @@ Mat44 Mat44::sPerspective(float inFovY, float inAspect, float inNear, float inFa
 	return Mat44(Vec4(width, 0.0f, 0.0f, 0.0f), Vec4(0.0f, height, 0.0f, 0.0f), Vec4(0.0f, 0.0f, range, -1.0f), Vec4(0.0f, 0.0f, range * inNear, 0.0f));
 }
 
-bool Mat44::operator == (Mat44Arg inM2) const
+bool Mat44::operator==(Mat44Arg inM2) const
 {
 	return UVec4::sAnd(
-		UVec4::sAnd(Vec4::sEquals(mCol[0], inM2.mCol[0]), Vec4::sEquals(mCol[1], inM2.mCol[1])),
-		UVec4::sAnd(Vec4::sEquals(mCol[2], inM2.mCol[2]), Vec4::sEquals(mCol[3], inM2.mCol[3]))
-	).TestAllTrue();
+						 UVec4::sAnd(Vec4::sEquals(mCol[0], inM2.mCol[0]), Vec4::sEquals(mCol[1], inM2.mCol[1])),
+						 UVec4::sAnd(Vec4::sEquals(mCol[2], inM2.mCol[2]), Vec4::sEquals(mCol[3], inM2.mCol[3])))
+			.TestAllTrue();
 }
 
 bool Mat44::IsClose(Mat44Arg inM2, float inMaxDistSq) const
@@ -238,7 +235,7 @@ bool Mat44::IsClose(Mat44Arg inM2, float inMaxDistSq) const
 	return true;
 }
 
-Mat44 Mat44::operator * (Mat44Arg inM) const
+Mat44 Mat44::operator*(Mat44Arg inM) const
 {
 	Mat44 result;
 #if defined(JPH_USE_SSE)
@@ -268,7 +265,7 @@ Mat44 Mat44::operator * (Mat44Arg inM) const
 	return result;
 }
 
-Vec3 Mat44::operator * (Vec3Arg inV) const
+Vec3 Mat44::operator*(Vec3Arg inV) const
 {
 #if defined(JPH_USE_SSE)
 	__m128 t = _mm_mul_ps(mCol[0].mValue, _mm_shuffle_ps(inV.mValue, inV.mValue, _MM_SHUFFLE(0, 0, 0, 0)));
@@ -284,13 +281,13 @@ Vec3 Mat44::operator * (Vec3Arg inV) const
 	return Vec3::sFixW(t);
 #else
 	return Vec3(
-		mCol[0].mF32[0] * inV.mF32[0] + mCol[1].mF32[0] * inV.mF32[1] + mCol[2].mF32[0] * inV.mF32[2] + mCol[3].mF32[0],
-		mCol[0].mF32[1] * inV.mF32[0] + mCol[1].mF32[1] * inV.mF32[1] + mCol[2].mF32[1] * inV.mF32[2] + mCol[3].mF32[1],
-		mCol[0].mF32[2] * inV.mF32[0] + mCol[1].mF32[2] * inV.mF32[1] + mCol[2].mF32[2] * inV.mF32[2] + mCol[3].mF32[2]);
+			mCol[0].mF32[0] * inV.mF32[0] + mCol[1].mF32[0] * inV.mF32[1] + mCol[2].mF32[0] * inV.mF32[2] + mCol[3].mF32[0],
+			mCol[0].mF32[1] * inV.mF32[0] + mCol[1].mF32[1] * inV.mF32[1] + mCol[2].mF32[1] * inV.mF32[2] + mCol[3].mF32[1],
+			mCol[0].mF32[2] * inV.mF32[0] + mCol[1].mF32[2] * inV.mF32[1] + mCol[2].mF32[2] * inV.mF32[2] + mCol[3].mF32[2]);
 #endif
 }
 
-Vec4 Mat44::operator * (Vec4Arg inV) const
+Vec4 Mat44::operator*(Vec4Arg inV) const
 {
 #if defined(JPH_USE_SSE)
 	__m128 t = _mm_mul_ps(mCol[0].mValue, _mm_shuffle_ps(inV.mValue, inV.mValue, _MM_SHUFFLE(0, 0, 0, 0)));
@@ -306,10 +303,10 @@ Vec4 Mat44::operator * (Vec4Arg inV) const
 	return t;
 #else
 	return Vec4(
-		mCol[0].mF32[0] * inV.mF32[0] + mCol[1].mF32[0] * inV.mF32[1] + mCol[2].mF32[0] * inV.mF32[2] + mCol[3].mF32[0] * inV.mF32[3],
-		mCol[0].mF32[1] * inV.mF32[0] + mCol[1].mF32[1] * inV.mF32[1] + mCol[2].mF32[1] * inV.mF32[2] + mCol[3].mF32[1] * inV.mF32[3],
-		mCol[0].mF32[2] * inV.mF32[0] + mCol[1].mF32[2] * inV.mF32[1] + mCol[2].mF32[2] * inV.mF32[2] + mCol[3].mF32[2] * inV.mF32[3],
-		mCol[0].mF32[3] * inV.mF32[0] + mCol[1].mF32[3] * inV.mF32[1] + mCol[2].mF32[3] * inV.mF32[2] + mCol[3].mF32[3] * inV.mF32[3]);
+			mCol[0].mF32[0] * inV.mF32[0] + mCol[1].mF32[0] * inV.mF32[1] + mCol[2].mF32[0] * inV.mF32[2] + mCol[3].mF32[0] * inV.mF32[3],
+			mCol[0].mF32[1] * inV.mF32[0] + mCol[1].mF32[1] * inV.mF32[1] + mCol[2].mF32[1] * inV.mF32[2] + mCol[3].mF32[1] * inV.mF32[3],
+			mCol[0].mF32[2] * inV.mF32[0] + mCol[1].mF32[2] * inV.mF32[1] + mCol[2].mF32[2] * inV.mF32[2] + mCol[3].mF32[2] * inV.mF32[3],
+			mCol[0].mF32[3] * inV.mF32[0] + mCol[1].mF32[3] * inV.mF32[1] + mCol[2].mF32[3] * inV.mF32[2] + mCol[3].mF32[3] * inV.mF32[3]);
 #endif
 }
 
@@ -327,9 +324,9 @@ Vec3 Mat44::Multiply3x3(Vec3Arg inV) const
 	return Vec3::sFixW(t);
 #else
 	return Vec3(
-		mCol[0].mF32[0] * inV.mF32[0] + mCol[1].mF32[0] * inV.mF32[1] + mCol[2].mF32[0] * inV.mF32[2],
-		mCol[0].mF32[1] * inV.mF32[0] + mCol[1].mF32[1] * inV.mF32[1] + mCol[2].mF32[1] * inV.mF32[2],
-		mCol[0].mF32[2] * inV.mF32[0] + mCol[1].mF32[2] * inV.mF32[1] + mCol[2].mF32[2] * inV.mF32[2]);
+			mCol[0].mF32[0] * inV.mF32[0] + mCol[1].mF32[0] * inV.mF32[1] + mCol[2].mF32[0] * inV.mF32[2],
+			mCol[0].mF32[1] * inV.mF32[0] + mCol[1].mF32[1] * inV.mF32[1] + mCol[2].mF32[1] * inV.mF32[2],
+			mCol[0].mF32[2] * inV.mF32[0] + mCol[1].mF32[2] * inV.mF32[1] + mCol[2].mF32[2] * inV.mF32[2]);
 #endif
 }
 
@@ -408,7 +405,7 @@ Mat44 Mat44::Multiply3x3RightTransposed(Mat44Arg inM) const
 	return result;
 }
 
-Mat44 Mat44::operator * (float inV) const
+Mat44 Mat44::operator*(float inV) const
 {
 	Vec4 multiplier = Vec4::sReplicate(inV);
 
@@ -418,7 +415,7 @@ Mat44 Mat44::operator * (float inV) const
 	return result;
 }
 
-Mat44 &Mat44::operator *= (float inV)
+Mat44 &Mat44::operator*=(float inV)
 {
 	for (int c = 0; c < 4; ++c)
 		mCol[c] *= inV;
@@ -426,7 +423,7 @@ Mat44 &Mat44::operator *= (float inV)
 	return *this;
 }
 
-Mat44 Mat44::operator + (Mat44Arg inM) const
+Mat44 Mat44::operator+(Mat44Arg inM) const
 {
 	Mat44 result;
 	for (int i = 0; i < 4; ++i)
@@ -434,7 +431,7 @@ Mat44 Mat44::operator + (Mat44Arg inM) const
 	return result;
 }
 
-Mat44 Mat44::operator - () const
+Mat44 Mat44::operator-() const
 {
 	Mat44 result;
 	for (int i = 0; i < 4; ++i)
@@ -442,7 +439,7 @@ Mat44 Mat44::operator - () const
 	return result;
 }
 
-Mat44 Mat44::operator - (Mat44Arg inM) const
+Mat44 Mat44::operator-(Mat44Arg inM) const
 {
 	Mat44 result;
 	for (int i = 0; i < 4; ++i)
@@ -450,7 +447,7 @@ Mat44 Mat44::operator - (Mat44Arg inM) const
 	return result;
 }
 
-Mat44 &Mat44::operator += (Mat44Arg inM)
+Mat44 &Mat44::operator+=(Mat44Arg inM)
 {
 	for (int c = 0; c < 4; ++c)
 		mCol[c] += inM.mCol[c];
@@ -715,10 +712,10 @@ Mat44 Mat44::Inversed() const
 	float m21332331 = m21 * m33 - m23 * m31;
 	float m22332332 = m22 * m33 - m23 * m32;
 
-	Vec4 col0(m11 * m22332332 - m12 * m21332331 + m13 * m21322231,		-m10 * m22332332 + m12 * m20332330 - m13 * m20322230,		m10 * m21332331 - m11 * m20332330 + m13 * m20312130,		-m10 * m21322231 + m11 * m20322230 - m12 * m20312130);
-	Vec4 col1(-m01 * m22332332 + m02 * m21332331 - m03 * m21322231,		m00 * m22332332 - m02 * m20332330 + m03 * m20322230,		-m00 * m21332331 + m01 * m20332330 - m03 * m20312130,		m00 * m21322231 - m01 * m20322230 + m02 * m20312130);
-	Vec4 col2(m01 * m12331332 - m02 * m11331331 + m03 * m11321231,		-m00 * m12331332 + m02 * m10331330 - m03 * m10321230,		m00 * m11331331 - m01 * m10331330 + m03 * m10311130,		-m00 * m11321231 + m01 * m10321230 - m02 * m10311130);
-	Vec4 col3(-m01 * m12231322 + m02 * m11231321 - m03 * m11221221,		m00 * m12231322 - m02 * m10231320 + m03 * m10221220,		-m00 * m11231321 + m01 * m10231320 - m03 * m10211120,		m00 * m11221221 - m01 * m10221220 + m02 * m10211120);
+	Vec4 col0(m11 * m22332332 - m12 * m21332331 + m13 * m21322231, -m10 * m22332332 + m12 * m20332330 - m13 * m20322230, m10 * m21332331 - m11 * m20332330 + m13 * m20312130, -m10 * m21322231 + m11 * m20322230 - m12 * m20312130);
+	Vec4 col1(-m01 * m22332332 + m02 * m21332331 - m03 * m21322231, m00 * m22332332 - m02 * m20332330 + m03 * m20322230, -m00 * m21332331 + m01 * m20332330 - m03 * m20312130, m00 * m21322231 - m01 * m20322230 + m02 * m20312130);
+	Vec4 col2(m01 * m12331332 - m02 * m11331331 + m03 * m11321231, -m00 * m12331332 + m02 * m10331330 - m03 * m10321230, m00 * m11331331 - m01 * m10331330 + m03 * m10311130, -m00 * m11321231 + m01 * m10321230 - m02 * m10311130);
+	Vec4 col3(-m01 * m12231322 + m02 * m11231321 - m03 * m11221221, m00 * m12231322 - m02 * m10231320 + m03 * m10221220, -m00 * m11231321 + m01 * m10231320 - m03 * m10211120, m00 * m11221221 - m01 * m10221220 + m02 * m10211120);
 
 	float det = m00 * col0.mF32[0] + m01 * col0.mF32[1] + m02 * col0.mF32[2] + m03 * col0.mF32[3];
 
@@ -741,13 +738,10 @@ float Mat44::GetDeterminant3x3() const
 Mat44 Mat44::Adjointed3x3() const
 {
 	return Mat44(
-		Vec4(JPH_EL(1, 1), JPH_EL(1, 2), JPH_EL(1, 0), 0) * Vec4(JPH_EL(2, 2), JPH_EL(2, 0), JPH_EL(2, 1), 0)
-			- Vec4(JPH_EL(1, 2), JPH_EL(1, 0), JPH_EL(1, 1), 0) * Vec4(JPH_EL(2, 1), JPH_EL(2, 2), JPH_EL(2, 0), 0),
-		Vec4(JPH_EL(0, 2), JPH_EL(0, 0), JPH_EL(0, 1), 0) * Vec4(JPH_EL(2, 1), JPH_EL(2, 2), JPH_EL(2, 0), 0)
-			- Vec4(JPH_EL(0, 1), JPH_EL(0, 2), JPH_EL(0, 0), 0) * Vec4(JPH_EL(2, 2), JPH_EL(2, 0), JPH_EL(2, 1), 0),
-		Vec4(JPH_EL(0, 1), JPH_EL(0, 2), JPH_EL(0, 0), 0) * Vec4(JPH_EL(1, 2), JPH_EL(1, 0), JPH_EL(1, 1), 0)
-			- Vec4(JPH_EL(0, 2), JPH_EL(0, 0), JPH_EL(0, 1), 0) * Vec4(JPH_EL(1, 1), JPH_EL(1, 2), JPH_EL(1, 0), 0),
-		Vec4(0, 0, 0, 1));
+			Vec4(JPH_EL(1, 1), JPH_EL(1, 2), JPH_EL(1, 0), 0) * Vec4(JPH_EL(2, 2), JPH_EL(2, 0), JPH_EL(2, 1), 0) - Vec4(JPH_EL(1, 2), JPH_EL(1, 0), JPH_EL(1, 1), 0) * Vec4(JPH_EL(2, 1), JPH_EL(2, 2), JPH_EL(2, 0), 0),
+			Vec4(JPH_EL(0, 2), JPH_EL(0, 0), JPH_EL(0, 1), 0) * Vec4(JPH_EL(2, 1), JPH_EL(2, 2), JPH_EL(2, 0), 0) - Vec4(JPH_EL(0, 1), JPH_EL(0, 2), JPH_EL(0, 0), 0) * Vec4(JPH_EL(2, 2), JPH_EL(2, 0), JPH_EL(2, 1), 0),
+			Vec4(JPH_EL(0, 1), JPH_EL(0, 2), JPH_EL(0, 0), 0) * Vec4(JPH_EL(1, 2), JPH_EL(1, 0), JPH_EL(1, 1), 0) - Vec4(JPH_EL(0, 2), JPH_EL(0, 0), JPH_EL(0, 1), 0) * Vec4(JPH_EL(1, 1), JPH_EL(1, 2), JPH_EL(1, 0), 0),
+			Vec4(0, 0, 0, 1));
 }
 
 Mat44 Mat44::Inversed3x3() const
@@ -755,13 +749,10 @@ Mat44 Mat44::Inversed3x3() const
 	float det = GetDeterminant3x3();
 
 	return Mat44(
-		(Vec4(JPH_EL(1, 1), JPH_EL(1, 2), JPH_EL(1, 0), 0) * Vec4(JPH_EL(2, 2), JPH_EL(2, 0), JPH_EL(2, 1), 0)
-			- Vec4(JPH_EL(1, 2), JPH_EL(1, 0), JPH_EL(1, 1), 0) * Vec4(JPH_EL(2, 1), JPH_EL(2, 2), JPH_EL(2, 0), 0)) / det,
-		(Vec4(JPH_EL(0, 2), JPH_EL(0, 0), JPH_EL(0, 1), 0) * Vec4(JPH_EL(2, 1), JPH_EL(2, 2), JPH_EL(2, 0), 0)
-			- Vec4(JPH_EL(0, 1), JPH_EL(0, 2), JPH_EL(0, 0), 0) * Vec4(JPH_EL(2, 2), JPH_EL(2, 0), JPH_EL(2, 1), 0)) / det,
-		(Vec4(JPH_EL(0, 1), JPH_EL(0, 2), JPH_EL(0, 0), 0) * Vec4(JPH_EL(1, 2), JPH_EL(1, 0), JPH_EL(1, 1), 0)
-			- Vec4(JPH_EL(0, 2), JPH_EL(0, 0), JPH_EL(0, 1), 0) * Vec4(JPH_EL(1, 1), JPH_EL(1, 2), JPH_EL(1, 0), 0)) / det,
-		Vec4(0, 0, 0, 1));
+			(Vec4(JPH_EL(1, 1), JPH_EL(1, 2), JPH_EL(1, 0), 0) * Vec4(JPH_EL(2, 2), JPH_EL(2, 0), JPH_EL(2, 1), 0) - Vec4(JPH_EL(1, 2), JPH_EL(1, 0), JPH_EL(1, 1), 0) * Vec4(JPH_EL(2, 1), JPH_EL(2, 2), JPH_EL(2, 0), 0)) / det,
+			(Vec4(JPH_EL(0, 2), JPH_EL(0, 0), JPH_EL(0, 1), 0) * Vec4(JPH_EL(2, 1), JPH_EL(2, 2), JPH_EL(2, 0), 0) - Vec4(JPH_EL(0, 1), JPH_EL(0, 2), JPH_EL(0, 0), 0) * Vec4(JPH_EL(2, 2), JPH_EL(2, 0), JPH_EL(2, 1), 0)) / det,
+			(Vec4(JPH_EL(0, 1), JPH_EL(0, 2), JPH_EL(0, 0), 0) * Vec4(JPH_EL(1, 2), JPH_EL(1, 0), JPH_EL(1, 1), 0) - Vec4(JPH_EL(0, 2), JPH_EL(0, 0), JPH_EL(0, 1), 0) * Vec4(JPH_EL(1, 1), JPH_EL(1, 2), JPH_EL(1, 0), 0)) / det,
+			Vec4(0, 0, 0, 1));
 }
 
 bool Mat44::SetInversed3x3(Mat44Arg inM)
@@ -789,36 +780,38 @@ Quat Mat44::GetQuaternion() const
 		float s = sqrt(tr + 1.0f);
 		float is = 0.5f / s;
 		return Quat(
-			(mCol[1].mF32[2] - mCol[2].mF32[1]) * is,
-			(mCol[2].mF32[0] - mCol[0].mF32[2]) * is,
-			(mCol[0].mF32[1] - mCol[1].mF32[0]) * is,
-			0.5f * s);
+				(mCol[1].mF32[2] - mCol[2].mF32[1]) * is,
+				(mCol[2].mF32[0] - mCol[0].mF32[2]) * is,
+				(mCol[0].mF32[1] - mCol[1].mF32[0]) * is,
+				0.5f * s);
 	}
 	else
 	{
 		int i = 0;
-		if (mCol[1].mF32[1] > mCol[0].mF32[0]) i = 1;
-		if (mCol[2].mF32[2] > mCol[i].mF32[i]) i = 2;
+		if (mCol[1].mF32[1] > mCol[0].mF32[0])
+			i = 1;
+		if (mCol[2].mF32[2] > mCol[i].mF32[i])
+			i = 2;
 
 		if (i == 0)
 		{
 			float s = sqrt(mCol[0].mF32[0] - (mCol[1].mF32[1] + mCol[2].mF32[2]) + 1);
 			float is = 0.5f / s;
 			return Quat(
-				0.5f * s,
-				(mCol[1].mF32[0] + mCol[0].mF32[1]) * is,
-				(mCol[0].mF32[2] + mCol[2].mF32[0]) * is,
-				(mCol[1].mF32[2] - mCol[2].mF32[1]) * is);
+					0.5f * s,
+					(mCol[1].mF32[0] + mCol[0].mF32[1]) * is,
+					(mCol[0].mF32[2] + mCol[2].mF32[0]) * is,
+					(mCol[1].mF32[2] - mCol[2].mF32[1]) * is);
 		}
 		else if (i == 1)
 		{
 			float s = sqrt(mCol[1].mF32[1] - (mCol[2].mF32[2] + mCol[0].mF32[0]) + 1);
 			float is = 0.5f / s;
 			return Quat(
-				(mCol[1].mF32[0] + mCol[0].mF32[1]) * is,
-				0.5f * s,
-				(mCol[2].mF32[1] + mCol[1].mF32[2]) * is,
-				(mCol[2].mF32[0] - mCol[0].mF32[2]) * is);
+					(mCol[1].mF32[0] + mCol[0].mF32[1]) * is,
+					0.5f * s,
+					(mCol[2].mF32[1] + mCol[1].mF32[2]) * is,
+					(mCol[2].mF32[0] - mCol[0].mF32[2]) * is);
 		}
 		else
 		{
@@ -827,10 +820,10 @@ Quat Mat44::GetQuaternion() const
 			float s = sqrt(mCol[2].mF32[2] - (mCol[0].mF32[0] + mCol[1].mF32[1]) + 1);
 			float is = 0.5f / s;
 			return Quat(
-				(mCol[0].mF32[2] + mCol[2].mF32[0]) * is,
-				(mCol[2].mF32[1] + mCol[1].mF32[2]) * is,
-				0.5f * s,
-				(mCol[0].mF32[1] - mCol[1].mF32[0]) * is);
+					(mCol[0].mF32[2] + mCol[2].mF32[0]) * is,
+					(mCol[2].mF32[1] + mCol[1].mF32[2]) * is,
+					0.5f * s,
+					(mCol[0].mF32[1] - mCol[1].mF32[0]) * is);
 		}
 	}
 }
@@ -838,19 +831,19 @@ Quat Mat44::GetQuaternion() const
 Mat44 Mat44::sQuatLeftMultiply(QuatArg inQ)
 {
 	return Mat44(
-		Vec4(1, 1, -1, -1) * inQ.mValue.Swizzle<SWIZZLE_W, SWIZZLE_Z, SWIZZLE_Y, SWIZZLE_X>(),
-		Vec4(-1, 1, 1, -1) * inQ.mValue.Swizzle<SWIZZLE_Z, SWIZZLE_W, SWIZZLE_X, SWIZZLE_Y>(),
-		Vec4(1, -1, 1, -1) * inQ.mValue.Swizzle<SWIZZLE_Y, SWIZZLE_X, SWIZZLE_W, SWIZZLE_Z>(),
-		inQ.mValue);
+			Vec4(1, 1, -1, -1) * inQ.mValue.Swizzle<SWIZZLE_W, SWIZZLE_Z, SWIZZLE_Y, SWIZZLE_X>(),
+			Vec4(-1, 1, 1, -1) * inQ.mValue.Swizzle<SWIZZLE_Z, SWIZZLE_W, SWIZZLE_X, SWIZZLE_Y>(),
+			Vec4(1, -1, 1, -1) * inQ.mValue.Swizzle<SWIZZLE_Y, SWIZZLE_X, SWIZZLE_W, SWIZZLE_Z>(),
+			inQ.mValue);
 }
 
 Mat44 Mat44::sQuatRightMultiply(QuatArg inQ)
 {
 	return Mat44(
-		Vec4(1, -1, 1, -1) * inQ.mValue.Swizzle<SWIZZLE_W, SWIZZLE_Z, SWIZZLE_Y, SWIZZLE_X>(),
-		Vec4(1, 1, -1, -1) * inQ.mValue.Swizzle<SWIZZLE_Z, SWIZZLE_W, SWIZZLE_X, SWIZZLE_Y>(),
-		Vec4(-1, 1, 1, -1) * inQ.mValue.Swizzle<SWIZZLE_Y, SWIZZLE_X, SWIZZLE_W, SWIZZLE_Z>(),
-		inQ.mValue);
+			Vec4(1, -1, 1, -1) * inQ.mValue.Swizzle<SWIZZLE_W, SWIZZLE_Z, SWIZZLE_Y, SWIZZLE_X>(),
+			Vec4(1, 1, -1, -1) * inQ.mValue.Swizzle<SWIZZLE_Z, SWIZZLE_W, SWIZZLE_X, SWIZZLE_Y>(),
+			Vec4(-1, 1, 1, -1) * inQ.mValue.Swizzle<SWIZZLE_Y, SWIZZLE_X, SWIZZLE_W, SWIZZLE_Z>(),
+			inQ.mValue);
 }
 
 Mat44 Mat44::GetRotation() const
@@ -866,25 +859,25 @@ Mat44 Mat44::GetRotationSafe() const
 {
 #if defined(JPH_USE_AVX512)
 	return Mat44(_mm_maskz_mov_ps(0b0111, mCol[0].mValue),
-				 _mm_maskz_mov_ps(0b0111, mCol[1].mValue),
-				 _mm_maskz_mov_ps(0b0111, mCol[2].mValue),
-				 Vec4(0, 0, 0, 1));
+							 _mm_maskz_mov_ps(0b0111, mCol[1].mValue),
+							 _mm_maskz_mov_ps(0b0111, mCol[2].mValue),
+							 Vec4(0, 0, 0, 1));
 #elif defined(JPH_USE_SSE4_1)
 	__m128 zero = _mm_setzero_ps();
 	return Mat44(_mm_blend_ps(mCol[0].mValue, zero, 8),
-				 _mm_blend_ps(mCol[1].mValue, zero, 8),
-				 _mm_blend_ps(mCol[2].mValue, zero, 8),
-				 Vec4(0, 0, 0, 1));
+							 _mm_blend_ps(mCol[1].mValue, zero, 8),
+							 _mm_blend_ps(mCol[2].mValue, zero, 8),
+							 Vec4(0, 0, 0, 1));
 #elif defined(JPH_USE_NEON)
 	return Mat44(vsetq_lane_f32(0, mCol[0].mValue, 3),
-				 vsetq_lane_f32(0, mCol[1].mValue, 3),
-				 vsetq_lane_f32(0, mCol[2].mValue, 3),
-				 Vec4(0, 0, 0, 1));
+							 vsetq_lane_f32(0, mCol[1].mValue, 3),
+							 vsetq_lane_f32(0, mCol[2].mValue, 3),
+							 Vec4(0, 0, 0, 1));
 #else
 	return Mat44(Vec4(mCol[0].mF32[0], mCol[0].mF32[1], mCol[0].mF32[2], 0),
-				 Vec4(mCol[1].mF32[0], mCol[1].mF32[1], mCol[1].mF32[2], 0),
-				 Vec4(mCol[2].mF32[0], mCol[2].mF32[1], mCol[2].mF32[2], 0),
-				 Vec4(0, 0, 0, 1));
+							 Vec4(mCol[1].mF32[0], mCol[1].mF32[1], mCol[1].mF32[2], 0),
+							 Vec4(mCol[2].mF32[0], mCol[2].mF32[1], mCol[2].mF32[2], 0),
+							 Vec4(0, 0, 0, 1));
 #endif
 }
 

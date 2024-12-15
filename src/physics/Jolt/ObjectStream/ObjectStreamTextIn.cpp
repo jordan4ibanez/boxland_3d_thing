@@ -2,16 +2,15 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
 #ifdef JPH_OBJECT_STREAM
 
-#include <Jolt/ObjectStream/ObjectStreamTextIn.h>
+#include "../ObjectStream/ObjectStreamTextIn.h"
 
 JPH_NAMESPACE_BEGIN
 
-ObjectStreamTextIn::ObjectStreamTextIn(istream &inStream) :
-	ObjectStreamIn(inStream)
+ObjectStreamTextIn::ObjectStreamTextIn(istream &inStream) : ObjectStreamIn(inStream)
 {
 }
 
@@ -20,7 +19,8 @@ bool ObjectStreamTextIn::ReadDataType(EOSDataType &outType)
 	String token;
 	if (ReadWord(token))
 	{
-		transform(token.begin(), token.end(), token.begin(), [](char inValue) { return (char)tolower(inValue); });
+		transform(token.begin(), token.end(), token.begin(), [](char inValue)
+							{ return (char)tolower(inValue); });
 		if (token == "declare")
 			outType = EOSDataType::Declare;
 		else if (token == "object")
@@ -186,7 +186,8 @@ bool ObjectStreamTextIn::ReadPrimitiveData(bool &outPrimitive)
 	String token;
 	if (!ReadWord(token))
 		return false;
-	transform(token.begin(), token.end(), token.begin(), [](char inValue) { return (char)tolower(inValue); });
+	transform(token.begin(), token.end(), token.begin(), [](char inValue)
+						{ return (char)tolower(inValue); });
 	outPrimitive = token == "true";
 	return outPrimitive || token == "false";
 }

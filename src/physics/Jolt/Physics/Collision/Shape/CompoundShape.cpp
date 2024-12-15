@@ -2,29 +2,27 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/CompoundShape.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/CompoundShape.h"
+#include "../../Collision/CollisionDispatch.h"
+#include "../../Collision/ShapeCast.h"
+#include "../../Collision/CastResult.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../../Core/Profiler.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_ABSTRACT(CompoundShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(CompoundShapeSettings, ShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_ABSTRACT(CompoundShapeSettings){
+		JPH_ADD_BASE_CLASS(CompoundShapeSettings, ShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(CompoundShapeSettings, mSubShapes)
-}
+				JPH_ADD_ATTRIBUTE(CompoundShapeSettings, mSubShapes)}
 
 JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(CompoundShapeSettings::SubShapeSettings)
 {
@@ -321,11 +319,11 @@ void CompoundShape::SaveBinaryState(StreamOut &inStream) const
 	inStream.Write(mInnerRadius);
 
 	// Write sub shapes
-	inStream.Write(mSubShapes, [](const SubShape &inElement, StreamOut &inS) {
+	inStream.Write(mSubShapes, [](const SubShape &inElement, StreamOut &inS)
+								 {
 		inS.Write(inElement.mUserData);
 		inS.Write(inElement.mPositionCOM);
-		inS.Write(inElement.mRotation);
-	});
+		inS.Write(inElement.mRotation); });
 }
 
 void CompoundShape::RestoreBinaryState(StreamIn &inStream)
@@ -338,12 +336,12 @@ void CompoundShape::RestoreBinaryState(StreamIn &inStream)
 	inStream.Read(mInnerRadius);
 
 	// Read sub shapes
-	inStream.Read(mSubShapes, [](StreamIn &inS, SubShape &outElement) {
+	inStream.Read(mSubShapes, [](StreamIn &inS, SubShape &outElement)
+								{
 		inS.Read(outElement.mUserData);
 		inS.Read(outElement.mPositionCOM);
 		inS.Read(outElement.mRotation);
-		outElement.mIsRotationIdentity = outElement.mRotation == Float3(0, 0, 0);
-	});
+		outElement.mIsRotationIdentity = outElement.mRotation == Float3(0, 0, 0); });
 }
 
 void CompoundShape::SaveSubShapeState(ShapeList &outSubShapes) const

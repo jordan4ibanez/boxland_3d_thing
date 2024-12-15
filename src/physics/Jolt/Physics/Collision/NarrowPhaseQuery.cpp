@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/NarrowPhaseQuery.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/AABoxCast.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/CollideShape.h>
-#include <Jolt/Physics/Collision/CollisionCollectorImpl.h>
-#include <Jolt/Physics/Collision/CastResult.h>
+#include "../Collision/NarrowPhaseQuery.h"
+#include "../Collision/CollisionDispatch.h"
+#include "../Collision/RayCast.h"
+#include "../Collision/AABoxCast.h"
+#include "../Collision/ShapeCast.h"
+#include "../Collision/CollideShape.h"
+#include "../Collision/CollisionCollectorImpl.h"
+#include "../Collision/CastResult.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -22,16 +22,15 @@ bool NarrowPhaseQuery::CastRay(const RRayCast &inRay, RayCastResult &ioHit, cons
 	class MyCollector : public RayCastBodyCollector
 	{
 	public:
-							MyCollector(const RRayCast &inRay, RayCastResult &ioHit, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter) :
-			mRay(inRay),
-			mHit(ioHit),
-			mBodyLockInterface(inBodyLockInterface),
-			mBodyFilter(inBodyFilter)
+		MyCollector(const RRayCast &inRay, RayCastResult &ioHit, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter) : mRay(inRay),
+																																																																						 mHit(ioHit),
+																																																																						 mBodyLockInterface(inBodyLockInterface),
+																																																																						 mBodyFilter(inBodyFilter)
 		{
 			UpdateEarlyOutFraction(ioHit.mFraction);
 		}
 
-		virtual void		AddHit(const ResultType &inResult) override
+		virtual void AddHit(const ResultType &inResult) override
 		{
 			JPH_ASSERT(inResult.mFraction < mHit.mFraction, "This hit should not have been passed on to the collector");
 
@@ -67,10 +66,10 @@ bool NarrowPhaseQuery::CastRay(const RRayCast &inRay, RayCastResult &ioHit, cons
 			}
 		}
 
-		RRayCast					mRay;
-		RayCastResult &				mHit;
-		const BodyLockInterface &	mBodyLockInterface;
-		const BodyFilter &			mBodyFilter;
+		RRayCast mRay;
+		RayCastResult &mHit;
+		const BodyLockInterface &mBodyLockInterface;
+		const BodyFilter &mBodyFilter;
 	};
 
 	// Do broadphase test, note that the broadphase uses floats so we drop precision here
@@ -86,18 +85,17 @@ void NarrowPhaseQuery::CastRay(const RRayCast &inRay, const RayCastSettings &inR
 	class MyCollector : public RayCastBodyCollector
 	{
 	public:
-							MyCollector(const RRayCast &inRay, const RayCastSettings &inRayCastSettings, CastRayCollector &ioCollector, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) :
-			RayCastBodyCollector(ioCollector),
-			mRay(inRay),
-			mRayCastSettings(inRayCastSettings),
-			mCollector(ioCollector),
-			mBodyLockInterface(inBodyLockInterface),
-			mBodyFilter(inBodyFilter),
-			mShapeFilter(inShapeFilter)
+		MyCollector(const RRayCast &inRay, const RayCastSettings &inRayCastSettings, CastRayCollector &ioCollector, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) : RayCastBodyCollector(ioCollector),
+																																																																																																																	mRay(inRay),
+																																																																																																																	mRayCastSettings(inRayCastSettings),
+																																																																																																																	mCollector(ioCollector),
+																																																																																																																	mBodyLockInterface(inBodyLockInterface),
+																																																																																																																	mBodyFilter(inBodyFilter),
+																																																																																																																	mShapeFilter(inShapeFilter)
 		{
 		}
 
-		virtual void		AddHit(const ResultType &inResult) override
+		virtual void AddHit(const ResultType &inResult) override
 		{
 			JPH_ASSERT(inResult.mFraction < mCollector.GetEarlyOutFraction(), "This hit should not have been passed on to the collector");
 
@@ -132,12 +130,12 @@ void NarrowPhaseQuery::CastRay(const RRayCast &inRay, const RayCastSettings &inR
 			}
 		}
 
-		RRayCast					mRay;
-		RayCastSettings				mRayCastSettings;
-		CastRayCollector &			mCollector;
-		const BodyLockInterface &	mBodyLockInterface;
-		const BodyFilter &			mBodyFilter;
-		const ShapeFilter &			mShapeFilter;
+		RRayCast mRay;
+		RayCastSettings mRayCastSettings;
+		CastRayCollector &mCollector;
+		const BodyLockInterface &mBodyLockInterface;
+		const BodyFilter &mBodyFilter;
+		const ShapeFilter &mShapeFilter;
 	};
 
 	// Do broadphase test, note that the broadphase uses floats so we drop precision here
@@ -152,17 +150,16 @@ void NarrowPhaseQuery::CollidePoint(RVec3Arg inPoint, CollidePointCollector &ioC
 	class MyCollector : public CollideShapeBodyCollector
 	{
 	public:
-							MyCollector(RVec3Arg inPoint, CollidePointCollector &ioCollector, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) :
-			CollideShapeBodyCollector(ioCollector),
-			mPoint(inPoint),
-			mCollector(ioCollector),
-			mBodyLockInterface(inBodyLockInterface),
-			mBodyFilter(inBodyFilter),
-			mShapeFilter(inShapeFilter)
+		MyCollector(RVec3Arg inPoint, CollidePointCollector &ioCollector, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) : CollideShapeBodyCollector(ioCollector),
+																																																																																												mPoint(inPoint),
+																																																																																												mCollector(ioCollector),
+																																																																																												mBodyLockInterface(inBodyLockInterface),
+																																																																																												mBodyFilter(inBodyFilter),
+																																																																																												mShapeFilter(inShapeFilter)
 		{
 		}
 
-		virtual void		AddHit(const ResultType &inResult) override
+		virtual void AddHit(const ResultType &inResult) override
 		{
 			// Only test shape if it passes the body filter
 			if (mBodyFilter.ShouldCollide(inResult))
@@ -195,11 +192,11 @@ void NarrowPhaseQuery::CollidePoint(RVec3Arg inPoint, CollidePointCollector &ioC
 			}
 		}
 
-		RVec3							mPoint;
-		CollidePointCollector &			mCollector;
-		const BodyLockInterface &		mBodyLockInterface;
-		const BodyFilter &				mBodyFilter;
-		const ShapeFilter &				mShapeFilter;
+		RVec3 mPoint;
+		CollidePointCollector &mCollector;
+		const BodyLockInterface &mBodyLockInterface;
+		const BodyFilter &mBodyFilter;
+		const ShapeFilter &mShapeFilter;
 	};
 
 	// Do broadphase test (note: truncates double to single precision since the broadphase uses single precision)
@@ -214,21 +211,20 @@ void NarrowPhaseQuery::CollideShape(const Shape *inShape, Vec3Arg inShapeScale, 
 	class MyCollector : public CollideShapeBodyCollector
 	{
 	public:
-							MyCollector(const Shape *inShape, Vec3Arg inShapeScale, RMat44Arg inCenterOfMassTransform, const CollideShapeSettings &inCollideShapeSettings, RVec3Arg inBaseOffset, CollideShapeCollector &ioCollector, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) :
-			CollideShapeBodyCollector(ioCollector),
-			mShape(inShape),
-			mShapeScale(inShapeScale),
-			mCenterOfMassTransform(inCenterOfMassTransform),
-			mCollideShapeSettings(inCollideShapeSettings),
-			mBaseOffset(inBaseOffset),
-			mCollector(ioCollector),
-			mBodyLockInterface(inBodyLockInterface),
-			mBodyFilter(inBodyFilter),
-			mShapeFilter(inShapeFilter)
+		MyCollector(const Shape *inShape, Vec3Arg inShapeScale, RMat44Arg inCenterOfMassTransform, const CollideShapeSettings &inCollideShapeSettings, RVec3Arg inBaseOffset, CollideShapeCollector &ioCollector, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) : CollideShapeBodyCollector(ioCollector),
+																																																																																																																																																																mShape(inShape),
+																																																																																																																																																																mShapeScale(inShapeScale),
+																																																																																																																																																																mCenterOfMassTransform(inCenterOfMassTransform),
+																																																																																																																																																																mCollideShapeSettings(inCollideShapeSettings),
+																																																																																																																																																																mBaseOffset(inBaseOffset),
+																																																																																																																																																																mCollector(ioCollector),
+																																																																																																																																																																mBodyLockInterface(inBodyLockInterface),
+																																																																																																																																																																mBodyFilter(inBodyFilter),
+																																																																																																																																																																mShapeFilter(inShapeFilter)
 		{
 		}
 
-		virtual void		AddHit(const ResultType &inResult) override
+		virtual void AddHit(const ResultType &inResult) override
 		{
 			// Only test shape if it passes the body filter
 			if (mBodyFilter.ShouldCollide(inResult))
@@ -261,15 +257,15 @@ void NarrowPhaseQuery::CollideShape(const Shape *inShape, Vec3Arg inShapeScale, 
 			}
 		}
 
-		const Shape *					mShape;
-		Vec3							mShapeScale;
-		RMat44							mCenterOfMassTransform;
-		const CollideShapeSettings &	mCollideShapeSettings;
-		RVec3							mBaseOffset;
-		CollideShapeCollector &			mCollector;
-		const BodyLockInterface &		mBodyLockInterface;
-		const BodyFilter &				mBodyFilter;
-		const ShapeFilter &				mShapeFilter;
+		const Shape *mShape;
+		Vec3 mShapeScale;
+		RMat44 mCenterOfMassTransform;
+		const CollideShapeSettings &mCollideShapeSettings;
+		RVec3 mBaseOffset;
+		CollideShapeCollector &mCollector;
+		const BodyLockInterface &mBodyLockInterface;
+		const BodyFilter &mBodyFilter;
+		const ShapeFilter &mShapeFilter;
 	};
 
 	// Calculate bounds for shape and expand by max separation distance
@@ -288,19 +284,18 @@ void NarrowPhaseQuery::CastShape(const RShapeCast &inShapeCast, const ShapeCastS
 	class MyCollector : public CastShapeBodyCollector
 	{
 	public:
-							MyCollector(const RShapeCast &inShapeCast, const ShapeCastSettings &inShapeCastSettings, RVec3Arg inBaseOffset, CastShapeCollector &ioCollector, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) :
-			CastShapeBodyCollector(ioCollector),
-			mShapeCast(inShapeCast),
-			mShapeCastSettings(inShapeCastSettings),
-			mBaseOffset(inBaseOffset),
-			mCollector(ioCollector),
-			mBodyLockInterface(inBodyLockInterface),
-			mBodyFilter(inBodyFilter),
-			mShapeFilter(inShapeFilter)
+		MyCollector(const RShapeCast &inShapeCast, const ShapeCastSettings &inShapeCastSettings, RVec3Arg inBaseOffset, CastShapeCollector &ioCollector, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) : CastShapeBodyCollector(ioCollector),
+																																																																																																																																			 mShapeCast(inShapeCast),
+																																																																																																																																			 mShapeCastSettings(inShapeCastSettings),
+																																																																																																																																			 mBaseOffset(inBaseOffset),
+																																																																																																																																			 mCollector(ioCollector),
+																																																																																																																																			 mBodyLockInterface(inBodyLockInterface),
+																																																																																																																																			 mBodyFilter(inBodyFilter),
+																																																																																																																																			 mShapeFilter(inShapeFilter)
 		{
 		}
 
-		virtual void		AddHit(const ResultType &inResult) override
+		virtual void AddHit(const ResultType &inResult) override
 		{
 			JPH_ASSERT(inResult.mFraction <= max(0.0f, mCollector.GetEarlyOutFraction()), "This hit should not have been passed on to the collector");
 
@@ -335,18 +330,18 @@ void NarrowPhaseQuery::CastShape(const RShapeCast &inShapeCast, const ShapeCastS
 			}
 		}
 
-		RShapeCast					mShapeCast;
-		const ShapeCastSettings &	mShapeCastSettings;
-		RVec3						mBaseOffset;
-		CastShapeCollector &		mCollector;
-		const BodyLockInterface &	mBodyLockInterface;
-		const BodyFilter &			mBodyFilter;
-		const ShapeFilter &			mShapeFilter;
+		RShapeCast mShapeCast;
+		const ShapeCastSettings &mShapeCastSettings;
+		RVec3 mBaseOffset;
+		CastShapeCollector &mCollector;
+		const BodyLockInterface &mBodyLockInterface;
+		const BodyFilter &mBodyFilter;
+		const ShapeFilter &mShapeFilter;
 	};
 
 	// Do broadphase test
 	MyCollector collector(inShapeCast, inShapeCastSettings, inBaseOffset, ioCollector, *mBodyLockInterface, inBodyFilter, inShapeFilter);
-	mBroadPhaseQuery->CastAABox({ inShapeCast.mShapeWorldBounds, inShapeCast.mDirection }, collector, inBroadPhaseLayerFilter, inObjectLayerFilter);
+	mBroadPhaseQuery->CastAABox({inShapeCast.mShapeWorldBounds, inShapeCast.mDirection}, collector, inBroadPhaseLayerFilter, inObjectLayerFilter);
 }
 
 void NarrowPhaseQuery::CollectTransformedShapes(const AABox &inBox, TransformedShapeCollector &ioCollector, const BroadPhaseLayerFilter &inBroadPhaseLayerFilter, const ObjectLayerFilter &inObjectLayerFilter, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) const
@@ -354,17 +349,16 @@ void NarrowPhaseQuery::CollectTransformedShapes(const AABox &inBox, TransformedS
 	class MyCollector : public CollideShapeBodyCollector
 	{
 	public:
-							MyCollector(const AABox &inBox, TransformedShapeCollector &ioCollector, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) :
-			CollideShapeBodyCollector(ioCollector),
-			mBox(inBox),
-			mCollector(ioCollector),
-			mBodyLockInterface(inBodyLockInterface),
-			mBodyFilter(inBodyFilter),
-			mShapeFilter(inShapeFilter)
+		MyCollector(const AABox &inBox, TransformedShapeCollector &ioCollector, const BodyLockInterface &inBodyLockInterface, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter) : CollideShapeBodyCollector(ioCollector),
+																																																																																															mBox(inBox),
+																																																																																															mCollector(ioCollector),
+																																																																																															mBodyLockInterface(inBodyLockInterface),
+																																																																																															mBodyFilter(inBodyFilter),
+																																																																																															mShapeFilter(inShapeFilter)
 		{
 		}
 
-		virtual void		AddHit(const ResultType &inResult) override
+		virtual void AddHit(const ResultType &inResult) override
 		{
 			// Only test shape if it passes the body filter
 			if (mBodyFilter.ShouldCollide(inResult))
@@ -397,11 +391,11 @@ void NarrowPhaseQuery::CollectTransformedShapes(const AABox &inBox, TransformedS
 			}
 		}
 
-		const AABox &					mBox;
-		TransformedShapeCollector &		mCollector;
-		const BodyLockInterface &		mBodyLockInterface;
-		const BodyFilter &				mBodyFilter;
-		const ShapeFilter &				mShapeFilter;
+		const AABox &mBox;
+		TransformedShapeCollector &mCollector;
+		const BodyLockInterface &mBodyLockInterface;
+		const BodyFilter &mBodyFilter;
+		const ShapeFilter &mShapeFilter;
 	};
 
 	// Do broadphase test

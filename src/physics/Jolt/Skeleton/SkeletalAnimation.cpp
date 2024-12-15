@@ -2,39 +2,32 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Skeleton/SkeletalAnimation.h>
-#include <Jolt/Skeleton/SkeletonPose.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../Skeleton/SkeletalAnimation.h"
+#include "../Skeleton/SkeletonPose.h"
+#include "../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(SkeletalAnimation::JointState)
-{
-	JPH_ADD_ATTRIBUTE(JointState, mRotation)
-	JPH_ADD_ATTRIBUTE(JointState, mTranslation)
-}
+JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(SkeletalAnimation::JointState){
+		JPH_ADD_ATTRIBUTE(JointState, mRotation)
+				JPH_ADD_ATTRIBUTE(JointState, mTranslation)}
 
-JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(SkeletalAnimation::Keyframe)
-{
-	JPH_ADD_BASE_CLASS(Keyframe, JointState)
+JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(SkeletalAnimation::Keyframe){
+		JPH_ADD_BASE_CLASS(Keyframe, JointState)
 
-	JPH_ADD_ATTRIBUTE(Keyframe, mTime)
-}
+				JPH_ADD_ATTRIBUTE(Keyframe, mTime)}
 
-JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(SkeletalAnimation::AnimatedJoint)
-{
-	JPH_ADD_ATTRIBUTE(AnimatedJoint, mJointName)
-	JPH_ADD_ATTRIBUTE(AnimatedJoint, mKeyframes)
-}
+JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(SkeletalAnimation::AnimatedJoint){
+		JPH_ADD_ATTRIBUTE(AnimatedJoint, mJointName)
+				JPH_ADD_ATTRIBUTE(AnimatedJoint, mKeyframes)}
 
 JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(SkeletalAnimation)
 {
 	JPH_ADD_ATTRIBUTE(SkeletalAnimation, mAnimatedJoints)
 	JPH_ADD_ATTRIBUTE(SkeletalAnimation, mIsLooping)
 }
-
 
 void SkeletalAnimation::JointState::FromMatrix(Mat44Arg inMatrix)
 {
@@ -62,7 +55,7 @@ void SkeletalAnimation::Sample(float inTime, SkeletonPose &ioPose) const
 	// Correct time when animation is looping
 	JPH_ASSERT(inTime >= 0.0f);
 	float duration = GetDuration();
-	float time = duration > 0.0f && mIsLooping? fmod(inTime, duration) : inTime;
+	float time = duration > 0.0f && mIsLooping ? fmod(inTime, duration) : inTime;
 
 	for (const AnimatedJoint &aj : mAnimatedJoints)
 	{

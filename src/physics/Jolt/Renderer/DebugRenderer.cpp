@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
 #ifdef JPH_DEBUG_RENDERER
 
-#include <Jolt/Renderer/DebugRenderer.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Geometry/OrientedBox.h>
+#include "../Renderer/DebugRenderer.h"
+#include "../Core/Profiler.h"
+#include "../Geometry/OrientedBox.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -18,7 +18,7 @@ DebugRenderer *DebugRenderer::sInstance = nullptr;
 static const int sMaxLevel = 4;
 
 // Distance for each LOD level, these are tweaked for an object of approx. size 1. Use the lod scale to scale these distances.
-static const float sLODDistanceForLevel[] = { 5.0f, 10.0f, 40.0f, FLT_MAX };
+static const float sLODDistanceForLevel[] = {5.0f, 10.0f, 40.0f, FLT_MAX};
 
 DebugRenderer::Triangle::Triangle(Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inV3, ColorArg inColor)
 {
@@ -40,7 +40,7 @@ DebugRenderer::Triangle::Triangle(Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inV3, Colo
 	mV[0].mNormal = mV[1].mNormal = mV[2].mNormal = normal3;
 
 	// Reset UV's
-	mV[0].mUV = mV[1].mUV = mV[2].mUV = { 0, 0 };
+	mV[0].mUV = mV[1].mUV = mV[2].mUV = {0, 0};
 }
 
 DebugRenderer::Triangle::Triangle(Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inV3, ColorArg inColor, Vec3Arg inUVOrigin, Vec3Arg inUVDirection)
@@ -64,9 +64,9 @@ DebugRenderer::Triangle::Triangle(Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inV3, Colo
 	Vec3 uv2 = inV2 - inUVOrigin;
 	Vec3 uv3 = inV3 - inUVOrigin;
 	Vec3 axis2 = normal.Cross(inUVDirection);
-	mV[0].mUV = { inUVDirection.Dot(uv1), axis2.Dot(uv1) };
-	mV[1].mUV = { inUVDirection.Dot(uv2), axis2.Dot(uv2) };
-	mV[2].mUV = { inUVDirection.Dot(uv3), axis2.Dot(uv3) };
+	mV[0].mUV = {inUVDirection.Dot(uv1), axis2.Dot(uv1)};
+	mV[1].mUV = {inUVDirection.Dot(uv2), axis2.Dot(uv2)};
+	mV[2].mUV = {inUVDirection.Dot(uv3), axis2.Dot(uv3)};
 }
 
 DebugRenderer::DebugRenderer()
@@ -304,7 +304,7 @@ void DebugRenderer::Create8thSphereRecursive(Array<uint32> &ioIndices, Array<Ver
 			Float3 position, normal;
 			inGetSupport(inDir1).StoreFloat3(&position);
 			inDir1.StoreFloat3(&normal);
-			ioVertices.push_back({ position, normal, inUV, Color::sWhite });
+			ioVertices.push_back({position, normal, inUV, Color::sWhite});
 		}
 
 		if (ioIdx2 == 0xffffffff)
@@ -313,7 +313,7 @@ void DebugRenderer::Create8thSphereRecursive(Array<uint32> &ioIndices, Array<Ver
 			Float3 position, normal;
 			inGetSupport(inDir2).StoreFloat3(&position);
 			inDir2.StoreFloat3(&normal);
-			ioVertices.push_back({ position, normal, inUV, Color::sWhite });
+			ioVertices.push_back({position, normal, inUV, Color::sWhite});
 		}
 
 		if (ioIdx3 == 0xffffffff)
@@ -322,7 +322,7 @@ void DebugRenderer::Create8thSphereRecursive(Array<uint32> &ioIndices, Array<Ver
 			Float3 position, normal;
 			inGetSupport(inDir3).StoreFloat3(&position);
 			inDir3.StoreFloat3(&normal);
-			ioVertices.push_back({ position, normal, inUV, Color::sWhite });
+			ioVertices.push_back({position, normal, inUV, Color::sWhite});
 		}
 
 		ioIndices.push_back(ioIdx1);
@@ -339,10 +339,10 @@ void DebugRenderer::Create8thSphereRecursive(Array<uint32> &ioIndices, Array<Ver
 		uint32 idx2 = 0xffffffff;
 		uint32 idx3 = 0xffffffff;
 
-		Create8thSphereRecursive(ioIndices, ioVertices, inDir1,  ioIdx1, center1, idx1,   center3, idx3,   inUV, inGetSupport, inLevel - 1);
-		Create8thSphereRecursive(ioIndices, ioVertices, center1, idx1,	 center2, idx2,   center3, idx3,   inUV, inGetSupport, inLevel - 1);
-		Create8thSphereRecursive(ioIndices, ioVertices, center1, idx1,   inDir2,  ioIdx2, center2, idx2,   inUV, inGetSupport, inLevel - 1);
-		Create8thSphereRecursive(ioIndices, ioVertices, center3, idx3,   center2, idx2,   inDir3,  ioIdx3, inUV, inGetSupport, inLevel - 1);
+		Create8thSphereRecursive(ioIndices, ioVertices, inDir1, ioIdx1, center1, idx1, center3, idx3, inUV, inGetSupport, inLevel - 1);
+		Create8thSphereRecursive(ioIndices, ioVertices, center1, idx1, center2, idx2, center3, idx3, inUV, inGetSupport, inLevel - 1);
+		Create8thSphereRecursive(ioIndices, ioVertices, center1, idx1, inDir2, ioIdx2, center2, idx2, inUV, inGetSupport, inLevel - 1);
+		Create8thSphereRecursive(ioIndices, ioVertices, center3, idx3, center2, idx2, inDir3, ioIdx3, inUV, inGetSupport, inLevel - 1);
 	}
 }
 
@@ -362,14 +362,14 @@ DebugRenderer::Batch DebugRenderer::CreateCylinder(float inTop, float inBottom, 
 
 	for (int q = 0; q < 4; ++q)
 	{
-		Float2 uv = (q & 1) == 0? Float2(0.25f, 0.75f) : Float2(0.25f, 0.25f);
+		Float2 uv = (q & 1) == 0 ? Float2(0.25f, 0.75f) : Float2(0.25f, 0.25f);
 
 		uint32 center_start_idx = (uint32)cylinder_vertices.size();
 
 		Float3 nt(0.0f, 1.0f, 0.0f);
 		Float3 nb(0.0f, -1.0f, 0.0f);
-		cylinder_vertices.push_back({ Float3(0.0f, inTop, 0.0f), nt, uv, Color::sWhite });
-		cylinder_vertices.push_back({ Float3(0.0f, inBottom, 0.0f), nb, uv, Color::sWhite });
+		cylinder_vertices.push_back({Float3(0.0f, inTop, 0.0f), nt, uv, Color::sWhite});
+		cylinder_vertices.push_back({Float3(0.0f, inBottom, 0.0f), nb, uv, Color::sWhite});
 
 		uint32 vtx_start_idx = (uint32)cylinder_vertices.size();
 
@@ -388,10 +388,10 @@ DebugRenderer::Batch DebugRenderer::CreateCylinder(float inTop, float inBottom, 
 			Float3 n;
 			edge.Cross(Vec3(s, 0, c).Cross(edge)).Normalized().StoreFloat3(&n);
 
-			cylinder_vertices.push_back({ vt, nt, uv, Color::sWhite });
-			cylinder_vertices.push_back({ vb, nb, uv, Color::sWhite });
-			cylinder_vertices.push_back({ vt, n, uv, Color::sWhite });
-			cylinder_vertices.push_back({ vb, n, uv, Color::sWhite });
+			cylinder_vertices.push_back({vt, nt, uv, Color::sWhite});
+			cylinder_vertices.push_back({vb, nb, uv, Color::sWhite});
+			cylinder_vertices.push_back({vt, n, uv, Color::sWhite});
+			cylinder_vertices.push_back({vb, n, uv, Color::sWhite});
 		}
 
 		for (int i = 0; i < num_parts; ++i)
@@ -445,10 +445,10 @@ void DebugRenderer::CreateQuad(Array<uint32> &ioIndices, Array<Vertex> &ioVertic
 	vertices[0].mNormal = vertices[1].mNormal = vertices[2].mNormal = vertices[3].mNormal = normal3;
 
 	// Set UV's
-	vertices[0].mUV = { 0, 0 };
-	vertices[1].mUV = { 2, 0 };
-	vertices[2].mUV = { 2, 2 };
-	vertices[3].mUV = { 0, 2 };
+	vertices[0].mUV = {0, 0};
+	vertices[1].mUV = {2, 0};
+	vertices[2].mUV = {2, 2};
+	vertices[3].mUV = {0, 2};
 
 	// Set indices
 	ioIndices.push_back(start_idx);
@@ -468,14 +468,14 @@ void DebugRenderer::Initialize()
 		Array<uint32> box_indices;
 
 		// Get corner points
-		Vec3 v0 = Vec3(-1,  1, -1);
-		Vec3 v1 = Vec3( 1,  1, -1);
-		Vec3 v2 = Vec3( 1,  1,  1);
-		Vec3 v3 = Vec3(-1,  1,  1);
+		Vec3 v0 = Vec3(-1, 1, -1);
+		Vec3 v1 = Vec3(1, 1, -1);
+		Vec3 v2 = Vec3(1, 1, 1);
+		Vec3 v3 = Vec3(-1, 1, 1);
 		Vec3 v4 = Vec3(-1, -1, -1);
-		Vec3 v5 = Vec3( 1, -1, -1);
-		Vec3 v6 = Vec3( 1, -1,  1);
-		Vec3 v7 = Vec3(-1, -1,  1);
+		Vec3 v5 = Vec3(1, -1, -1);
+		Vec3 v6 = Vec3(1, -1, 1);
+		Vec3 v7 = Vec3(-1, -1, 1);
 
 		// Top
 		CreateQuad(box_indices, box_vertices, v0, v3, v2, v1);
@@ -499,7 +499,8 @@ void DebugRenderer::Initialize()
 	}
 
 	// Support function that returns a unit sphere
-	auto sphere_support = [](Vec3Arg inDirection) { return inDirection; };
+	auto sphere_support = [](Vec3Arg inDirection)
+	{ return inDirection; };
 
 	// Construct geometries
 	mSphere = new Geometry(AABox(Vec3(-1, -1, -1), Vec3(1, 1, 1)));
@@ -516,28 +517,28 @@ void DebugRenderer::Initialize()
 		float distance = sLODDistanceForLevel[sMaxLevel - level];
 
 		// Sphere
-		mSphere->mLODs.push_back({ CreateTriangleBatchForConvex(sphere_support, level), distance });
+		mSphere->mLODs.push_back({CreateTriangleBatchForConvex(sphere_support, level), distance});
 
 		// Capsule bottom half sphere
 		{
 			Array<Vertex> capsule_bottom_vertices;
 			Array<uint32> capsule_bottom_indices;
-			Create8thSphere(capsule_bottom_indices, capsule_bottom_vertices, -Vec3::sAxisX(), -Vec3::sAxisY(),  Vec3::sAxisZ(), Float2(0.25f, 0.25f), sphere_support, level);
-			Create8thSphere(capsule_bottom_indices, capsule_bottom_vertices, -Vec3::sAxisY(),  Vec3::sAxisX(),  Vec3::sAxisZ(), Float2(0.25f, 0.75f), sphere_support, level);
-			Create8thSphere(capsule_bottom_indices, capsule_bottom_vertices,  Vec3::sAxisX(), -Vec3::sAxisY(), -Vec3::sAxisZ(), Float2(0.25f, 0.25f), sphere_support, level);
+			Create8thSphere(capsule_bottom_indices, capsule_bottom_vertices, -Vec3::sAxisX(), -Vec3::sAxisY(), Vec3::sAxisZ(), Float2(0.25f, 0.25f), sphere_support, level);
+			Create8thSphere(capsule_bottom_indices, capsule_bottom_vertices, -Vec3::sAxisY(), Vec3::sAxisX(), Vec3::sAxisZ(), Float2(0.25f, 0.75f), sphere_support, level);
+			Create8thSphere(capsule_bottom_indices, capsule_bottom_vertices, Vec3::sAxisX(), -Vec3::sAxisY(), -Vec3::sAxisZ(), Float2(0.25f, 0.25f), sphere_support, level);
 			Create8thSphere(capsule_bottom_indices, capsule_bottom_vertices, -Vec3::sAxisY(), -Vec3::sAxisX(), -Vec3::sAxisZ(), Float2(0.25f, 0.75f), sphere_support, level);
-			mCapsuleBottom->mLODs.push_back({ CreateTriangleBatch(capsule_bottom_vertices, capsule_bottom_indices), distance });
+			mCapsuleBottom->mLODs.push_back({CreateTriangleBatch(capsule_bottom_vertices, capsule_bottom_indices), distance});
 		}
 
 		// Capsule top half sphere
 		{
 			Array<Vertex> capsule_top_vertices;
 			Array<uint32> capsule_top_indices;
-			Create8thSphere(capsule_top_indices, capsule_top_vertices,  Vec3::sAxisX(),  Vec3::sAxisY(),  Vec3::sAxisZ(), Float2(0.25f, 0.75f), sphere_support, level);
-			Create8thSphere(capsule_top_indices, capsule_top_vertices,  Vec3::sAxisY(), -Vec3::sAxisX(),  Vec3::sAxisZ(), Float2(0.25f, 0.25f), sphere_support, level);
-			Create8thSphere(capsule_top_indices, capsule_top_vertices,  Vec3::sAxisY(),  Vec3::sAxisX(), -Vec3::sAxisZ(), Float2(0.25f, 0.25f), sphere_support, level);
-			Create8thSphere(capsule_top_indices, capsule_top_vertices, -Vec3::sAxisX(),  Vec3::sAxisY(), -Vec3::sAxisZ(), Float2(0.25f, 0.75f), sphere_support, level);
-			mCapsuleTop->mLODs.push_back({ CreateTriangleBatch(capsule_top_vertices, capsule_top_indices), distance });
+			Create8thSphere(capsule_top_indices, capsule_top_vertices, Vec3::sAxisX(), Vec3::sAxisY(), Vec3::sAxisZ(), Float2(0.25f, 0.75f), sphere_support, level);
+			Create8thSphere(capsule_top_indices, capsule_top_vertices, Vec3::sAxisY(), -Vec3::sAxisX(), Vec3::sAxisZ(), Float2(0.25f, 0.25f), sphere_support, level);
+			Create8thSphere(capsule_top_indices, capsule_top_vertices, Vec3::sAxisY(), Vec3::sAxisX(), -Vec3::sAxisZ(), Float2(0.25f, 0.25f), sphere_support, level);
+			Create8thSphere(capsule_top_indices, capsule_top_vertices, -Vec3::sAxisX(), Vec3::sAxisY(), -Vec3::sAxisZ(), Float2(0.25f, 0.75f), sphere_support, level);
+			mCapsuleTop->mLODs.push_back({CreateTriangleBatch(capsule_top_vertices, capsule_top_indices), distance});
 		}
 
 		// Capsule middle part
@@ -546,7 +547,7 @@ void DebugRenderer::Initialize()
 			Array<uint32> capsule_mid_indices;
 			for (int q = 0; q < 4; ++q)
 			{
-				Float2 uv = (q & 1) == 0? Float2(0.25f, 0.25f) : Float2(0.25f, 0.75f);
+				Float2 uv = (q & 1) == 0 ? Float2(0.25f, 0.25f) : Float2(0.25f, 0.75f);
 
 				uint32 start_idx = (uint32)capsule_mid_vertices.size();
 
@@ -560,8 +561,8 @@ void DebugRenderer::Initialize()
 					Float3 vb(s, -1.0f, c);
 					Float3 n(s, 0, c);
 
-					capsule_mid_vertices.push_back({ vt, n, uv, Color::sWhite });
-					capsule_mid_vertices.push_back({ vb, n, uv, Color::sWhite });
+					capsule_mid_vertices.push_back({vt, n, uv, Color::sWhite});
+					capsule_mid_vertices.push_back({vb, n, uv, Color::sWhite});
 				}
 
 				for (int i = 0; i < num_parts; ++i)
@@ -577,7 +578,7 @@ void DebugRenderer::Initialize()
 					capsule_mid_indices.push_back(start + 2);
 				}
 			}
-			mCapsuleMid->mLODs.push_back({ CreateTriangleBatch(capsule_mid_vertices, capsule_mid_indices), distance });
+			mCapsuleMid->mLODs.push_back({CreateTriangleBatch(capsule_mid_vertices, capsule_mid_indices), distance});
 		}
 
 		// Open cone
@@ -586,7 +587,7 @@ void DebugRenderer::Initialize()
 			Array<uint32> open_cone_indices;
 			for (int q = 0; q < 4; ++q)
 			{
-				Float2 uv = (q & 1) == 0? Float2(0.25f, 0.25f) : Float2(0.25f, 0.75f);
+				Float2 uv = (q & 1) == 0 ? Float2(0.25f, 0.25f) : Float2(0.25f, 0.75f);
 
 				uint32 start_idx = (uint32)open_cone_vertices.size();
 
@@ -604,10 +605,11 @@ void DebugRenderer::Initialize()
 					// perpendicular = Y cross vb (perpendicular to the plane in which 0, y and vb exists)
 					// normal = perpendicular cross vb (normal to the edge 0 vb)
 					Vec3 normal = Vec3(s, -Square(s) - Square(c), c).Normalized();
-					Float3 n; normal.StoreFloat3(&n);
+					Float3 n;
+					normal.StoreFloat3(&n);
 
-					open_cone_vertices.push_back({ vt, n, uv, Color::sWhite });
-					open_cone_vertices.push_back({ vb, n, uv, Color::sWhite });
+					open_cone_vertices.push_back({vt, n, uv, Color::sWhite});
+					open_cone_vertices.push_back({vb, n, uv, Color::sWhite});
 				}
 
 				for (int i = 0; i < num_parts; ++i)
@@ -619,11 +621,11 @@ void DebugRenderer::Initialize()
 					open_cone_indices.push_back(start + 3);
 				}
 			}
-			mOpenCone->mLODs.push_back({ CreateTriangleBatch(open_cone_vertices, open_cone_indices), distance });
+			mOpenCone->mLODs.push_back({CreateTriangleBatch(open_cone_vertices, open_cone_indices), distance});
 		}
 
 		// Cylinder
-		mCylinder->mLODs.push_back({ CreateCylinder(1.0f, -1.0f, 1.0f, 1.0f, level), distance });
+		mCylinder->mLODs.push_back({CreateCylinder(1.0f, -1.0f, 1.0f, 1.0f, level), distance});
 	}
 }
 
@@ -680,13 +682,13 @@ DebugRenderer::Batch DebugRenderer::CreateTriangleBatchForConvex(SupportFunction
 
 	Array<Vertex> vertices;
 	Array<uint32> indices;
-	Create8thSphere(indices, vertices,  Vec3::sAxisX(),  Vec3::sAxisY(),  Vec3::sAxisZ(), Float2(0.25f, 0.25f), inGetSupport, inLevel);
-	Create8thSphere(indices, vertices,  Vec3::sAxisY(), -Vec3::sAxisX(),  Vec3::sAxisZ(), Float2(0.25f, 0.75f), inGetSupport, inLevel);
-	Create8thSphere(indices, vertices, -Vec3::sAxisY(),  Vec3::sAxisX(),  Vec3::sAxisZ(), Float2(0.25f, 0.75f), inGetSupport, inLevel);
-	Create8thSphere(indices, vertices, -Vec3::sAxisX(), -Vec3::sAxisY(),  Vec3::sAxisZ(), Float2(0.25f, 0.25f), inGetSupport, inLevel);
-	Create8thSphere(indices, vertices,  Vec3::sAxisY(),  Vec3::sAxisX(), -Vec3::sAxisZ(), Float2(0.25f, 0.75f), inGetSupport, inLevel);
-	Create8thSphere(indices, vertices, -Vec3::sAxisX(),  Vec3::sAxisY(), -Vec3::sAxisZ(), Float2(0.25f, 0.25f), inGetSupport, inLevel);
-	Create8thSphere(indices, vertices,  Vec3::sAxisX(), -Vec3::sAxisY(), -Vec3::sAxisZ(), Float2(0.25f, 0.25f), inGetSupport, inLevel);
+	Create8thSphere(indices, vertices, Vec3::sAxisX(), Vec3::sAxisY(), Vec3::sAxisZ(), Float2(0.25f, 0.25f), inGetSupport, inLevel);
+	Create8thSphere(indices, vertices, Vec3::sAxisY(), -Vec3::sAxisX(), Vec3::sAxisZ(), Float2(0.25f, 0.75f), inGetSupport, inLevel);
+	Create8thSphere(indices, vertices, -Vec3::sAxisY(), Vec3::sAxisX(), Vec3::sAxisZ(), Float2(0.25f, 0.75f), inGetSupport, inLevel);
+	Create8thSphere(indices, vertices, -Vec3::sAxisX(), -Vec3::sAxisY(), Vec3::sAxisZ(), Float2(0.25f, 0.25f), inGetSupport, inLevel);
+	Create8thSphere(indices, vertices, Vec3::sAxisY(), Vec3::sAxisX(), -Vec3::sAxisZ(), Float2(0.25f, 0.75f), inGetSupport, inLevel);
+	Create8thSphere(indices, vertices, -Vec3::sAxisX(), Vec3::sAxisY(), -Vec3::sAxisZ(), Float2(0.25f, 0.25f), inGetSupport, inLevel);
+	Create8thSphere(indices, vertices, Vec3::sAxisX(), -Vec3::sAxisY(), -Vec3::sAxisZ(), Float2(0.25f, 0.25f), inGetSupport, inLevel);
 	Create8thSphere(indices, vertices, -Vec3::sAxisY(), -Vec3::sAxisX(), -Vec3::sAxisZ(), Float2(0.25f, 0.75f), inGetSupport, inLevel);
 
 	if (outBounds != nullptr)
@@ -707,14 +709,14 @@ DebugRenderer::GeometryRef DebugRenderer::CreateTriangleGeometryForConvex(Suppor
 
 		// Create triangle batch and only calculate bounds for highest LOD level
 		AABox bounds;
-		Batch batch = CreateTriangleBatchForConvex(inGetSupport, level, geometry == nullptr? &bounds : nullptr);
+		Batch batch = CreateTriangleBatchForConvex(inGetSupport, level, geometry == nullptr ? &bounds : nullptr);
 
 		// Construct geometry in the first iteration
 		if (geometry == nullptr)
 			geometry = new Geometry(bounds);
 
 		// Add the LOD
-		geometry->mLODs.push_back({ batch, distance });
+		geometry->mLODs.push_back({batch, distance});
 	}
 
 	return geometry;
@@ -829,16 +831,16 @@ DebugRenderer::Geometry *DebugRenderer::CreateSwingLimitGeometry(int inNumSegmen
 		Vec3 normal = 0.5f * (next_pos.Cross(pos).NormalizedOr(Vec3::sZero()) + pos.Cross(prev_pos).NormalizedOr(Vec3::sZero()));
 
 		// Store top vertex
-		top.mPosition = { 0, 0, 0 };
+		top.mPosition = {0, 0, 0};
 		normal.StoreFloat3(&top.mNormal);
 		top.mColor = Color::sWhite;
-		top.mUV = { 0, 0 };
+		top.mUV = {0, 0};
 
 		// Store bottom vertex
 		pos.StoreFloat3(&bottom.mPosition);
 		normal.StoreFloat3(&bottom.mNormal);
 		bottom.mColor = Color::sWhite;
-		bottom.mUV = { 0, 0 };
+		bottom.mUV = {0, 0};
 	}
 
 	// Allocate space for indices
@@ -873,7 +875,7 @@ void DebugRenderer::DrawSwingConeLimits(RMat44Arg inMatrix, float inSwingYHalfAn
 	JPH_ASSERT(inEdgeLength > 0.0f);
 
 	// Check cache
-	SwingConeLimits limits { inSwingYHalfAngle, inSwingZHalfAngle };
+	SwingConeLimits limits{inSwingYHalfAngle, inSwingZHalfAngle};
 	GeometryRef &geometry = mSwingConeLimits[limits];
 	if (geometry == nullptr)
 	{
@@ -913,7 +915,7 @@ void DebugRenderer::DrawSwingConeLimits(RMat44Arg inMatrix, float inSwingYHalfAn
 
 					// Calculate the corresponding z value of the quaternion
 					float z_sq = e1_sq - e1_sq / e2_sq * Square(y);
-					z = z_sq <= 0.0f? 0.0f : sqrt(z_sq);
+					z = z_sq <= 0.0f ? 0.0f : sqrt(z_sq);
 				}
 				else
 				{
@@ -922,7 +924,7 @@ void DebugRenderer::DrawSwingConeLimits(RMat44Arg inMatrix, float inSwingYHalfAn
 
 					// Calculate the corresponding y value of the quaternion
 					float y_sq = e2_sq - e2_sq / e1_sq * Square(z);
-					y = y_sq <= 0.0f? 0.0f : sqrt(y_sq);
+					y = y_sq <= 0.0f ? 0.0f : sqrt(y_sq);
 				}
 
 				// If we're tracing the opposite side, flip the values
@@ -956,7 +958,7 @@ void DebugRenderer::DrawSwingPyramidLimits(RMat44Arg inMatrix, float inMinSwingY
 	JPH_ASSERT(inEdgeLength > 0.0f);
 
 	// Check cache
-	SwingPyramidLimits limits { inMinSwingYAngle, inMaxSwingYAngle, inMinSwingZAngle, inMaxSwingZAngle };
+	SwingPyramidLimits limits{inMinSwingYAngle, inMaxSwingYAngle, inMinSwingZAngle, inMaxSwingZAngle};
 	GeometryRef &geometry = mSwingPyramidLimits[limits];
 	if (geometry == nullptr)
 	{
@@ -972,7 +974,8 @@ void DebugRenderer::DrawSwingPyramidLimits(RMat44Arg inMatrix, float inMinSwingY
 
 		// Note that this is q = Quat::sRotation(Vec3::sAxisZ(), z) * Quat::sRotation(Vec3::sAxisY(), y) with q.x set to zero so we don't introduce twist
 		// This matches the calculation in SwingTwistConstraintPart::ClampSwingTwist
-		auto get_axis = [](float inY, float inZ) {
+		auto get_axis = [](float inY, float inZ)
+		{
 			float hy = 0.5f * inY;
 			float hz = 0.5f * inZ;
 			float cos_hy = Cos(hy);
@@ -1022,8 +1025,8 @@ void DebugRenderer::DrawPie(RVec3Arg inCenter, float inRadius, Vec3Arg inNormal,
 	{
 		int num_parts = (int)ceil(64.0f * delta_angle / (2.0f * JPH_PI));
 
-		Float3 normal = { 0, 1, 0 };
-		Float3 center = { 0, 0, 0 };
+		Float3 normal = {0, 1, 0};
+		Float3 center = {0, 0, 0};
 
 		// Allocate space for vertices
 		int num_vertices = num_parts + 2;
@@ -1031,15 +1034,15 @@ void DebugRenderer::DrawPie(RVec3Arg inCenter, float inRadius, Vec3Arg inNormal,
 		Vertex *vertices = vertices_start;
 
 		// Center of circle
-		*vertices++ = { center, normal, { 0, 0 }, Color::sWhite };
+		*vertices++ = {center, normal, {0, 0}, Color::sWhite};
 
 		// Outer edge of pie
 		for (int i = 0; i <= num_parts; ++i)
 		{
 			float angle = float(i) / float(num_parts) * delta_angle;
 
-			Float3 pos = { Cos(angle), 0, Sin(angle) };
-			*vertices++ = { pos, normal, { 0, 0 }, Color::sWhite };
+			Float3 pos = {Cos(angle), 0, Sin(angle)};
+			*vertices++ = {pos, normal, {0, 0}, Color::sWhite};
 		}
 
 		// Allocate space for indices
@@ -1066,7 +1069,7 @@ void DebugRenderer::DrawPie(RVec3Arg inCenter, float inRadius, Vec3Arg inNormal,
 
 void DebugRenderer::DrawTaperedCylinder(RMat44Arg inMatrix, float inTop, float inBottom, float inTopRadius, float inBottomRadius, ColorArg inColor, ECastShadow inCastShadow, EDrawMode inDrawMode)
 {
-	TaperedCylinder tapered_cylinder { inTop, inBottom, inTopRadius, inBottomRadius };
+	TaperedCylinder tapered_cylinder{inTop, inBottom, inTopRadius, inBottomRadius};
 
 	GeometryRef &geometry = mTaperedCylinders[tapered_cylinder];
 	if (geometry == nullptr)
@@ -1081,7 +1084,7 @@ void DebugRenderer::DrawTaperedCylinder(RMat44Arg inMatrix, float inTop, float i
 		geometry = new Geometry(AABox(Vec3(-max_radius, inBottom, -max_radius), Vec3(max_radius, inTop, max_radius)));
 
 		for (int level = sMaxLevel; level >= 1; --level)
-			geometry->mLODs.push_back({ CreateCylinder(inTop, inBottom, inTopRadius, inBottomRadius, level), sLODDistanceForLevel[sMaxLevel - level] });
+			geometry->mLODs.push_back({CreateCylinder(inTop, inBottom, inTopRadius, inBottomRadius, level), sLODDistanceForLevel[sMaxLevel - level]});
 	}
 
 	DrawGeometry(inMatrix, inColor, geometry, ECullMode::CullBackFace, inCastShadow, inDrawMode);

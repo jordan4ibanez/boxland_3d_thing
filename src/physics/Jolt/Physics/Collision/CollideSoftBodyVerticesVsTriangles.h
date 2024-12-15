@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Physics/Collision/CollideSoftBodyVertexIterator.h>
-#include <Jolt/Geometry/ClosestPoint.h>
+#include "../Collision/CollideSoftBodyVertexIterator.h"
+#include "../../Geometry/ClosestPoint.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -13,20 +13,19 @@ JPH_NAMESPACE_BEGIN
 class JPH_EXPORT CollideSoftBodyVerticesVsTriangles
 {
 public:
-						CollideSoftBodyVerticesVsTriangles(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale) :
-		mTransform(inCenterOfMassTransform * Mat44::sScale(inScale)),
-		mInvTransform(mTransform.Inversed()),
-		mNormalSign(ScaleHelpers::IsInsideOut(inScale)? -1.0f : 1.0f)
+	CollideSoftBodyVerticesVsTriangles(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale) : mTransform(inCenterOfMassTransform * Mat44::sScale(inScale)),
+																																													mInvTransform(mTransform.Inversed()),
+																																													mNormalSign(ScaleHelpers::IsInsideOut(inScale) ? -1.0f : 1.0f)
 	{
 	}
 
-	JPH_INLINE void		StartVertex(const CollideSoftBodyVertexIterator &inVertex)
+	JPH_INLINE void StartVertex(const CollideSoftBodyVertexIterator &inVertex)
 	{
 		mLocalPosition = mInvTransform * inVertex.GetPosition();
 		mClosestDistanceSq = FLT_MAX;
 	}
 
-	JPH_INLINE void		ProcessTriangle(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
+	JPH_INLINE void ProcessTriangle(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
 	{
 		// Get the closest point from the vertex to the triangle
 		uint32 set;
@@ -43,7 +42,7 @@ public:
 		}
 	}
 
-	JPH_INLINE void		FinishVertex(const CollideSoftBodyVertexIterator &ioVertex, int inCollidingShapeIndex) const
+	JPH_INLINE void FinishVertex(const CollideSoftBodyVertexIterator &ioVertex, int inCollidingShapeIndex) const
 	{
 		if (mClosestDistanceSq < FLT_MAX)
 		{
@@ -71,20 +70,20 @@ public:
 					float normal_length = normal.Length();
 					float penetration = -normal_length;
 					if (ioVertex.UpdatePenetration(penetration))
-						ioVertex.SetCollision(Plane::sFromPointAndNormal(closest_point, normal_length > 0.0f? normal / normal_length : triangle_normal), inCollidingShapeIndex);
+						ioVertex.SetCollision(Plane::sFromPointAndNormal(closest_point, normal_length > 0.0f ? normal / normal_length : triangle_normal), inCollidingShapeIndex);
 				}
 			}
 		}
 	}
 
-	Mat44				mTransform;
-	Mat44				mInvTransform;
-	Vec3				mLocalPosition;
-	Vec3				mV0, mV1, mV2;
-	Vec3				mClosestPoint;
-	float				mNormalSign;
-	float				mClosestDistanceSq;
-	uint32				mSet;
+	Mat44 mTransform;
+	Mat44 mInvTransform;
+	Vec3 mLocalPosition;
+	Vec3 mV0, mV1, mV2;
+	Vec3 mClosestPoint;
+	float mNormalSign;
+	float mClosestDistanceSq;
+	uint32 mSet;
 };
 
 JPH_NAMESPACE_END

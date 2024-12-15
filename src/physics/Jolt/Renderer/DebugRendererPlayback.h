@@ -5,12 +5,12 @@
 #pragma once
 
 #ifndef JPH_DEBUG_RENDERER
-	#error This file should only be included when JPH_DEBUG_RENDERER is defined
+#error This file should only be included when JPH_DEBUG_RENDERER is defined
 #endif // !JPH_DEBUG_RENDERER
 
-#include <Jolt/Renderer/DebugRendererRecorder.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/UnorderedMap.h>
+#include "../Renderer/DebugRendererRecorder.h"
+#include "../Core/StreamIn.h"
+#include "../Core/UnorderedMap.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -19,20 +19,20 @@ class JPH_DEBUG_RENDERER_EXPORT DebugRendererPlayback
 {
 public:
 	/// Constructor
-										DebugRendererPlayback(DebugRenderer &inRenderer) : mRenderer(inRenderer) { }
+	DebugRendererPlayback(DebugRenderer &inRenderer) : mRenderer(inRenderer) {}
 
 	/// Parse a stream of frames
-	void								Parse(StreamIn &inStream);
+	void Parse(StreamIn &inStream);
 
 	/// Get the number of parsed frames
-	uint								GetNumFrames() const				{ return (uint)mFrames.size(); }
+	uint GetNumFrames() const { return (uint)mFrames.size(); }
 
 	/// Draw a frame
-	void								DrawFrame(uint inFrameNumber) const;
+	void DrawFrame(uint inFrameNumber) const;
 
 private:
 	/// The debug renderer we're using to do the actual rendering
-	DebugRenderer &						mRenderer;
+	DebugRenderer &mRenderer;
 
 	/// Mapping of ID to batch
 	UnorderedMap<uint32, DebugRenderer::Batch> mBatches;
@@ -42,7 +42,7 @@ private:
 
 	/// The list of parsed frames
 	using Frame = DebugRendererRecorder::Frame;
-	Array<Frame>						mFrames;
+	Array<Frame> mFrames;
 };
 
 JPH_NAMESPACE_END

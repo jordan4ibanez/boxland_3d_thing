@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Physics/Body/BodyLockInterface.h>
+#include "../Body/BodyLockInterface.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -14,8 +14,7 @@ class BodyLockBase : public NonCopyable
 {
 public:
 	/// Constructor will lock the body
-								BodyLockBase(const BodyLockInterface &inBodyLockInterface, const BodyID &inBodyID) :
-		mBodyLockInterface(inBodyLockInterface)
+	BodyLockBase(const BodyLockInterface &inBodyLockInterface, const BodyID &inBodyID) : mBodyLockInterface(inBodyLockInterface)
 	{
 		if (inBodyID == BodyID())
 		{
@@ -26,7 +25,7 @@ public:
 		else
 		{
 			// Get mutex
-			mBodyLockMutex = Write? inBodyLockInterface.LockWrite(inBodyID) : inBodyLockInterface.LockRead(inBodyID);
+			mBodyLockMutex = Write ? inBodyLockInterface.LockWrite(inBodyID) : inBodyLockInterface.LockRead(inBodyID);
 
 			// Get a reference to the body or nullptr when it is no longer valid
 			mBody = inBodyLockInterface.TryGetBody(inBodyID);
@@ -34,7 +33,7 @@ public:
 	}
 
 	/// Explicitly release the lock (normally this is done in the destructor)
-	inline void					ReleaseLock()
+	inline void ReleaseLock()
 	{
 		if (mBodyLockMutex != nullptr)
 		{
@@ -49,34 +48,34 @@ public:
 	}
 
 	/// Destructor will unlock the body
-								~BodyLockBase()
+	~BodyLockBase()
 	{
 		ReleaseLock();
 	}
 
 	/// Test if the lock was successful (if the body ID was valid)
-	inline bool					Succeeded() const
+	inline bool Succeeded() const
 	{
 		return mBody != nullptr;
 	}
 
 	/// Test if the lock was successful (if the body ID was valid) and the body is still in the broad phase
-	inline bool					SucceededAndIsInBroadPhase() const
+	inline bool SucceededAndIsInBroadPhase() const
 	{
 		return mBody != nullptr && mBody->IsInBroadPhase();
 	}
 
 	/// Access the body
-	inline BodyType &			GetBody() const
+	inline BodyType &GetBody() const
 	{
 		JPH_ASSERT(mBody != nullptr, "Should check Succeeded() first");
 		return *mBody;
 	}
 
 private:
-	const BodyLockInterface &	mBodyLockInterface;
-	SharedMutex *				mBodyLockMutex;
-	BodyType *					mBody;
+	const BodyLockInterface &mBodyLockInterface;
+	SharedMutex *mBodyLockMutex;
+	BodyType *mBody;
 };
 
 /// A body lock takes a body ID and locks the underlying body so that other threads cannot access its members

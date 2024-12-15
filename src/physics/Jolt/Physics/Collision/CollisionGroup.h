@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Physics/Collision/GroupFilter.h>
-#include <Jolt/ObjectStream/SerializableObject.h>
+#include "../Collision/GroupFilter.h"
+#include "../../ObjectStream/SerializableObject.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -21,20 +21,20 @@ class JPH_EXPORT CollisionGroup
 	JPH_DECLARE_SERIALIZABLE_NON_VIRTUAL(JPH_EXPORT, CollisionGroup)
 
 public:
-	using GroupID			= uint32;
-	using SubGroupID		= uint32;
+	using GroupID = uint32;
+	using SubGroupID = uint32;
 
-	static const GroupID	cInvalidGroup = ~GroupID(0);
-	static const SubGroupID	cInvalidSubGroup = ~SubGroupID(0);
+	static const GroupID cInvalidGroup = ~GroupID(0);
+	static const SubGroupID cInvalidSubGroup = ~SubGroupID(0);
 
 	/// Default constructor
-							CollisionGroup() = default;
+	CollisionGroup() = default;
 
 	/// Construct with all properties
-							CollisionGroup(const GroupFilter *inFilter, GroupID inGroupID, SubGroupID inSubGroupID) : mGroupFilter(inFilter), mGroupID(inGroupID), mSubGroupID(inSubGroupID) { }
+	CollisionGroup(const GroupFilter *inFilter, GroupID inGroupID, SubGroupID inSubGroupID) : mGroupFilter(inFilter), mGroupID(inGroupID), mSubGroupID(inSubGroupID) {}
 
 	/// Set the collision group filter
-	inline void				SetGroupFilter(const GroupFilter *inFilter)
+	inline void SetGroupFilter(const GroupFilter *inFilter)
 	{
 		mGroupFilter = inFilter;
 	}
@@ -46,29 +46,29 @@ public:
 	}
 
 	/// Set the main group id for this object
-	inline void				SetGroupID(GroupID inID)
+	inline void SetGroupID(GroupID inID)
 	{
 		mGroupID = inID;
 	}
 
-	inline GroupID			GetGroupID() const
+	inline GroupID GetGroupID() const
 	{
 		return mGroupID;
 	}
 
 	/// Add this object to a sub group
-	inline void				SetSubGroupID(SubGroupID inID)
+	inline void SetSubGroupID(SubGroupID inID)
 	{
 		mSubGroupID = inID;
 	}
 
-	inline SubGroupID		GetSubGroupID() const
+	inline SubGroupID GetSubGroupID() const
 	{
 		return mSubGroupID;
 	}
 
 	/// Check if this object collides with another object
-	bool					CanCollide(const CollisionGroup &inOther) const
+	bool CanCollide(const CollisionGroup &inOther) const
 	{
 		// Call the CanCollide function of the first group filter that's not null
 		if (mGroupFilter != nullptr)
@@ -80,15 +80,15 @@ public:
 	}
 
 	/// Saves the state of this object in binary form to inStream. Does not save group filter.
-	void					SaveBinaryState(StreamOut &inStream) const;
+	void SaveBinaryState(StreamOut &inStream) const;
 
 	/// Restore the state of this object from inStream. Does not save group filter.
-	void					RestoreBinaryState(StreamIn &inStream);
+	void RestoreBinaryState(StreamIn &inStream);
 
 private:
-	RefConst<GroupFilter>	mGroupFilter;
-	GroupID					mGroupID = cInvalidGroup;
-	SubGroupID				mSubGroupID = cInvalidSubGroup;
+	RefConst<GroupFilter> mGroupFilter;
+	GroupID mGroupID = cInvalidGroup;
+	SubGroupID mSubGroupID = cInvalidSubGroup;
 };
 
 JPH_NAMESPACE_END

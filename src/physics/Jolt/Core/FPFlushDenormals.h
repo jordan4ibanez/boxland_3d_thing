@@ -4,24 +4,30 @@
 
 #pragma once
 
-#include <Jolt/Core/FPControlWord.h>
+#include "../Core/FPControlWord.h"
 
 JPH_NAMESPACE_BEGIN
 
 #if defined(JPH_CPU_WASM)
 
 // Not supported
-class FPFlushDenormals { };
+class FPFlushDenormals
+{
+};
 
 #elif defined(JPH_USE_SSE)
 
 /// Helper class that needs to be put on the stack to enable flushing denormals to zero
 /// This can make floating point operations much faster when working with very small numbers
-class FPFlushDenormals : public FPControlWord<_MM_FLUSH_ZERO_ON, _MM_FLUSH_ZERO_MASK> { };
+class FPFlushDenormals : public FPControlWord<_MM_FLUSH_ZERO_ON, _MM_FLUSH_ZERO_MASK>
+{
+};
 
 #elif defined(JPH_CPU_ARM) && defined(JPH_COMPILER_MSVC)
 
-class FPFlushDenormals : public FPControlWord<_DN_FLUSH, _MCW_DN> { };
+class FPFlushDenormals : public FPControlWord<_DN_FLUSH, _MCW_DN>
+{
+};
 
 #elif defined(JPH_CPU_ARM)
 
@@ -30,7 +36,9 @@ static constexpr uint64 FP_FZ = 1 << 24;
 
 /// Helper class that needs to be put on the stack to enable flushing denormals to zero
 /// This can make floating point operations much faster when working with very small numbers
-class FPFlushDenormals : public FPControlWord<FP_FZ, FP_FZ> { };
+class FPFlushDenormals : public FPControlWord<FP_FZ, FP_FZ>
+{
+};
 
 #else
 

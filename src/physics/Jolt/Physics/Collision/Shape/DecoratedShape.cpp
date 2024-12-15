@@ -2,22 +2,19 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/DecoratedShape.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/DecoratedShape.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_ABSTRACT(DecoratedShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(DecoratedShapeSettings, ShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_ABSTRACT(DecoratedShapeSettings){
+		JPH_ADD_BASE_CLASS(DecoratedShapeSettings, ShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(DecoratedShapeSettings, mInnerShape)
-}
+				JPH_ADD_ATTRIBUTE(DecoratedShapeSettings, mInnerShape)}
 
-DecoratedShape::DecoratedShape(EShapeSubType inSubType, const DecoratedShapeSettings &inSettings, ShapeResult &outResult) :
-	Shape(EShapeType::Decorated, inSubType, inSettings, outResult)
+DecoratedShape::DecoratedShape(EShapeSubType inSubType, const DecoratedShapeSettings &inSettings, ShapeResult &outResult) : Shape(EShapeType::Decorated, inSubType, inSettings, outResult)
 {
 	// Check that there's a shape
 	if (inSettings.mInnerShape == nullptr && inSettings.mInnerShapePtr == nullptr)

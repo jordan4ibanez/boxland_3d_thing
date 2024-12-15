@@ -2,17 +2,16 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/TriangleSplitter/TriangleSplitterBinning.h>
+#include "../TriangleSplitter/TriangleSplitterBinning.h"
 
- JPH_NAMESPACE_BEGIN
+JPH_NAMESPACE_BEGIN
 
-TriangleSplitterBinning::TriangleSplitterBinning(const VertexList &inVertices, const IndexedTriangleList &inTriangles, uint inMinNumBins, uint inMaxNumBins, uint inNumTrianglesPerBin) :
-	TriangleSplitter(inVertices, inTriangles),
-	mMinNumBins(inMinNumBins),
-	mMaxNumBins(inMaxNumBins),
-	mNumTrianglesPerBin(inNumTrianglesPerBin)
+TriangleSplitterBinning::TriangleSplitterBinning(const VertexList &inVertices, const IndexedTriangleList &inTriangles, uint inMinNumBins, uint inMaxNumBins, uint inNumTrianglesPerBin) : TriangleSplitter(inVertices, inTriangles),
+																																																																																													mMinNumBins(inMinNumBins),
+																																																																																													mMaxNumBins(inMaxNumBins),
+																																																																																													mNumTrianglesPerBin(inNumTrianglesPerBin)
 {
 	mBins.resize(mMaxNumBins);
 }

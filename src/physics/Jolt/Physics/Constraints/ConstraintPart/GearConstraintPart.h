@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Physics/StateRecorder.h>
+#include "../../Body/Body.h"
+#include "../../StateRecorder.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -39,7 +39,7 @@ JPH_NAMESPACE_BEGIN
 class GearConstraintPart
 {
 	/// Internal helper function to update velocities of bodies after Lagrange multiplier is calculated
-	JPH_INLINE bool				ApplyVelocityStep(Body &ioBody1, Body &ioBody2, float inLambda) const
+	JPH_INLINE bool ApplyVelocityStep(Body &ioBody1, Body &ioBody2, float inLambda) const
 	{
 		// Apply impulse if delta is not zero
 		if (inLambda != 0.0f)
@@ -66,7 +66,7 @@ public:
 	/// @param inWorldSpaceHingeAxis1 The axis around which body 1 rotates
 	/// @param inWorldSpaceHingeAxis2 The axis around which body 2 rotates
 	/// @param inRatio The ratio between rotation and translation
-	inline void					CalculateConstraintProperties(const Body &inBody1, Vec3Arg inWorldSpaceHingeAxis1, const Body &inBody2, Vec3Arg inWorldSpaceHingeAxis2, float inRatio)
+	inline void CalculateConstraintProperties(const Body &inBody1, Vec3Arg inWorldSpaceHingeAxis1, const Body &inBody2, Vec3Arg inWorldSpaceHingeAxis2, float inRatio)
 	{
 		JPH_ASSERT(inWorldSpaceHingeAxis1.IsNormalized(1.0e-4f));
 		JPH_ASSERT(inWorldSpaceHingeAxis2.IsNormalized(1.0e-4f));
@@ -86,14 +86,14 @@ public:
 	}
 
 	/// Deactivate this constraint
-	inline void					Deactivate()
+	inline void Deactivate()
 	{
 		mEffectiveMass = 0.0f;
 		mTotalLambda = 0.0f;
 	}
 
 	/// Check if constraint is active
-	inline bool					IsActive() const
+	inline bool IsActive() const
 	{
 		return mEffectiveMass != 0.0f;
 	}
@@ -102,7 +102,7 @@ public:
 	/// @param ioBody1 The first body that this constraint is attached to
 	/// @param ioBody2 The second body that this constraint is attached to
 	/// @param inWarmStartImpulseRatio Ratio of new step to old time step (dt_new / dt_old) for scaling the lagrange multiplier of the previous frame
-	inline void					WarmStart(Body &ioBody1, Body &ioBody2, float inWarmStartImpulseRatio)
+	inline void WarmStart(Body &ioBody1, Body &ioBody2, float inWarmStartImpulseRatio)
 	{
 		mTotalLambda *= inWarmStartImpulseRatio;
 		ApplyVelocityStep(ioBody1, ioBody2, mTotalLambda);
@@ -114,7 +114,7 @@ public:
 	/// @param inWorldSpaceHingeAxis1 The axis around which body 1 rotates
 	/// @param inWorldSpaceHingeAxis2 The axis around which body 2 rotates
 	/// @param inRatio The ratio between rotation and translation
-	inline bool					SolveVelocityConstraint(Body &ioBody1, Vec3Arg inWorldSpaceHingeAxis1, Body &ioBody2, Vec3Arg inWorldSpaceHingeAxis2, float inRatio)
+	inline bool SolveVelocityConstraint(Body &ioBody1, Vec3Arg inWorldSpaceHingeAxis1, Body &ioBody2, Vec3Arg inWorldSpaceHingeAxis2, float inRatio)
 	{
 		// Lagrange multiplier is:
 		//
@@ -126,7 +126,7 @@ public:
 	}
 
 	/// Return lagrange multiplier
-	float						GetTotalLambda() const
+	float GetTotalLambda() const
 	{
 		return mTotalLambda;
 	}
@@ -136,7 +136,7 @@ public:
 	/// @param ioBody2 The second body that this constraint is attached to
 	/// @param inC Value of the constraint equation (C)
 	/// @param inBaumgarte Baumgarte constant (fraction of the error to correct)
-	inline bool					SolvePositionConstraint(Body &ioBody1, Body &ioBody2, float inC, float inBaumgarte) const
+	inline bool SolvePositionConstraint(Body &ioBody1, Body &ioBody2, float inC, float inBaumgarte) const
 	{
 		// Only apply position constraint when the constraint is hard, otherwise the velocity bias will fix the constraint
 		if (inC != 0.0f)
@@ -174,22 +174,22 @@ public:
 	}
 
 	/// Save state of this constraint part
-	void						SaveState(StateRecorder &inStream) const
+	void SaveState(StateRecorder &inStream) const
 	{
 		inStream.Write(mTotalLambda);
 	}
 
 	/// Restore state of this constraint part
-	void						RestoreState(StateRecorder &inStream)
+	void RestoreState(StateRecorder &inStream)
 	{
 		inStream.Read(mTotalLambda);
 	}
 
 private:
-	Vec3						mInvI1_A;
-	Vec3						mInvI2_B;
-	float						mEffectiveMass = 0.0f;
-	float						mTotalLambda = 0.0f;
+	Vec3 mInvI1_A;
+	Vec3 mInvI2_B;
+	float mEffectiveMass = 0.0f;
+	float mTotalLambda = 0.0f;
 };
 
 JPH_NAMESPACE_END

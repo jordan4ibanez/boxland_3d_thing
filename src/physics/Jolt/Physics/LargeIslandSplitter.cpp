@@ -1,18 +1,18 @@
 // SPDX-FileCopyrightText: 2023 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Physics/LargeIslandSplitter.h>
-#include <Jolt/Physics/IslandBuilder.h>
-#include <Jolt/Physics/Constraints/CalculateSolverSteps.h>
-#include <Jolt/Physics/Constraints/Constraint.h>
-#include <Jolt/Physics/Constraints/ContactConstraintManager.h>
-#include <Jolt/Physics/Body/BodyManager.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/TempAllocator.h>
+#include "LargeIslandSplitter.h"
+#include "IslandBuilder.h"
+#include "Constraints/CalculateSolverSteps.h"
+#include "Constraints/Constraint.h"
+#include "Constraints/ContactConstraintManager.h"
+#include "Body/BodyManager.h"
+#include "../Core/Profiler.h"
+#include "../Core/TempAllocator.h"
 
-//#define JPH_LARGE_ISLAND_SPLITTER_DEBUG
+// #define JPH_LARGE_ISLAND_SPLITTER_DEBUG
 
 JPH_NAMESPACE_BEGIN
 
@@ -164,9 +164,7 @@ void LargeIslandSplitter::Splits::MarkBatchProcessed(uint inNumProcessed, bool &
 			// If we're beyond the end of splits, go to the non-parallel split
 			if (split_index >= mNumSplits)
 				split_index = cNonParallelSplitIdx;
-		}
-		while (iteration < mNumIterations
-			&& mSplits[split_index].GetNumItems() == 0); // We don't support processing empty splits, skip to the next split in this case
+		} while (iteration < mNumIterations && mSplits[split_index].GetNumItems() == 0); // We don't support processing empty splits, skip to the next split in this case
 
 		mStatus.store((uint64(iteration) << StatusIterationShift) | (uint64(split_index) << StatusSplitShift), memory_order_release);
 	}
@@ -307,13 +305,13 @@ bool LargeIslandSplitter::SplitIsland(uint32 inIslandIndex, const IslandBuilder 
 	inIslandBuilder.GetBodiesInIsland(inIslandIndex, bodies_start, bodies_end);
 
 	// Reset the split mask for all bodies in this island
-	Body const * const *bodies = inBodyManager.GetBodies().data();
+	Body const *const *bodies = inBodyManager.GetBodies().data();
 	for (const BodyID *b = bodies_start; b < bodies_end; ++b)
 		mSplitMasks[bodies[b->GetIndex()]->GetIndexInActiveBodiesInternal()] = 0;
 
 	// Count the number of contacts and constraints per split
-	uint num_contacts_in_split[cNumSplits] = { };
-	uint num_constraints_in_split[cNumSplits] = { };
+	uint num_contacts_in_split[cNumSplits] = {};
+	uint num_constraints_in_split[cNumSplits] = {};
 
 	// Get space to store split indices
 	uint offset = mContactAndConstraintsNextFree.fetch_add(island_size, memory_order_relaxed);
@@ -367,8 +365,7 @@ bool LargeIslandSplitter::SplitIsland(uint32 inIslandIndex, const IslandBuilder 
 	for (uint s = 0; s < cNumSplits; ++s)
 	{
 		// If this split doesn't contain enough constraints and contacts, we will combine it with the non parallel split
-		if (num_constraints_in_split[s] + num_contacts_in_split[s] < cSplitCombineTreshold
-			&& s < cNonParallelSplitIdx) // The non-parallel split cannot merge into itself
+		if (num_constraints_in_split[s] + num_contacts_in_split[s] < cSplitCombineTreshold && s < cNonParallelSplitIdx) // The non-parallel split cannot merge into itself
 		{
 			// Remap it
 			split_remap_table[s] = cNonParallelSplitIdx;
@@ -514,7 +511,7 @@ LargeIslandSplitter::EStatus LargeIslandSplitter::FetchNextBatch(uint &outSplitI
 			return EStatus::BatchRetrieved;
 		}
 
-	return all_done? EStatus::AllBatchesDone : EStatus::WaitingForBatch;
+	return all_done ? EStatus::AllBatchesDone : EStatus::WaitingForBatch;
 }
 
 void LargeIslandSplitter::MarkBatchProcessed(uint inSplitIslandIndex, const uint32 *inConstraintsBegin, const uint32 *inConstraintsEnd, const uint32 *inContactsBegin, const uint32 *inContactsEnd, bool &outLastIteration, bool &outFinalBatch)

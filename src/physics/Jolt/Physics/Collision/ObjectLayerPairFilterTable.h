@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Physics/Collision/ObjectLayer.h>
+#include "../Collision/ObjectLayer.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -14,7 +14,7 @@ class ObjectLayerPairFilterTable : public ObjectLayerPairFilter
 {
 private:
 	/// Get which bit corresponds to the pair (inLayer1, inLayer2)
-	uint					GetBit(ObjectLayer inLayer1, ObjectLayer inLayer2) const
+	uint GetBit(ObjectLayer inLayer1, ObjectLayer inLayer2) const
 	{
 		// We store the lower left half only, so swap the inputs when trying to access the top right half
 		if (inLayer1 > inLayer2)
@@ -32,8 +32,7 @@ public:
 	JPH_OVERRIDE_NEW_DELETE
 
 	/// Constructs the table with inNumObjectLayers Layers, initially all layer pairs are disabled
-	explicit				ObjectLayerPairFilterTable(uint inNumObjectLayers) :
-		mNumObjectLayers(inNumObjectLayers)
+	explicit ObjectLayerPairFilterTable(uint inNumObjectLayers) : mNumObjectLayers(inNumObjectLayers)
 	{
 		// By default nothing collides
 		// For the first layer we only need to store 1 bit, for the second 2 bits, for the third 3 bits, etc.
@@ -43,27 +42,27 @@ public:
 	}
 
 	/// Get the number of object layers
-	uint					GetNumObjectLayers() const
+	uint GetNumObjectLayers() const
 	{
 		return mNumObjectLayers;
 	}
 
 	/// Disable collision between two object layers
-	void					DisableCollision(ObjectLayer inLayer1, ObjectLayer inLayer2)
+	void DisableCollision(ObjectLayer inLayer1, ObjectLayer inLayer2)
 	{
 		uint bit = GetBit(inLayer1, inLayer2);
 		mTable[bit >> 3] &= (0xff ^ (1 << (bit & 0b111)));
 	}
 
 	/// Enable collision between two object layers
-	void					EnableCollision(ObjectLayer inLayer1, ObjectLayer inLayer2)
+	void EnableCollision(ObjectLayer inLayer1, ObjectLayer inLayer2)
 	{
 		uint bit = GetBit(inLayer1, inLayer2);
 		mTable[bit >> 3] |= 1 << (bit & 0b111);
 	}
 
 	/// Returns true if two layers can collide
-	virtual bool			ShouldCollide(ObjectLayer inObject1, ObjectLayer inObject2) const override
+	virtual bool ShouldCollide(ObjectLayer inObject1, ObjectLayer inObject2) const override
 	{
 		// Test if the bit is set for this group pair
 		uint bit = GetBit(inObject1, inObject2);
@@ -71,8 +70,8 @@ public:
 	}
 
 private:
-	uint					mNumObjectLayers;							///< The number of layers that this table supports
-	Array<uint8>			mTable;										///< The table of bits that indicates which layers collide
+	uint mNumObjectLayers; ///< The number of layers that this table supports
+	Array<uint8> mTable;	 ///< The table of bits that indicates which layers collide
 };
 
 JPH_NAMESPACE_END

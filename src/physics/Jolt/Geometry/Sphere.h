@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Geometry/AABox.h>
+#include "../Geometry/AABox.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -14,35 +14,35 @@ public:
 	JPH_OVERRIDE_NEW_DELETE
 
 	/// Constructor
-	inline				Sphere() = default;
-	inline				Sphere(const Float3 &inCenter, float inRadius)			: mCenter(inCenter), mRadius(inRadius) { }
-	inline				Sphere(Vec3Arg inCenter, float inRadius)				: mRadius(inRadius) { inCenter.StoreFloat3(&mCenter); }
+	inline Sphere() = default;
+	inline Sphere(const Float3 &inCenter, float inRadius) : mCenter(inCenter), mRadius(inRadius) {}
+	inline Sphere(Vec3Arg inCenter, float inRadius) : mRadius(inRadius) { inCenter.StoreFloat3(&mCenter); }
 
 	/// Calculate the support vector for this convex shape.
-	inline Vec3			GetSupport(Vec3Arg inDirection) const
+	inline Vec3 GetSupport(Vec3Arg inDirection) const
 	{
 		float length = inDirection.Length();
-		return length > 0.0f ? Vec3::sLoadFloat3Unsafe(mCenter) + (mRadius/ length) * inDirection : Vec3::sLoadFloat3Unsafe(mCenter);
+		return length > 0.0f ? Vec3::sLoadFloat3Unsafe(mCenter) + (mRadius / length) * inDirection : Vec3::sLoadFloat3Unsafe(mCenter);
 	}
 
 	// Properties
-	inline Vec3			GetCenter() const										{ return Vec3::sLoadFloat3Unsafe(mCenter); }
-	inline float		GetRadius() const										{ return mRadius; }
+	inline Vec3 GetCenter() const { return Vec3::sLoadFloat3Unsafe(mCenter); }
+	inline float GetRadius() const { return mRadius; }
 
 	/// Test if two spheres overlap
-	inline bool			Overlaps(const Sphere &inB) const
+	inline bool Overlaps(const Sphere &inB) const
 	{
 		return (Vec3::sLoadFloat3Unsafe(mCenter) - Vec3::sLoadFloat3Unsafe(inB.mCenter)).LengthSq() <= Square(mRadius + inB.mRadius);
 	}
 
 	/// Check if this sphere overlaps with a box
-	inline bool			Overlaps(const AABox &inOther) const
+	inline bool Overlaps(const AABox &inOther) const
 	{
 		return inOther.GetSqDistanceTo(GetCenter()) <= Square(mRadius);
 	}
 
 	/// Create the minimal sphere that encapsulates this sphere and inPoint
-	inline void			EncapsulatePoint(Vec3Arg inPoint)
+	inline void EncapsulatePoint(Vec3Arg inPoint)
 	{
 		// Calculate distance between point and center
 		Vec3 center = GetCenter();
@@ -65,8 +65,8 @@ public:
 	}
 
 private:
-	Float3				mCenter;
-	float				mRadius;
+	Float3 mCenter;
+	float mRadius;
 };
 
 JPH_NAMESPACE_END

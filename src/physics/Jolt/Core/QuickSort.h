@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Core/InsertionSort.h>
+#include "../Core/InsertionSort.h"
 
 JPH_NAMESPACE_BEGIN
 

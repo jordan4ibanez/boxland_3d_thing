@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Geometry/Indexify.h>
-#include <Jolt/Geometry/AABox.h>
+#include "../Geometry/Indexify.h"
+#include "../Geometry/AABox.h"
 
 JPH_NAMESPACE_BEGIN
 

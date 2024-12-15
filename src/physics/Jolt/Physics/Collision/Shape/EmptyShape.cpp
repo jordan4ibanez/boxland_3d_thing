@@ -2,23 +2,21 @@
 // SPDX-FileCopyrightText: 2024 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/EmptyShape.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/EmptyShape.h"
+#include "../../Collision/CollisionDispatch.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(EmptyShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(EmptyShapeSettings, ShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(EmptyShapeSettings){
+		JPH_ADD_BASE_CLASS(EmptyShapeSettings, ShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(EmptyShapeSettings, mCenterOfMass)
-}
+				JPH_ADD_ATTRIBUTE(EmptyShapeSettings, mCenterOfMass)}
 
 ShapeSettings::ShapeResult EmptyShapeSettings::Create() const
 {
@@ -46,7 +44,8 @@ void EmptyShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassTransfo
 void EmptyShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::Empty);
-	f.mConstruct = []() -> Shape * { return new EmptyShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new EmptyShape; };
 	f.mColor = Color::sBlack;
 
 	auto collide_empty = []([[maybe_unused]] const Shape *inShape1, [[maybe_unused]] const Shape *inShape2, [[maybe_unused]] Vec3Arg inScale1, [[maybe_unused]] Vec3Arg inScale2, [[maybe_unused]] Mat44Arg inCenterOfMassTransform1, [[maybe_unused]] Mat44Arg inCenterOfMassTransform2, [[maybe_unused]] const SubShapeIDCreator &inSubShapeIDCreator1, [[maybe_unused]] const SubShapeIDCreator &inSubShapeIDCreator2, [[maybe_unused]] const CollideShapeSettings &inCollideShapeSettings, [[maybe_unused]] CollideShapeCollector &ioCollector, [[maybe_unused]] const ShapeFilter &inShapeFilter) { /* Do Nothing */ };

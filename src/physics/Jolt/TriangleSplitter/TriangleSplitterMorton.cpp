@@ -2,16 +2,15 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/TriangleSplitter/TriangleSplitterMorton.h>
-#include <Jolt/Geometry/MortonCode.h>
-#include <Jolt/Core/QuickSort.h>
+#include "../TriangleSplitter/TriangleSplitterMorton.h"
+#include "../Geometry/MortonCode.h"
+#include "../Core/QuickSort.h"
 
 JPH_NAMESPACE_BEGIN
 
-TriangleSplitterMorton::TriangleSplitterMorton(const VertexList &inVertices, const IndexedTriangleList &inTriangles) :
-	TriangleSplitter(inVertices, inTriangles)
+TriangleSplitterMorton::TriangleSplitterMorton(const VertexList &inVertices, const IndexedTriangleList &inTriangles) : TriangleSplitter(inVertices, inTriangles)
 {
 	// Calculate bounds of centroids
 	AABox bounds;
@@ -28,7 +27,8 @@ TriangleSplitterMorton::TriangleSplitterMorton(const VertexList &inVertices, con
 
 	// Sort triangles on morton code
 	const Array<uint32> &morton_codes = mMortonCodes;
-	QuickSort(mSortedTriangleIdx.begin(), mSortedTriangleIdx.end(), [&morton_codes](uint inLHS, uint inRHS) { return morton_codes[inLHS] < morton_codes[inRHS]; });
+	QuickSort(mSortedTriangleIdx.begin(), mSortedTriangleIdx.end(), [&morton_codes](uint inLHS, uint inRHS)
+						{ return morton_codes[inLHS] < morton_codes[inRHS]; });
 }
 
 bool TriangleSplitterMorton::Split(const Range &inTriangles, Range &outLeft, Range &outRight)
@@ -43,7 +43,7 @@ bool TriangleSplitterMorton::Split(const Range &inTriangles, Range &outLeft, Ran
 	uint step = inTriangles.Count();
 	do
 	{
-		step = (step + 1) >> 1; // Exponential decrease
+		step = (step + 1) >> 1;				 // Exponential decrease
 		uint new_split = split + step; // Proposed new position
 		if (new_split < inTriangles.mEnd)
 		{
@@ -52,8 +52,7 @@ bool TriangleSplitterMorton::Split(const Range &inTriangles, Range &outLeft, Ran
 			if (split_prefix > common_prefix)
 				split = new_split; // Accept proposal
 		}
-	}
-	while (step > 1);
+	} while (step > 1);
 
 	outLeft = Range(inTriangles.mBegin, split + 1);
 	outRight = Range(split + 1, inTriangles.mEnd);

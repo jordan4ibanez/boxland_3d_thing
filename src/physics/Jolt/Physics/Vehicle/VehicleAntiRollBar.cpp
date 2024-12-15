@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Vehicle/VehicleAntiRollBar.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../Vehicle/VehicleAntiRollBar.h"
+#include "../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 

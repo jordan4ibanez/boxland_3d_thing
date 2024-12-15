@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Core/HashCombine.h>
+#include "../Core/HashCombine.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -14,30 +14,30 @@ class [[nodiscard]] Float3
 public:
 	JPH_OVERRIDE_NEW_DELETE
 
-				Float3() = default; ///< Intentionally not initialized for performance reasons
-				Float3(const Float3 &inRHS) = default;
-	Float3 &	operator = (const Float3 &inRHS) = default;
-	constexpr	Float3(float inX, float inY, float inZ) : x(inX), y(inY), z(inZ) { }
+	Float3() = default; ///< Intentionally not initialized for performance reasons
+	Float3(const Float3 &inRHS) = default;
+	Float3 &operator=(const Float3 &inRHS) = default;
+	constexpr Float3(float inX, float inY, float inZ) : x(inX), y(inY), z(inZ) {}
 
-	float		operator [] (int inCoordinate) const
+	float operator[](int inCoordinate) const
 	{
 		JPH_ASSERT(inCoordinate < 3);
 		return *(&x + inCoordinate);
 	}
 
-	bool		operator == (const Float3 &inRHS) const
+	bool operator==(const Float3 &inRHS) const
 	{
 		return x == inRHS.x && y == inRHS.y && z == inRHS.z;
 	}
 
-	bool		operator != (const Float3 &inRHS) const
+	bool operator!=(const Float3 &inRHS) const
 	{
 		return x != inRHS.x || y != inRHS.y || z != inRHS.z;
 	}
 
-	float		x;
-	float		y;
-	float		z;
+	float x;
+	float y;
+	float z;
 };
 
 using VertexList = Array<Float3>;

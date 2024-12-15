@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/SwingTwistConstraint.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Constraints/SwingTwistConstraint.h"
+#include "../Body/Body.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -89,15 +89,14 @@ void SwingTwistConstraint::UpdateLimits()
 	mSwingTwistConstraintPart.SetLimits(mTwistMinAngle, mTwistMaxAngle, -mPlaneHalfConeAngle, mPlaneHalfConeAngle, -mNormalHalfConeAngle, mNormalHalfConeAngle);
 }
 
-SwingTwistConstraint::SwingTwistConstraint(Body &inBody1, Body &inBody2, const SwingTwistConstraintSettings &inSettings) :
-	TwoBodyConstraint(inBody1, inBody2, inSettings),
-	mNormalHalfConeAngle(inSettings.mNormalHalfConeAngle),
-	mPlaneHalfConeAngle(inSettings.mPlaneHalfConeAngle),
-	mTwistMinAngle(inSettings.mTwistMinAngle),
-	mTwistMaxAngle(inSettings.mTwistMaxAngle),
-	mMaxFrictionTorque(inSettings.mMaxFrictionTorque),
-	mSwingMotorSettings(inSettings.mSwingMotorSettings),
-	mTwistMotorSettings(inSettings.mTwistMotorSettings)
+SwingTwistConstraint::SwingTwistConstraint(Body &inBody1, Body &inBody2, const SwingTwistConstraintSettings &inSettings) : TwoBodyConstraint(inBody1, inBody2, inSettings),
+																																																													 mNormalHalfConeAngle(inSettings.mNormalHalfConeAngle),
+																																																													 mPlaneHalfConeAngle(inSettings.mPlaneHalfConeAngle),
+																																																													 mTwistMinAngle(inSettings.mTwistMinAngle),
+																																																													 mTwistMaxAngle(inSettings.mTwistMaxAngle),
+																																																													 mMaxFrictionTorque(inSettings.mMaxFrictionTorque),
+																																																													 mSwingMotorSettings(inSettings.mSwingMotorSettings),
+																																																													 mTwistMotorSettings(inSettings.mTwistMotorSettings)
 {
 	// Override swing type
 	mSwingTwistConstraintPart.SetSwingType(inSettings.mSwingType);
@@ -223,7 +222,7 @@ void SwingTwistConstraint::SetupVelocityConstraint(float inDeltaTime)
 		if (mSwingMotorState == EMotorState::Position || mTwistMotorState == EMotorState::Position)
 		{
 			// Get target orientation along the shortest path from q
-			Quat target_orientation = q.Dot(mTargetOrientation) > 0.0f? mTargetOrientation : -mTargetOrientation;
+			Quat target_orientation = q.Dot(mTargetOrientation) > 0.0f ? mTargetOrientation : -mTargetOrientation;
 
 			// The definition of the constraint rotation q:
 			// R2 * ConstraintToBody2 = R1 * ConstraintToBody1 * q (1)

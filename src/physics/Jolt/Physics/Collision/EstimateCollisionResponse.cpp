@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/EstimateCollisionResponse.h>
-#include <Jolt/Physics/Body/Body.h>
+#include "../Collision/EstimateCollisionResponse.h"
+#include "../Body/Body.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -76,7 +76,7 @@ void EstimateCollisionResponse(const Body &inBody1, const Body &inBody2, const C
 
 	struct AxisConstraint
 	{
-		inline void		Initialize(Vec3Arg inR1, Vec3Arg inR2, Vec3Arg inWorldSpaceNormal, float inInvM1, float inInvM2, Mat44Arg inInvI1, Mat44Arg inInvI2)
+		inline void Initialize(Vec3Arg inR1, Vec3Arg inR2, Vec3Arg inWorldSpaceNormal, float inInvM1, float inInvM2, Mat44Arg inInvI1, Mat44Arg inInvI2)
 		{
 			// Calculate effective mass: K^-1 = (J M^-1 J^T)^-1
 			mR1PlusUxAxis = inR1.Cross(inWorldSpaceNormal);
@@ -87,7 +87,7 @@ void EstimateCollisionResponse(const Body &inBody1, const Body &inBody2, const C
 			mBias = 0.0f;
 		}
 
-		inline float	SolveGetLambda(Vec3Arg inWorldSpaceNormal, const CollisionEstimationResult &inResult) const
+		inline float SolveGetLambda(Vec3Arg inWorldSpaceNormal, const CollisionEstimationResult &inResult) const
 		{
 			// Calculate jacobian multiplied by linear/angular velocity
 			float jv = inWorldSpaceNormal.Dot(inResult.mLinearVelocity1 - inResult.mLinearVelocity2) + mR1PlusUxAxis.Dot(inResult.mAngularVelocity1) - mR2xAxis.Dot(inResult.mAngularVelocity2);
@@ -98,7 +98,7 @@ void EstimateCollisionResponse(const Body &inBody1, const Body &inBody2, const C
 			return mEffectiveMass * (jv - mBias);
 		}
 
-		inline void		SolveApplyLambda(Vec3Arg inWorldSpaceNormal, float inInvM1, float inInvM2, float inLambda, CollisionEstimationResult &ioResult) const
+		inline void SolveApplyLambda(Vec3Arg inWorldSpaceNormal, float inInvM1, float inInvM2, float inLambda, CollisionEstimationResult &ioResult) const
 		{
 			// Apply impulse to body velocities
 			ioResult.mLinearVelocity1 -= (inLambda * inInvM1) * inWorldSpaceNormal;
@@ -107,7 +107,7 @@ void EstimateCollisionResponse(const Body &inBody1, const Body &inBody2, const C
 			ioResult.mAngularVelocity2 += inLambda * mInvI2_R2xAxis;
 		}
 
-		inline void		Solve(Vec3Arg inWorldSpaceNormal, float inInvM1, float inInvM2, float inMinLambda, float inMaxLambda, float &ioTotalLambda, CollisionEstimationResult &ioResult) const
+		inline void Solve(Vec3Arg inWorldSpaceNormal, float inInvM1, float inInvM2, float inMinLambda, float inMaxLambda, float &ioTotalLambda, CollisionEstimationResult &ioResult) const
 		{
 			// Calculate new total lambda
 			float total_lambda = ioTotalLambda + SolveGetLambda(inWorldSpaceNormal, ioResult);
@@ -120,19 +120,19 @@ void EstimateCollisionResponse(const Body &inBody1, const Body &inBody2, const C
 			ioTotalLambda = total_lambda;
 		}
 
-		Vec3			mR1PlusUxAxis;
-		Vec3			mR2xAxis;
-		Vec3			mInvI1_R1PlusUxAxis;
-		Vec3			mInvI2_R2xAxis;
-		float			mEffectiveMass;
-		float			mBias;
+		Vec3 mR1PlusUxAxis;
+		Vec3 mR2xAxis;
+		Vec3 mInvI1_R1PlusUxAxis;
+		Vec3 mInvI2_R2xAxis;
+		float mEffectiveMass;
+		float mBias;
 	};
 
 	struct Constraint
 	{
-		AxisConstraint	mContact;
-		AxisConstraint	mFriction1;
-		AxisConstraint	mFriction2;
+		AxisConstraint mContact;
+		AxisConstraint mFriction1;
+		AxisConstraint mFriction2;
 	};
 
 	// Initialize the constraint properties
@@ -170,7 +170,7 @@ void EstimateCollisionResponse(const Body &inBody1, const Body &inBody2, const C
 	}
 
 	// If there's only 1 contact point, we only need 1 iteration
-	int num_iterations = inCombinedFriction <= 0.0f && num_points == 1? 1 : inNumIterations;
+	int num_iterations = inCombinedFriction <= 0.0f && num_points == 1 ? 1 : inNumIterations;
 
 	// Solve iteratively
 	for (int iteration = 0; iteration < num_iterations; ++iteration)

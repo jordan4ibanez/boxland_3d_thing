@@ -2,22 +2,22 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/CylinderShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/Shape/GetTrianglesContext.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/CollidePointResult.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/CollideSoftBodyVertexIterator.h>
-#include <Jolt/Geometry/RayCylinder.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../../Collision/Shape/CylinderShape.h"
+#include "../../Collision/Shape/ScaleHelpers.h"
+#include "../../Collision/Shape/GetTrianglesContext.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/CastResult.h"
+#include "../../Collision/CollidePointResult.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../Collision/CollideSoftBodyVertexIterator.h"
+#include "../../../Geometry/RayCylinder.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -33,18 +33,18 @@ JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(CylinderShapeSettings)
 
 // Approximation of top face with 8 vertices
 static const Vec3 cCylinderTopFace[] =
-{
-	Vec3(0.0f,			1.0f,	1.0f),
-	Vec3(0.707106769f,	1.0f,	0.707106769f),
-	Vec3(1.0f,			1.0f,	0.0f),
-	Vec3(0.707106769f,	1.0f,	-0.707106769f),
-	Vec3(-0.0f,			1.0f,	-1.0f),
-	Vec3(-0.707106769f,	1.0f,	-0.707106769f),
-	Vec3(-1.0f,			1.0f,	0.0f),
-	Vec3(-0.707106769f,	1.0f,	0.707106769f)
-};
+		{
+				Vec3(0.0f, 1.0f, 1.0f),
+				Vec3(0.707106769f, 1.0f, 0.707106769f),
+				Vec3(1.0f, 1.0f, 0.0f),
+				Vec3(0.707106769f, 1.0f, -0.707106769f),
+				Vec3(-0.0f, 1.0f, -1.0f),
+				Vec3(-0.707106769f, 1.0f, -0.707106769f),
+				Vec3(-1.0f, 1.0f, 0.0f),
+				Vec3(-0.707106769f, 1.0f, 0.707106769f)};
 
-static const StaticArray<Vec3, 96> sUnitCylinderTriangles = []() {
+static const StaticArray<Vec3, 96> sUnitCylinderTriangles = []()
+{
 	StaticArray<Vec3, 96> verts;
 
 	const Vec3 bottom_offset(0.0f, -2.0f, 0.0f);
@@ -87,11 +87,10 @@ ShapeSettings::ShapeResult CylinderShapeSettings::Create() const
 	return mCachedResult;
 }
 
-CylinderShape::CylinderShape(const CylinderShapeSettings &inSettings, ShapeResult &outResult) :
-	ConvexShape(EShapeSubType::Cylinder, inSettings, outResult),
-	mHalfHeight(inSettings.mHalfHeight),
-	mRadius(inSettings.mRadius),
-	mConvexRadius(inSettings.mConvexRadius)
+CylinderShape::CylinderShape(const CylinderShapeSettings &inSettings, ShapeResult &outResult) : ConvexShape(EShapeSubType::Cylinder, inSettings, outResult),
+																																																mHalfHeight(inSettings.mHalfHeight),
+																																																mRadius(inSettings.mRadius),
+																																																mConvexRadius(inSettings.mConvexRadius)
 {
 	if (inSettings.mHalfHeight < inSettings.mConvexRadius)
 	{
@@ -114,11 +113,10 @@ CylinderShape::CylinderShape(const CylinderShapeSettings &inSettings, ShapeResul
 	outResult.Set(this);
 }
 
-CylinderShape::CylinderShape(float inHalfHeight, float inRadius, float inConvexRadius, const PhysicsMaterial *inMaterial) :
-	ConvexShape(EShapeSubType::Cylinder, inMaterial),
-	mHalfHeight(inHalfHeight),
-	mRadius(inRadius),
-	mConvexRadius(inConvexRadius)
+CylinderShape::CylinderShape(float inHalfHeight, float inRadius, float inConvexRadius, const PhysicsMaterial *inMaterial) : ConvexShape(EShapeSubType::Cylinder, inMaterial),
+																																																														mHalfHeight(inHalfHeight),
+																																																														mRadius(inRadius),
+																																																														mConvexRadius(inConvexRadius)
 {
 	JPH_ASSERT(inHalfHeight >= inConvexRadius);
 	JPH_ASSERT(inRadius >= inConvexRadius);
@@ -128,16 +126,15 @@ CylinderShape::CylinderShape(float inHalfHeight, float inRadius, float inConvexR
 class CylinderShape::Cylinder final : public Support
 {
 public:
-					Cylinder(float inHalfHeight, float inRadius, float inConvexRadius) :
-		mHalfHeight(inHalfHeight),
-		mRadius(inRadius),
-		mConvexRadius(inConvexRadius)
+	Cylinder(float inHalfHeight, float inRadius, float inConvexRadius) : mHalfHeight(inHalfHeight),
+																																			 mRadius(inRadius),
+																																			 mConvexRadius(inConvexRadius)
 	{
 		static_assert(sizeof(Cylinder) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(Cylinder)));
 	}
 
-	virtual Vec3	GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		// Support mapping, taken from:
 		// A Fast and Robust GJK Implementation for Collision Detection of Convex Objects - Gino van den Bergen
@@ -150,15 +147,15 @@ public:
 			return Vec3(0, Sign(y) * mHalfHeight, 0);
 	}
 
-	virtual float	GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return mConvexRadius;
 	}
 
 private:
-	float			mHalfHeight;
-	float			mRadius;
-	float			mConvexRadius;
+	float mHalfHeight;
+	float mRadius;
+	float mConvexRadius;
 };
 
 const ConvexShape::Support *CylinderShape::GetSupportFunction(ESupportMode inMode, SupportBuffer &inBuffer, Vec3Arg inScale) const
@@ -215,7 +212,7 @@ void CylinderShape::GetSupportingFace(const SubShapeID &inSubShapeID, Vec3Arg in
 	else
 	{
 		// Hitting top or bottom
-		Vec3 multiplier = y < 0.0f? Vec3(scaled_radius, scaled_half_height, scaled_radius) : Vec3(-scaled_radius, -scaled_half_height, scaled_radius);
+		Vec3 multiplier = y < 0.0f ? Vec3(scaled_radius, scaled_half_height, scaled_radius) : Vec3(-scaled_radius, -scaled_half_height, scaled_radius);
 		Mat44 transform = inCenterOfMassTransform.PreScaled(multiplier);
 		for (const Vec3 &v : cCylinderTopFace)
 			outVertices.push_back(transform * v);
@@ -258,7 +255,7 @@ Vec3 CylinderShape::GetSurfaceNormal(const SubShapeID &inSubShapeID, Vec3Arg inL
 	if (distance_to_curved_surface < distance_to_top_or_bottom)
 		return local_surface_position_xz / local_surface_position_xz_len;
 	else
-		return inLocalSurfacePosition.GetY() > 0.0f? Vec3::sAxisY() : -Vec3::sAxisY();
+		return inLocalSurfacePosition.GetY() > 0.0f ? Vec3::sAxisY() : -Vec3::sAxisY();
 }
 
 AABox CylinderShape::GetLocalBounds() const
@@ -270,8 +267,8 @@ AABox CylinderShape::GetLocalBounds() const
 #ifdef JPH_DEBUG_RENDERER
 void CylinderShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassTransform, Vec3Arg inScale, ColorArg inColor, bool inUseMaterialColors, bool inDrawWireframe) const
 {
-	DebugRenderer::EDrawMode draw_mode = inDrawWireframe? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
-	inRenderer->DrawCylinder(inCenterOfMassTransform * Mat44::sScale(inScale.Abs()), mHalfHeight, mRadius, inUseMaterialColors? GetMaterial()->GetDebugColor() : inColor, DebugRenderer::ECastShadow::On, draw_mode);
+	DebugRenderer::EDrawMode draw_mode = inDrawWireframe ? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
+	inRenderer->DrawCylinder(inCenterOfMassTransform * Mat44::sScale(inScale.Abs()), mHalfHeight, mRadius, inUseMaterialColors ? GetMaterial()->GetDebugColor() : inColor, DebugRenderer::ECastShadow::On, draw_mode);
 }
 #endif // JPH_DEBUG_RENDERER
 
@@ -295,9 +292,9 @@ void CylinderShape::CollidePoint(Vec3Arg inPoint, const SubShapeIDCreator &inSub
 		return;
 
 	// Check if the point is in the cylinder
-	if (abs(inPoint.GetY()) <= mHalfHeight											// Within the height
-		&& Square(inPoint.GetX()) + Square(inPoint.GetZ()) <= Square(mRadius))		// Within the radius
-		ioCollector.AddHit({ TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID() });
+	if (abs(inPoint.GetY()) <= mHalfHeight																		 // Within the height
+			&& Square(inPoint.GetX()) + Square(inPoint.GetZ()) <= Square(mRadius)) // Within the radius
+		ioCollector.AddHit({TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID()});
 }
 
 void CylinderShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale, const CollideSoftBodyVertexIterator &inVertices, uint inNumVertices, int inCollidingShapeIndex) const
@@ -335,7 +332,7 @@ void CylinderShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Ve
 			else if (side_penetration < top_penetration)
 			{
 				// Side surface is closest
-				normal = side_normal_length > 0.0f? side_normal / side_normal_length : Vec3::sAxisX();
+				normal = side_normal_length > 0.0f ? side_normal / side_normal_length : Vec3::sAxisX();
 				point = radius * normal;
 			}
 			else
@@ -397,7 +394,8 @@ Vec3 CylinderShape::MakeScaleValid(Vec3Arg inScale) const
 void CylinderShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::Cylinder);
-	f.mConstruct = []() -> Shape * { return new CylinderShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new CylinderShape; };
 	f.mColor = Color::sGreen;
 }
 

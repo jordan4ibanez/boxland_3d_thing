@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Physics/Collision/ObjectLayer.h>
+#include "../Collision/ObjectLayer.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -19,10 +19,10 @@ public:
 
 	/// Number of bits for the group and mask bits
 	static constexpr uint32 cNumBits = JPH_OBJECT_LAYER_BITS / 2;
-	static constexpr uint32	cMask = (1 << cNumBits) - 1;
+	static constexpr uint32 cMask = (1 << cNumBits) - 1;
 
 	/// Construct an ObjectLayer from a group and mask bits
-	static ObjectLayer		sGetObjectLayer(uint32 inGroup, uint32 inMask = cMask)
+	static ObjectLayer sGetObjectLayer(uint32 inGroup, uint32 inMask = cMask)
 	{
 		JPH_ASSERT((inGroup & ~cMask) == 0);
 		JPH_ASSERT((inMask & ~cMask) == 0);
@@ -30,22 +30,21 @@ public:
 	}
 
 	/// Get the group bits from an ObjectLayer
-	static inline uint32	sGetGroup(ObjectLayer inObjectLayer)
+	static inline uint32 sGetGroup(ObjectLayer inObjectLayer)
 	{
 		return uint32(inObjectLayer) & cMask;
 	}
 
 	/// Get the mask bits from an ObjectLayer
-	static inline uint32	sGetMask(ObjectLayer inObjectLayer)
+	static inline uint32 sGetMask(ObjectLayer inObjectLayer)
 	{
 		return uint32(inObjectLayer) >> cNumBits;
 	}
 
 	/// Returns true if two layers can collide
-	virtual bool			ShouldCollide(ObjectLayer inObject1, ObjectLayer inObject2) const override
+	virtual bool ShouldCollide(ObjectLayer inObject1, ObjectLayer inObject2) const override
 	{
-		return (sGetGroup(inObject1) & sGetMask(inObject2)) != 0
-			&& (sGetGroup(inObject2) & sGetMask(inObject1)) != 0;
+		return (sGetGroup(inObject1) & sGetMask(inObject2)) != 0 && (sGetGroup(inObject2) & sGetMask(inObject1)) != 0;
 	}
 };
 

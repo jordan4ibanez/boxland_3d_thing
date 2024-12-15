@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Geometry/AABox.h>
+#include "../Geometry/AABox.h"
 
 JPH_NAMESPACE_BEGIN
 

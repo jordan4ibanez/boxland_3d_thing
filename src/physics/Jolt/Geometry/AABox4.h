@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Geometry/OrientedBox.h>
+#include "../Geometry/OrientedBox.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -92,22 +92,22 @@ JPH_INLINE UVec4 AABox4VsBox(Mat44Arg inOrientation, Vec3Arg inHalfExtents, Vec4
 	// Note that the code is swapped around: A is the aabox and B is the oriented box (this saves us from having to invert the orientation of the oriented box)
 
 	// Compute translation vector t (the translation of B in the space of A)
-	Vec4 t[3] {
-		inOrientation.GetTranslation().SplatX() - 0.5f * (inBoxMinX + inBoxMaxX),
-		inOrientation.GetTranslation().SplatY() - 0.5f * (inBoxMinY + inBoxMaxY),
-		inOrientation.GetTranslation().SplatZ() - 0.5f * (inBoxMinZ + inBoxMaxZ) };
+	Vec4 t[3]{
+			inOrientation.GetTranslation().SplatX() - 0.5f * (inBoxMinX + inBoxMaxX),
+			inOrientation.GetTranslation().SplatY() - 0.5f * (inBoxMinY + inBoxMaxY),
+			inOrientation.GetTranslation().SplatZ() - 0.5f * (inBoxMinZ + inBoxMaxZ)};
 
 	// Compute common subexpressions. Add in an epsilon term to
 	// counteract arithmetic errors when two edges are parallel and
 	// their cross product is (near) null (see text for details)
 	Vec3 epsilon = Vec3::sReplicate(inEpsilon);
-	Vec3 abs_r[3] { inOrientation.GetAxisX().Abs() + epsilon, inOrientation.GetAxisY().Abs() + epsilon, inOrientation.GetAxisZ().Abs() + epsilon };
+	Vec3 abs_r[3]{inOrientation.GetAxisX().Abs() + epsilon, inOrientation.GetAxisY().Abs() + epsilon, inOrientation.GetAxisZ().Abs() + epsilon};
 
 	// Half extents for a
-	Vec4 a_half_extents[3] {
-		0.5f * (inBoxMaxX - inBoxMinX),
-		0.5f * (inBoxMaxY - inBoxMinY),
-		0.5f * (inBoxMaxZ - inBoxMinZ) };
+	Vec4 a_half_extents[3]{
+			0.5f * (inBoxMaxX - inBoxMinX),
+			0.5f * (inBoxMaxY - inBoxMinY),
+			0.5f * (inBoxMaxZ - inBoxMinZ)};
 
 	// Half extents of b
 	Vec4 b_half_extents_x = inHalfExtents.SplatX();

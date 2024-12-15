@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Geometry/Triangle.h>
-#include <Jolt/Geometry/IndexedTriangle.h>
+#include "../Geometry/Triangle.h"
+#include "../Geometry/IndexedTriangle.h"
 
 JPH_NAMESPACE_BEGIN
 

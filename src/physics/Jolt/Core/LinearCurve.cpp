@@ -2,20 +2,18 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Core/LinearCurve.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../Core/LinearCurve.h"
+#include "../Core/StreamIn.h"
+#include "../Core/StreamOut.h"
+#include "../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(LinearCurve::Point)
-{
-	JPH_ADD_ATTRIBUTE(Point, mX)
-	JPH_ADD_ATTRIBUTE(Point, mY)
-}
+JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(LinearCurve::Point){
+		JPH_ADD_ATTRIBUTE(Point, mX)
+				JPH_ADD_ATTRIBUTE(Point, mY)}
 
 JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(LinearCurve)
 {
@@ -27,7 +25,8 @@ float LinearCurve::GetValue(float inX) const
 	if (mPoints.empty())
 		return 0.0f;
 
-	Points::const_iterator i2 = std::lower_bound(mPoints.begin(), mPoints.end(), inX, [](const Point &inPoint, float inValue) { return inPoint.mX < inValue; });
+	Points::const_iterator i2 = std::lower_bound(mPoints.begin(), mPoints.end(), inX, [](const Point &inPoint, float inValue)
+																							 { return inPoint.mX < inValue; });
 
 	if (i2 == mPoints.begin())
 		return mPoints.front().mY;

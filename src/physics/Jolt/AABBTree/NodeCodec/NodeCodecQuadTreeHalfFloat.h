@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <Jolt/Core/ByteBuffer.h>
-#include <Jolt/Math/HalfFloat.h>
-#include <Jolt/AABBTree/AABBTreeBuilder.h>
+#include "../../Core/ByteBuffer.h"
+#include "../../Math/HalfFloat.h"
+#include "../../AABBTree/AABBTreeBuilder.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -15,44 +15,44 @@ class NodeCodecQuadTreeHalfFloat
 {
 public:
 	/// Number of child nodes of this node
-	static constexpr int				NumChildrenPerNode = 4;
+	static constexpr int NumChildrenPerNode = 4;
 
 	/// Header for the tree
 	struct Header
 	{
-		Float3							mRootBoundsMin;
-		Float3							mRootBoundsMax;
-		uint32							mRootProperties;
+		Float3 mRootBoundsMin;
+		Float3 mRootBoundsMax;
+		uint32 mRootProperties;
 	};
 
 	/// Size of the header (an empty struct is always > 0 bytes so this needs a separate variable)
-	static constexpr int				HeaderSize = sizeof(Header);
+	static constexpr int HeaderSize = sizeof(Header);
 
 	/// Stack size to use during DecodingContext::sWalkTree
-	static constexpr int				StackSize = 128;
+	static constexpr int StackSize = 128;
 
 	/// Node properties
 	enum : uint32
 	{
-		TRIANGLE_COUNT_BITS				= 4,
-		TRIANGLE_COUNT_SHIFT			= 28,
-		TRIANGLE_COUNT_MASK				= (1 << TRIANGLE_COUNT_BITS) - 1,
-		OFFSET_BITS						= 28,
-		OFFSET_MASK						= (1 << OFFSET_BITS) - 1,
-		OFFSET_NON_SIGNIFICANT_BITS		= 2,
-		OFFSET_NON_SIGNIFICANT_MASK		= (1 << OFFSET_NON_SIGNIFICANT_BITS) - 1,
+		TRIANGLE_COUNT_BITS = 4,
+		TRIANGLE_COUNT_SHIFT = 28,
+		TRIANGLE_COUNT_MASK = (1 << TRIANGLE_COUNT_BITS) - 1,
+		OFFSET_BITS = 28,
+		OFFSET_MASK = (1 << OFFSET_BITS) - 1,
+		OFFSET_NON_SIGNIFICANT_BITS = 2,
+		OFFSET_NON_SIGNIFICANT_MASK = (1 << OFFSET_NON_SIGNIFICANT_BITS) - 1,
 	};
 
 	/// Node structure
 	struct Node
 	{
-		HalfFloat						mBoundsMinX[4];			///< 4 child bounding boxes
-		HalfFloat						mBoundsMinY[4];
-		HalfFloat						mBoundsMinZ[4];
-		HalfFloat						mBoundsMaxX[4];
-		HalfFloat						mBoundsMaxY[4];
-		HalfFloat						mBoundsMaxZ[4];
-		uint32							mNodeProperties[4];		///< 4 child node properties
+		HalfFloat mBoundsMinX[4]; ///< 4 child bounding boxes
+		HalfFloat mBoundsMinY[4];
+		HalfFloat mBoundsMinZ[4];
+		HalfFloat mBoundsMaxX[4];
+		HalfFloat mBoundsMaxY[4];
+		HalfFloat mBoundsMaxZ[4];
+		uint32 mNodeProperties[4]; ///< 4 child node properties
 	};
 
 	static_assert(sizeof(Node) == 64, "Node should be 64 bytes");
@@ -62,7 +62,7 @@ public:
 	{
 	public:
 		/// Get an upper bound on the amount of bytes needed for a node tree with inNodeCount nodes
-		uint							GetPessimisticMemoryEstimate(uint inNodeCount) const
+		uint GetPessimisticMemoryEstimate(uint inNodeCount) const
 		{
 			return inNodeCount * (sizeof(Node) + Alignment - 1);
 		}
@@ -72,7 +72,7 @@ public:
 		/// Algorithm can enlarge the bounding boxes of the children during compression and returns these in outChildBoundsMin, outChildBoundsMax
 		/// inNodeBoundsMin, inNodeBoundsMax is the bounding box if inNode possibly widened by compressing the parent node
 		/// Returns uint(-1) on error and reports the error in outError
-		uint							NodeAllocate(const AABBTreeBuilder::Node *inNode, Vec3Arg inNodeBoundsMin, Vec3Arg inNodeBoundsMax, Array<const AABBTreeBuilder::Node *> &ioChildren, Vec3 outChildBoundsMin[NumChildrenPerNode], Vec3 outChildBoundsMax[NumChildrenPerNode], ByteBuffer &ioBuffer, const char *&outError) const
+		uint NodeAllocate(const AABBTreeBuilder::Node *inNode, Vec3Arg inNodeBoundsMin, Vec3Arg inNodeBoundsMax, Array<const AABBTreeBuilder::Node *> &ioChildren, Vec3 outChildBoundsMin[NumChildrenPerNode], Vec3 outChildBoundsMax[NumChildrenPerNode], ByteBuffer &ioBuffer, const char *&outError) const
 		{
 			// We don't emit nodes for leafs
 			if (!inNode->HasChildren())
@@ -133,7 +133,7 @@ public:
 		}
 
 		/// Once all nodes have been added, this call finalizes all nodes by patching in the offsets of the child nodes (that were added after the node itself was added)
-		bool						NodeFinalize(const AABBTreeBuilder::Node *inNode, uint inNodeStart, uint inNumChildren, const uint *inChildrenNodeStart, const uint *inChildrenTrianglesStart, ByteBuffer &ioBuffer, const char *&outError) const
+		bool NodeFinalize(const AABBTreeBuilder::Node *inNode, uint inNodeStart, uint inNumChildren, const uint *inChildrenNodeStart, const uint *inChildrenTrianglesStart, ByteBuffer &ioBuffer, const char *&outError) const
 		{
 			if (!inNode->HasChildren())
 				return true;
@@ -142,7 +142,7 @@ public:
 			for (uint i = 0; i < inNumChildren; ++i)
 			{
 				// If there are triangles, use the triangle offset otherwise use the node offset
-				uint offset = node->mNodeProperties[i] != 0? inChildrenTrianglesStart[i] : inChildrenNodeStart[i];
+				uint offset = node->mNodeProperties[i] != 0 ? inChildrenTrianglesStart[i] : inChildrenNodeStart[i];
 				if (offset & OFFSET_NON_SIGNIFICANT_MASK)
 				{
 					outError = "NodeCodecQuadTreeHalfFloat: Internal Error: Offset has non-significant bits set";
@@ -163,9 +163,9 @@ public:
 		}
 
 		/// Once all nodes have been finalized, this will finalize the header of the nodes
-		bool						Finalize(Header *outHeader, const AABBTreeBuilder::Node *inRoot, uint inRootNodeStart, uint inRootTrianglesStart, const char *&outError) const
+		bool Finalize(Header *outHeader, const AABBTreeBuilder::Node *inRoot, uint inRootNodeStart, uint inRootTrianglesStart, const char *&outError) const
 		{
-			uint offset = inRoot->HasChildren()? inRootNodeStart : inRootTrianglesStart;
+			uint offset = inRoot->HasChildren() ? inRootNodeStart : inRootTrianglesStart;
 			if (offset & OFFSET_NON_SIGNIFICANT_MASK)
 			{
 				outError = "NodeCodecQuadTreeHalfFloat: Internal Error: Offset has non-significant bits set";
@@ -196,19 +196,19 @@ public:
 	{
 	public:
 		/// Get the amount of bits needed to store an ID to a triangle block
-		inline static uint			sTriangleBlockIDBits(const ByteBuffer &inTree)
+		inline static uint sTriangleBlockIDBits(const ByteBuffer &inTree)
 		{
 			return 32 - CountLeadingZeros((uint32)inTree.size()) - OFFSET_NON_SIGNIFICANT_BITS;
 		}
 
 		/// Convert a triangle block ID to the start of the triangle buffer
-		inline static const void *	sGetTriangleBlockStart(const uint8 *inBufferStart, uint inTriangleBlockID)
+		inline static const void *sGetTriangleBlockStart(const uint8 *inBufferStart, uint inTriangleBlockID)
 		{
 			return inBufferStart + (inTriangleBlockID << OFFSET_NON_SIGNIFICANT_BITS);
 		}
 
 		/// Constructor
-		JPH_INLINE explicit			DecodingContext(const Header *inHeader)
+		JPH_INLINE explicit DecodingContext(const Header *inHeader)
 		{
 			// Start with the root node on the stack
 			mNodeStack[0] = inHeader->mRootProperties;
@@ -216,7 +216,7 @@ public:
 
 		/// Walk the node tree calling the Visitor::VisitNodes for each node encountered and Visitor::VisitTriangles for each triangle encountered
 		template <class TriangleContext, class Visitor>
-		JPH_INLINE void				WalkTree(const uint8 *inBufferStart, const TriangleContext &inTriangleContext, Visitor &ioVisitor)
+		JPH_INLINE void WalkTree(const uint8 *inBufferStart, const TriangleContext &inTriangleContext, Visitor &ioVisitor)
 		{
 			do
 			{
@@ -268,19 +268,18 @@ public:
 				do
 					--mTop;
 				while (mTop >= 0 && !ioVisitor.ShouldVisitNode(mTop));
-			}
-			while (mTop >= 0);
+			} while (mTop >= 0);
 		}
 
 		/// This can be used to have the visitor early out (ioVisitor.ShouldAbort() returns true) and later continue again (call WalkTree() again)
-		bool						IsDoneWalking() const
+		bool IsDoneWalking() const
 		{
 			return mTop < 0;
 		}
 
 	private:
-		uint32						mNodeStack[StackSize];
-		int							mTop = 0;
+		uint32 mNodeStack[StackSize];
+		int mTop = 0;
 	};
 };
 

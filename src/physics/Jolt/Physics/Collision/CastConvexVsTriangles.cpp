@@ -2,29 +2,28 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/CastConvexVsTriangles.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/ActiveEdges.h>
-#include <Jolt/Physics/Collision/NarrowPhaseStats.h>
-#include <Jolt/Geometry/EPAPenetrationDepth.h>
+#include "../Collision/CastConvexVsTriangles.h"
+#include "../Collision/TransformedShape.h"
+#include "../Collision/Shape/ScaleHelpers.h"
+#include "../Collision/ActiveEdges.h"
+#include "../Collision/NarrowPhaseStats.h"
+#include "../../Geometry/EPAPenetrationDepth.h"
 
 JPH_NAMESPACE_BEGIN
 
-CastConvexVsTriangles::CastConvexVsTriangles(const ShapeCast &inShapeCast, const ShapeCastSettings &inShapeCastSettings, Vec3Arg inScale, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, CastShapeCollector &ioCollector) :
-	mShapeCast(inShapeCast),
-	mShapeCastSettings(inShapeCastSettings),
-	mCenterOfMassTransform2(inCenterOfMassTransform2),
-	mScale(inScale),
-	mSubShapeIDCreator1(inSubShapeIDCreator1),
-	mCollector(ioCollector)
+CastConvexVsTriangles::CastConvexVsTriangles(const ShapeCast &inShapeCast, const ShapeCastSettings &inShapeCastSettings, Vec3Arg inScale, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, CastShapeCollector &ioCollector) : mShapeCast(inShapeCast),
+																																																																																																																															 mShapeCastSettings(inShapeCastSettings),
+																																																																																																																															 mCenterOfMassTransform2(inCenterOfMassTransform2),
+																																																																																																																															 mScale(inScale),
+																																																																																																																															 mSubShapeIDCreator1(inSubShapeIDCreator1),
+																																																																																																																															 mCollector(ioCollector)
 {
 	JPH_ASSERT(inShapeCast.mShape->GetType() == EShapeType::Convex);
 
 	// Determine if shape is inside out or not
-	mScaleSign = ScaleHelpers::IsInsideOut(inScale)? -1.0f : 1.0f;
+	mScaleSign = ScaleHelpers::IsInsideOut(inScale) ? -1.0f : 1.0f;
 }
 
 void CastConvexVsTriangles::Cast(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8 inActiveEdges, const SubShapeID &inSubShapeID2)
@@ -45,13 +44,13 @@ void CastConvexVsTriangles::Cast(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8
 		return;
 
 	// Create triangle support function
-	TriangleConvexSupport triangle { v0, v1, v2 };
+	TriangleConvexSupport triangle{v0, v1, v2};
 
 	// Check if we already created the cast shape support function
 	if (mSupport == nullptr)
 	{
 		// Determine if we want to use the actual shape or a shrunken shape with convex radius
-		ConvexShape::ESupportMode support_mode = mShapeCastSettings.mUseShrunkenShapeAndConvexRadius? ConvexShape::ESupportMode::ExcludeConvexRadius : ConvexShape::ESupportMode::Default;
+		ConvexShape::ESupportMode support_mode = mShapeCastSettings.mUseShrunkenShapeAndConvexRadius ? ConvexShape::ESupportMode::ExcludeConvexRadius : ConvexShape::ESupportMode::Default;
 
 		// Create support function
 		mSupport = static_cast<const ConvexShape *>(mShapeCast.mShape)->GetSupportFunction(support_mode, mSupportBuffer, mShapeCast.mScale);
@@ -70,7 +69,7 @@ void CastConvexVsTriangles::Cast(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8
 
 			// Update the contact normal to account for active edges
 			// Note that we flip the triangle normal as the penetration axis is pointing towards the triangle instead of away
-			contact_normal = ActiveEdges::FixNormal(v0, v1, v2, back_facing? triangle_normal : -triangle_normal, inActiveEdges, contact_point_b, contact_normal, active_edge_movement_direction);
+			contact_normal = ActiveEdges::FixNormal(v0, v1, v2, back_facing ? triangle_normal : -triangle_normal, inActiveEdges, contact_point_b, contact_normal, active_edge_movement_direction);
 		}
 
 		// Convert to world space

@@ -6,11 +6,11 @@
 
 // Include for __rdtsc
 #if defined(JPH_PLATFORM_WINDOWS)
-	#include <intrin.h>
+#include <intrin.h>
 #elif defined(JPH_CPU_X86) && defined(JPH_COMPILER_GCC)
-	#include <x86intrin.h>
+#include <x86intrin.h>
 #elif defined(JPH_CPU_E2K)
-	#include <x86intrin.h>
+#include <x86intrin.h>
 #endif
 
 JPH_NAMESPACE_BEGIN
@@ -33,14 +33,14 @@ JPH_INLINE uint64 GetProcessorTickCount()
 	return __rdtsc();
 #elif defined(JPH_CPU_ARM) && defined(JPH_USE_NEON)
 	uint64 val;
-	asm volatile("mrs %0, cntvct_el0" : "=r" (val));
+	asm volatile("mrs %0, cntvct_el0" : "=r"(val));
 	return val;
 #elif defined(JPH_CPU_ARM)
 	return 0; // Not supported
 #elif defined(JPH_CPU_WASM)
 	return 0; // Not supported
 #else
-	#error Undefined
+#error Undefined
 #endif
 }
 

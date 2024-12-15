@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Physics/StateRecorder.h>
+#include "../../Body/Body.h"
+#include "../../StateRecorder.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -39,7 +39,7 @@ JPH_NAMESPACE_BEGIN
 /// E = identity matrix.
 class PointConstraintPart
 {
-	JPH_INLINE bool				ApplyVelocityStep(Body &ioBody1, Body &ioBody2, Vec3Arg inLambda) const
+	JPH_INLINE bool ApplyVelocityStep(Body &ioBody1, Body &ioBody2, Vec3Arg inLambda) const
 	{
 		// Apply impulse if delta is not zero
 		if (inLambda != Vec3::sZero())
@@ -77,7 +77,7 @@ public:
 	/// @param inRotation2 The 3x3 rotation matrix for body 2 (translation part is ignored)
 	/// @param inR1 Local space vector from center of mass to constraint point for body 1
 	/// @param inR2 Local space vector from center of mass to constraint point for body 2
-	inline void					CalculateConstraintProperties(const Body &inBody1, Mat44Arg inRotation1, Vec3Arg inR1, const Body &inBody2, Mat44Arg inRotation2, Vec3Arg inR2)
+	inline void CalculateConstraintProperties(const Body &inBody1, Mat44Arg inRotation1, Vec3Arg inR1, const Body &inBody2, Mat44Arg inRotation2, Vec3Arg inR2)
 	{
 		// Positions where the point constraint acts on (middle point between center of masses) in world space
 		mR1 = inRotation1.Multiply3x3(inR1);
@@ -126,14 +126,14 @@ public:
 	}
 
 	/// Deactivate this constraint
-	inline void					Deactivate()
+	inline void Deactivate()
 	{
 		mEffectiveMass = Mat44::sZero();
 		mTotalLambda = Vec3::sZero();
 	}
 
 	/// Check if constraint is active
-	inline bool					IsActive() const
+	inline bool IsActive() const
 	{
 		return mEffectiveMass(3, 3) != 0.0f;
 	}
@@ -142,7 +142,7 @@ public:
 	/// @param ioBody1 The first body that this constraint is attached to
 	/// @param ioBody2 The second body that this constraint is attached to
 	/// @param inWarmStartImpulseRatio Ratio of new step to old time step (dt_new / dt_old) for scaling the lagrange multiplier of the previous frame
-	inline void					WarmStart(Body &ioBody1, Body &ioBody2, float inWarmStartImpulseRatio)
+	inline void WarmStart(Body &ioBody1, Body &ioBody2, float inWarmStartImpulseRatio)
 	{
 		mTotalLambda *= inWarmStartImpulseRatio;
 		ApplyVelocityStep(ioBody1, ioBody2, mTotalLambda);
@@ -151,7 +151,7 @@ public:
 	/// Iteratively update the velocity constraint. Makes sure d/dt C(...) = 0, where C is the constraint equation.
 	/// @param ioBody1 The first body that this constraint is attached to
 	/// @param ioBody2 The second body that this constraint is attached to
-	inline bool					SolveVelocityConstraint(Body &ioBody1, Body &ioBody2)
+	inline bool SolveVelocityConstraint(Body &ioBody1, Body &ioBody2)
 	{
 		// Calculate lagrange multiplier:
 		//
@@ -165,7 +165,7 @@ public:
 	/// @param ioBody1 The first body that this constraint is attached to
 	/// @param ioBody2 The second body that this constraint is attached to
 	/// @param inBaumgarte Baumgarte constant (fraction of the error to correct)
-	inline bool					SolvePositionConstraint(Body &ioBody1, Body &ioBody2, float inBaumgarte) const
+	inline bool SolvePositionConstraint(Body &ioBody1, Body &ioBody2, float inBaumgarte) const
 	{
 		Vec3 separation = (Vec3(ioBody2.GetCenterOfMassPosition() - ioBody1.GetCenterOfMassPosition()) + mR2 - mR1);
 		if (separation != Vec3::sZero())
@@ -210,30 +210,30 @@ public:
 	}
 
 	/// Return lagrange multiplier
-	Vec3						GetTotalLambda() const
+	Vec3 GetTotalLambda() const
 	{
 		return mTotalLambda;
 	}
 
 	/// Save state of this constraint part
-	void						SaveState(StateRecorder &inStream) const
+	void SaveState(StateRecorder &inStream) const
 	{
 		inStream.Write(mTotalLambda);
 	}
 
 	/// Restore state of this constraint part
-	void						RestoreState(StateRecorder &inStream)
+	void RestoreState(StateRecorder &inStream)
 	{
 		inStream.Read(mTotalLambda);
 	}
 
 private:
-	Vec3						mR1;
-	Vec3						mR2;
-	Mat44						mInvI1_R1X;
-	Mat44						mInvI2_R2X;
-	Mat44						mEffectiveMass;
-	Vec3						mTotalLambda { Vec3::sZero() };
+	Vec3 mR1;
+	Vec3 mR2;
+	Mat44 mInvI1_R1X;
+	Mat44 mInvI2_R2X;
+	Mat44 mEffectiveMass;
+	Vec3 mTotalLambda{Vec3::sZero()};
 };
 
 JPH_NAMESPACE_END

@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <Jolt/ObjectStream/SerializableObject.h>
-#include <Jolt/Core/Color.h>
-#include <Jolt/Geometry/AABox.h>
-#include <Jolt/Geometry/Triangle.h>
-#include <Jolt/Geometry/IndexedTriangle.h>
+#include "../ObjectStream/SerializableObject.h"
+#include "../Core/Color.h"
+#include "../Geometry/AABox.h"
+#include "../Geometry/Triangle.h"
+#include "../Geometry/IndexedTriangle.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -38,5 +38,5 @@ JPH_DECLARE_SERIALIZABLE_OUTSIDE_CLASS(JPH_EXPORT, Plane);
 JPH_NAMESPACE_END
 
 // These need to be added after all types have been registered or else clang under linux will not find GetRTTIOfType for the type
-#include <Jolt/ObjectStream/SerializableAttributeTyped.h>
-#include <Jolt/ObjectStream/SerializableAttributeEnum.h>
+#include "../ObjectStream/SerializableAttributeTyped.h"
+#include "../ObjectStream/SerializableAttributeEnum.h"

@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Physics/StateRecorder.h>
-#include <Jolt/Math/Vector.h>
-#include <Jolt/Math/Matrix.h>
+#include "../../Body/Body.h"
+#include "../../StateRecorder.h"
+#include "../../../Math/Vector.h"
+#include "../../../Math/Matrix.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -52,7 +52,7 @@ public:
 
 private:
 	/// Internal helper function to update velocities of bodies after Lagrange multiplier is calculated
-	JPH_INLINE bool				ApplyVelocityStep(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, const Vec2 &inLambda) const
+	JPH_INLINE bool ApplyVelocityStep(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, const Vec2 &inLambda) const
 	{
 		// Apply impulse if delta is not zero
 		if (!inLambda.IsZero())
@@ -84,7 +84,7 @@ private:
 	}
 
 	/// Internal helper function to calculate the lagrange multiplier
-	inline void					CalculateLagrangeMultiplier(const Body &inBody1, const Body &inBody2, Vec3Arg inN1, Vec3Arg inN2, Vec2 &outLambda) const
+	inline void CalculateLagrangeMultiplier(const Body &inBody1, const Body &inBody2, Vec3Arg inN1, Vec3Arg inN2, Vec2 &outLambda) const
 	{
 		// Calculate lagrange multiplier:
 		//
@@ -99,7 +99,7 @@ private:
 public:
 	/// Calculate properties used during the functions below
 	/// All input vectors are in world space
-	inline void					CalculateConstraintProperties(const Body &inBody1, Mat44Arg inRotation1, Vec3Arg inR1PlusU, const Body &inBody2, Mat44Arg inRotation2, Vec3Arg inR2, Vec3Arg inN1, Vec3Arg inN2)
+	inline void CalculateConstraintProperties(const Body &inBody1, Mat44Arg inRotation1, Vec3Arg inR1PlusU, const Body &inBody2, Mat44Arg inRotation2, Vec3Arg inR2, Vec3Arg inN1, Vec3Arg inN2)
 	{
 		JPH_ASSERT(inN1.IsNormalized(1.0e-5f));
 		JPH_ASSERT(inN2.IsNormalized(1.0e-5f));
@@ -155,21 +155,21 @@ public:
 	}
 
 	/// Deactivate this constraint
-	inline void					Deactivate()
+	inline void Deactivate()
 	{
 		mEffectiveMass.SetZero();
 		mTotalLambda.SetZero();
 	}
 
 	/// Check if constraint is active
-	inline bool					IsActive() const
+	inline bool IsActive() const
 	{
 		return !mEffectiveMass.IsZero();
 	}
 
 	/// Must be called from the WarmStartVelocityConstraint call to apply the previous frame's impulses
 	/// All input vectors are in world space
-	inline void					WarmStart(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, float inWarmStartImpulseRatio)
+	inline void WarmStart(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, float inWarmStartImpulseRatio)
 	{
 		mTotalLambda *= inWarmStartImpulseRatio;
 		ApplyVelocityStep(ioBody1, ioBody2, inN1, inN2, mTotalLambda);
@@ -177,7 +177,7 @@ public:
 
 	/// Iteratively update the velocity constraint. Makes sure d/dt C(...) = 0, where C is the constraint equation.
 	/// All input vectors are in world space
-	inline bool					SolveVelocityConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2)
+	inline bool SolveVelocityConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2)
 	{
 		Vec2 lambda;
 		CalculateLagrangeMultiplier(ioBody1, ioBody2, inN1, inN2, lambda);
@@ -190,7 +190,7 @@ public:
 
 	/// Iteratively update the position constraint. Makes sure C(...) = 0.
 	/// All input vectors are in world space
-	inline bool					SolvePositionConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inU, Vec3Arg inN1, Vec3Arg inN2, float inBaumgarte) const
+	inline bool SolvePositionConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inU, Vec3Arg inN1, Vec3Arg inN2, float inBaumgarte) const
 	{
 		Vec2 c;
 		c[0] = inU.Dot(inN1);
@@ -237,40 +237,40 @@ public:
 	}
 
 	/// Override total lagrange multiplier, can be used to set the initial value for warm starting
-	inline void					SetTotalLambda(const Vec2 &inLambda)
+	inline void SetTotalLambda(const Vec2 &inLambda)
 	{
 		mTotalLambda = inLambda;
 	}
 
 	/// Return lagrange multiplier
-	inline const Vec2 &			GetTotalLambda() const
+	inline const Vec2 &GetTotalLambda() const
 	{
 		return mTotalLambda;
 	}
 
 	/// Save state of this constraint part
-	void						SaveState(StateRecorder &inStream) const
+	void SaveState(StateRecorder &inStream) const
 	{
 		inStream.Write(mTotalLambda);
 	}
 
 	/// Restore state of this constraint part
-	void						RestoreState(StateRecorder &inStream)
+	void RestoreState(StateRecorder &inStream)
 	{
 		inStream.Read(mTotalLambda);
 	}
 
 private:
-	Vec3						mR1PlusUxN1;
-	Vec3						mR1PlusUxN2;
-	Vec3						mR2xN1;
-	Vec3						mR2xN2;
-	Vec3						mInvI1_R1PlusUxN1;
-	Vec3						mInvI1_R1PlusUxN2;
-	Vec3						mInvI2_R2xN1;
-	Vec3						mInvI2_R2xN2;
-	Mat22						mEffectiveMass;
-	Vec2						mTotalLambda { Vec2::sZero() };
+	Vec3 mR1PlusUxN1;
+	Vec3 mR1PlusUxN2;
+	Vec3 mR2xN1;
+	Vec3 mR2xN2;
+	Vec3 mInvI1_R1PlusUxN1;
+	Vec3 mInvI1_R1PlusUxN2;
+	Vec3 mInvI2_R2xN1;
+	Vec3 mInvI2_R2xN2;
+	Mat22 mEffectiveMass;
+	Vec2 mTotalLambda{Vec2::sZero()};
 };
 
 JPH_NAMESPACE_END

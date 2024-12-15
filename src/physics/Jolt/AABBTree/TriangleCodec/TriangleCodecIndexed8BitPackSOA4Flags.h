@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Geometry/RayTriangle.h>
+#include "../../Geometry/RayTriangle.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -27,15 +27,15 @@ public:
 	class TriangleHeader
 	{
 	public:
-		Float3						mOffset;			///< Offset of all vertices
-		Float3						mScale;				///< Scale of all vertices, vertex_position = mOffset + mScale * compressed_vertex_position
+		Float3 mOffset; ///< Offset of all vertices
+		Float3 mScale;	///< Scale of all vertices, vertex_position = mOffset + mScale * compressed_vertex_position
 	};
 
 	/// Size of the header (an empty struct is always > 0 bytes so this needs a separate variable)
-	static constexpr int			TriangleHeaderSize = sizeof(TriangleHeader);
+	static constexpr int TriangleHeaderSize = sizeof(TriangleHeader);
 
 	/// If this codec could return a different offset than the current buffer size when calling Pack()
-	static constexpr bool			ChangesOffsetOnPack = false;
+	static constexpr bool ChangesOffsetOnPack = false;
 
 	/// Amount of bits per component
 	enum EComponentData : uint32
@@ -63,8 +63,8 @@ public:
 	/// A single packed vertex
 	struct VertexData
 	{
-		uint32						mVertexXY;
-		uint32						mVertexZY;
+		uint32 mVertexXY;
+		uint32 mVertexZY;
 	};
 
 	static_assert(sizeof(VertexData) == 8, "Compiler added padding");
@@ -72,28 +72,32 @@ public:
 	/// A block of 4 triangles
 	struct TriangleBlock
 	{
-		uint8						mIndices[3][4];				///< 8 bit indices to triangle vertices for 4 triangles in the form mIndices[vertex][triangle] where vertex in [0, 2] and triangle in [0, 3]
-		uint8						mFlags[4];					///< Triangle flags (could contain material and active edges)
+		uint8 mIndices[3][4]; ///< 8 bit indices to triangle vertices for 4 triangles in the form mIndices[vertex][triangle] where vertex in [0, 2] and triangle in [0, 3]
+		uint8 mFlags[4];			///< Triangle flags (could contain material and active edges)
 	};
 
 	static_assert(sizeof(TriangleBlock) == 16, "Compiler added padding");
 
 	enum ETriangleBlockHeaderFlags : uint32
 	{
-		OFFSET_TO_VERTICES_BITS = 29,							///< Offset from current block to start of vertices in bytes
+		OFFSET_TO_VERTICES_BITS = 29, ///< Offset from current block to start of vertices in bytes
 		OFFSET_TO_VERTICES_MASK = (1 << OFFSET_TO_VERTICES_BITS) - 1,
-		OFFSET_TO_USERDATA_BITS = 3,							///< When user data is stored, this is the number of blocks to skip to get to the user data (0 = no user data)
+		OFFSET_TO_USERDATA_BITS = 3, ///< When user data is stored, this is the number of blocks to skip to get to the user data (0 = no user data)
 		OFFSET_TO_USERDATA_MASK = (1 << OFFSET_TO_USERDATA_BITS) - 1,
 	};
 
 	/// A triangle header, will be followed by one or more TriangleBlocks
 	struct TriangleBlockHeader
 	{
-		const VertexData *			GetVertexData() const		{ return reinterpret_cast<const VertexData *>(reinterpret_cast<const uint8 *>(this) + (mFlags & OFFSET_TO_VERTICES_MASK)); }
-		const TriangleBlock *		GetTriangleBlock() const	{ return reinterpret_cast<const TriangleBlock *>(reinterpret_cast<const uint8 *>(this) + sizeof(TriangleBlockHeader)); }
-		const uint32 *				GetUserData() const			{ uint32 offset = mFlags >> OFFSET_TO_VERTICES_BITS; return offset == 0? nullptr : reinterpret_cast<const uint32 *>(GetTriangleBlock() + offset); }
+		const VertexData *GetVertexData() const { return reinterpret_cast<const VertexData *>(reinterpret_cast<const uint8 *>(this) + (mFlags & OFFSET_TO_VERTICES_MASK)); }
+		const TriangleBlock *GetTriangleBlock() const { return reinterpret_cast<const TriangleBlock *>(reinterpret_cast<const uint8 *>(this) + sizeof(TriangleBlockHeader)); }
+		const uint32 *GetUserData() const
+		{
+			uint32 offset = mFlags >> OFFSET_TO_VERTICES_BITS;
+			return offset == 0 ? nullptr : reinterpret_cast<const uint32 *>(GetTriangleBlock() + offset);
+		}
 
-		uint32						mFlags;
+		uint32 mFlags;
 	};
 
 	static_assert(sizeof(TriangleBlockHeader) == 4, "Compiler added padding");
@@ -103,8 +107,7 @@ public:
 	{
 	public:
 		/// Constructor
-									ValidationContext(const IndexedTriangleList &inTriangles, const VertexList &inVertices) :
-			mVertices(inVertices)
+		ValidationContext(const IndexedTriangleList &inTriangles, const VertexList &inVertices) : mVertices(inVertices)
 		{
 			// Only used the referenced triangles, just like EncodingContext::Finalize does
 			for (const IndexedTriangle &i : inTriangles)
@@ -113,7 +116,7 @@ public:
 		}
 
 		/// Test if a triangle will be degenerate after quantization
-		bool						IsDegenerate(const IndexedTriangle &inTriangle) const
+		bool IsDegenerate(const IndexedTriangle &inTriangle) const
 		{
 			// Quantize the triangle in the same way as EncodingContext::Finalize does
 			UVec4 quantized_vertex[3];
@@ -124,8 +127,8 @@ public:
 		}
 
 	private:
-		const VertexList &			mVertices;
-		AABox						mBounds;
+		const VertexList &mVertices;
+		AABox mBounds;
 	};
 
 	/// This class is used to encode and compress triangle data into a byte buffer
@@ -133,23 +136,22 @@ public:
 	{
 	public:
 		/// Construct the encoding context
-		explicit					EncodingContext(const VertexList &inVertices) :
-			mVertexMap(inVertices.size(), 0xffffffff) // Fill vertex map with 'not found'
+		explicit EncodingContext(const VertexList &inVertices) : mVertexMap(inVertices.size(), 0xffffffff) // Fill vertex map with 'not found'
 		{
 			// Reserve for worst case to avoid allocating in the inner loop
 			mVertices.reserve(inVertices.size());
 		}
 
 		/// Get an upper bound on the amount of bytes needed to store inTriangleCount triangles
-		uint						GetPessimisticMemoryEstimate(uint inTriangleCount, bool inStoreUserData) const
+		uint GetPessimisticMemoryEstimate(uint inTriangleCount, bool inStoreUserData) const
 		{
 			// Worst case each triangle is alone in a block, none of the vertices are shared and we need to add 3 bytes to align the vertices
-			return inTriangleCount * (sizeof(TriangleBlockHeader) + sizeof(TriangleBlock) + (inStoreUserData? sizeof(uint32) : 0) + 3 * sizeof(VertexData)) + 3;
+			return inTriangleCount * (sizeof(TriangleBlockHeader) + sizeof(TriangleBlock) + (inStoreUserData ? sizeof(uint32) : 0) + 3 * sizeof(VertexData)) + 3;
 		}
 
 		/// Pack the triangles in inContainer to ioBuffer. This stores the mMaterialIndex of a triangle in the 8 bit flags.
 		/// Returns uint(-1) on error.
-		uint						Pack(const IndexedTriangleList &inTriangles, bool inStoreUserData, ByteBuffer &ioBuffer, const char *&outError)
+		uint Pack(const IndexedTriangleList &inTriangles, bool inStoreUserData, ByteBuffer &ioBuffer, const char *&outError)
 		{
 			// Determine position of triangles start
 			uint offset = (uint)ioBuffer.size();
@@ -187,7 +189,7 @@ public:
 					{
 						// Fetch vertex index. Create degenerate triangles for padding triangles.
 						bool triangle_available = t + block_tri_idx < tri_count;
-						uint32 src_vertex_index = triangle_available? inTriangles[t + block_tri_idx].mIdx[vertex_nr] : inTriangles[tri_count - 1].mIdx[0];
+						uint32 src_vertex_index = triangle_available ? inTriangles[t + block_tri_idx].mIdx[vertex_nr] : inTriangles[tri_count - 1].mIdx[0];
 
 						// Check if we've seen this vertex before and if it is in the range that we can encode
 						uint32 &vertex_index = mVertexMap[src_vertex_index];
@@ -208,7 +210,7 @@ public:
 						block->mIndices[vertex_nr][block_tri_idx] = (uint8)vertex_offset;
 
 						// Store flags
-						uint32 flags = triangle_available? inTriangles[t + block_tri_idx].mMaterialIndex : 0;
+						uint32 flags = triangle_available ? inTriangles[t + block_tri_idx].mMaterialIndex : 0;
 						if (flags > 0xff)
 						{
 							outError = "TriangleCodecIndexed8BitPackSOA4Flags: Material index doesn't fit in 8 bit";
@@ -230,7 +232,7 @@ public:
 		}
 
 		/// After all triangles have been packed, this finalizes the header and triangle buffer
-		void						Finalize(const VertexList &inVertices, TriangleHeader *ioHeader, ByteBuffer &ioBuffer) const
+		void Finalize(const VertexList &inVertices, TriangleHeader *ioHeader, ByteBuffer &ioBuffer) const
 		{
 			// Check if anything to do
 			if (mVertices.empty())
@@ -276,10 +278,10 @@ public:
 	private:
 		using VertexMap = Array<uint32>;
 
-		uint						mNumTriangles = 0;
-		Array<uint32>				mVertices;				///< Output vertices as an index into the original vertex list (inVertices), sorted according to occurrence
-		VertexMap					mVertexMap;				///< Maps from the original mesh vertex index (inVertices) to the index in our output vertices (mVertices)
-		Array<uint>					mOffsetsToPatch;		///< Offsets to the vertex buffer that need to be patched in once all nodes have been packed
+		uint mNumTriangles = 0;
+		Array<uint32> mVertices;		 ///< Output vertices as an index into the original vertex list (inVertices), sorted according to occurrence
+		VertexMap mVertexMap;				 ///< Maps from the original mesh vertex index (inVertices) to the index in our output vertices (mVertices)
+		Array<uint> mOffsetsToPatch; ///< Offsets to the vertex buffer that need to be patched in once all nodes have been packed
 	};
 
 	/// This class is used to decode and decompress triangle data packed by the EncodingContext
@@ -287,7 +289,7 @@ public:
 	{
 	private:
 		/// Private helper functions to unpack the 1 vertex of 4 triangles (outX contains the x coordinate of triangle 0 .. 3 etc.)
-		JPH_INLINE void				Unpack(const VertexData *inVertices, UVec4Arg inIndex, Vec4 &outX, Vec4 &outY, Vec4 &outZ) const
+		JPH_INLINE void Unpack(const VertexData *inVertices, UVec4Arg inIndex, Vec4 &outX, Vec4 &outY, Vec4 &outZ) const
 		{
 			// Get compressed data
 			UVec4 c1 = UVec4::sGatherInt4<8>(&inVertices->mVertexXY, inIndex);
@@ -305,18 +307,17 @@ public:
 		}
 
 	public:
-		JPH_INLINE explicit			DecodingContext(const TriangleHeader *inHeader) :
-			mOffsetX(Vec4::sReplicate(inHeader->mOffset.x)),
-			mOffsetY(Vec4::sReplicate(inHeader->mOffset.y)),
-			mOffsetZ(Vec4::sReplicate(inHeader->mOffset.z)),
-			mScaleX(Vec4::sReplicate(inHeader->mScale.x)),
-			mScaleY(Vec4::sReplicate(inHeader->mScale.y)),
-			mScaleZ(Vec4::sReplicate(inHeader->mScale.z))
+		JPH_INLINE explicit DecodingContext(const TriangleHeader *inHeader) : mOffsetX(Vec4::sReplicate(inHeader->mOffset.x)),
+																																					mOffsetY(Vec4::sReplicate(inHeader->mOffset.y)),
+																																					mOffsetZ(Vec4::sReplicate(inHeader->mOffset.z)),
+																																					mScaleX(Vec4::sReplicate(inHeader->mScale.x)),
+																																					mScaleY(Vec4::sReplicate(inHeader->mScale.y)),
+																																					mScaleZ(Vec4::sReplicate(inHeader->mScale.z))
 		{
 		}
 
 		/// Unpacks triangles in the format t1v1,t1v2,t1v3, t2v1,t2v2,t2v3, ...
-		JPH_INLINE void				Unpack(const void *inTriangleStart, uint32 inNumTriangles, Vec3 *outTriangles) const
+		JPH_INLINE void Unpack(const void *inTriangleStart, uint32 inNumTriangles, Vec3 *outTriangles) const
 		{
 			JPH_ASSERT(inNumTriangles > 0);
 			const TriangleBlockHeader *header = reinterpret_cast<const TriangleBlockHeader *>(inTriangleStart);
@@ -354,12 +355,11 @@ public:
 				}
 
 				++t;
-			}
-			while (t < end);
+			} while (t < end);
 		}
 
 		/// Tests a ray against the packed triangles
-		JPH_INLINE float			TestRay(Vec3Arg inRayOrigin, Vec3Arg inRayDirection, const void *inTriangleStart, uint32 inNumTriangles, float inClosest, uint32 &outClosestTriangleIndex) const
+		JPH_INLINE float TestRay(Vec3Arg inRayOrigin, Vec3Arg inRayDirection, const void *inTriangleStart, uint32 inNumTriangles, float inClosest, uint32 &outClosestTriangleIndex) const
 		{
 			JPH_ASSERT(inNumTriangles > 0);
 			const TriangleBlockHeader *header = reinterpret_cast<const TriangleBlockHeader *>(inTriangleStart);
@@ -399,8 +399,7 @@ public:
 				// Next block
 				++t;
 				start_triangle_idx += UVec4::sReplicate(4);
-			}
-			while (t < end);
+			} while (t < end);
 
 			// Get the smallest component
 			Vec4::sSort4(closest, closest_triangle_idx);
@@ -409,7 +408,7 @@ public:
 		}
 
 		/// Decode a single triangle
-		inline void					GetTriangle(const void *inTriangleStart, uint32 inTriangleIdx, Vec3 &outV1, Vec3 &outV2, Vec3 &outV3) const
+		inline void GetTriangle(const void *inTriangleStart, uint32 inTriangleIdx, Vec3 &outV1, Vec3 &outV2, Vec3 &outV3) const
 		{
 			const TriangleBlockHeader *header = reinterpret_cast<const TriangleBlockHeader *>(inTriangleStart);
 			const VertexData *vertices = header->GetVertexData();
@@ -443,15 +442,15 @@ public:
 		}
 
 		/// Get user data for a triangle
-		JPH_INLINE uint32			GetUserData(const void *inTriangleStart, uint32 inTriangleIdx) const
+		JPH_INLINE uint32 GetUserData(const void *inTriangleStart, uint32 inTriangleIdx) const
 		{
 			const TriangleBlockHeader *header = reinterpret_cast<const TriangleBlockHeader *>(inTriangleStart);
 			const uint32 *user_data = header->GetUserData();
-			return user_data != nullptr? user_data[inTriangleIdx] : 0;
+			return user_data != nullptr ? user_data[inTriangleIdx] : 0;
 		}
 
 		/// Get flags for entire triangle block
-		JPH_INLINE static void		sGetFlags(const void *inTriangleStart, uint32 inNumTriangles, uint8 *outTriangleFlags)
+		JPH_INLINE static void sGetFlags(const void *inTriangleStart, uint32 inNumTriangles, uint8 *outTriangleFlags)
 		{
 			JPH_ASSERT(inNumTriangles > 0);
 			const TriangleBlockHeader *header = reinterpret_cast<const TriangleBlockHeader *>(inTriangleStart);
@@ -465,12 +464,11 @@ public:
 					*outTriangleFlags++ = t->mFlags[i];
 
 				++t;
-			}
-			while (t < end);
+			} while (t < end);
 		}
 
 		/// Get flags for a particular triangle
-		JPH_INLINE static uint8		sGetFlags(const void *inTriangleStart, int inTriangleIndex)
+		JPH_INLINE static uint8 sGetFlags(const void *inTriangleStart, int inTriangleIndex)
 		{
 			const TriangleBlockHeader *header = reinterpret_cast<const TriangleBlockHeader *>(inTriangleStart);
 			const TriangleBlock *first_block = header->GetTriangleBlock();
@@ -478,19 +476,19 @@ public:
 		}
 
 		/// Unpacks triangles and flags, convenience function
-		JPH_INLINE void				Unpack(const void *inTriangleStart, uint32 inNumTriangles, Vec3 *outTriangles, uint8 *outTriangleFlags) const
+		JPH_INLINE void Unpack(const void *inTriangleStart, uint32 inNumTriangles, Vec3 *outTriangles, uint8 *outTriangleFlags) const
 		{
 			Unpack(inTriangleStart, inNumTriangles, outTriangles);
 			sGetFlags(inTriangleStart, inNumTriangles, outTriangleFlags);
 		}
 
 	private:
-		Vec4						mOffsetX;
-		Vec4						mOffsetY;
-		Vec4						mOffsetZ;
-		Vec4						mScaleX;
-		Vec4						mScaleY;
-		Vec4						mScaleZ;
+		Vec4 mOffsetX;
+		Vec4 mOffsetY;
+		Vec4 mOffsetZ;
+		Vec4 mScaleX;
+		Vec4 mScaleY;
+		Vec4 mScaleZ;
 	};
 };
 

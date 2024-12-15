@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
 #ifdef JPH_DEBUG_RENDERER
 
-#include <Jolt/Renderer/DebugRendererRecorder.h>
+#include "../Renderer/DebugRendererRecorder.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -14,14 +14,14 @@ void DebugRendererRecorder::DrawLine(RVec3Arg inFrom, RVec3Arg inTo, ColorArg in
 {
 	lock_guard lock(mMutex);
 
-	mCurrentFrame.mLines.push_back({ inFrom, inTo, inColor });
+	mCurrentFrame.mLines.push_back({inFrom, inTo, inColor});
 }
 
 void DebugRendererRecorder::DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor, ECastShadow inCastShadow)
 {
 	lock_guard lock(mMutex);
 
-	mCurrentFrame.mTriangles.push_back({ inV1, inV2, inV3, inColor, inCastShadow });
+	mCurrentFrame.mTriangles.push_back({inV1, inV2, inV3, inColor, inCastShadow});
 }
 
 DebugRenderer::Batch DebugRendererRecorder::CreateTriangleBatch(const Triangle *inTriangles, int inTriangleCount)
@@ -83,21 +83,21 @@ void DebugRendererRecorder::DrawGeometry(RMat44Arg inModelMatrix, const AABox &i
 
 		// Save the LODs
 		mStream.Write((uint32)inGeometry->mLODs.size());
-		for (const LOD & lod : inGeometry->mLODs)
+		for (const LOD &lod : inGeometry->mLODs)
 		{
 			mStream.Write(lod.mDistance);
 			mStream.Write(static_cast<const BatchImpl *>(lod.mTriangleBatch.GetPtr())->mID);
 		}
 	}
 
-	mCurrentFrame.mGeometries.push_back({ inModelMatrix, inModelColor, geometry_id, inCullMode, inCastShadow, inDrawMode });
+	mCurrentFrame.mGeometries.push_back({inModelMatrix, inModelColor, geometry_id, inCullMode, inCastShadow, inDrawMode});
 }
 
 void DebugRendererRecorder::DrawText3D(RVec3Arg inPosition, const string_view &inString, ColorArg inColor, float inHeight)
 {
 	lock_guard lock(mMutex);
 
-	mCurrentFrame.mTexts.push_back({ inPosition, inString, inColor, inHeight });
+	mCurrentFrame.mTexts.push_back({inPosition, inString, inColor, inHeight});
 }
 
 void DebugRendererRecorder::EndFrame()

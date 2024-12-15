@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/ConstraintManager.h>
-#include <Jolt/Physics/Constraints/CalculateSolverSteps.h>
-#include <Jolt/Physics/IslandBuilder.h>
-#include <Jolt/Physics/StateRecorder.h>
-#include <Jolt/Physics/PhysicsLock.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/QuickSort.h>
+#include "../Constraints/ConstraintManager.h"
+#include "../Constraints/CalculateSolverSteps.h"
+#include "../IslandBuilder.h"
+#include "../StateRecorder.h"
+#include "../PhysicsLock.h"
+#include "../../Core/Profiler.h"
+#include "../../Core/QuickSort.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -104,15 +104,15 @@ void ConstraintManager::sSortConstraints(Constraint **inActiveConstraints, uint3
 {
 	JPH_PROFILE_FUNCTION();
 
-	QuickSort(inConstraintIdxBegin, inConstraintIdxEnd, [inActiveConstraints](uint32 inLHS, uint32 inRHS) {
+	QuickSort(inConstraintIdxBegin, inConstraintIdxEnd, [inActiveConstraints](uint32 inLHS, uint32 inRHS)
+						{
 		const Constraint *lhs = inActiveConstraints[inLHS];
 		const Constraint *rhs = inActiveConstraints[inRHS];
 
 		if (lhs->GetConstraintPriority() != rhs->GetConstraintPriority())
 			return lhs->GetConstraintPriority() < rhs->GetConstraintPriority();
 
-		return lhs->mConstraintIndex < rhs->mConstraintIndex;
-	});
+		return lhs->mConstraintIndex < rhs->mConstraintIndex; });
 }
 
 void ConstraintManager::sSetupVelocityConstraints(Constraint **inActiveConstraints, uint32 inNumActiveConstraints, float inDeltaTime)

@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Vehicle/Wheel.h>
-#include <Jolt/Physics/Vehicle/VehicleConstraint.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../Vehicle/Wheel.h"
+#include "../Vehicle/VehicleConstraint.h"
+#include "../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -63,9 +63,8 @@ void WheelSettings::RestoreBinaryState(StreamIn &inStream)
 	inStream.Read(mEnableSuspensionForcePoint);
 }
 
-Wheel::Wheel(const WheelSettings &inSettings) :
-	mSettings(&inSettings),
-	mSuspensionLength(inSettings.mSuspensionMaxLength)
+Wheel::Wheel(const WheelSettings &inSettings) : mSettings(&inSettings),
+																								mSuspensionLength(inSettings.mSuspensionMaxLength)
 {
 	JPH_ASSERT(inSettings.mSuspensionDirection.IsNormalized());
 	JPH_ASSERT(inSettings.mSteeringAxis.IsNormalized());

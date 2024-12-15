@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/PhysicsMaterial.h>
-#include <Jolt/Physics/Collision/PhysicsMaterialSimple.h>
-#include <Jolt/Core/StreamUtils.h>
+#include "../Collision/PhysicsMaterial.h"
+#include "../Collision/PhysicsMaterialSimple.h"
+#include "../../Core/StreamUtils.h"
 
 JPH_NAMESPACE_BEGIN
 

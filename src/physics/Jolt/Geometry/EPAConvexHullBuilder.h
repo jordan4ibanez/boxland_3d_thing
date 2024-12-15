@@ -5,16 +5,16 @@
 #pragma once
 
 // Define to validate the integrity of the hull structure
-//#define JPH_EPA_CONVEX_BUILDER_VALIDATE
+// #define JPH_EPA_CONVEX_BUILDER_VALIDATE
 
 // Define to draw the building of the hull for debugging purposes
-//#define JPH_EPA_CONVEX_BUILDER_DRAW
+// #define JPH_EPA_CONVEX_BUILDER_DRAW
 
-#include <Jolt/Core/NonCopyable.h>
+#include "../Core/NonCopyable.h"
 
 #ifdef JPH_EPA_CONVEX_BUILDER_DRAW
-	#include <Jolt/Renderer/DebugRenderer.h>
-	#include <Jolt/Core/StringTools.h>
+#include "../Renderer/DebugRenderer.h"
+#include "../Core/StringTools.h"
 #endif
 
 JPH_NAMESPACE_BEGIN
@@ -32,13 +32,13 @@ public:
 	// Due to the Euler characteristic (https://en.wikipedia.org/wiki/Euler_characteristic) we know that Vertices - Edges + Faces = 2
 	// In our case we only have triangles and they are always fully connected, so each edge is shared exactly between 2 faces: Edges = Faces * 3 / 2
 	// Substituting: Vertices = Faces / 2 + 2 which is approximately Faces / 2.
-	static constexpr int cMaxTriangles = 256;				///< Max triangles in hull
-	static constexpr int cMaxPoints = cMaxTriangles / 2;	///< Max number of points in hull
+	static constexpr int cMaxTriangles = 256;						 ///< Max triangles in hull
+	static constexpr int cMaxPoints = cMaxTriangles / 2; ///< Max number of points in hull
 
 	// Constants
-	static constexpr int cMaxEdgeLength = 128;				///< Max number of edges in FindEdge
+	static constexpr int cMaxEdgeLength = 128;						///< Max number of edges in FindEdge
 	static constexpr float cMinTriangleArea = 1.0e-10f;		///< Minimum area of a triangle before, if smaller than this it will not be added to the priority queue
-	static constexpr float cBarycentricEpsilon = 1.0e-3f;	///< Epsilon value used to determine if a point is in the interior of a triangle
+	static constexpr float cBarycentricEpsilon = 1.0e-3f; ///< Epsilon value used to determine if a point is in the interior of a triangle
 
 	// Forward declare
 	class Triangle;
@@ -48,10 +48,10 @@ public:
 	{
 	public:
 		/// Information about neighbouring triangle
-		Triangle *		mNeighbourTriangle;					///< Triangle that neighbours this triangle
-		int				mNeighbourEdge;						///< Index in mEdge that specifies edge that this Edge is connected to
+		Triangle *mNeighbourTriangle; ///< Triangle that neighbours this triangle
+		int mNeighbourEdge;						///< Index in mEdge that specifies edge that this Edge is connected to
 
-		int				mStartIdx;							///< Vertex index in mPositions that indicates the start vertex of this edge
+		int mStartIdx; ///< Vertex index in mPositions that indicates the start vertex of this edge
 	};
 
 	using Edges = StaticArray<Edge, cMaxEdgeLength>;
@@ -62,39 +62,39 @@ public:
 	{
 	public:
 		/// Constructor
-		inline			Triangle(int inIdx0, int inIdx1, int inIdx2, const Vec3 *inPositions);
+		inline Triangle(int inIdx0, int inIdx1, int inIdx2, const Vec3 *inPositions);
 
 		/// Check if triangle is facing inPosition
-		inline bool		IsFacing(Vec3Arg inPosition) const
+		inline bool IsFacing(Vec3Arg inPosition) const
 		{
 			JPH_ASSERT(!mRemoved);
 			return mNormal.Dot(inPosition - mCentroid) > 0.0f;
 		}
 
 		/// Check if triangle is facing the origin
-		inline bool		IsFacingOrigin() const
+		inline bool IsFacingOrigin() const
 		{
 			JPH_ASSERT(!mRemoved);
 			return mNormal.Dot(mCentroid) < 0.0f;
 		}
 
 		/// Get the next edge of edge inIndex
-		inline const Edge & GetNextEdge(int inIndex) const
+		inline const Edge &GetNextEdge(int inIndex) const
 		{
 			return mEdge[(inIndex + 1) % 3];
 		}
 
-		Edge			mEdge[3];							///< 3 edges of this triangle
-		Vec3			mNormal;							///< Normal of this triangle, length is 2 times area of triangle
-		Vec3			mCentroid;							///< Center of the triangle
-		float			mClosestLenSq = FLT_MAX;			///< Closest distance^2 from origin to triangle
-		float			mLambda[2];							///< Barycentric coordinates of closest point to origin on triangle
-		bool			mLambdaRelativeTo0;					///< How to calculate the closest point, true: y0 + l0 * (y1 - y0) + l1 * (y2 - y0), false: y1 + l0 * (y0 - y1) + l1 * (y2 - y1)
-		bool			mClosestPointInterior = false;		///< Flag that indicates that the closest point from this triangle to the origin is an interior point
-		bool			mRemoved = false;					///< Flag that indicates that triangle has been removed
-		bool			mInQueue = false;					///< Flag that indicates that this triangle was placed in the sorted heap (stays true after it is popped because the triangle is freed by the main EPA algorithm loop)
+		Edge mEdge[3];											///< 3 edges of this triangle
+		Vec3 mNormal;												///< Normal of this triangle, length is 2 times area of triangle
+		Vec3 mCentroid;											///< Center of the triangle
+		float mClosestLenSq = FLT_MAX;			///< Closest distance^2 from origin to triangle
+		float mLambda[2];										///< Barycentric coordinates of closest point to origin on triangle
+		bool mLambdaRelativeTo0;						///< How to calculate the closest point, true: y0 + l0 * (y1 - y0) + l1 * (y2 - y0), false: y1 + l0 * (y0 - y1) + l1 * (y2 - y1)
+		bool mClosestPointInterior = false; ///< Flag that indicates that the closest point from this triangle to the origin is an interior point
+		bool mRemoved = false;							///< Flag that indicates that triangle has been removed
+		bool mInQueue = false;							///< Flag that indicates that this triangle was placed in the sorted heap (stays true after it is popped because the triangle is freed by the main EPA algorithm loop)
 #ifdef JPH_EPA_CONVEX_BUILDER_DRAW
-		int				mIteration;							///< Iteration that this triangle was created
+		int mIteration; ///< Iteration that this triangle was created
 #endif
 	};
 
@@ -105,25 +105,25 @@ public:
 		/// Struct that stores both a triangle or a next pointer in case the triangle is unused
 		union alignas(Triangle) Block
 		{
-			uint8		mTriangle[sizeof(Triangle)];
-			Block *		mNextFree;
+			uint8 mTriangle[sizeof(Triangle)];
+			Block *mNextFree;
 		};
 
 		/// Storage for triangle data
-		Block			mTriangles[cMaxTriangles];			///< Storage for triangles
-		Block *			mNextFree = nullptr;				///< List of free triangles
-		int				mHighWatermark = 0;					///< High water mark for used triangles (if mNextFree == nullptr we can take one from here)
+		Block mTriangles[cMaxTriangles]; ///< Storage for triangles
+		Block *mNextFree = nullptr;			 ///< List of free triangles
+		int mHighWatermark = 0;					 ///< High water mark for used triangles (if mNextFree == nullptr we can take one from here)
 
 	public:
 		/// Return all triangles to the free pool
-		void			Clear()
+		void Clear()
 		{
 			mNextFree = nullptr;
 			mHighWatermark = 0;
 		}
 
 		/// Allocate a new triangle with 3 indexes
-		Triangle *		CreateTriangle(int inIdx0, int inIdx1, int inIdx2, const Vec3 *inPositions)
+		Triangle *CreateTriangle(int inIdx0, int inIdx1, int inIdx2, const Vec3 *inPositions)
 		{
 			Triangle *t;
 			if (mNextFree != nullptr)
@@ -148,7 +148,7 @@ public:
 		}
 
 		/// Free a triangle
-		void			FreeTriangle(Triangle *inT)
+		void FreeTriangle(Triangle *inT)
 		{
 			// Destruct triangle
 			inT->~Triangle();
@@ -171,7 +171,7 @@ public:
 	class Points : public PointsBase
 	{
 	public:
-		size_type &		GetSizeRef()
+		size_type &GetSizeRef()
 		{
 			return mSize;
 		}
@@ -182,13 +182,13 @@ public:
 	{
 	public:
 		/// Function to sort triangles on closest distance to origin
-		static bool		sTriangleSorter(const Triangle *inT1, const Triangle *inT2)
+		static bool sTriangleSorter(const Triangle *inT1, const Triangle *inT2)
 		{
 			return inT1->mClosestLenSq > inT2->mClosestLenSq;
 		}
 
 		/// Add triangle to the list
-		void			push_back(Triangle *inT)
+		void push_back(Triangle *inT)
 		{
 			// Add to base
 			Triangles::push_back(inT);
@@ -201,13 +201,13 @@ public:
 		}
 
 		/// Peek the next closest triangle without removing it
-		Triangle *		PeekClosest()
+		Triangle *PeekClosest()
 		{
 			return front();
 		}
 
 		/// Get next closest triangle
-		Triangle *		PopClosest()
+		Triangle *PopClosest()
 		{
 			// Move closest to end
 			std::pop_heap(begin(), end(), sTriangleSorter);
@@ -220,8 +220,7 @@ public:
 	};
 
 	/// Constructor
-	explicit			EPAConvexHullBuilder(const Points &inPositions) :
-		mPositions(inPositions)
+	explicit EPAConvexHullBuilder(const Points &inPositions) : mPositions(inPositions)
 	{
 #ifdef JPH_EPA_CONVEX_BUILDER_DRAW
 		mIteration = 0;
@@ -230,7 +229,7 @@ public:
 	}
 
 	/// Initialize the hull with 3 points
-	void				Initialize(int inIdx1, int inIdx2, int inIdx3)
+	void Initialize(int inIdx1, int inIdx2, int inIdx3)
 	{
 		// Release triangles
 		mFactory.Clear();
@@ -258,26 +257,26 @@ public:
 	}
 
 	/// Check if there's another triangle to process from the queue
-	bool				HasNextTriangle() const
+	bool HasNextTriangle() const
 	{
 		return !mTriangleQueue.empty();
 	}
 
 	/// Access to the next closest triangle to the origin (won't remove it from the queue).
-	Triangle *			PeekClosestTriangleInQueue()
+	Triangle *PeekClosestTriangleInQueue()
 	{
 		return mTriangleQueue.PeekClosest();
 	}
 
 	/// Access to the next closest triangle to the origin and remove it from the queue.
-	Triangle *			PopClosestTriangleFromQueue()
+	Triangle *PopClosestTriangleFromQueue()
 	{
 		return mTriangleQueue.PopClosest();
 	}
 
 	/// Find the triangle on which inPosition is the furthest to the front
 	/// Note this function works as long as all points added have been added with AddPoint(..., FLT_MAX).
-	Triangle *			FindFacingTriangle(Vec3Arg inPosition, float &outBestDistSq)
+	Triangle *FindFacingTriangle(Vec3Arg inPosition, float &outBestDistSq)
 	{
 		Triangle *best = nullptr;
 		float best_dist_sq = 0.0f;
@@ -302,7 +301,7 @@ public:
 	}
 
 	/// Add a new point to the convex hull
-	bool				AddPoint(Triangle *inFacingTriangle, int inIdx, float inClosestDistSq, NewTriangles &outTriangles)
+	bool AddPoint(Triangle *inFacingTriangle, int inIdx, float inClosestDistSq, NewTriangles &outTriangles)
 	{
 		// Get position
 		Vec3 pos = mPositions[inIdx];
@@ -333,8 +332,8 @@ public:
 			outTriangles.push_back(nt);
 
 			// Check if we need to put this triangle in the priority queue
-			if ((nt->mClosestPointInterior && nt->mClosestLenSq < inClosestDistSq)	// For the main algorithm
-				|| nt->mClosestLenSq < 0.0f)										// For when the origin is not inside the hull yet
+			if ((nt->mClosestPointInterior && nt->mClosestLenSq < inClosestDistSq) // For the main algorithm
+					|| nt->mClosestLenSq < 0.0f)																			 // For when the origin is not inside the hull yet
 				mTriangleQueue.push_back(nt);
 		}
 
@@ -362,7 +361,7 @@ public:
 	}
 
 	/// Free a triangle
-	void				FreeTriangle(Triangle *inT)
+	void FreeTriangle(Triangle *inT)
 	{
 #ifdef JPH_ENABLE_ASSERTS
 		// Make sure that this triangle is not connected
@@ -383,7 +382,7 @@ public:
 
 private:
 	/// Create a new triangle
-	Triangle *			CreateTriangle(int inIdx1, int inIdx2, int inIdx3)
+	Triangle *CreateTriangle(int inIdx1, int inIdx2, int inIdx3)
 	{
 		// Call provider to create triangle
 		Triangle *t = mFactory.CreateTriangle(inIdx1, inIdx2, inIdx3, mPositions.data());
@@ -404,7 +403,7 @@ private:
 	}
 
 	/// Link triangle edge to other triangle edge
-	static void			sLinkTriangle(Triangle *inT1, int inEdge1, Triangle *inT2, int inEdge2)
+	static void sLinkTriangle(Triangle *inT1, int inEdge1, Triangle *inT2, int inEdge2)
 	{
 		JPH_ASSERT(inEdge1 >= 0 && inEdge1 < 3);
 		JPH_ASSERT(inEdge2 >= 0 && inEdge2 < 3);
@@ -427,7 +426,7 @@ private:
 	}
 
 	/// Unlink this triangle
-	void				UnlinkTriangle(Triangle *inT)
+	void UnlinkTriangle(Triangle *inT)
 	{
 		// Unlink from neighbours
 		for (int i = 0; i < 3; ++i)
@@ -454,7 +453,7 @@ private:
 
 	/// Given one triangle that faces inVertex, find the edges of the triangles that are not facing inVertex.
 	/// Will flag all those triangles for removal.
-	bool				FindEdge(Triangle *inFacingTriangle, Vec3Arg inVertex, Edges &outEdges)
+	bool FindEdge(Triangle *inFacingTriangle, Vec3Arg inVertex, Edges &outEdges)
 	{
 		// Assert that we were given an empty array
 		JPH_ASSERT(outEdges.empty());
@@ -468,9 +467,9 @@ private:
 		// Instead of recursing, we build our own stack with the information we need
 		struct StackEntry
 		{
-			Triangle *	mTriangle;
-			int			mEdge;
-			int			mIter;
+			Triangle *mTriangle;
+			int mEdge;
+			int mIter;
 		};
 		StackEntry stack[cMaxEdgeLength];
 		int cur_stack_pos = 0;
@@ -563,7 +562,7 @@ private:
 
 #ifdef JPH_EPA_CONVEX_BUILDER_VALIDATE
 	/// Check consistency of 1 triangle
-	void				ValidateTriangle(const Triangle *inT) const
+	void ValidateTriangle(const Triangle *inT) const
 	{
 		if (inT->mRemoved)
 		{
@@ -601,7 +600,7 @@ private:
 	}
 
 	/// Check consistency of all triangles
-	void				ValidateTriangles() const
+	void ValidateTriangles() const
 	{
 		for (const Triangle *t : mTriangles)
 			ValidateTriangle(t);
@@ -611,7 +610,7 @@ private:
 #ifdef JPH_EPA_CONVEX_BUILDER_DRAW
 public:
 	/// Draw state of algorithm
-	void				DrawState()
+	void DrawState()
 	{
 		// Draw origin
 		DebugRenderer::sInstance->DrawCoordinateSystem(RMat44::sTranslation(cDrawScale * mOffset), 1.0f);
@@ -650,7 +649,7 @@ public:
 	}
 
 	/// Draw a label to indicate the next stage in the algorithm
-	void				DrawLabel(const string_view &inText)
+	void DrawLabel(const string_view &inText)
 	{
 		DebugRenderer::sInstance->DrawText3D(cDrawScale * mOffset, inText, Color::sWhite, 0.1f * cDrawScale);
 
@@ -658,7 +657,7 @@ public:
 	}
 
 	/// Draw geometry for debugging purposes
-	void				DrawGeometry(const DebugRenderer::GeometryRef &inGeometry, ColorArg inColor)
+	void DrawGeometry(const DebugRenderer::GeometryRef &inGeometry, ColorArg inColor)
 	{
 		RMat44 origin = RMat44::sScale(Vec3::sReplicate(cDrawScale)) * RMat44::sTranslation(mOffset);
 		DebugRenderer::sInstance->DrawGeometry(origin, inGeometry->mBounds.Transformed(origin), inGeometry->mBounds.GetExtent().LengthSq(), inColor, inGeometry);
@@ -667,7 +666,7 @@ public:
 	}
 
 	/// Draw a triangle for debugging purposes
-	void				DrawWireTriangle(const Triangle &inTriangle, ColorArg inColor)
+	void DrawWireTriangle(const Triangle &inTriangle, ColorArg inColor)
 	{
 		RVec3 prev = cDrawScale * (mOffset + mPositions[inTriangle.mEdge[2].mStartIdx]);
 		for (const Edge &edge : inTriangle.mEdge)
@@ -679,30 +678,30 @@ public:
 	}
 
 	/// Draw a marker for debugging purposes
-	void				DrawMarker(Vec3Arg inPosition, ColorArg inColor, float inSize)
+	void DrawMarker(Vec3Arg inPosition, ColorArg inColor, float inSize)
 	{
 		DebugRenderer::sInstance->DrawMarker(cDrawScale * (mOffset + inPosition), inColor, inSize);
 	}
 
 	/// Draw an arrow for debugging purposes
-	void				DrawArrow(Vec3Arg inFrom, Vec3Arg inTo, ColorArg inColor, float inArrowSize)
+	void DrawArrow(Vec3Arg inFrom, Vec3Arg inTo, ColorArg inColor, float inArrowSize)
 	{
 		DebugRenderer::sInstance->DrawArrow(cDrawScale * (mOffset + inFrom), cDrawScale * (mOffset + inTo), inColor, inArrowSize);
 	}
 #endif
 
 private:
-	TriangleFactory		mFactory;							///< Factory to create new triangles and remove old ones
-	const Points &		mPositions;							///< List of positions (some of them are part of the hull)
-	TriangleQueue		mTriangleQueue;						///< List of triangles that are part of the hull that still need to be checked (if !mRemoved)
+	TriangleFactory mFactory;			///< Factory to create new triangles and remove old ones
+	const Points &mPositions;			///< List of positions (some of them are part of the hull)
+	TriangleQueue mTriangleQueue; ///< List of triangles that are part of the hull that still need to be checked (if !mRemoved)
 
 #if defined(JPH_EPA_CONVEX_BUILDER_VALIDATE) || defined(JPH_EPA_CONVEX_BUILDER_DRAW)
-	Triangles			mTriangles;							///< The list of all triangles in this hull (for debug purposes)
+	Triangles mTriangles; ///< The list of all triangles in this hull (for debug purposes)
 #endif
 
 #ifdef JPH_EPA_CONVEX_BUILDER_DRAW
-	int					mIteration;							///< Number of iterations we've had so far (for debug purposes)
-	RVec3				mOffset;							///< Offset to use for state drawing
+	int mIteration; ///< Number of iterations we've had so far (for debug purposes)
+	RVec3 mOffset;	///< Offset to use for state drawing
 #endif
 };
 

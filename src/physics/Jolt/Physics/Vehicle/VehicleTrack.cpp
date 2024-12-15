@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Vehicle/VehicleTrack.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../Vehicle/VehicleTrack.h"
+#include "../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 

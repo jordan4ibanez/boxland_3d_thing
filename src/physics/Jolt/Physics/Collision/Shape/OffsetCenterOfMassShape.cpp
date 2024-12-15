@@ -2,25 +2,23 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/OffsetCenterOfMassShape.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/OffsetCenterOfMassShape.h"
+#include "../../Collision/CollisionDispatch.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/ShapeCast.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(OffsetCenterOfMassShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(OffsetCenterOfMassShapeSettings, DecoratedShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(OffsetCenterOfMassShapeSettings){
+		JPH_ADD_BASE_CLASS(OffsetCenterOfMassShapeSettings, DecoratedShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(OffsetCenterOfMassShapeSettings, mOffset)
-}
+				JPH_ADD_ATTRIBUTE(OffsetCenterOfMassShapeSettings, mOffset)}
 
 ShapeSettings::ShapeResult OffsetCenterOfMassShapeSettings::Create() const
 {
@@ -29,9 +27,8 @@ ShapeSettings::ShapeResult OffsetCenterOfMassShapeSettings::Create() const
 	return mCachedResult;
 }
 
-OffsetCenterOfMassShape::OffsetCenterOfMassShape(const OffsetCenterOfMassShapeSettings &inSettings, ShapeResult &outResult) :
-	DecoratedShape(EShapeSubType::OffsetCenterOfMass, inSettings, outResult),
-	mOffset(inSettings.mOffset)
+OffsetCenterOfMassShape::OffsetCenterOfMassShape(const OffsetCenterOfMassShapeSettings &inSettings, ShapeResult &outResult) : DecoratedShape(EShapeSubType::OffsetCenterOfMass, inSettings, outResult),
+																																																															mOffset(inSettings.mOffset)
 {
 	if (outResult.HasError())
 		return;
@@ -202,7 +199,8 @@ void OffsetCenterOfMassShape::RestoreBinaryState(StreamIn &inStream)
 void OffsetCenterOfMassShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::OffsetCenterOfMass);
-	f.mConstruct = []() -> Shape * { return new OffsetCenterOfMassShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new OffsetCenterOfMassShape; };
 	f.mColor = Color::sCyan;
 
 	for (EShapeSubType s : sAllSubShapeTypes)

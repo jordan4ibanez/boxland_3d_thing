@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <Jolt/Physics/Character/CharacterBase.h>
-#include <Jolt/Physics/Collision/ObjectLayer.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/EActivation.h>
+#include "../Character/CharacterBase.h"
+#include "../Collision/ObjectLayer.h"
+#include "../Collision/TransformedShape.h"
+#include "../EActivation.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -18,16 +18,16 @@ public:
 	JPH_OVERRIDE_NEW_DELETE
 
 	/// Layer that this character will be added to
-	ObjectLayer							mLayer = 0;
+	ObjectLayer mLayer = 0;
 
 	/// Mass of the character
-	float								mMass = 80.0f;
+	float mMass = 80.0f;
 
 	/// Friction for the character
-	float								mFriction = 0.2f;
+	float mFriction = 0.2f;
 
 	/// Value to multiply gravity with for this character
-	float								mGravityFactor = 1.0f;
+	float mGravityFactor = 1.0f;
 };
 
 /// Runtime character object.
@@ -45,79 +45,79 @@ public:
 	/// @param inRotation Initial rotation for the character (usually only around Y)
 	/// @param inUserData Application specific value
 	/// @param inSystem Physics system that this character will be added to later
-										Character(const CharacterSettings *inSettings, RVec3Arg inPosition, QuatArg inRotation, uint64 inUserData, PhysicsSystem *inSystem);
+	Character(const CharacterSettings *inSettings, RVec3Arg inPosition, QuatArg inRotation, uint64 inUserData, PhysicsSystem *inSystem);
 
 	/// Destructor
-	virtual								~Character() override;
+	virtual ~Character() override;
 
 	/// Add bodies and constraints to the system and optionally activate the bodies
-	void								AddToPhysicsSystem(EActivation inActivationMode = EActivation::Activate, bool inLockBodies = true);
+	void AddToPhysicsSystem(EActivation inActivationMode = EActivation::Activate, bool inLockBodies = true);
 
 	/// Remove bodies and constraints from the system
-	void								RemoveFromPhysicsSystem(bool inLockBodies = true);
+	void RemoveFromPhysicsSystem(bool inLockBodies = true);
 
 	/// Wake up the character
-	void								Activate(bool inLockBodies = true);
+	void Activate(bool inLockBodies = true);
 
 	/// Needs to be called after every PhysicsSystem::Update
 	/// @param inMaxSeparationDistance Max distance between the floor and the character to still consider the character standing on the floor
 	/// @param inLockBodies If the collision query should use the locking body interface (true) or the non locking body interface (false)
-	void								PostSimulation(float inMaxSeparationDistance, bool inLockBodies = true);
+	void PostSimulation(float inMaxSeparationDistance, bool inLockBodies = true);
 
 	/// Control the velocity of the character
-	void								SetLinearAndAngularVelocity(Vec3Arg inLinearVelocity, Vec3Arg inAngularVelocity, bool inLockBodies = true);
+	void SetLinearAndAngularVelocity(Vec3Arg inLinearVelocity, Vec3Arg inAngularVelocity, bool inLockBodies = true);
 
 	/// Get the linear velocity of the character (m / s)
-	Vec3								GetLinearVelocity(bool inLockBodies = true) const;
+	Vec3 GetLinearVelocity(bool inLockBodies = true) const;
 
 	/// Set the linear velocity of the character (m / s)
-	void								SetLinearVelocity(Vec3Arg inLinearVelocity, bool inLockBodies = true);
+	void SetLinearVelocity(Vec3Arg inLinearVelocity, bool inLockBodies = true);
 
 	/// Add world space linear velocity to current velocity (m / s)
-	void								AddLinearVelocity(Vec3Arg inLinearVelocity, bool inLockBodies = true);
+	void AddLinearVelocity(Vec3Arg inLinearVelocity, bool inLockBodies = true);
 
 	/// Add impulse to the center of mass of the character
-	void								AddImpulse(Vec3Arg inImpulse, bool inLockBodies = true);
+	void AddImpulse(Vec3Arg inImpulse, bool inLockBodies = true);
 
 	/// Get the body associated with this character
-	BodyID								GetBodyID() const										{ return mBodyID; }
+	BodyID GetBodyID() const { return mBodyID; }
 
 	/// Get position / rotation of the body
-	void								GetPositionAndRotation(RVec3 &outPosition, Quat &outRotation, bool inLockBodies = true) const;
+	void GetPositionAndRotation(RVec3 &outPosition, Quat &outRotation, bool inLockBodies = true) const;
 
 	/// Set the position / rotation of the body, optionally activating it.
-	void								SetPositionAndRotation(RVec3Arg inPosition, QuatArg inRotation, EActivation inActivationMode = EActivation::Activate, bool inLockBodies = true) const;
+	void SetPositionAndRotation(RVec3Arg inPosition, QuatArg inRotation, EActivation inActivationMode = EActivation::Activate, bool inLockBodies = true) const;
 
 	/// Get the position of the character
-	RVec3								GetPosition(bool inLockBodies = true) const;
+	RVec3 GetPosition(bool inLockBodies = true) const;
 
 	/// Set the position of the character, optionally activating it.
-	void								SetPosition(RVec3Arg inPostion, EActivation inActivationMode = EActivation::Activate, bool inLockBodies = true);
+	void SetPosition(RVec3Arg inPostion, EActivation inActivationMode = EActivation::Activate, bool inLockBodies = true);
 
 	/// Get the rotation of the character
-	Quat								GetRotation(bool inLockBodies = true) const;
+	Quat GetRotation(bool inLockBodies = true) const;
 
 	/// Set the rotation of the character, optionally activating it.
-	void								SetRotation(QuatArg inRotation, EActivation inActivationMode = EActivation::Activate, bool inLockBodies = true);
+	void SetRotation(QuatArg inRotation, EActivation inActivationMode = EActivation::Activate, bool inLockBodies = true);
 
 	/// Position of the center of mass of the underlying rigid body
-	RVec3								GetCenterOfMassPosition(bool inLockBodies = true) const;
+	RVec3 GetCenterOfMassPosition(bool inLockBodies = true) const;
 
 	/// Calculate the world transform of the character
-	RMat44								GetWorldTransform(bool inLockBodies = true) const;
+	RMat44 GetWorldTransform(bool inLockBodies = true) const;
 
 	/// Get the layer of the character
-	ObjectLayer							GetLayer() const										{ return mLayer; }
+	ObjectLayer GetLayer() const { return mLayer; }
 
 	/// Update the layer of the character
-	void								SetLayer(ObjectLayer inLayer, bool inLockBodies = true);
+	void SetLayer(ObjectLayer inLayer, bool inLockBodies = true);
 
 	/// Switch the shape of the character (e.g. for stance). When inMaxPenetrationDepth is not FLT_MAX, it checks
 	/// if the new shape collides before switching shape. Returns true if the switch succeeded.
-	bool								SetShape(const Shape *inShape, float inMaxPenetrationDepth, bool inLockBodies = true);
+	bool SetShape(const Shape *inShape, float inMaxPenetrationDepth, bool inLockBodies = true);
 
 	/// Get the transformed shape that represents the volume of the character, can be used for collision checks.
-	TransformedShape					GetTransformedShape(bool inLockBodies = true) const;
+	TransformedShape GetTransformedShape(bool inLockBodies = true) const;
 
 	/// @brief Get all contacts for the character at a particular location
 	/// @param inPosition Position to test.
@@ -128,20 +128,20 @@ public:
 	/// @param inBaseOffset All hit results will be returned relative to this offset, can be zero to get results in world position, but when you're testing far from the origin you get better precision by picking a position that's closer e.g. GetPosition() since floats are most accurate near the origin
 	/// @param ioCollector Collision collector that receives the collision results.
 	/// @param inLockBodies If the collision query should use the locking body interface (true) or the non locking body interface (false)
-	void								CheckCollision(RVec3Arg inPosition, QuatArg inRotation, Vec3Arg inMovementDirection, float inMaxSeparationDistance, const Shape *inShape, RVec3Arg inBaseOffset, CollideShapeCollector &ioCollector, bool inLockBodies = true) const;
+	void CheckCollision(RVec3Arg inPosition, QuatArg inRotation, Vec3Arg inMovementDirection, float inMaxSeparationDistance, const Shape *inShape, RVec3Arg inBaseOffset, CollideShapeCollector &ioCollector, bool inLockBodies = true) const;
 
 private:
 	/// Check collisions between inShape and the world using the center of mass transform
-	void								CheckCollision(RMat44Arg inCenterOfMassTransform, Vec3Arg inMovementDirection, float inMaxSeparationDistance, const Shape *inShape, RVec3Arg inBaseOffset, CollideShapeCollector &ioCollector, bool inLockBodies) const;
+	void CheckCollision(RMat44Arg inCenterOfMassTransform, Vec3Arg inMovementDirection, float inMaxSeparationDistance, const Shape *inShape, RVec3Arg inBaseOffset, CollideShapeCollector &ioCollector, bool inLockBodies) const;
 
 	/// Check collisions between inShape and the world using the current position / rotation of the character
-	void								CheckCollision(const Shape *inShape, float inMaxSeparationDistance, RVec3Arg inBaseOffset, CollideShapeCollector &ioCollector, bool inLockBodies) const;
+	void CheckCollision(const Shape *inShape, float inMaxSeparationDistance, RVec3Arg inBaseOffset, CollideShapeCollector &ioCollector, bool inLockBodies) const;
 
 	/// The body of this character
-	BodyID								mBodyID;
+	BodyID mBodyID;
 
 	/// The layer the body is in
-	ObjectLayer							mLayer;
+	ObjectLayer mLayer;
 };
 
 JPH_NAMESPACE_END

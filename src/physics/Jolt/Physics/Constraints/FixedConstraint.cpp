@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/FixedConstraint.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../Constraints/FixedConstraint.h"
+#include "../Body/Body.h"
+#include "../../ObjectStream/TypeDeclarations.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -62,8 +62,7 @@ TwoBodyConstraint *FixedConstraintSettings::Create(Body &inBody1, Body &inBody2)
 	return new FixedConstraint(inBody1, inBody2, *this);
 }
 
-FixedConstraint::FixedConstraint(Body &inBody1, Body &inBody2, const FixedConstraintSettings &inSettings) :
-	TwoBodyConstraint(inBody1, inBody2, inSettings)
+FixedConstraint::FixedConstraint(Body &inBody1, Body &inBody2, const FixedConstraintSettings &inSettings) : TwoBodyConstraint(inBody1, inBody2, inSettings)
 {
 	// Store inverse of initial rotation from body 1 to body 2 in body 1 space
 	mInvInitialOrientation = RotationEulerConstraintPart::sGetInvInitialOrientationXY(inSettings.mAxisX1, inSettings.mAxisY1, inSettings.mAxisX2, inSettings.mAxisY2);

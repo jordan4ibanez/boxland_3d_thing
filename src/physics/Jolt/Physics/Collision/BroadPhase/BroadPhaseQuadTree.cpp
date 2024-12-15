@@ -2,18 +2,18 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
-#include <Jolt/Physics/Collision/BroadPhase/BroadPhaseQuadTree.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/AABoxCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Core/QuickSort.h>
+#include "../../../Jolt.h"
+#include "../../Collision/BroadPhase/BroadPhaseQuadTree.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/AABoxCast.h"
+#include "../../Collision/CastResult.h"
+#include "../../../Core/QuickSort.h"
 
 JPH_NAMESPACE_BEGIN
 
 BroadPhaseQuadTree::~BroadPhaseQuadTree()
 {
-	delete [] mLayers;
+	delete[] mLayers;
 }
 
 void BroadPhaseQuadTree::Init(BodyManager *inBodyManager, const BroadPhaseLayerInterface &inLayerInterface)
@@ -38,12 +38,12 @@ void BroadPhaseQuadTree::Init(BodyManager *inBodyManager, const BroadPhaseLayerI
 
 	// Init allocator
 	// Estimate the amount of nodes we're going to need
-	uint32 num_leaves = (uint32)(mMaxBodies + 1) / 2; // Assume 50% fill
+	uint32 num_leaves = (uint32)(mMaxBodies + 1) / 2;													 // Assume 50% fill
 	uint32 num_leaves_plus_internal_nodes = num_leaves + (num_leaves + 2) / 3; // = Sum(num_leaves * 4^-i) with i = [0, Inf].
-	mAllocator.Init(2 * num_leaves_plus_internal_nodes, 256); // We use double the amount of nodes while rebuilding the tree during Update()
+	mAllocator.Init(2 * num_leaves_plus_internal_nodes, 256);									 // We use double the amount of nodes while rebuilding the tree during Update()
 
 	// Init sub trees
-	mLayers = new QuadTree [mNumLayers];
+	mLayers = new QuadTree[mNumLayers];
 	for (uint l = 0; l < mNumLayers; ++l)
 	{
 		mLayers[l].Init(mAllocator);
@@ -160,11 +160,12 @@ BroadPhase::AddState BroadPhaseQuadTree::AddBodiesPrepare(BodyID *ioBodies, int 
 	const BodyVector &bodies = mBodyManager->GetBodies();
 	JPH_ASSERT(mMaxBodies == mBodyManager->GetMaxBodies());
 
-	LayerState *state = new LayerState [mNumLayers];
+	LayerState *state = new LayerState[mNumLayers];
 
 	// Sort bodies on layer
-	Body * const * const bodies_ptr = bodies.data(); // C pointer or else sort is incredibly slow in debug mode
-	QuickSort(ioBodies, ioBodies + inNumber, [bodies_ptr](BodyID inLHS, BodyID inRHS) { return bodies_ptr[inLHS.GetIndex()]->GetBroadPhaseLayer() < bodies_ptr[inRHS.GetIndex()]->GetBroadPhaseLayer(); });
+	Body *const *const bodies_ptr = bodies.data(); // C pointer or else sort is incredibly slow in debug mode
+	QuickSort(ioBodies, ioBodies + inNumber, [bodies_ptr](BodyID inLHS, BodyID inRHS)
+						{ return bodies_ptr[inLHS.GetIndex()]->GetBroadPhaseLayer() < bodies_ptr[inRHS.GetIndex()]->GetBroadPhaseLayer(); });
 
 	BodyID *b_start = ioBodies, *b_end = ioBodies + inNumber;
 	while (b_start < b_end)
@@ -174,7 +175,8 @@ BroadPhase::AddState BroadPhaseQuadTree::AddBodiesPrepare(BodyID *ioBodies, int 
 		JPH_ASSERT(broadphase_layer < mNumLayers);
 
 		// Find first body with different layer
-		BodyID *b_mid = std::upper_bound(b_start, b_end, broadphase_layer, [bodies_ptr](BroadPhaseLayer::Type inLayer, BodyID inBodyID) { return inLayer < (BroadPhaseLayer::Type)bodies_ptr[inBodyID.GetIndex()]->GetBroadPhaseLayer(); });
+		BodyID *b_mid = std::upper_bound(b_start, b_end, broadphase_layer, [bodies_ptr](BroadPhaseLayer::Type inLayer, BodyID inBodyID)
+																		 { return inLayer < (BroadPhaseLayer::Type)bodies_ptr[inBodyID.GetIndex()]->GetBroadPhaseLayer(); });
 
 		// Keep track of state for this layer
 		LayerState &layer_state = state[broadphase_layer];
@@ -237,7 +239,7 @@ void BroadPhaseQuadTree::AddBodiesFinalize(BodyID *ioBodies, int inNumber, AddSt
 		}
 	}
 
-	delete [] state;
+	delete[] state;
 }
 
 void BroadPhaseQuadTree::AddBodiesAbort(BodyID *ioBodies, int inNumber, AddState inAddState)
@@ -271,7 +273,7 @@ void BroadPhaseQuadTree::AddBodiesAbort(BodyID *ioBodies, int inNumber, AddState
 		}
 	}
 
-	delete [] state;
+	delete[] state;
 }
 
 void BroadPhaseQuadTree::RemoveBodies(BodyID *ioBodies, int inNumber)
@@ -288,7 +290,8 @@ void BroadPhaseQuadTree::RemoveBodies(BodyID *ioBodies, int inNumber)
 
 	// Sort bodies on layer
 	Tracking *tracking = mTracking.data(); // C pointer or else sort is incredibly slow in debug mode
-	QuickSort(ioBodies, ioBodies + inNumber, [tracking](BodyID inLHS, BodyID inRHS) { return tracking[inLHS.GetIndex()].mBroadPhaseLayer < tracking[inRHS.GetIndex()].mBroadPhaseLayer; });
+	QuickSort(ioBodies, ioBodies + inNumber, [tracking](BodyID inLHS, BodyID inRHS)
+						{ return tracking[inLHS.GetIndex()].mBroadPhaseLayer < tracking[inRHS.GetIndex()].mBroadPhaseLayer; });
 
 	BodyID *b_start = ioBodies, *b_end = ioBodies + inNumber;
 	while (b_start < b_end)
@@ -298,7 +301,8 @@ void BroadPhaseQuadTree::RemoveBodies(BodyID *ioBodies, int inNumber)
 		JPH_ASSERT(broadphase_layer != (BroadPhaseLayer::Type)cBroadPhaseLayerInvalid);
 
 		// Find first body with different layer
-		BodyID *b_mid = std::upper_bound(b_start, b_end, broadphase_layer, [tracking](BroadPhaseLayer::Type inLayer, BodyID inBodyID) { return inLayer < tracking[inBodyID.GetIndex()].mBroadPhaseLayer; });
+		BodyID *b_mid = std::upper_bound(b_start, b_end, broadphase_layer, [tracking](BroadPhaseLayer::Type inLayer, BodyID inBodyID)
+																		 { return inLayer < tracking[inBodyID.GetIndex()].mBroadPhaseLayer; });
 
 		// Remove all bodies of the same layer
 		mLayers[broadphase_layer].RemoveBodies(bodies, mTracking, b_start, int(b_mid - b_start));
@@ -338,7 +342,8 @@ void BroadPhaseQuadTree::NotifyBodiesAABBChanged(BodyID *ioBodies, int inNumber,
 
 	// Sort bodies on layer
 	const Tracking *tracking = mTracking.data(); // C pointer or else sort is incredibly slow in debug mode
-	QuickSort(ioBodies, ioBodies + inNumber, [tracking](BodyID inLHS, BodyID inRHS) { return tracking[inLHS.GetIndex()].mBroadPhaseLayer < tracking[inRHS.GetIndex()].mBroadPhaseLayer; });
+	QuickSort(ioBodies, ioBodies + inNumber, [tracking](BodyID inLHS, BodyID inRHS)
+						{ return tracking[inLHS.GetIndex()].mBroadPhaseLayer < tracking[inRHS.GetIndex()].mBroadPhaseLayer; });
 
 	BodyID *b_start = ioBodies, *b_end = ioBodies + inNumber;
 	while (b_start < b_end)
@@ -348,7 +353,8 @@ void BroadPhaseQuadTree::NotifyBodiesAABBChanged(BodyID *ioBodies, int inNumber,
 		JPH_ASSERT(broadphase_layer != (BroadPhaseLayer::Type)cBroadPhaseLayerInvalid);
 
 		// Find first body with different layer
-		BodyID *b_mid = std::upper_bound(b_start, b_end, broadphase_layer, [tracking](BroadPhaseLayer::Type inLayer, BodyID inBodyID) { return inLayer < tracking[inBodyID.GetIndex()].mBroadPhaseLayer; });
+		BodyID *b_mid = std::upper_bound(b_start, b_end, broadphase_layer, [tracking](BroadPhaseLayer::Type inLayer, BodyID inBodyID)
+																		 { return inLayer < tracking[inBodyID.GetIndex()].mBroadPhaseLayer; });
 
 		// Nodify all bodies of the same layer changed
 		mLayers[broadphase_layer].NotifyBodiesAABBChanged(bodies, mTracking, b_start, int(b_mid - b_start));
@@ -551,7 +557,8 @@ void BroadPhaseQuadTree::FindCollidingPairs(BodyID *ioActiveBodies, int inNumAct
 
 	// Sort bodies on layer
 	const Tracking *tracking = mTracking.data(); // C pointer or else sort is incredibly slow in debug mode
-	QuickSort(ioActiveBodies, ioActiveBodies + inNumActiveBodies, [tracking](BodyID inLHS, BodyID inRHS) { return tracking[inLHS.GetIndex()].mObjectLayer < tracking[inRHS.GetIndex()].mObjectLayer; });
+	QuickSort(ioActiveBodies, ioActiveBodies + inNumActiveBodies, [tracking](BodyID inLHS, BodyID inRHS)
+						{ return tracking[inLHS.GetIndex()].mObjectLayer < tracking[inRHS.GetIndex()].mObjectLayer; });
 
 	BodyID *b_start = ioActiveBodies, *b_end = ioActiveBodies + inNumActiveBodies;
 	while (b_start < b_end)
@@ -561,7 +568,8 @@ void BroadPhaseQuadTree::FindCollidingPairs(BodyID *ioActiveBodies, int inNumAct
 		JPH_ASSERT(object_layer != cObjectLayerInvalid);
 
 		// Find first body with different layer
-		BodyID *b_mid = std::upper_bound(b_start, b_end, object_layer, [tracking](ObjectLayer inLayer, BodyID inBodyID) { return inLayer < tracking[inBodyID.GetIndex()].mObjectLayer; });
+		BodyID *b_mid = std::upper_bound(b_start, b_end, object_layer, [tracking](ObjectLayer inLayer, BodyID inBodyID)
+																		 { return inLayer < tracking[inBodyID.GetIndex()].mObjectLayer; });
 
 		// Loop over all layers and test the ones that could hit
 		for (BroadPhaseLayer::Type l = 0; l < mNumLayers; ++l)

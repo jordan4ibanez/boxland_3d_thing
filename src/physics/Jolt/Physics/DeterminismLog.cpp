@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2022 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Physics/DeterminismLog.h>
+#include "DeterminismLog.h"
 
 #ifdef JPH_ENABLE_DETERMINISM_LOG
 

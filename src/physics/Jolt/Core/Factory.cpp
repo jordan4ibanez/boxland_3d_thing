@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Core/Factory.h>
+#include "../Core/Factory.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -13,19 +13,19 @@ Factory *Factory::sInstance = nullptr;
 void *Factory::CreateObject(const char *inName)
 {
 	const RTTI *ci = Find(inName);
-	return ci != nullptr? ci->CreateObject() : nullptr;
+	return ci != nullptr ? ci->CreateObject() : nullptr;
 }
 
 const RTTI *Factory::Find(const char *inName)
 {
 	ClassNameMap::iterator c = mClassNameMap.find(inName);
-	return c != mClassNameMap.end()? c->second : nullptr;
+	return c != mClassNameMap.end() ? c->second : nullptr;
 }
 
 const RTTI *Factory::Find(uint32 inHash)
 {
 	ClassHashMap::iterator c = mClassHashMap.find(inHash);
-	return c != mClassHashMap.end()? c->second : nullptr;
+	return c != mClassHashMap.end() ? c->second : nullptr;
 }
 
 bool Factory::Register(const RTTI *inRTTI)

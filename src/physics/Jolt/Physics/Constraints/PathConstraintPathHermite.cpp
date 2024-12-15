@@ -2,22 +2,20 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/PathConstraintPathHermite.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Constraints/PathConstraintPathHermite.h"
+#include "../../Core/Profiler.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(PathConstraintPathHermite::Point)
-{
-	JPH_ADD_ATTRIBUTE(PathConstraintPathHermite::Point, mPosition)
-	JPH_ADD_ATTRIBUTE(PathConstraintPathHermite::Point, mTangent)
-	JPH_ADD_ATTRIBUTE(PathConstraintPathHermite::Point, mNormal)
-}
+JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(PathConstraintPathHermite::Point){
+		JPH_ADD_ATTRIBUTE(PathConstraintPathHermite::Point, mPosition)
+				JPH_ADD_ATTRIBUTE(PathConstraintPathHermite::Point, mTangent)
+						JPH_ADD_ATTRIBUTE(PathConstraintPathHermite::Point, mNormal)}
 
 JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(PathConstraintPathHermite)
 {
@@ -214,7 +212,7 @@ float PathConstraintPathHermite::GetClosestPoint(Vec3Arg inPosition, float inFra
 	float best_t = float(num_points - 1);
 
 	// Loop over all points
-	for (int i = 0, max_i = IsLooping()? num_points : num_points - 1; i < max_i; ++i)
+	for (int i = 0, max_i = IsLooping() ? num_points : num_points - 1; i < max_i; ++i)
 	{
 		const Point &p1 = mPoints[i];
 		const Point &p2 = mPoints[(i + 1) % num_points];

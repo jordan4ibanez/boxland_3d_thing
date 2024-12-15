@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/AABBTree/AABBTreeBuilder.h>
+#include "../AABBTree/AABBTreeBuilder.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -82,7 +82,7 @@ void AABBTreeBuilder::Node::GetTriangleCountPerNode(float &outAverage, uint &out
 float AABBTreeBuilder::Node::CalculateSAHCost(float inCostTraversal, float inCostLeaf) const
 {
 	float surface_area = mBounds.GetSurfaceArea();
-	return surface_area > 0.0f? CalculateSAHCostInternal(inCostTraversal / surface_area, inCostLeaf / surface_area) : 0.0f;
+	return surface_area > 0.0f ? CalculateSAHCostInternal(inCostTraversal / surface_area, inCostLeaf / surface_area) : 0.0f;
 }
 
 void AABBTreeBuilder::Node::GetNChildren(uint inN, Array<const Node *> &outChildren) const
@@ -130,9 +130,7 @@ void AABBTreeBuilder::Node::GetNChildren(uint inN, Array<const Node *> &outChild
 float AABBTreeBuilder::Node::CalculateSAHCostInternal(float inCostTraversalDivSurfaceArea, float inCostLeafDivSurfaceArea) const
 {
 	if (HasChildren())
-		return inCostTraversalDivSurfaceArea * mBounds.GetSurfaceArea()
-			+ mChild[0]->CalculateSAHCostInternal(inCostTraversalDivSurfaceArea, inCostLeafDivSurfaceArea)
-			+ mChild[1]->CalculateSAHCostInternal(inCostTraversalDivSurfaceArea, inCostLeafDivSurfaceArea);
+		return inCostTraversalDivSurfaceArea * mBounds.GetSurfaceArea() + mChild[0]->CalculateSAHCostInternal(inCostTraversalDivSurfaceArea, inCostLeafDivSurfaceArea) + mChild[1]->CalculateSAHCostInternal(inCostTraversalDivSurfaceArea, inCostLeafDivSurfaceArea);
 	else
 		return inCostLeafDivSurfaceArea * mBounds.GetSurfaceArea() * GetTriangleCount();
 }
@@ -153,9 +151,8 @@ void AABBTreeBuilder::Node::GetTriangleCountPerNodeInternal(float &outAverage, u
 	}
 }
 
-AABBTreeBuilder::AABBTreeBuilder(TriangleSplitter &inSplitter, uint inMaxTrianglesPerLeaf) :
-	mTriangleSplitter(inSplitter),
-	mMaxTrianglesPerLeaf(inMaxTrianglesPerLeaf)
+AABBTreeBuilder::AABBTreeBuilder(TriangleSplitter &inSplitter, uint inMaxTrianglesPerLeaf) : mTriangleSplitter(inSplitter),
+																																														 mMaxTrianglesPerLeaf(inMaxTrianglesPerLeaf)
 {
 }
 

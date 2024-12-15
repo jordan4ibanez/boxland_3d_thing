@@ -2,19 +2,19 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/BroadPhase/QuadTree.h>
-#include <Jolt/Physics/Collision/BroadPhase/BroadPhaseQuadTree.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/AABoxCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/SortReverseAndStore.h>
-#include <Jolt/Physics/Body/BodyPair.h>
-#include <Jolt/Physics/PhysicsLock.h>
-#include <Jolt/Geometry/AABox4.h>
-#include <Jolt/Geometry/RayAABox.h>
-#include <Jolt/Geometry/OrientedBox.h>
+#include "../../Collision/BroadPhase/QuadTree.h"
+#include "../../Collision/BroadPhase/BroadPhaseQuadTree.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/AABoxCast.h"
+#include "../../Collision/CastResult.h"
+#include "../../Collision/SortReverseAndStore.h"
+#include "../../Body/BodyPair.h"
+#include "../../PhysicsLock.h"
+#include "../../../Geometry/AABox4.h"
+#include "../../../Geometry/RayAABox.h"
+#include "../../../Geometry/OrientedBox.h"
 
 #ifdef JPH_DUMP_BROADPHASE_TREE
 JPH_SUPPRESS_WARNINGS_STD_BEGIN
@@ -28,8 +28,7 @@ JPH_NAMESPACE_BEGIN
 // QuadTree::Node
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-QuadTree::Node::Node(bool inIsChanged) :
-	mIsChanged(inIsChanged)
+QuadTree::Node::Node(bool inIsChanged) : mIsChanged(inIsChanged)
 {
 	// First reset bounds
 	Vec4 val = Vec4::sReplicate(cLargeFloat);
@@ -178,8 +177,7 @@ QuadTree::~QuadTree()
 			// Mark node to be freed
 			mAllocator->AddObjectToBatch(free_batch, node_idx);
 			--top;
-		}
-		while (top >= 0);
+		} while (top >= 0);
 	}
 
 	// Now free all nodes
@@ -260,7 +258,7 @@ void QuadTree::UpdatePrepare(const BodyVector &inBodies, TrackingVector &ioTrack
 #endif
 
 	// Create space for all body ID's
-	NodeID *node_ids = new NodeID [mNumBodies];
+	NodeID *node_ids = new NodeID[mNumBodies];
 	NodeID *cur_node_id = node_ids;
 
 	// Collect all bodies
@@ -275,10 +273,10 @@ void QuadTree::UpdatePrepare(const BodyVector &inBodies, TrackingVector &ioTrack
 		if (node_id.IsBody())
 		{
 			// Validate that we're still in the right layer
-		#ifdef JPH_ENABLE_ASSERTS
+#ifdef JPH_ENABLE_ASSERTS
 			uint32 body_index = node_id.GetBodyID().GetIndex();
 			JPH_ASSERT(ioTracking[body_index].mObjectLayer == inBodies[body_index]->GetObjectLayer());
-		#endif
+#endif
 
 			// Store body
 			*cur_node_id = node_id;
@@ -310,8 +308,8 @@ void QuadTree::UpdatePrepare(const BodyVector &inBodies, TrackingVector &ioTrack
 						else
 						{
 							JPH_ASSERT(false, "Stack full!\n"
-								"This must be a very deep tree. Are you batch adding bodies through BodyInterface::AddBodiesPrepare/AddBodiesFinalize?\n"
-								"If you add lots of bodies through BodyInterface::AddBody you may need to call PhysicsSystem::OptimizeBroadPhase to rebuild the tree.");
+																"This must be a very deep tree. Are you batch adding bodies through BodyInterface::AddBodiesPrepare/AddBodiesFinalize?\n"
+																"If you add lots of bodies through BodyInterface::AddBody you may need to call PhysicsSystem::OptimizeBroadPhase to rebuild the tree.");
 
 							// Falling back to adding the node as a whole
 							*cur_node_id = child_node_id;
@@ -324,12 +322,11 @@ void QuadTree::UpdatePrepare(const BodyVector &inBodies, TrackingVector &ioTrack
 			}
 		}
 		--top;
-	}
-	while (top >= 0);
+	} while (top >= 0);
 
 	// Check that our book keeping matches
 	uint32 num_node_ids = uint32(cur_node_id - node_ids);
-	JPH_ASSERT(inFullRebuild? num_node_ids == mNumBodies : num_node_ids <= mNumBodies);
+	JPH_ASSERT(inFullRebuild ? num_node_ids == mNumBodies : num_node_ids <= mNumBodies);
 
 	// This will be the new root node id
 	NodeID root_node_id;
@@ -365,7 +362,7 @@ void QuadTree::UpdatePrepare(const BodyVector &inBodies, TrackingVector &ioTrack
 	}
 
 	// Delete temporary data
-	delete [] node_ids;
+	delete[] node_ids;
 
 	outUpdateState.mRootNodeID = root_node_id;
 }
@@ -518,7 +515,7 @@ QuadTree::NodeID QuadTree::BuildTree(const BodyVector &inBodies, TrackingVector 
 	}
 
 	// Calculate centers of all bodies that are to be inserted
-	Vec3 *centers = new Vec3 [inNumber];
+	Vec3 *centers = new Vec3[inNumber];
 	JPH_ASSERT(IsAligned(centers, JPH_VECTOR_ALIGNMENT));
 	Vec3 *c = centers;
 	for (const NodeID *n = ioNodeIDs, *n_end = ioNodeIDs + inNumber; n < n_end; ++n, ++c)
@@ -527,12 +524,12 @@ QuadTree::NodeID QuadTree::BuildTree(const BodyVector &inBodies, TrackingVector 
 	// The algorithm is a recursive tree build, but to avoid the call overhead we keep track of a stack here
 	struct StackEntry
 	{
-		uint32			mNodeIdx;					// Node index of node that is generated
-		int				mChildIdx;					// Index of child that we're currently processing
-		int				mSplit[5];					// Indices where the node ID's have been split to form 4 partitions
-		uint32			mDepth;						// Depth of this node in the tree
-		Vec3			mNodeBoundsMin;				// Bounding box of this node, accumulated while iterating over children
-		Vec3			mNodeBoundsMax;
+		uint32 mNodeIdx;		 // Node index of node that is generated
+		int mChildIdx;			 // Index of child that we're currently processing
+		int mSplit[5];			 // Indices where the node ID's have been split to form 4 partitions
+		uint32 mDepth;			 // Depth of this node in the tree
+		Vec3 mNodeBoundsMin; // Bounding box of this node, accumulated while iterating over children
+		Vec3 mNodeBoundsMax;
 	};
 	static_assert(sizeof(StackEntry) == 64);
 	StackEntry stack[cStackSize / 4]; // We don't process 4 at a time in this loop but 1, so the stack can be 4x as small
@@ -628,7 +625,7 @@ QuadTree::NodeID QuadTree::BuildTree(const BodyVector &inBodies, TrackingVector 
 	}
 
 	// Delete temporary data
-	delete [] centers;
+	delete[] centers;
 
 	// Store bounding box of root
 	outBounds.mMin = stack[0].mNodeBoundsMin;
@@ -654,8 +651,7 @@ void QuadTree::MarkNodeAndParentsChanged(uint32 inNodeIndex)
 
 		// Get our parent
 		node_idx = node.mParentNodeIndex;
-	}
-	while (node_idx != cInvalidNodeIndex);
+	} while (node_idx != cInvalidNodeIndex);
 }
 
 void QuadTree::WidenAndMarkNodeAndParentsChanged(uint32 inNodeIndex, const AABox &inNewBounds)
@@ -868,8 +864,7 @@ void QuadTree::AddBodiesAbort(TrackingVector &ioTracking, const AddState &inStat
 			mAllocator->AddObjectToBatch(free_batch, node_idx);
 		}
 		--top;
-	}
-	while (top >= 0);
+	} while (top >= 0);
 
 	// Now free all nodes as a single batch
 	mAllocator->DestructObjectBatch(free_batch);
@@ -1023,16 +1018,15 @@ JPH_INLINE void QuadTree::WalkTree(const ObjectLayerFilter &inObjectLayerFilter,
 			}
 			else
 				JPH_ASSERT(false, "Stack full!\n"
-					"This must be a very deep tree. Are you batch adding bodies through BodyInterface::AddBodiesPrepare/AddBodiesFinalize?\n"
-					"If you add lots of bodies through BodyInterface::AddBody you may need to call PhysicsSystem::OptimizeBroadPhase to rebuild the tree.");
+													"This must be a very deep tree. Are you batch adding bodies through BodyInterface::AddBodiesPrepare/AddBodiesFinalize?\n"
+													"If you add lots of bodies through BodyInterface::AddBody you may need to call PhysicsSystem::OptimizeBroadPhase to rebuild the tree.");
 		}
 
 		// Fetch next node until we find one that the visitor wants to see
 		do
 			--top;
 		while (top >= 0 && !ioVisitor.ShouldVisitNode(top));
-	}
-	while (top >= 0);
+	} while (top >= 0);
 
 #ifdef JPH_TRACK_BROADPHASE_STATS
 	// Calculate total time the broadphase walk took
@@ -1058,28 +1052,27 @@ void QuadTree::CastRay(const RayCast &inRay, RayCastBodyCollector &ioCollector, 
 	{
 	public:
 		/// Constructor
-		JPH_INLINE				Visitor(const RayCast &inRay, RayCastBodyCollector &ioCollector) :
-			mOrigin(inRay.mOrigin),
-			mInvDirection(inRay.mDirection),
-			mCollector(ioCollector)
+		JPH_INLINE Visitor(const RayCast &inRay, RayCastBodyCollector &ioCollector) : mOrigin(inRay.mOrigin),
+																																									mInvDirection(inRay.mDirection),
+																																									mCollector(ioCollector)
 		{
 			mFractionStack[0] = -1;
 		}
 
 		/// Returns true if further processing of the tree should be aborted
-		JPH_INLINE bool			ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
 		/// Returns true if this node / body should be visited, false if no hit can be generated
-		JPH_INLINE bool			ShouldVisitNode(int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode(int inStackTop) const
 		{
 			return mFractionStack[inStackTop] < mCollector.GetEarlyOutFraction();
 		}
 
 		/// Visit nodes, returns number of hits found and sorts ioChildNodeIDs so that they are at the beginning of the vector.
-		JPH_INLINE int			VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop)
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop)
 		{
 			// Test the ray against 4 bounding boxes
 			Vec4 fraction = RayAABox4(mOrigin, mInvDirection, inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -1089,18 +1082,18 @@ void QuadTree::CastRay(const RayCast &inRay, RayCastBodyCollector &ioCollector, 
 		}
 
 		/// Visit a body, returns false if the algorithm should terminate because no hits can be generated anymore
-		JPH_INLINE void			VisitBody(const BodyID &inBodyID, int inStackTop)
+		JPH_INLINE void VisitBody(const BodyID &inBodyID, int inStackTop)
 		{
 			// Store potential hit with body
-			BroadPhaseCastResult result { inBodyID, mFractionStack[inStackTop] };
+			BroadPhaseCastResult result{inBodyID, mFractionStack[inStackTop]};
 			mCollector.AddHit(result);
 		}
 
 	private:
-		Vec3					mOrigin;
-		RayInvDirection			mInvDirection;
-		RayCastBodyCollector &	mCollector;
-		float					mFractionStack[cStackSize];
+		Vec3 mOrigin;
+		RayInvDirection mInvDirection;
+		RayCastBodyCollector &mCollector;
+		float mFractionStack[cStackSize];
 	};
 
 	Visitor visitor(inRay, ioCollector);
@@ -1113,26 +1106,25 @@ void QuadTree::CollideAABox(const AABox &inBox, CollideShapeBodyCollector &ioCol
 	{
 	public:
 		/// Constructor
-		JPH_INLINE					Visitor(const AABox &inBox, CollideShapeBodyCollector &ioCollector) :
-			mBox(inBox),
-			mCollector(ioCollector)
+		JPH_INLINE Visitor(const AABox &inBox, CollideShapeBodyCollector &ioCollector) : mBox(inBox),
+																																										 mCollector(ioCollector)
 		{
 		}
 
 		/// Returns true if further processing of the tree should be aborted
-		JPH_INLINE bool				ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
 		/// Returns true if this node / body should be visited, false if no hit can be generated
-		JPH_INLINE bool				ShouldVisitNode(int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode(int inStackTop) const
 		{
 			return true;
 		}
 
 		/// Visit nodes, returns number of hits found and sorts ioChildNodeIDs so that they are at the beginning of the vector.
-		JPH_INLINE int				VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop) const
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop) const
 		{
 			// Test the box vs 4 boxes
 			UVec4 hitting = AABox4VsBox(mBox, inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -1140,15 +1132,15 @@ void QuadTree::CollideAABox(const AABox &inBox, CollideShapeBodyCollector &ioCol
 		}
 
 		/// Visit a body, returns false if the algorithm should terminate because no hits can be generated anymore
-		JPH_INLINE void				VisitBody(const BodyID &inBodyID, int inStackTop)
+		JPH_INLINE void VisitBody(const BodyID &inBodyID, int inStackTop)
 		{
 			// Store potential hit with body
 			mCollector.AddHit(inBodyID);
 		}
 
 	private:
-		const AABox &				mBox;
-		CollideShapeBodyCollector &	mCollector;
+		const AABox &mBox;
+		CollideShapeBodyCollector &mCollector;
 	};
 
 	Visitor visitor(inBox, ioCollector);
@@ -1161,29 +1153,28 @@ void QuadTree::CollideSphere(Vec3Arg inCenter, float inRadius, CollideShapeBodyC
 	{
 	public:
 		/// Constructor
-		JPH_INLINE					Visitor(Vec3Arg inCenter, float inRadius, CollideShapeBodyCollector &ioCollector) :
-			mCenterX(inCenter.SplatX()),
-			mCenterY(inCenter.SplatY()),
-			mCenterZ(inCenter.SplatZ()),
-			mRadiusSq(Vec4::sReplicate(Square(inRadius))),
-			mCollector(ioCollector)
+		JPH_INLINE Visitor(Vec3Arg inCenter, float inRadius, CollideShapeBodyCollector &ioCollector) : mCenterX(inCenter.SplatX()),
+																																																	 mCenterY(inCenter.SplatY()),
+																																																	 mCenterZ(inCenter.SplatZ()),
+																																																	 mRadiusSq(Vec4::sReplicate(Square(inRadius))),
+																																																	 mCollector(ioCollector)
 		{
 		}
 
 		/// Returns true if further processing of the tree should be aborted
-		JPH_INLINE bool				ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
 		/// Returns true if this node / body should be visited, false if no hit can be generated
-		JPH_INLINE bool				ShouldVisitNode(int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode(int inStackTop) const
 		{
 			return true;
 		}
 
 		/// Visit nodes, returns number of hits found and sorts ioChildNodeIDs so that they are at the beginning of the vector.
-		JPH_INLINE int				VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop) const
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop) const
 		{
 			// Test 4 boxes vs sphere
 			UVec4 hitting = AABox4VsSphere(mCenterX, mCenterY, mCenterZ, mRadiusSq, inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -1191,18 +1182,18 @@ void QuadTree::CollideSphere(Vec3Arg inCenter, float inRadius, CollideShapeBodyC
 		}
 
 		/// Visit a body, returns false if the algorithm should terminate because no hits can be generated anymore
-		JPH_INLINE void				VisitBody(const BodyID &inBodyID, int inStackTop)
+		JPH_INLINE void VisitBody(const BodyID &inBodyID, int inStackTop)
 		{
 			// Store potential hit with body
 			mCollector.AddHit(inBodyID);
 		}
 
 	private:
-		Vec4						mCenterX;
-		Vec4						mCenterY;
-		Vec4						mCenterZ;
-		Vec4						mRadiusSq;
-		CollideShapeBodyCollector &	mCollector;
+		Vec4 mCenterX;
+		Vec4 mCenterY;
+		Vec4 mCenterZ;
+		Vec4 mRadiusSq;
+		CollideShapeBodyCollector &mCollector;
 	};
 
 	Visitor visitor(inCenter, inRadius, ioCollector);
@@ -1215,26 +1206,25 @@ void QuadTree::CollidePoint(Vec3Arg inPoint, CollideShapeBodyCollector &ioCollec
 	{
 	public:
 		/// Constructor
-		JPH_INLINE					Visitor(Vec3Arg inPoint, CollideShapeBodyCollector &ioCollector) :
-			mPoint(inPoint),
-			mCollector(ioCollector)
+		JPH_INLINE Visitor(Vec3Arg inPoint, CollideShapeBodyCollector &ioCollector) : mPoint(inPoint),
+																																									mCollector(ioCollector)
 		{
 		}
 
 		/// Returns true if further processing of the tree should be aborted
-		JPH_INLINE bool				ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
 		/// Returns true if this node / body should be visited, false if no hit can be generated
-		JPH_INLINE bool				ShouldVisitNode(int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode(int inStackTop) const
 		{
 			return true;
 		}
 
 		/// Visit nodes, returns number of hits found and sorts ioChildNodeIDs so that they are at the beginning of the vector.
-		JPH_INLINE int				VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop) const
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop) const
 		{
 			// Test if point overlaps with box
 			UVec4 hitting = AABox4VsPoint(mPoint, inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -1242,15 +1232,15 @@ void QuadTree::CollidePoint(Vec3Arg inPoint, CollideShapeBodyCollector &ioCollec
 		}
 
 		/// Visit a body, returns false if the algorithm should terminate because no hits can be generated anymore
-		JPH_INLINE void				VisitBody(const BodyID &inBodyID, int inStackTop)
+		JPH_INLINE void VisitBody(const BodyID &inBodyID, int inStackTop)
 		{
 			// Store potential hit with body
 			mCollector.AddHit(inBodyID);
 		}
 
 	private:
-		Vec3						mPoint;
-		CollideShapeBodyCollector &	mCollector;
+		Vec3 mPoint;
+		CollideShapeBodyCollector &mCollector;
 	};
 
 	Visitor visitor(inPoint, ioCollector);
@@ -1263,26 +1253,25 @@ void QuadTree::CollideOrientedBox(const OrientedBox &inBox, CollideShapeBodyColl
 	{
 	public:
 		/// Constructor
-		JPH_INLINE					Visitor(const OrientedBox &inBox, CollideShapeBodyCollector &ioCollector) :
-			mBox(inBox),
-			mCollector(ioCollector)
+		JPH_INLINE Visitor(const OrientedBox &inBox, CollideShapeBodyCollector &ioCollector) : mBox(inBox),
+																																													 mCollector(ioCollector)
 		{
 		}
 
 		/// Returns true if further processing of the tree should be aborted
-		JPH_INLINE bool				ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
 		/// Returns true if this node / body should be visited, false if no hit can be generated
-		JPH_INLINE bool				ShouldVisitNode(int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode(int inStackTop) const
 		{
 			return true;
 		}
 
 		/// Visit nodes, returns number of hits found and sorts ioChildNodeIDs so that they are at the beginning of the vector.
-		JPH_INLINE int				VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop) const
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop) const
 		{
 			// Test if point overlaps with box
 			UVec4 hitting = AABox4VsBox(mBox, inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -1290,15 +1279,15 @@ void QuadTree::CollideOrientedBox(const OrientedBox &inBox, CollideShapeBodyColl
 		}
 
 		/// Visit a body, returns false if the algorithm should terminate because no hits can be generated anymore
-		JPH_INLINE void				VisitBody(const BodyID &inBodyID, int inStackTop)
+		JPH_INLINE void VisitBody(const BodyID &inBodyID, int inStackTop)
 		{
 			// Store potential hit with body
 			mCollector.AddHit(inBodyID);
 		}
 
 	private:
-		OrientedBox					mBox;
-		CollideShapeBodyCollector &	mCollector;
+		OrientedBox mBox;
+		CollideShapeBodyCollector &mCollector;
 	};
 
 	Visitor visitor(inBox, ioCollector);
@@ -1311,29 +1300,28 @@ void QuadTree::CastAABox(const AABoxCast &inBox, CastShapeBodyCollector &ioColle
 	{
 	public:
 		/// Constructor
-		JPH_INLINE					Visitor(const AABoxCast &inBox, CastShapeBodyCollector &ioCollector) :
-			mOrigin(inBox.mBox.GetCenter()),
-			mExtent(inBox.mBox.GetExtent()),
-			mInvDirection(inBox.mDirection),
-			mCollector(ioCollector)
+		JPH_INLINE Visitor(const AABoxCast &inBox, CastShapeBodyCollector &ioCollector) : mOrigin(inBox.mBox.GetCenter()),
+																																											mExtent(inBox.mBox.GetExtent()),
+																																											mInvDirection(inBox.mDirection),
+																																											mCollector(ioCollector)
 		{
 			mFractionStack[0] = -1;
 		}
 
 		/// Returns true if further processing of the tree should be aborted
-		JPH_INLINE bool				ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
 		/// Returns true if this node / body should be visited, false if no hit can be generated
-		JPH_INLINE bool				ShouldVisitNode(int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode(int inStackTop) const
 		{
 			return mFractionStack[inStackTop] < mCollector.GetPositiveEarlyOutFraction();
 		}
 
 		/// Visit nodes, returns number of hits found and sorts ioChildNodeIDs so that they are at the beginning of the vector.
-		JPH_INLINE int				VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop)
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioChildNodeIDs, int inStackTop)
 		{
 			// Enlarge them by the casted aabox extents
 			Vec4 bounds_min_x = inBoundsMinX, bounds_min_y = inBoundsMinY, bounds_min_z = inBoundsMinZ, bounds_max_x = inBoundsMaxX, bounds_max_y = inBoundsMaxY, bounds_max_z = inBoundsMaxZ;
@@ -1347,19 +1335,19 @@ void QuadTree::CastAABox(const AABoxCast &inBox, CastShapeBodyCollector &ioColle
 		}
 
 		/// Visit a body, returns false if the algorithm should terminate because no hits can be generated anymore
-		JPH_INLINE void				VisitBody(const BodyID &inBodyID, int inStackTop)
+		JPH_INLINE void VisitBody(const BodyID &inBodyID, int inStackTop)
 		{
 			// Store potential hit with body
-			BroadPhaseCastResult result { inBodyID, mFractionStack[inStackTop] };
+			BroadPhaseCastResult result{inBodyID, mFractionStack[inStackTop]};
 			mCollector.AddHit(result);
 		}
 
 	private:
-		Vec3						mOrigin;
-		Vec3						mExtent;
-		RayInvDirection				mInvDirection;
-		CastShapeBodyCollector &	mCollector;
-		float						mFractionStack[cStackSize];
+		Vec3 mOrigin;
+		Vec3 mExtent;
+		RayInvDirection mInvDirection;
+		CastShapeBodyCollector &mCollector;
+		float mFractionStack[cStackSize];
 	};
 
 	Visitor visitor(inBox, ioCollector);
@@ -1405,12 +1393,10 @@ void QuadTree::FindCollidingPairs(const BodyVector &inBodies, const BodyID *inAc
 				{
 					// Collision between dynamic pairs need to be picked up only once
 					const Body &body2 = *inBodies[b2_id.GetIndex()];
-					if (inObjectLayerPairFilter.ShouldCollide(body1.GetObjectLayer(), body2.GetObjectLayer())
-						&& Body::sFindCollidingPairsCanCollide(body1, body2)
-						&& bounds1.Overlaps(body2.GetWorldSpaceBounds())) // In the broadphase we widen the bounding box when a body moves, do a final check to see if the bounding boxes actually overlap
+					if (inObjectLayerPairFilter.ShouldCollide(body1.GetObjectLayer(), body2.GetObjectLayer()) && Body::sFindCollidingPairsCanCollide(body1, body2) && bounds1.Overlaps(body2.GetWorldSpaceBounds())) // In the broadphase we widen the bounding box when a body moves, do a final check to see if the bounding boxes actually overlap
 					{
 						// Store potential hit between bodies
-						ioPairCollector.AddHit({ b1_id, b2_id });
+						ioPairCollector.AddHit({b1_id, b2_id});
 					}
 				}
 			}
@@ -1447,13 +1433,12 @@ void QuadTree::FindCollidingPairs(const BodyVector &inBodies, const BodyID *inAc
 					}
 					else
 						JPH_ASSERT(false, "Stack full!\n"
-							"This must be a very deep tree. Are you batch adding bodies through BodyInterface::AddBodiesPrepare/AddBodiesFinalize?\n"
-							"If you add lots of bodies through BodyInterface::AddBody you may need to call PhysicsSystem::OptimizeBroadPhase to rebuild the tree.");
+															"This must be a very deep tree. Are you batch adding bodies through BodyInterface::AddBodiesPrepare/AddBodiesFinalize?\n"
+															"If you add lots of bodies through BodyInterface::AddBody you may need to call PhysicsSystem::OptimizeBroadPhase to rebuild the tree.");
 				}
 			}
 			--top;
-		}
-		while (top >= 0);
+		} while (top >= 0);
 	}
 
 	// Test that the root node was not swapped while finding collision pairs.
@@ -1474,8 +1459,8 @@ void QuadTree::ValidateTree(const BodyVector &inBodies, const TrackingVector &in
 	// To avoid call overhead, create a stack in place
 	struct StackEntry
 	{
-		uint32			mNodeIndex;
-		uint32			mParentNodeIndex;
+		uint32 mNodeIndex;
+		uint32 mParentNodeIndex;
 	};
 	StackEntry stack[cStackSize];
 	stack[0].mNodeIndex = inNodeIndex;
@@ -1542,8 +1527,7 @@ void QuadTree::ValidateTree(const BodyVector &inBodies, const TrackingVector &in
 			}
 		}
 		--top;
-	}
-	while (top >= 0);
+	} while (top >= 0);
 
 	// Check that the amount of bodies in the tree matches our counter
 	JPH_ASSERT(num_bodies == inNumExpectedBodies);
@@ -1591,7 +1575,7 @@ void QuadTree::DumpTree(const NodeID &inRoot, const char *inFileNamePrefix) cons
 
 			// Output node
 			String node_str = ConvertToString(node_idx);
-			f << "node" << node_str << "[label = \"Node " << node_str << "\nVolume: " << ConvertToString(bounds.GetVolume()) << "\" color=" << (node.mIsChanged? "red" : "black") << "]\n";
+			f << "node" << node_str << "[label = \"Node " << node_str << "\nVolume: " << ConvertToString(bounds.GetVolume()) << "\" color=" << (node.mIsChanged ? "red" : "black") << "]\n";
 
 			// Recurse and get all children
 			for (NodeID child_node_id : node.mChildNodeID)
@@ -1611,8 +1595,7 @@ void QuadTree::DumpTree(const NodeID &inRoot, const char *inFileNamePrefix) cons
 				}
 		}
 		--top;
-	}
-	while (top >= 0);
+	} while (top >= 0);
 
 	// Finish DOT file
 	f << "}\n";
@@ -1641,8 +1624,8 @@ void QuadTree::ReportStats(const char *inName, const LayerToStats &inLayer, uint
 	{
 		double total_pct = 100.0 * double(kv.second.mTotalTicks) / double(inTicks100Pct);
 		double total_pct_excl_collector = 100.0 * double(kv.second.mTotalTicks - kv.second.mCollectorTicks) / double(inTicks100Pct);
-		double hits_reported_vs_bodies_visited = kv.second.mBodiesVisited > 0? 100.0 * double(kv.second.mHitsReported) / double(kv.second.mBodiesVisited) : 100.0;
-		double hits_reported_vs_nodes_visited = kv.second.mNodesVisited > 0? double(kv.second.mHitsReported) / double(kv.second.mNodesVisited) : -1.0;
+		double hits_reported_vs_bodies_visited = kv.second.mBodiesVisited > 0 ? 100.0 * double(kv.second.mHitsReported) / double(kv.second.mBodiesVisited) : 100.0;
+		double hits_reported_vs_nodes_visited = kv.second.mNodesVisited > 0 ? double(kv.second.mHitsReported) / double(kv.second.mNodesVisited) : -1.0;
 
 		std::stringstream str;
 		str << inName << ", " << kv.first << ", " << mName << ", " << kv.second.mNumQueries << ", " << total_pct << ", " << total_pct_excl_collector << ", " << kv.second.mNodesVisited << ", " << kv.second.mBodiesVisited << ", " << kv.second.mHitsReported << ", " << hits_reported_vs_bodies_visited << ", " << hits_reported_vs_nodes_visited;

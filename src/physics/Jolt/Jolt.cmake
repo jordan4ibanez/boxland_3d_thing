@@ -509,7 +509,7 @@ if (CMAKE_GENERATOR STREQUAL "Ninja Multi-Config" AND MSVC)
 	# See: https://github.com/jrouwe/JoltPhysics/issues/1211
 	target_precompile_headers(Jolt PRIVATE "${JOLT_PHYSICS_ROOT}/Jolt.h")
 else()
-	target_precompile_headers(Jolt PRIVATE "$<$<NOT:$<CONFIG:ReleaseCoverage>>:${JOLT_PHYSICS_ROOT}/Jolt.h>")
+	target_precompile_headers(Jolt PRIVATE "$<$<NOT:$<CONFIG:ReleaseCoverage>>:${JOLT_PHYSICS_ROOT}/Jolt.h"")
 endif()
 
 if (NOT CPP_EXCEPTIONS_ENABLED)

@@ -2,21 +2,20 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
 #ifdef JPH_OBJECT_STREAM
 
-#include <Jolt/ObjectStream/ObjectStreamIn.h>
-#include <Jolt/Core/Factory.h>
-#include <Jolt/Core/UnorderedSet.h>
-#include <Jolt/ObjectStream/ObjectStreamTextIn.h>
-#include <Jolt/ObjectStream/ObjectStreamBinaryIn.h>
-#include <Jolt/ObjectStream/SerializableObject.h>
+#include "../ObjectStream/ObjectStreamIn.h"
+#include "../Core/Factory.h"
+#include "../Core/UnorderedSet.h"
+#include "../ObjectStream/ObjectStreamTextIn.h"
+#include "../ObjectStream/ObjectStreamBinaryIn.h"
+#include "../ObjectStream/SerializableObject.h"
 
 JPH_NAMESPACE_BEGIN
 
-ObjectStreamIn::ObjectStreamIn(istream &inStream) :
-	mStream(inStream)
+ObjectStreamIn::ObjectStreamIn(istream &inStream) : mStream(inStream)
 {
 }
 
@@ -26,16 +25,20 @@ bool ObjectStreamIn::GetInfo(istream &inStream, EStreamType &outType, int &outVe
 	char header[9];
 	memset(header, 0, 9);
 	inStream.read(header, 8);
-	if ((header[0] == 'B' || header[0] == 'T') && header[1] == 'O' && header[2] == 'S'
-		&& (header[3] == ' ' || isdigit(header[3])) && isdigit(header[4])
-		&& header[5] == '.' && isdigit(header[6]) && isdigit(header[7]))
+	if ((header[0] == 'B' || header[0] == 'T') && header[1] == 'O' && header[2] == 'S' && (header[3] == ' ' || isdigit(header[3])) && isdigit(header[4]) && header[5] == '.' && isdigit(header[6]) && isdigit(header[7]))
 	{
 		// Check if this is a binary or text objectfile
 		switch (header[0])
 		{
-		case 'T':	outType = ObjectStream::EStreamType::Text;		break;
-		case 'B':	outType = ObjectStream::EStreamType::Binary;	break;
-		default:	JPH_ASSERT(false);								break;
+		case 'T':
+			outType = ObjectStream::EStreamType::Text;
+			break;
+		case 'B':
+			outType = ObjectStream::EStreamType::Binary;
+			break;
+		default:
+			JPH_ASSERT(false);
+			break;
 		}
 
 		// Extract version and revision
@@ -53,7 +56,7 @@ bool ObjectStreamIn::GetInfo(istream &inStream, EStreamType &outType, int &outVe
 ObjectStreamIn *ObjectStreamIn::Open(istream &inStream)
 {
 	// Check if file is an ObjectStream of the correct version and revision
-	EStreamType	type;
+	EStreamType type;
 	int version;
 	int revision;
 	if (GetInfo(inStream, type, version, revision))
@@ -63,9 +66,12 @@ ObjectStreamIn *ObjectStreamIn::Open(istream &inStream)
 			// Create an input stream of the correct type
 			switch (type)
 			{
-			case EStreamType::Text:		return new ObjectStreamTextIn(inStream);
-			case EStreamType::Binary:	return new ObjectStreamBinaryIn(inStream);
-			default:					JPH_ASSERT(false);
+			case EStreamType::Text:
+				return new ObjectStreamTextIn(inStream);
+			case EStreamType::Binary:
+				return new ObjectStreamBinaryIn(inStream);
+			default:
+				JPH_ASSERT(false);
 			}
 		}
 		else
@@ -192,7 +198,7 @@ void *ObjectStreamIn::Read(const RTTI *inRTTI)
 	}
 }
 
-void *ObjectStreamIn::ReadObject(const RTTI *& outRTTI)
+void *ObjectStreamIn::ReadObject(const RTTI *&outRTTI)
 {
 	// Read the object class
 	void *object = nullptr;
@@ -210,9 +216,7 @@ void *ObjectStreamIn::ReadObject(const RTTI *& outRTTI)
 			if (ReadIdentifier(identifier))
 			{
 				// Check if this object can be read or must be skipped
-				if (identifier != sNullIdentifier
-					&& class_desc.mRTTI
-					&& !class_desc.mRTTI->IsAbstract())
+				if (identifier != sNullIdentifier && class_desc.mRTTI && !class_desc.mRTTI->IsAbstract())
 				{
 					// Create object instance
 					outRTTI = class_desc.mRTTI;
@@ -293,8 +297,7 @@ bool ObjectStreamIn::ReadRTTI()
 		}
 
 		// Read instance/pointer class name
-		if ((attribute.mSourceType == EOSDataType::Instance || attribute.mSourceType == EOSDataType::Pointer)
-			&& !ReadName(attribute.mClassName))
+		if ((attribute.mSourceType == EOSDataType::Instance || attribute.mSourceType == EOSDataType::Pointer) && !ReadName(attribute.mClassName))
 			return false;
 
 		// Find attribute in rtti
@@ -366,7 +369,7 @@ bool ObjectStreamIn::ReadClassData(const ClassDescription &inClassDesc, void *in
 		if (attr_desc.mIndex >= 0 && inInstance)
 		{
 			const SerializableAttribute &attr = inClassDesc.mRTTI->GetAttribute(attr_desc.mIndex);
-			if (attr_desc.mSourceType ==  attr_desc.mDestinationType)
+			if (attr_desc.mSourceType == attr_desc.mDestinationType)
 			{
 				continue_reading = attr.ReadData(*this, inInstance);
 			}
@@ -475,130 +478,130 @@ bool ObjectStreamIn::SkipAttributeData(int inArrayDepth, EOSDataType inDataType,
 				switch (inDataType)
 				{
 				case EOSDataType::Pointer:
-					{
-						Identifier temporary;
-						continue_reading = ReadIdentifier(temporary);
-						break;
-					}
+				{
+					Identifier temporary;
+					continue_reading = ReadIdentifier(temporary);
+					break;
+				}
 
 				case EOSDataType::T_uint8:
-					{
-						uint8 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					uint8 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_uint16:
-					{
-						uint16 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					uint16 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_int:
-					{
-						int temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					int temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_uint32:
-					{
-						uint32 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					uint32 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_uint64:
-					{
-						uint64 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					uint64 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_float:
-					{
-						float temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					float temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_double:
-					{
-						double temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					double temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_bool:
-					{
-						bool temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					bool temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_String:
-					{
-						String temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					String temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_Float3:
-					{
-						Float3 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					Float3 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_Double3:
-					{
-						Double3 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					Double3 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_Vec3:
-					{
-						Vec3 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					Vec3 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_DVec3:
-					{
-						DVec3 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					DVec3 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_Vec4:
-					{
-						Vec4 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					Vec4 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_Quat:
-					{
-						Quat temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					Quat temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_Mat44:
-					{
-						Mat44 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					Mat44 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::T_DMat44:
-					{
-						DMat44 temporary;
-						continue_reading = ReadPrimitiveData(temporary);
-						break;
-					}
+				{
+					DMat44 temporary;
+					continue_reading = ReadPrimitiveData(temporary);
+					break;
+				}
 
 				case EOSDataType::Array:
 				case EOSDataType::Object:

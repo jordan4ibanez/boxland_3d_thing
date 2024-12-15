@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/HingeConstraint.h>
-#include <Jolt/Physics/Constraints/ConstraintPart/RotationEulerConstraintPart.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Constraints/HingeConstraint.h"
+#include "../Constraints/ConstraintPart/RotationEulerConstraintPart.h"
+#include "../Body/Body.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -67,17 +67,17 @@ void HingeConstraintSettings::RestoreBinaryState(StreamIn &inStream)
 	inStream.Read(mLimitsMax);
 	inStream.Read(mMaxFrictionTorque);
 	mLimitsSpringSettings.RestoreBinaryState(inStream);
-	mMotorSettings.RestoreBinaryState(inStream);}
+	mMotorSettings.RestoreBinaryState(inStream);
+}
 
 TwoBodyConstraint *HingeConstraintSettings::Create(Body &inBody1, Body &inBody2) const
 {
 	return new HingeConstraint(inBody1, inBody2, *this);
 }
 
-HingeConstraint::HingeConstraint(Body &inBody1, Body &inBody2, const HingeConstraintSettings &inSettings) :
-	TwoBodyConstraint(inBody1, inBody2, inSettings),
-	mMaxFrictionTorque(inSettings.mMaxFrictionTorque),
-	mMotorSettings(inSettings.mMotorSettings)
+HingeConstraint::HingeConstraint(Body &inBody1, Body &inBody2, const HingeConstraintSettings &inSettings) : TwoBodyConstraint(inBody1, inBody2, inSettings),
+																																																						mMaxFrictionTorque(inSettings.mMaxFrictionTorque),
+																																																						mMotorSettings(inSettings.mMotorSettings)
 {
 	// Store limits
 	JPH_ASSERT(inSettings.mLimitsMin != inSettings.mLimitsMax || inSettings.mLimitsSpringSettings.mFrequency > 0.0f, "Better use a fixed constraint in this case");
@@ -240,7 +240,7 @@ float HingeConstraint::GetSmallestAngleToLimit() const
 {
 	float dist_to_min = CenterAngleAroundZero(mTheta - mLimitsMin);
 	float dist_to_max = CenterAngleAroundZero(mTheta - mLimitsMax);
-	return abs(dist_to_min) < abs(dist_to_max)? dist_to_min : dist_to_max;
+	return abs(dist_to_min) < abs(dist_to_max) ? dist_to_min : dist_to_max;
 }
 
 bool HingeConstraint::IsMinLimitClosest() const
@@ -259,11 +259,11 @@ bool HingeConstraint::SolveVelocityConstraint(float inDeltaTime)
 		switch (mMotorState)
 		{
 		case EMotorState::Off:
-			{
-				float max_lambda = mMaxFrictionTorque * inDeltaTime;
-				motor = mMotorConstraintPart.SolveVelocityConstraint(*mBody1, *mBody2, mA1, -max_lambda, max_lambda);
-				break;
-			}
+		{
+			float max_lambda = mMaxFrictionTorque * inDeltaTime;
+			motor = mMotorConstraintPart.SolveVelocityConstraint(*mBody1, *mBody2, mA1, -max_lambda, max_lambda);
+			break;
+		}
 
 		case EMotorState::Velocity:
 		case EMotorState::Position:
@@ -390,7 +390,6 @@ void HingeConstraint::RestoreState(StateRecorder &inStream)
 	inStream.Read(mTargetAngularVelocity);
 	inStream.Read(mTargetAngle);
 }
-
 
 Ref<ConstraintSettings> HingeConstraint::GetConstraintSettings() const
 {

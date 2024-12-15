@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/BroadPhase/BroadPhase.h>
+#include "../../Collision/BroadPhase/BroadPhase.h"
 
 JPH_NAMESPACE_BEGIN
 

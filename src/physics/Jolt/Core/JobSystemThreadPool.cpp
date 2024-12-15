@@ -2,28 +2,28 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Core/JobSystemThreadPool.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/FPException.h>
+#include "../Core/JobSystemThreadPool.h"
+#include "../Core/Profiler.h"
+#include "../Core/FPException.h"
 
 #ifdef JPH_PLATFORM_WINDOWS
-	JPH_SUPPRESS_WARNING_PUSH
-	JPH_MSVC_SUPPRESS_WARNING(5039) // winbase.h(13179): warning C5039: 'TpSetCallbackCleanupGroup': pointer or reference to potentially throwing function passed to 'extern "C"' function under -EHc. Undefined behavior may occur if this function throws an exception.
-	#ifndef WIN32_LEAN_AND_MEAN
-		#define WIN32_LEAN_AND_MEAN
-	#endif
+JPH_SUPPRESS_WARNING_PUSH
+JPH_MSVC_SUPPRESS_WARNING(5039) // winbase.h(13179): warning C5039: 'TpSetCallbackCleanupGroup': pointer or reference to potentially throwing function passed to 'extern "C"' function under -EHc. Undefined behavior may occur if this function throws an exception.
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 #ifndef JPH_COMPILER_MINGW
-	#include <Windows.h>
+#include <Windows.h>
 #else
-	#include <windows.h>
+#include <windows.h>
 #endif
 
-	JPH_SUPPRESS_WARNING_POP
+JPH_SUPPRESS_WARNING_POP
 #endif
 #ifdef JPH_PLATFORM_LINUX
-	#include <sys/prctl.h>
+#include <sys/prctl.h>
 #endif
 
 JPH_NAMESPACE_BEGIN
@@ -71,7 +71,8 @@ void JobSystemThreadPool::StartThreads([[maybe_unused]] int inNumThreads)
 	JPH_ASSERT(mThreads.empty());
 	mThreads.reserve(inNumThreads);
 	for (int i = 0; i < inNumThreads; ++i)
-		mThreads.emplace_back([this, i] { ThreadMain(i); });
+		mThreads.emplace_back([this, i]
+													{ ThreadMain(i); });
 #endif
 }
 
@@ -240,70 +241,70 @@ void JobSystemThreadPool::QueueJobs(Job **inJobs, uint inNumJobs)
 #if defined(JPH_PLATFORM_WINDOWS)
 
 #if !defined(JPH_COMPILER_MINGW) // MinGW doesn't support __try/__except)
-	// Sets the current thread name in MSVC debugger
-	static void RaiseThreadNameException(const char *inName)
+// Sets the current thread name in MSVC debugger
+static void RaiseThreadNameException(const char *inName)
+{
+#pragma pack(push, 8)
+
+	struct THREADNAME_INFO
 	{
-		#pragma pack(push, 8)
+		DWORD dwType;			// Must be 0x1000.
+		LPCSTR szName;		// Pointer to name (in user addr space).
+		DWORD dwThreadID; // Thread ID (-1=caller thread).
+		DWORD dwFlags;		// Reserved for future use, must be zero.
+	};
 
-		struct THREADNAME_INFO
-		{
-			DWORD	dwType;			// Must be 0x1000.
-			LPCSTR	szName;			// Pointer to name (in user addr space).
-			DWORD	dwThreadID;		// Thread ID (-1=caller thread).
-			DWORD	dwFlags;		// Reserved for future use, must be zero.
-		};
+#pragma pack(pop)
 
-		#pragma pack(pop)
+	THREADNAME_INFO info;
+	info.dwType = 0x1000;
+	info.szName = inName;
+	info.dwThreadID = (DWORD)-1;
+	info.dwFlags = 0;
 
-		THREADNAME_INFO info;
-		info.dwType = 0x1000;
-		info.szName = inName;
-		info.dwThreadID = (DWORD)-1;
-		info.dwFlags = 0;
-
-		__try
-		{
-			RaiseException(0x406D1388, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR *)&info);
-		}
-		__except(EXCEPTION_EXECUTE_HANDLER)
-		{
-		}
+	__try
+	{
+		RaiseException(0x406D1388, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR *)&info);
 	}
+	__except (EXCEPTION_EXECUTE_HANDLER)
+	{
+	}
+}
 #endif // !JPH_COMPILER_MINGW
 
-	static void SetThreadName(const char* inName)
+static void SetThreadName(const char *inName)
+{
+	JPH_SUPPRESS_WARNING_PUSH
+
+	// Suppress casting warning, it's fine here as GetProcAddress doesn't really return a FARPROC
+	JPH_CLANG_SUPPRESS_WARNING("-Wcast-function-type")				// error : cast from 'FARPROC' (aka 'long long (*)()') to 'SetThreadDescriptionFunc' (aka 'long (*)(void *, const wchar_t *)') converts to incompatible function type
+	JPH_CLANG_SUPPRESS_WARNING("-Wcast-function-type-strict") // error : cast from 'FARPROC' (aka 'long long (*)()') to 'SetThreadDescriptionFunc' (aka 'long (*)(void *, const wchar_t *)') converts to incompatible function type
+	JPH_MSVC_SUPPRESS_WARNING(4191)														// reinterpret_cast' : unsafe conversion from 'FARPROC' to 'SetThreadDescriptionFunc'. Calling this function through the result pointer may cause your program to fail
+
+	using SetThreadDescriptionFunc = HRESULT(WINAPI *)(HANDLE hThread, PCWSTR lpThreadDescription);
+	static SetThreadDescriptionFunc SetThreadDescription = reinterpret_cast<SetThreadDescriptionFunc>(GetProcAddress(GetModuleHandleW(L"Kernel32.dll"), "SetThreadDescription"));
+
+	JPH_SUPPRESS_WARNING_POP
+
+	if (SetThreadDescription)
 	{
-		JPH_SUPPRESS_WARNING_PUSH
+		wchar_t name_buffer[64] = {0};
+		if (MultiByteToWideChar(CP_UTF8, 0, inName, -1, name_buffer, sizeof(name_buffer) / sizeof(wchar_t) - 1) == 0)
+			return;
 
-		// Suppress casting warning, it's fine here as GetProcAddress doesn't really return a FARPROC
-		JPH_CLANG_SUPPRESS_WARNING("-Wcast-function-type") // error : cast from 'FARPROC' (aka 'long long (*)()') to 'SetThreadDescriptionFunc' (aka 'long (*)(void *, const wchar_t *)') converts to incompatible function type
-		JPH_CLANG_SUPPRESS_WARNING("-Wcast-function-type-strict") // error : cast from 'FARPROC' (aka 'long long (*)()') to 'SetThreadDescriptionFunc' (aka 'long (*)(void *, const wchar_t *)') converts to incompatible function type
-		JPH_MSVC_SUPPRESS_WARNING(4191) // reinterpret_cast' : unsafe conversion from 'FARPROC' to 'SetThreadDescriptionFunc'. Calling this function through the result pointer may cause your program to fail
-
-		using SetThreadDescriptionFunc = HRESULT(WINAPI*)(HANDLE hThread, PCWSTR lpThreadDescription);
-		static SetThreadDescriptionFunc SetThreadDescription = reinterpret_cast<SetThreadDescriptionFunc>(GetProcAddress(GetModuleHandleW(L"Kernel32.dll"), "SetThreadDescription"));
-
-		JPH_SUPPRESS_WARNING_POP
-
-		if (SetThreadDescription)
-		{
-			wchar_t name_buffer[64] = { 0 };
-			if (MultiByteToWideChar(CP_UTF8, 0, inName, -1, name_buffer, sizeof(name_buffer) / sizeof(wchar_t) - 1) == 0)
-				return;
-
-			SetThreadDescription(GetCurrentThread(), name_buffer);
-		}
+		SetThreadDescription(GetCurrentThread(), name_buffer);
+	}
 #if !defined(JPH_COMPILER_MINGW)
-		else if (IsDebuggerPresent())
-			RaiseThreadNameException(inName);
+	else if (IsDebuggerPresent())
+		RaiseThreadNameException(inName);
 #endif // !JPH_COMPILER_MINGW
-	}
+}
 #elif defined(JPH_PLATFORM_LINUX)
-	static void SetThreadName(const char *inName)
-	{
-		JPH_ASSERT(strlen(inName) < 16); // String will be truncated if it is longer
-		prctl(PR_SET_NAME, inName, 0, 0, 0);
-	}
+static void SetThreadName(const char *inName)
+{
+	JPH_ASSERT(strlen(inName) < 16); // String will be truncated if it is longer
+	prctl(PR_SET_NAME, inName, 0, 0, 0);
+}
 #endif // JPH_PLATFORM_LINUX
 
 void JobSystemThreadPool::ThreadMain(int inThreadIndex)

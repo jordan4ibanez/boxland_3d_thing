@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <Jolt/Core/Reference.h>
-#include <Jolt/Core/Color.h>
-#include <Jolt/Core/Result.h>
-#include <Jolt/ObjectStream/SerializableObject.h>
+#include "../../Core/Reference.h"
+#include "../../Core/Color.h"
+#include "../../Core/Result.h"
+#include "../../ObjectStream/SerializableObject.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -25,26 +25,26 @@ class JPH_EXPORT PhysicsMaterial : public SerializableObject, public RefTarget<P
 
 public:
 	/// Virtual destructor
-	virtual									~PhysicsMaterial() override = default;
+	virtual ~PhysicsMaterial() override = default;
 
 	/// Default material that is used when a shape has no materials defined
-	static RefConst<PhysicsMaterial>		sDefault;
+	static RefConst<PhysicsMaterial> sDefault;
 
 	// Properties
-	virtual const char *					GetDebugName() const			{ return "Unknown"; }
-	virtual Color							GetDebugColor() const			{ return Color::sGrey; }
+	virtual const char *GetDebugName() const { return "Unknown"; }
+	virtual Color GetDebugColor() const { return Color::sGrey; }
 
 	/// Saves the contents of the material in binary form to inStream.
-	virtual void							SaveBinaryState(StreamOut &inStream) const;
+	virtual void SaveBinaryState(StreamOut &inStream) const;
 
 	using PhysicsMaterialResult = Result<Ref<PhysicsMaterial>>;
 
 	/// Creates a PhysicsMaterial of the correct type and restores its contents from the binary stream inStream.
-	static PhysicsMaterialResult			sRestoreFromBinaryState(StreamIn &inStream);
+	static PhysicsMaterialResult sRestoreFromBinaryState(StreamIn &inStream);
 
 protected:
 	/// This function should not be called directly, it is used by sRestoreFromBinaryState.
-	virtual void							RestoreBinaryState(StreamIn &inStream);
+	virtual void RestoreBinaryState(StreamIn &inStream);
 };
 
 using PhysicsMaterialList = Array<RefConst<PhysicsMaterial>>;

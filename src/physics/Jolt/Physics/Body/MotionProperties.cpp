@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Body/MotionProperties.h>
-#include <Jolt/Physics/StateRecorder.h>
+#include "../Body/MotionProperties.h"
+#include "../StateRecorder.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -27,8 +27,8 @@ void MotionProperties::SetMassProperties(EAllowedDOFs inAllowedDOFs, const MassP
 	else
 	{
 		JPH_ASSERT(inMassProperties.mMass > 0.0f, "Invalid mass. "
-			"Some shapes like MeshShape or TriangleShape cannot calculate mass automatically, "
-			"in this case you need to provide it by setting BodyCreationSettings::mOverrideMassProperties and mMassPropertiesOverride.");
+																							"Some shapes like MeshShape or TriangleShape cannot calculate mass automatically, "
+																							"in this case you need to provide it by setting BodyCreationSettings::mOverrideMassProperties and mMassPropertiesOverride.");
 		mInvMass = 1.0f / inMassProperties.mMass;
 	}
 
@@ -43,8 +43,7 @@ void MotionProperties::SetMassProperties(EAllowedDOFs inAllowedDOFs, const MassP
 		// Set inverse inertia
 		Mat44 rotation;
 		Vec3 diagonal;
-		if (inMassProperties.DecomposePrincipalMomentsOfInertia(rotation, diagonal)
-			&& !diagonal.IsNearZero())
+		if (inMassProperties.DecomposePrincipalMomentsOfInertia(rotation, diagonal) && !diagonal.IsNearZero())
 		{
 			mInvInertiaDiagonal = diagonal.Reciprocal();
 			mInertiaRotation = rotation.GetQuaternion();

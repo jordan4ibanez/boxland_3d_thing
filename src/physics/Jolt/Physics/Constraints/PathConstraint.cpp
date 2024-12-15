@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/PathConstraint.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Core/StringTools.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Constraints/PathConstraint.h"
+#include "../Body/Body.h"
+#include "../../Core/StringTools.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -62,11 +62,10 @@ TwoBodyConstraint *PathConstraintSettings::Create(Body &inBody1, Body &inBody2) 
 	return new PathConstraint(inBody1, inBody2, *this);
 }
 
-PathConstraint::PathConstraint(Body &inBody1, Body &inBody2, const PathConstraintSettings &inSettings) :
-	TwoBodyConstraint(inBody1, inBody2, inSettings),
-	mRotationConstraintType(inSettings.mRotationConstraintType),
-	mMaxFrictionForce(inSettings.mMaxFrictionForce),
-	mPositionMotorSettings(inSettings.mPositionMotorSettings)
+PathConstraint::PathConstraint(Body &inBody1, Body &inBody2, const PathConstraintSettings &inSettings) : TwoBodyConstraint(inBody1, inBody2, inSettings),
+																																																				 mRotationConstraintType(inSettings.mRotationConstraintType),
+																																																				 mMaxFrictionForce(inSettings.mMaxFrictionForce),
+																																																				 mPositionMotorSettings(inSettings.mPositionMotorSettings)
 {
 	// Calculate transform that takes us from the path start to center of mass space of body 1
 	mPathToBody1 = Mat44::sRotationTranslation(inSettings.mPathRotation, inSettings.mPathPosition - inBody1.GetShape()->GetCenterOfMass());
@@ -269,11 +268,11 @@ bool PathConstraint::SolveVelocityConstraint(float inDeltaTime)
 		switch (mPositionMotorState)
 		{
 		case EMotorState::Off:
-			{
-				float max_lambda = mMaxFrictionForce * inDeltaTime;
-				motor = mPositionMotorConstraintPart.SolveVelocityConstraint(*mBody1, *mBody2, mPathTangent, -max_lambda, max_lambda);
-				break;
-			}
+		{
+			float max_lambda = mMaxFrictionForce * inDeltaTime;
+			motor = mPositionMotorConstraintPart.SolveVelocityConstraint(*mBody1, *mBody2, mPathTangent, -max_lambda, max_lambda);
+			break;
+		}
 
 		case EMotorState::Velocity:
 		case EMotorState::Position:
@@ -391,20 +390,20 @@ void PathConstraint::DrawConstraint(DebugRenderer *inRenderer) const
 		switch (mPositionMotorState)
 		{
 		case EMotorState::Position:
-			{
-				// Draw target marker
-				Vec3 position, tangent, normal, binormal;
-				mPath->GetPointOnPath(mTargetPathFraction, position, tangent, normal, binormal);
-				inRenderer->DrawMarker(path_to_world * position, Color::sYellow, 1.0f);
-				break;
-			}
+		{
+			// Draw target marker
+			Vec3 position, tangent, normal, binormal;
+			mPath->GetPointOnPath(mTargetPathFraction, position, tangent, normal, binormal);
+			inRenderer->DrawMarker(path_to_world * position, Color::sYellow, 1.0f);
+			break;
+		}
 
 		case EMotorState::Velocity:
-			{
-				RVec3 position = mBody2->GetCenterOfMassPosition() + mR2;
-				inRenderer->DrawArrow(position, position + mPathTangent * mTargetVelocity, Color::sRed, 0.1f);
-				break;
-			}
+		{
+			RVec3 position = mBody2->GetCenterOfMassPosition() + mR2;
+			inRenderer->DrawArrow(position, position + mPathTangent * mTargetVelocity, Color::sRed, 0.1f);
+			break;
+		}
 
 		case EMotorState::Off:
 			break;

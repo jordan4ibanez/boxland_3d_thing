@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/Shape/SubShapeID.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/Geometry/OrientedBox.h>
+#include "../Collision/TransformedShape.h"
+#include "../Collision/RayCast.h"
+#include "../Collision/ShapeCast.h"
+#include "../Collision/CastResult.h"
+#include "../Collision/Shape/SubShapeID.h"
+#include "../Collision/CollisionDispatch.h"
+#include "../../Geometry/OrientedBox.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -119,14 +119,13 @@ void TransformedShape::CollectTransformedShapes(const AABox &inBox, TransformedS
 	{
 		struct MyCollector : public TransformedShapeCollector
 		{
-										MyCollector(TransformedShapeCollector &ioCollector, RVec3 inShapePositionCOM) :
-				TransformedShapeCollector(ioCollector),
-				mCollector(ioCollector),
-				mShapePositionCOM(inShapePositionCOM)
+			MyCollector(TransformedShapeCollector &ioCollector, RVec3 inShapePositionCOM) : TransformedShapeCollector(ioCollector),
+																																											mCollector(ioCollector),
+																																											mShapePositionCOM(inShapePositionCOM)
 			{
 			}
 
-			virtual void				AddHit(const TransformedShape &inResult) override
+			virtual void AddHit(const TransformedShape &inResult) override
 			{
 				// Apply the center of mass offset
 				TransformedShape ts = inResult;
@@ -139,8 +138,8 @@ void TransformedShape::CollectTransformedShapes(const AABox &inBox, TransformedS
 				UpdateEarlyOutFraction(mCollector.GetEarlyOutFraction());
 			}
 
-			TransformedShapeCollector &	mCollector;
-			RVec3						mShapePositionCOM;
+			TransformedShapeCollector &mCollector;
+			RVec3 mShapePositionCOM;
 		};
 
 		// Set the context on the collector

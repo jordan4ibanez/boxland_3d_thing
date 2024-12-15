@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Physics/StateRecorder.h>
+#include "../../Body/Body.h"
+#include "../../StateRecorder.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -47,7 +47,7 @@ JPH_NAMESPACE_BEGIN
 class IndependentAxisConstraintPart
 {
 	/// Internal helper function to update velocities of bodies after Lagrange multiplier is calculated
-	JPH_INLINE bool				ApplyVelocityStep(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, float inRatio, float inLambda) const
+	JPH_INLINE bool ApplyVelocityStep(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, float inRatio, float inLambda) const
 	{
 		// Apply impulse if delta is not zero
 		if (inLambda != 0.0f)
@@ -86,7 +86,7 @@ public:
 	/// @param inR2 The position on which the constraint operates on body 1 relative to COM
 	/// @param inN2 The world space normal in which the constraint operates for body 2
 	/// @param inRatio The ratio how forces are applied between bodies
-	inline void					CalculateConstraintProperties(const Body &inBody1, const Body &inBody2, Vec3Arg inR1, Vec3Arg inN1, Vec3Arg inR2, Vec3Arg inN2, float inRatio)
+	inline void CalculateConstraintProperties(const Body &inBody1, const Body &inBody2, Vec3Arg inR1, Vec3Arg inN1, Vec3Arg inR2, Vec3Arg inN2, float inRatio)
 	{
 		JPH_ASSERT(inN1.IsNormalized(1.0e-4f) && inN2.IsNormalized(1.0e-4f));
 
@@ -120,14 +120,14 @@ public:
 	}
 
 	/// Deactivate this constraint
-	inline void					Deactivate()
+	inline void Deactivate()
 	{
 		mEffectiveMass = 0.0f;
 		mTotalLambda = 0.0f;
 	}
 
 	/// Check if constraint is active
-	inline bool					IsActive() const
+	inline bool IsActive() const
 	{
 		return mEffectiveMass != 0.0f;
 	}
@@ -139,7 +139,7 @@ public:
 	/// @param inN2 The world space normal in which the constraint operates for body 2
 	/// @param inRatio The ratio how forces are applied between bodies
 	/// @param inWarmStartImpulseRatio Ratio of new step to old time step (dt_new / dt_old) for scaling the lagrange multiplier of the previous frame
-	inline void					WarmStart(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, float inRatio, float inWarmStartImpulseRatio)
+	inline void WarmStart(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, float inRatio, float inWarmStartImpulseRatio)
 	{
 		mTotalLambda *= inWarmStartImpulseRatio;
 		ApplyVelocityStep(ioBody1, ioBody2, inN1, inN2, inRatio, mTotalLambda);
@@ -153,21 +153,21 @@ public:
 	/// @param inRatio The ratio how forces are applied between bodies
 	/// @param inMinLambda Minimum angular impulse to apply (N m s)
 	/// @param inMaxLambda Maximum angular impulse to apply (N m s)
-	inline bool					SolveVelocityConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, float inRatio, float inMinLambda, float inMaxLambda)
+	inline bool SolveVelocityConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, float inRatio, float inMinLambda, float inMaxLambda)
 	{
 		// Lagrange multiplier is:
 		//
 		// lambda = -K^-1 (J v + b)
 		float lambda = -mEffectiveMass * (inN1.Dot(ioBody1.GetLinearVelocity()) + mR1xN1.Dot(ioBody1.GetAngularVelocity()) + inRatio * inN2.Dot(ioBody2.GetLinearVelocity()) + mRatioR2xN2.Dot(ioBody2.GetAngularVelocity()));
 		float new_lambda = Clamp(mTotalLambda + lambda, inMinLambda, inMaxLambda); // Clamp impulse
-		lambda = new_lambda - mTotalLambda; // Lambda potentially got clamped, calculate the new impulse to apply
-		mTotalLambda = new_lambda; // Store accumulated impulse
+		lambda = new_lambda - mTotalLambda;																				 // Lambda potentially got clamped, calculate the new impulse to apply
+		mTotalLambda = new_lambda;																								 // Store accumulated impulse
 
 		return ApplyVelocityStep(ioBody1, ioBody2, inN1, inN2, inRatio, lambda);
 	}
 
 	/// Return lagrange multiplier
-	float						GetTotalLambda() const
+	float GetTotalLambda() const
 	{
 		return mTotalLambda;
 	}
@@ -180,7 +180,7 @@ public:
 	/// @param inRatio The ratio how forces are applied between bodies
 	/// @param inC Value of the constraint equation (C)
 	/// @param inBaumgarte Baumgarte constant (fraction of the error to correct)
-	inline bool					SolvePositionConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, float inRatio, float inC, float inBaumgarte) const
+	inline bool SolvePositionConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inN1, Vec3Arg inN2, float inRatio, float inC, float inBaumgarte) const
 	{
 		if (inC != 0.0f)
 		{
@@ -223,24 +223,24 @@ public:
 	}
 
 	/// Save state of this constraint part
-	void						SaveState(StateRecorder &inStream) const
+	void SaveState(StateRecorder &inStream) const
 	{
 		inStream.Write(mTotalLambda);
 	}
 
 	/// Restore state of this constraint part
-	void						RestoreState(StateRecorder &inStream)
+	void RestoreState(StateRecorder &inStream)
 	{
 		inStream.Read(mTotalLambda);
 	}
 
 private:
-	Vec3						mR1xN1;
-	Vec3						mInvI1_R1xN1;
-	Vec3						mRatioR2xN2;
-	Vec3						mInvI2_RatioR2xN2;
-	float						mEffectiveMass = 0.0f;
-	float						mTotalLambda = 0.0f;
+	Vec3 mR1xN1;
+	Vec3 mInvI1_R1xN1;
+	Vec3 mRatioR2xN2;
+	Vec3 mInvI2_RatioR2xN2;
+	float mEffectiveMass = 0.0f;
+	float mTotalLambda = 0.0f;
 };
 
 JPH_NAMESPACE_END

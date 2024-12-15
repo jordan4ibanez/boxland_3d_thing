@@ -4,17 +4,17 @@
 
 #pragma once
 
-#include <Jolt/Core/TickCounter.h>
-#include <Jolt/Physics/Collision/Shape/Shape.h>
+#include "../../Core/TickCounter.h"
+#include "../Collision/Shape/Shape.h"
 
 JPH_SUPPRESS_WARNING_PUSH
 JPH_CLANG_SUPPRESS_WARNING("-Wc++98-compat-pedantic")
 
 // Shorthand function to ifdef out code if narrow phase stats tracking is off
 #ifdef JPH_TRACK_NARROWPHASE_STATS
-	#define JPH_IF_TRACK_NARROWPHASE_STATS(...) __VA_ARGS__
+#define JPH_IF_TRACK_NARROWPHASE_STATS(...) __VA_ARGS__
 #else
-	#define JPH_IF_TRACK_NARROWPHASE_STATS(...)
+#define JPH_IF_TRACK_NARROWPHASE_STATS(...)
 #endif // JPH_TRACK_NARROWPHASE_STATS
 
 JPH_SUPPRESS_WARNING_POP
@@ -28,35 +28,34 @@ class NarrowPhaseStat
 {
 public:
 	/// Trace an individual stat in CSV form.
-	void					ReportStats(const char *inName, EShapeSubType inType1, EShapeSubType inType2, uint64 inTicks100Pct) const;
+	void ReportStats(const char *inName, EShapeSubType inType1, EShapeSubType inType2, uint64 inTicks100Pct) const;
 
 	/// Trace the collected broadphase stats in CSV form.
 	/// This report can be used to judge and tweak the efficiency of the broadphase.
-	static void				sReportStats();
+	static void sReportStats();
 
-	atomic<uint64>			mNumQueries = 0;
-	atomic<uint64>			mHitsReported = 0;
-	atomic<uint64>			mTotalTicks = 0;
-	atomic<uint64>			mChildTicks = 0;
+	atomic<uint64> mNumQueries = 0;
+	atomic<uint64> mHitsReported = 0;
+	atomic<uint64> mTotalTicks = 0;
+	atomic<uint64> mChildTicks = 0;
 
-	static NarrowPhaseStat	sCollideShape[NumSubShapeTypes][NumSubShapeTypes];
-	static NarrowPhaseStat	sCastShape[NumSubShapeTypes][NumSubShapeTypes];
+	static NarrowPhaseStat sCollideShape[NumSubShapeTypes][NumSubShapeTypes];
+	static NarrowPhaseStat sCastShape[NumSubShapeTypes][NumSubShapeTypes];
 };
 
 /// Object that tracks the start and end of a narrow phase operation
 class TrackNarrowPhaseStat
 {
 public:
-							TrackNarrowPhaseStat(NarrowPhaseStat &inStat) :
-		mStat(inStat),
-		mParent(sRoot),
-		mStart(GetProcessorTickCount())
+	TrackNarrowPhaseStat(NarrowPhaseStat &inStat) : mStat(inStat),
+																									mParent(sRoot),
+																									mStart(GetProcessorTickCount())
 	{
 		// Make this the new root of the chain
 		sRoot = this;
 	}
 
-							~TrackNarrowPhaseStat()
+	~TrackNarrowPhaseStat()
 	{
 		uint64 delta_ticks = GetProcessorTickCount() - mStart;
 
@@ -73,9 +72,9 @@ public:
 		sRoot = mParent;
 	}
 
-	NarrowPhaseStat &		mStat;
-	TrackNarrowPhaseStat *	mParent;
-	uint64					mStart;
+	NarrowPhaseStat &mStat;
+	TrackNarrowPhaseStat *mParent;
+	uint64 mStart;
 
 	static thread_local TrackNarrowPhaseStat *sRoot;
 };
@@ -84,12 +83,11 @@ public:
 class TrackNarrowPhaseCollector
 {
 public:
-							TrackNarrowPhaseCollector() :
-		mStart(GetProcessorTickCount())
+	TrackNarrowPhaseCollector() : mStart(GetProcessorTickCount())
 	{
 	}
 
-							~TrackNarrowPhaseCollector()
+	~TrackNarrowPhaseCollector()
 	{
 		// Mark time spent in collector as 'child' time for the parent
 		uint64 delta_ticks = GetProcessorTickCount() - mStart;
@@ -102,7 +100,7 @@ public:
 	}
 
 private:
-	uint64					mStart;
+	uint64 mStart;
 };
 
 JPH_NAMESPACE_END

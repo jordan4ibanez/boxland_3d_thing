@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Physics/PhysicsSettings.h>
+#include "../PhysicsSettings.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -13,11 +13,11 @@ class CalculateSolverSteps
 {
 public:
 	/// Constructor
-	JPH_INLINE explicit			CalculateSolverSteps(const PhysicsSettings &inSettings) : mSettings(inSettings) { }
+	JPH_INLINE explicit CalculateSolverSteps(const PhysicsSettings &inSettings) : mSettings(inSettings) {}
 
 	/// Combine the number of velocity and position steps for this body/constraint with the current values
 	template <class Type>
-	JPH_INLINE void				operator () (const Type *inObject)
+	JPH_INLINE void operator()(const Type *inObject)
 	{
 		uint num_velocity_steps = inObject->GetNumVelocityStepsOverride();
 		mNumVelocitySteps = max(mNumVelocitySteps, num_velocity_steps);
@@ -29,7 +29,7 @@ public:
 	}
 
 	/// Must be called after all bodies/constraints have been processed
-	JPH_INLINE void				Finalize()
+	JPH_INLINE void Finalize()
 	{
 		// If we have a default velocity/position step count, take the max of the default and the overrides
 		if (mApplyDefaultVelocity)
@@ -39,17 +39,17 @@ public:
 	}
 
 	/// Get the results of the calculation
-	JPH_INLINE uint				GetNumPositionSteps() const					{ return mNumPositionSteps; }
-	JPH_INLINE uint				GetNumVelocitySteps() const					{ return mNumVelocitySteps; }
+	JPH_INLINE uint GetNumPositionSteps() const { return mNumPositionSteps; }
+	JPH_INLINE uint GetNumVelocitySteps() const { return mNumVelocitySteps; }
 
 private:
-	const PhysicsSettings &		mSettings;
+	const PhysicsSettings &mSettings;
 
-	uint						mNumVelocitySteps = 0;
-	uint						mNumPositionSteps = 0;
+	uint mNumVelocitySteps = 0;
+	uint mNumPositionSteps = 0;
 
-	bool						mApplyDefaultVelocity = false;
-	bool						mApplyDefaultPosition = false;
+	bool mApplyDefaultVelocity = false;
+	bool mApplyDefaultPosition = false;
 };
 
 /// Dummy class to replace the steps calculator when we don't need the result
@@ -57,7 +57,7 @@ class DummyCalculateSolverSteps
 {
 public:
 	template <class Type>
-	JPH_INLINE void				operator () (const Type *) const
+	JPH_INLINE void operator()(const Type *) const
 	{
 		/* Nothing to do */
 	}

@@ -2,26 +2,24 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/ScaledShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../../Collision/Shape/ScaledShape.h"
+#include "../../Collision/Shape/ScaleHelpers.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/ShapeCast.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../Collision/CollisionDispatch.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(ScaledShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(ScaledShapeSettings, DecoratedShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(ScaledShapeSettings){
+		JPH_ADD_BASE_CLASS(ScaledShapeSettings, DecoratedShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(ScaledShapeSettings, mScale)
-}
+				JPH_ADD_ATTRIBUTE(ScaledShapeSettings, mScale)}
 
 ShapeSettings::ShapeResult ScaledShapeSettings::Create() const
 {
@@ -30,9 +28,8 @@ ShapeSettings::ShapeResult ScaledShapeSettings::Create() const
 	return mCachedResult;
 }
 
-ScaledShape::ScaledShape(const ScaledShapeSettings &inSettings, ShapeResult &outResult) :
-	DecoratedShape(EShapeSubType::Scaled, inSettings, outResult),
-	mScale(inSettings.mScale)
+ScaledShape::ScaledShape(const ScaledShapeSettings &inSettings, ShapeResult &outResult) : DecoratedShape(EShapeSubType::Scaled, inSettings, outResult),
+																																													mScale(inSettings.mScale)
 {
 	if (outResult.HasError())
 		return;
@@ -114,7 +111,7 @@ void ScaledShape::DrawGetSupportingFace(DebugRenderer *inRenderer, RMat44Arg inC
 bool ScaledShape::CastRay(const RayCast &inRay, const SubShapeIDCreator &inSubShapeIDCreator, RayCastResult &ioHit) const
 {
 	Vec3 inv_scale = mScale.Reciprocal();
-	RayCast scaled_ray { inv_scale * inRay.mOrigin, inv_scale * inRay.mDirection };
+	RayCast scaled_ray{inv_scale * inRay.mOrigin, inv_scale * inRay.mDirection};
 	return mInnerShape->CastRay(scaled_ray, inSubShapeIDCreator, ioHit);
 }
 
@@ -125,7 +122,7 @@ void ScaledShape::CastRay(const RayCast &inRay, const RayCastSettings &inRayCast
 		return;
 
 	Vec3 inv_scale = mScale.Reciprocal();
-	RayCast scaled_ray { inv_scale * inRay.mOrigin, inv_scale * inRay.mDirection };
+	RayCast scaled_ray{inv_scale * inRay.mOrigin, inv_scale * inRay.mDirection};
 	return mInnerShape->CastRay(scaled_ray, inRayCastSettings, inSubShapeIDCreator, ioCollector, inShapeFilter);
 }
 
@@ -223,7 +220,8 @@ void ScaledShape::sCastShapeVsScaled(const ShapeCast &inShapeCast, const ShapeCa
 void ScaledShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::Scaled);
-	f.mConstruct = []() -> Shape * { return new ScaledShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new ScaledShape; };
 	f.mColor = Color::sYellow;
 
 	for (EShapeSubType s : sAllSubShapeTypes)

@@ -2,22 +2,22 @@
 // SPDX-FileCopyrightText: 2023 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/SoftBody/SoftBodyShape.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Geometry/RayTriangle.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/SoftBody/SoftBodyMotionProperties.h>
-#include <Jolt/Physics/Collision/CastConvexVsTriangles.h>
-#include <Jolt/Physics/Collision/CastSphereVsTriangles.h>
-#include <Jolt/Physics/Collision/CollideConvexVsTriangles.h>
-#include <Jolt/Physics/Collision/CollideSphereVsTriangles.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
+#include "../SoftBody/SoftBodyShape.h"
+#include "../../Core/Profiler.h"
+#include "../../Geometry/RayTriangle.h"
+#include "../Collision/RayCast.h"
+#include "../Collision/CastResult.h"
+#include "../Collision/TransformedShape.h"
+#include "../SoftBody/SoftBodyMotionProperties.h"
+#include "../Collision/CastConvexVsTriangles.h"
+#include "../Collision/CastSphereVsTriangles.h"
+#include "../Collision/CollideConvexVsTriangles.h"
+#include "../Collision/CollideSphereVsTriangles.h"
+#include "../Collision/CollisionDispatch.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -184,8 +184,8 @@ void SoftBodyShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassTran
 
 struct SoftBodyShape::SBSGetTrianglesContext
 {
-	Mat44		mCenterOfMassTransform;
-	int			mTriangleIndex;
+	Mat44 mCenterOfMassTransform;
+	int mTriangleIndex;
 };
 
 void SoftBodyShape::GetTrianglesStart(GetTrianglesContext &ioContext, [[maybe_unused]] const AABox &inBox, Vec3Arg inPositionCOM, QuatArg inRotation, Vec3Arg inScale) const

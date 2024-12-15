@@ -2,11 +2,11 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
 #ifdef JPH_DEBUG_RENDERER
 
-#include <Jolt/Renderer/DebugRendererPlayback.h>
+#include "../Renderer/DebugRendererPlayback.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -31,12 +31,12 @@ void DebugRendererPlayback::Parse(StreamIn &inStream)
 			uint32 triangle_count;
 			inStream.Read(triangle_count);
 
-			DebugRenderer::Triangle *triangles = new DebugRenderer::Triangle [triangle_count];
+			DebugRenderer::Triangle *triangles = new DebugRenderer::Triangle[triangle_count];
 			inStream.ReadBytes(triangles, triangle_count * sizeof(DebugRenderer::Triangle));
 
-			mBatches.insert({ id, mRenderer.CreateTriangleBatch(triangles, triangle_count) });
+			mBatches.insert({id, mRenderer.CreateTriangleBatch(triangles, triangle_count)});
 
-			delete [] triangles;
+			delete[] triangles;
 		}
 		else if (command == ECommand::CreateBatchIndexed)
 		{
@@ -46,19 +46,19 @@ void DebugRendererPlayback::Parse(StreamIn &inStream)
 			uint32 vertex_count;
 			inStream.Read(vertex_count);
 
-			DebugRenderer::Vertex *vertices = new DebugRenderer::Vertex [vertex_count];
+			DebugRenderer::Vertex *vertices = new DebugRenderer::Vertex[vertex_count];
 			inStream.ReadBytes(vertices, vertex_count * sizeof(DebugRenderer::Vertex));
 
 			uint32 index_count;
 			inStream.Read(index_count);
 
-			uint32 *indices = new uint32 [index_count];
+			uint32 *indices = new uint32[index_count];
 			inStream.ReadBytes(indices, index_count * sizeof(uint32));
 
-			mBatches.insert({ id, mRenderer.CreateTriangleBatch(vertices, vertex_count, indices, index_count) });
+			mBatches.insert({id, mRenderer.CreateTriangleBatch(vertices, vertex_count, indices, index_count)});
 
-			delete [] indices;
-			delete [] vertices;
+			delete[] indices;
+			delete[] vertices;
 		}
 		else if (command == ECommand::CreateGeometry)
 		{

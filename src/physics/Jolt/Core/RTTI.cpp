@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Core/RTTI.h>
-#include <Jolt/Core/StringTools.h>
+#include "../Core/RTTI.h"
+#include "../Core/StringTools.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -13,20 +13,18 @@ JPH_NAMESPACE_BEGIN
 // RTTI
 //////////////////////////////////////////////////////////////////////////////////////////
 
-RTTI::RTTI(const char *inName, int inSize, pCreateObjectFunction inCreateObject, pDestructObjectFunction inDestructObject) :
-	mName(inName),
-	mSize(inSize),
-	mCreate(inCreateObject),
-	mDestruct(inDestructObject)
+RTTI::RTTI(const char *inName, int inSize, pCreateObjectFunction inCreateObject, pDestructObjectFunction inDestructObject) : mName(inName),
+																																																														 mSize(inSize),
+																																																														 mCreate(inCreateObject),
+																																																														 mDestruct(inDestructObject)
 {
 	JPH_ASSERT(inDestructObject != nullptr, "Object cannot be destructed");
 }
 
-RTTI::RTTI(const char *inName, int inSize, pCreateObjectFunction inCreateObject, pDestructObjectFunction inDestructObject, pCreateRTTIFunction inCreateRTTI) :
-	mName(inName),
-	mSize(inSize),
-	mCreate(inCreateObject),
-	mDestruct(inDestructObject)
+RTTI::RTTI(const char *inName, int inSize, pCreateObjectFunction inCreateObject, pDestructObjectFunction inDestructObject, pCreateRTTIFunction inCreateRTTI) : mName(inName),
+																																																																															 mSize(inSize),
+																																																																															 mCreate(inCreateObject),
+																																																																															 mDestruct(inDestructObject)
 {
 	JPH_ASSERT(inDestructObject != nullptr, "Object cannot be destructed");
 
@@ -52,7 +50,7 @@ uint32 RTTI::GetHash() const
 
 void *RTTI::CreateObject() const
 {
-	return IsAbstract()? nullptr : mCreate();
+	return IsAbstract() ? nullptr : mCreate();
 }
 
 void RTTI::DestructObject(void *inObject) const
@@ -77,7 +75,7 @@ void RTTI::AddBaseClass(const RTTI *inRTTI, int inOffset)
 #endif // JPH_OBJECT_STREAM
 }
 
-bool RTTI::operator == (const RTTI &inRHS) const
+bool RTTI::operator==(const RTTI &inRHS) const
 {
 	// Compare addresses
 	if (this == &inRHS)

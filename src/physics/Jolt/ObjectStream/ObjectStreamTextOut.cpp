@@ -2,17 +2,16 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
 #ifdef JPH_OBJECT_STREAM
 
-#include <Jolt/ObjectStream/ObjectStreamTextOut.h>
-#include <Jolt/Core/StringTools.h>
+#include "../ObjectStream/ObjectStreamTextOut.h"
+#include "../Core/StringTools.h"
 
 JPH_NAMESPACE_BEGIN
 
-ObjectStreamTextOut::ObjectStreamTextOut(ostream &inStream) :
-	ObjectStreamOut(inStream)
+ObjectStreamTextOut::ObjectStreamTextOut(ostream &inStream) : ObjectStreamOut(inStream)
 {
 	WriteWord(StringFormat("TOS%2d.%02d", ObjectStream::sVersion, ObjectStream::sRevision));
 }
@@ -21,30 +20,76 @@ void ObjectStreamTextOut::WriteDataType(EOSDataType inType)
 {
 	switch (inType)
 	{
-	case EOSDataType::Declare:		WriteWord("declare ");		break;
-	case EOSDataType::Object:		WriteWord("object ");		break;
-	case EOSDataType::Instance:		WriteWord("instance ");		break;
-	case EOSDataType::Pointer:		WriteWord("pointer ");		break;
-	case EOSDataType::Array:		WriteWord("array ");		break;
-	case EOSDataType::T_uint8:		WriteWord("uint8");			break;
-	case EOSDataType::T_uint16:		WriteWord("uint16");		break;
-	case EOSDataType::T_int:		WriteWord("int");			break;
-	case EOSDataType::T_uint32:		WriteWord("uint32");		break;
-	case EOSDataType::T_uint64:		WriteWord("uint64");		break;
-	case EOSDataType::T_float:		WriteWord("float");			break;
-	case EOSDataType::T_double:		WriteWord("double");		break;
-	case EOSDataType::T_bool:		WriteWord("bool");			break;
-	case EOSDataType::T_String:		WriteWord("string");		break;
-	case EOSDataType::T_Float3:		WriteWord("float3");		break;
-	case EOSDataType::T_Double3:	WriteWord("double3");		break;
-	case EOSDataType::T_Vec3:		WriteWord("vec3");			break;
-	case EOSDataType::T_DVec3:		WriteWord("dvec3");			break;
-	case EOSDataType::T_Vec4:		WriteWord("vec4");			break;
-	case EOSDataType::T_Quat:		WriteWord("quat");			break;
-	case EOSDataType::T_Mat44:		WriteWord("mat44");			break;
-	case EOSDataType::T_DMat44:		WriteWord("dmat44");		break;
+	case EOSDataType::Declare:
+		WriteWord("declare ");
+		break;
+	case EOSDataType::Object:
+		WriteWord("object ");
+		break;
+	case EOSDataType::Instance:
+		WriteWord("instance ");
+		break;
+	case EOSDataType::Pointer:
+		WriteWord("pointer ");
+		break;
+	case EOSDataType::Array:
+		WriteWord("array ");
+		break;
+	case EOSDataType::T_uint8:
+		WriteWord("uint8");
+		break;
+	case EOSDataType::T_uint16:
+		WriteWord("uint16");
+		break;
+	case EOSDataType::T_int:
+		WriteWord("int");
+		break;
+	case EOSDataType::T_uint32:
+		WriteWord("uint32");
+		break;
+	case EOSDataType::T_uint64:
+		WriteWord("uint64");
+		break;
+	case EOSDataType::T_float:
+		WriteWord("float");
+		break;
+	case EOSDataType::T_double:
+		WriteWord("double");
+		break;
+	case EOSDataType::T_bool:
+		WriteWord("bool");
+		break;
+	case EOSDataType::T_String:
+		WriteWord("string");
+		break;
+	case EOSDataType::T_Float3:
+		WriteWord("float3");
+		break;
+	case EOSDataType::T_Double3:
+		WriteWord("double3");
+		break;
+	case EOSDataType::T_Vec3:
+		WriteWord("vec3");
+		break;
+	case EOSDataType::T_DVec3:
+		WriteWord("dvec3");
+		break;
+	case EOSDataType::T_Vec4:
+		WriteWord("vec4");
+		break;
+	case EOSDataType::T_Quat:
+		WriteWord("quat");
+		break;
+	case EOSDataType::T_Mat44:
+		WriteWord("mat44");
+		break;
+	case EOSDataType::T_DMat44:
+		WriteWord("dmat44");
+		break;
 	case EOSDataType::Invalid:
-	default:						JPH_ASSERT(false);			break;
+	default:
+		JPH_ASSERT(false);
+		break;
 	}
 }
 
@@ -106,7 +151,7 @@ void ObjectStreamTextOut::WritePrimitiveData(const double &inPrimitive)
 
 void ObjectStreamTextOut::WritePrimitiveData(const bool &inPrimitive)
 {
-	WriteWord(inPrimitive? "true" : "false");
+	WriteWord(inPrimitive ? "true" : "false");
 }
 
 void ObjectStreamTextOut::WritePrimitiveData(const Float3 &inPrimitive)

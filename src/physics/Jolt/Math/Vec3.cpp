@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Math/Vec3.h>
+#include "../Math/Vec3.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -41,8 +41,8 @@ static void sCreateVertices(StaticArray<Vec3, 1026> &ioVertices, Vec3Arg inDir1,
 	}
 }
 
-const StaticArray<Vec3, 1026> Vec3::sUnitSphere = []() {
-
+const StaticArray<Vec3, 1026> Vec3::sUnitSphere = []()
+{
 	const int level = 3;
 
 	StaticArray<Vec3, 1026> verts;

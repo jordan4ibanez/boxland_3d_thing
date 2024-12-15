@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/Physics/Collision/CastResult.h>
+#include "../Collision/CollisionDispatch.h"
+#include "../Collision/CastResult.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -37,13 +37,12 @@ void CollisionDispatch::sReversedCollideShape(const Shape *inShape1, const Shape
 	class ReversedCollector : public CollideShapeCollector
 	{
 	public:
-		explicit				ReversedCollector(CollideShapeCollector &ioCollector) :
-			CollideShapeCollector(ioCollector),
-			mCollector(ioCollector)
+		explicit ReversedCollector(CollideShapeCollector &ioCollector) : CollideShapeCollector(ioCollector),
+																																		 mCollector(ioCollector)
 		{
 		}
 
-		virtual void			AddHit(const CollideShapeResult &inResult) override
+		virtual void AddHit(const CollideShapeResult &inResult) override
 		{
 			// Add the reversed hit
 			mCollector.AddHit(inResult.Reversed());
@@ -53,7 +52,7 @@ void CollisionDispatch::sReversedCollideShape(const Shape *inShape1, const Shape
 		}
 
 	private:
-		CollideShapeCollector &	mCollector;
+		CollideShapeCollector &mCollector;
 	};
 
 	ReversedShapeFilter shape_filter(inShapeFilter);
@@ -67,14 +66,13 @@ void CollisionDispatch::sReversedCastShape(const ShapeCast &inShapeCast, const S
 	class ReversedCollector : public CastShapeCollector
 	{
 	public:
-		explicit				ReversedCollector(CastShapeCollector &ioCollector, Vec3Arg inWorldDirection) :
-			CastShapeCollector(ioCollector),
-			mCollector(ioCollector),
-			mWorldDirection(inWorldDirection)
+		explicit ReversedCollector(CastShapeCollector &ioCollector, Vec3Arg inWorldDirection) : CastShapeCollector(ioCollector),
+																																														mCollector(ioCollector),
+																																														mWorldDirection(inWorldDirection)
 		{
 		}
 
-		virtual void			AddHit(const ShapeCastResult &inResult) override
+		virtual void AddHit(const ShapeCastResult &inResult) override
 		{
 			// Add the reversed hit
 			mCollector.AddHit(inResult.Reversed(mWorldDirection));
@@ -84,8 +82,8 @@ void CollisionDispatch::sReversedCastShape(const ShapeCast &inShapeCast, const S
 		}
 
 	private:
-		CastShapeCollector &	mCollector;
-		Vec3					mWorldDirection;
+		CastShapeCollector &mCollector;
+		Vec3 mWorldDirection;
 	};
 
 	// Reverse the shape cast (shape cast is in local space to shape 2)

@@ -2,38 +2,36 @@
 // SPDX-FileCopyrightText: 2024 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/PlaneShape.h>
-#include <Jolt/Physics/Collision/Shape/ConvexShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/ShapeFilter.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/CollidePointResult.h>
-#include <Jolt/Physics/Collision/CollideSoftBodyVertexIterator.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/Geometry/Plane.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/PlaneShape.h"
+#include "../../Collision/Shape/ConvexShape.h"
+#include "../../Collision/Shape/ScaleHelpers.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/ShapeCast.h"
+#include "../../Collision/ShapeFilter.h"
+#include "../../Collision/CastResult.h"
+#include "../../Collision/CollisionDispatch.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../Collision/CollidePointResult.h"
+#include "../../Collision/CollideSoftBodyVertexIterator.h"
+#include "../../../Core/Profiler.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
+#include "../../../Geometry/Plane.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(PlaneShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(PlaneShapeSettings, ShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(PlaneShapeSettings){
+		JPH_ADD_BASE_CLASS(PlaneShapeSettings, ShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(PlaneShapeSettings, mPlane)
-	JPH_ADD_ATTRIBUTE(PlaneShapeSettings, mMaterial)
-	JPH_ADD_ATTRIBUTE(PlaneShapeSettings, mHalfExtent)
-}
+				JPH_ADD_ATTRIBUTE(PlaneShapeSettings, mPlane)
+						JPH_ADD_ATTRIBUTE(PlaneShapeSettings, mMaterial)
+								JPH_ADD_ATTRIBUTE(PlaneShapeSettings, mHalfExtent)}
 
 ShapeSettings::ShapeResult PlaneShapeSettings::Create() const
 {
@@ -84,11 +82,10 @@ void PlaneShape::CalculateLocalBounds()
 	}
 }
 
-PlaneShape::PlaneShape(const PlaneShapeSettings &inSettings, ShapeResult &outResult) :
-	Shape(EShapeType::Plane, EShapeSubType::Plane, inSettings, outResult),
-	mPlane(inSettings.mPlane),
-	mMaterial(inSettings.mMaterial),
-	mHalfExtent(inSettings.mHalfExtent)
+PlaneShape::PlaneShape(const PlaneShapeSettings &inSettings, ShapeResult &outResult) : Shape(EShapeType::Plane, EShapeSubType::Plane, inSettings, outResult),
+																																											 mPlane(inSettings.mPlane),
+																																											 mMaterial(inSettings.mMaterial),
+																																											 mHalfExtent(inSettings.mHalfExtent)
 {
 	if (!mPlane.GetNormal().IsNormalized())
 	{
@@ -148,7 +145,7 @@ void PlaneShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassTransfo
 		vertices[i] = com * local_vertices[i];
 
 	// Determine the color
-	Color color = inUseMaterialColors? GetMaterial(SubShapeID())->GetDebugColor() : inColor;
+	Color color = inUseMaterialColors ? GetMaterial(SubShapeID())->GetDebugColor() : inColor;
 
 	// Draw the plane
 	if (inDrawWireframe)
@@ -204,9 +201,8 @@ void PlaneShape::CastRay(const RayCast &inRay, const RayCastSettings &inRayCastS
 
 	// Inside solid half space?
 	float distance = mPlane.SignedDistance(inRay.mOrigin);
-	if (inRayCastSettings.mTreatConvexAsSolid
-		&& distance <= 0.0f // Inside plane
-		&& ioCollector.GetEarlyOutFraction() > 0.0f) // Willing to accept hits at fraction 0
+	if (inRayCastSettings.mTreatConvexAsSolid && distance <= 0.0f // Inside plane
+			&& ioCollector.GetEarlyOutFraction() > 0.0f)							// Willing to accept hits at fraction 0
 	{
 		// Hit at fraction 0
 		RayCastResult hit;
@@ -217,8 +213,8 @@ void PlaneShape::CastRay(const RayCast &inRay, const RayCastSettings &inRayCastS
 	}
 
 	float dot = inRay.mDirection.Dot(mPlane.GetNormal());
-	if (dot != 0.0f // Parallel ray will not hit plane
-		&& (inRayCastSettings.mBackFaceModeConvex == EBackFaceMode::CollideWithBackFaces || dot < 0.0f)) // Back face culling
+	if (dot != 0.0f																																											 // Parallel ray will not hit plane
+			&& (inRayCastSettings.mBackFaceModeConvex == EBackFaceMode::CollideWithBackFaces || dot < 0.0f)) // Back face culling
 	{
 		// Calculate hit with plane
 		float fraction = -distance / dot;
@@ -243,7 +239,7 @@ void PlaneShape::CollidePoint(Vec3Arg inPoint, const SubShapeIDCreator &inSubSha
 
 	// Check if the point is inside the plane
 	if (mPlane.SignedDistance(inPoint) < 0.0f)
-		ioCollector.AddHit({ TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID() });
+		ioCollector.AddHit({TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID()});
 }
 
 void PlaneShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale, const CollideSoftBodyVertexIterator &inVertices, uint inNumVertices, int inCollidingShapeIndex) const
@@ -382,8 +378,8 @@ void PlaneShape::sCastConvexVsPlane(const ShapeCast &inShapeCast, const ShapeCas
 
 struct PlaneShape::PSGetTrianglesContext
 {
-	Float3	mVertices[4];
-	bool	mDone = false;
+	Float3 mVertices[4];
+	bool mDone = false;
 };
 
 void PlaneShape::GetTrianglesStart(GetTrianglesContext &ioContext, const AABox &inBox, Vec3Arg inPositionCOM, QuatArg inRotation, Vec3Arg inScale) const
@@ -513,7 +509,7 @@ void PlaneShape::RestoreBinaryState(StreamIn &inStream)
 
 void PlaneShape::SaveMaterialState(PhysicsMaterialList &outMaterials) const
 {
-	outMaterials = { mMaterial };
+	outMaterials = {mMaterial};
 }
 
 void PlaneShape::RestoreMaterialState(const PhysicsMaterialRefC *inMaterials, uint inNumMaterials)
@@ -525,7 +521,8 @@ void PlaneShape::RestoreMaterialState(const PhysicsMaterialRefC *inMaterials, ui
 void PlaneShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::Plane);
-	f.mConstruct = []() -> Shape * { return new PlaneShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new PlaneShape; };
 	f.mColor = Color::sDarkRed;
 
 	for (EShapeSubType s : sConvexSubShapeTypes)

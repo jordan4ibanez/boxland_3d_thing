@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Core/Mutex.h>
+#include "../Core/Mutex.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -13,12 +13,12 @@ JPH_NAMESPACE_BEGIN
 /// This is the list of locks used by the physics engine, they need to be locked in a particular order (from top of the list to bottom of the list) in order to prevent deadlocks
 enum class EPhysicsLockTypes
 {
-	BroadPhaseQuery			= 1 << 0,
-	PerBody					= 1 << 1,
-	BodiesList				= 1 << 2,
-	BroadPhaseUpdate		= 1 << 3,
-	ConstraintsList			= 1 << 4,
-	ActiveBodiesList		= 1 << 5,
+	BroadPhaseQuery = 1 << 0,
+	PerBody = 1 << 1,
+	BodiesList = 1 << 2,
+	BroadPhaseUpdate = 1 << 3,
+	ConstraintsList = 1 << 4,
+	ActiveBodiesList = 1 << 5,
 };
 
 /// A token that indicates the context of a lock (we use 1 per physics system and we use the body manager pointer because it's convenient)
@@ -34,7 +34,7 @@ class JPH_EXPORT PhysicsLock
 public:
 #ifdef JPH_ENABLE_ASSERTS
 	/// Call before taking the lock
-	static inline void			sCheckLock(PhysicsLockContext inContext, EPhysicsLockTypes inType)
+	static inline void sCheckLock(PhysicsLockContext inContext, EPhysicsLockTypes inType)
 	{
 		uint32 &mutexes = sGetLockedMutexes(inContext);
 		JPH_ASSERT(uint32(inType) > mutexes, "A lock of same or higher priority was already taken, this can create a deadlock!");
@@ -42,7 +42,7 @@ public:
 	}
 
 	/// Call after releasing the lock
-	static inline void			sCheckUnlock(PhysicsLockContext inContext, EPhysicsLockTypes inType)
+	static inline void sCheckUnlock(PhysicsLockContext inContext, EPhysicsLockTypes inType)
 	{
 		uint32 &mutexes = sGetLockedMutexes(inContext);
 		JPH_ASSERT((mutexes & uint32(inType)) != 0, "Mutex was not locked!");
@@ -51,28 +51,28 @@ public:
 #endif // !JPH_ENABLE_ASSERTS
 
 	template <class LockType>
-	static inline void			sLock(LockType &inMutex JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType))
+	static inline void sLock(LockType &inMutex JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType))
 	{
 		JPH_IF_ENABLE_ASSERTS(sCheckLock(inContext, inType);)
 		inMutex.lock();
 	}
 
 	template <class LockType>
-	static inline void			sUnlock(LockType &inMutex JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType))
+	static inline void sUnlock(LockType &inMutex JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType))
 	{
 		JPH_IF_ENABLE_ASSERTS(sCheckUnlock(inContext, inType);)
 		inMutex.unlock();
 	}
 
 	template <class LockType>
-	static inline void			sLockShared(LockType &inMutex JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType))
+	static inline void sLockShared(LockType &inMutex JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType))
 	{
 		JPH_IF_ENABLE_ASSERTS(sCheckLock(inContext, inType);)
 		inMutex.lock_shared();
 	}
 
 	template <class LockType>
-	static inline void			sUnlockShared(LockType &inMutex JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType))
+	static inline void sUnlockShared(LockType &inMutex JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType))
 	{
 		JPH_IF_ENABLE_ASSERTS(sCheckUnlock(inContext, inType);)
 		inMutex.unlock_shared();
@@ -82,12 +82,12 @@ public:
 private:
 	struct LockData
 	{
-		uint32					mLockedMutexes = 0;
-		PhysicsLockContext		mContext = nullptr;
+		uint32 mLockedMutexes = 0;
+		PhysicsLockContext mContext = nullptr;
 	};
 
 	// Helper function to find the locked mutexes for a particular context
-	static uint32 &				sGetLockedMutexes(PhysicsLockContext inContext)
+	static uint32 &sGetLockedMutexes(PhysicsLockContext inContext)
 	{
 		static thread_local LockData sLocks[4];
 
@@ -115,26 +115,26 @@ template <class LockType>
 class UniqueLock : public NonCopyable
 {
 public:
-	explicit					UniqueLock(LockType &inLock JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType)) :
-		mLock(inLock)
+	explicit UniqueLock(LockType &inLock JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType)) : mLock(inLock)
 #ifdef JPH_ENABLE_ASSERTS
-		, mContext(inContext),
-		mType(inType)
+																																																													,
+																																																													mContext(inContext),
+																																																													mType(inType)
 #endif // JPH_ENABLE_ASSERTS
 	{
 		PhysicsLock::sLock(mLock JPH_IF_ENABLE_ASSERTS(, mContext, mType));
 	}
 
-								~UniqueLock()
+	~UniqueLock()
 	{
 		PhysicsLock::sUnlock(mLock JPH_IF_ENABLE_ASSERTS(, mContext, mType));
 	}
 
 private:
-	LockType &					mLock;
+	LockType &mLock;
 #ifdef JPH_ENABLE_ASSERTS
-	PhysicsLockContext			mContext;
-	EPhysicsLockTypes			mType;
+	PhysicsLockContext mContext;
+	EPhysicsLockTypes mType;
 #endif // JPH_ENABLE_ASSERTS
 };
 
@@ -143,26 +143,25 @@ template <class LockType>
 class SharedLock : public NonCopyable
 {
 public:
-	explicit					SharedLock(LockType &inLock JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType)) :
-		mLock(inLock)
+	explicit SharedLock(LockType &inLock JPH_IF_ENABLE_ASSERTS(, PhysicsLockContext inContext, EPhysicsLockTypes inType)) : mLock(inLock)
 #ifdef JPH_ENABLE_ASSERTS
-		, mContext(inContext)
-		, mType(inType)
+																																																													,
+																																																													mContext(inContext), mType(inType)
 #endif // JPH_ENABLE_ASSERTS
 	{
 		PhysicsLock::sLockShared(mLock JPH_IF_ENABLE_ASSERTS(, mContext, mType));
 	}
 
-								~SharedLock()
+	~SharedLock()
 	{
 		PhysicsLock::sUnlockShared(mLock JPH_IF_ENABLE_ASSERTS(, mContext, mType));
 	}
 
 private:
-	LockType &					mLock;
+	LockType &mLock;
 #ifdef JPH_ENABLE_ASSERTS
-	PhysicsLockContext			mContext;
-	EPhysicsLockTypes			mType;
+	PhysicsLockContext mContext;
+	EPhysicsLockTypes mType;
 #endif // JPH_ENABLE_ASSERTS
 };
 

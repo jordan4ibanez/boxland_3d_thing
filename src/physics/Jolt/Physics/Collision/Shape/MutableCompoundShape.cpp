@@ -2,21 +2,19 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/MutableCompoundShape.h>
-#include <Jolt/Physics/Collision/Shape/CompoundShapeVisitors.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/MutableCompoundShape.h"
+#include "../../Collision/Shape/CompoundShapeVisitors.h"
+#include "../../../Core/Profiler.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(MutableCompoundShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(MutableCompoundShapeSettings, CompoundShapeSettings)
-}
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(MutableCompoundShapeSettings){
+		JPH_ADD_BASE_CLASS(MutableCompoundShapeSettings, CompoundShapeSettings)}
 
 ShapeSettings::ShapeResult MutableCompoundShapeSettings::Create() const
 {
@@ -27,8 +25,7 @@ ShapeSettings::ShapeResult MutableCompoundShapeSettings::Create() const
 	return mCachedResult;
 }
 
-MutableCompoundShape::MutableCompoundShape(const MutableCompoundShapeSettings &inSettings, ShapeResult &outResult) :
-	CompoundShape(EShapeSubType::MutableCompound, inSettings, outResult)
+MutableCompoundShape::MutableCompoundShape(const MutableCompoundShapeSettings &inSettings, ShapeResult &outResult) : CompoundShape(EShapeSubType::MutableCompound, inSettings, outResult)
 {
 	mSubShapes.reserve(inSettings.mSubShapes.size());
 	for (const CompoundShapeSettings::SubShapeSettings &shape : inSettings.mSubShapes)
@@ -283,7 +280,7 @@ inline void MutableCompoundShape::WalkSubShapes(Visitor &ioVisitor) const
 			// Go through the individual boxes
 			uint sub_shape_start_idx = block << 2;
 			for (uint col = 0, max_col = min<uint>(4, (uint)mSubShapes.size() - sub_shape_start_idx); col < max_col; ++col) // Don't read beyond the end of the subshapes array
-				if (ioVisitor.ShouldVisitSubShape(result, col)) // Because the early out fraction can change, we need to retest every shape
+				if (ioVisitor.ShouldVisitSubShape(result, col))																																// Because the early out fraction can change, we need to retest every shape
 				{
 					// Test sub shape
 					uint sub_shape_idx = sub_shape_start_idx + col;
@@ -308,18 +305,18 @@ bool MutableCompoundShape::CastRay(const RayCast &inRay, const SubShapeIDCreator
 
 		using Result = Vec4;
 
-		JPH_INLINE Result	TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
+		JPH_INLINE Result TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
 		{
 			return TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
 		}
 
-		JPH_INLINE bool		ShouldVisitBlock(Vec4Arg inResult) const
+		JPH_INLINE bool ShouldVisitBlock(Vec4Arg inResult) const
 		{
 			UVec4 closer = Vec4::sLess(inResult, Vec4::sReplicate(mHit.mFraction));
 			return closer.TestAnyTrue();
 		}
 
-		JPH_INLINE bool		ShouldVisitSubShape(Vec4Arg inResult, uint inIndexInBlock) const
+		JPH_INLINE bool ShouldVisitSubShape(Vec4Arg inResult, uint inIndexInBlock) const
 		{
 			return inResult[inIndexInBlock] < mHit.mFraction;
 		}
@@ -344,18 +341,18 @@ void MutableCompoundShape::CastRay(const RayCast &inRay, const RayCastSettings &
 
 		using Result = Vec4;
 
-		JPH_INLINE Result	TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
+		JPH_INLINE Result TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
 		{
 			return TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
 		}
 
-		JPH_INLINE bool		ShouldVisitBlock(Vec4Arg inResult) const
+		JPH_INLINE bool ShouldVisitBlock(Vec4Arg inResult) const
 		{
 			UVec4 closer = Vec4::sLess(inResult, Vec4::sReplicate(mCollector.GetEarlyOutFraction()));
 			return closer.TestAnyTrue();
 		}
 
-		JPH_INLINE bool		ShouldVisitSubShape(Vec4Arg inResult, uint inIndexInBlock) const
+		JPH_INLINE bool ShouldVisitSubShape(Vec4Arg inResult, uint inIndexInBlock) const
 		{
 			return inResult[inIndexInBlock] < mCollector.GetEarlyOutFraction();
 		}
@@ -379,17 +376,17 @@ void MutableCompoundShape::CollidePoint(Vec3Arg inPoint, const SubShapeIDCreator
 
 		using Result = UVec4;
 
-		JPH_INLINE Result	TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
+		JPH_INLINE Result TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
 		{
 			return TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
 		}
 
-		JPH_INLINE bool		ShouldVisitBlock(UVec4Arg inResult) const
+		JPH_INLINE bool ShouldVisitBlock(UVec4Arg inResult) const
 		{
 			return inResult.TestAnyTrue();
 		}
 
-		JPH_INLINE bool		ShouldVisitSubShape(UVec4Arg inResult, uint inIndexInBlock) const
+		JPH_INLINE bool ShouldVisitSubShape(UVec4Arg inResult, uint inIndexInBlock) const
 		{
 			return inResult[inIndexInBlock] != 0;
 		}
@@ -409,18 +406,18 @@ void MutableCompoundShape::sCastShapeVsCompound(const ShapeCast &inShapeCast, co
 
 		using Result = Vec4;
 
-		JPH_INLINE Result	TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
+		JPH_INLINE Result TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
 		{
 			return TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
 		}
 
-		JPH_INLINE bool		ShouldVisitBlock(Vec4Arg inResult) const
+		JPH_INLINE bool ShouldVisitBlock(Vec4Arg inResult) const
 		{
 			UVec4 closer = Vec4::sLess(inResult, Vec4::sReplicate(mCollector.GetPositiveEarlyOutFraction()));
 			return closer.TestAnyTrue();
 		}
 
-		JPH_INLINE bool		ShouldVisitSubShape(Vec4Arg inResult, uint inIndexInBlock) const
+		JPH_INLINE bool ShouldVisitSubShape(Vec4Arg inResult, uint inIndexInBlock) const
 		{
 			return inResult[inIndexInBlock] < mCollector.GetPositiveEarlyOutFraction();
 		}
@@ -447,17 +444,17 @@ void MutableCompoundShape::CollectTransformedShapes(const AABox &inBox, Vec3Arg 
 
 		using Result = UVec4;
 
-		JPH_INLINE Result	TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
+		JPH_INLINE Result TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
 		{
 			return TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
 		}
 
-		JPH_INLINE bool		ShouldVisitBlock(UVec4Arg inResult) const
+		JPH_INLINE bool ShouldVisitBlock(UVec4Arg inResult) const
 		{
 			return inResult.TestAnyTrue();
 		}
 
-		JPH_INLINE bool		ShouldVisitSubShape(UVec4Arg inResult, uint inIndexInBlock) const
+		JPH_INLINE bool ShouldVisitSubShape(UVec4Arg inResult, uint inIndexInBlock) const
 		{
 			return inResult[inIndexInBlock] != 0;
 		}
@@ -498,17 +495,17 @@ void MutableCompoundShape::sCollideCompoundVsShape(const Shape *inShape1, const 
 
 		using Result = UVec4;
 
-		JPH_INLINE Result	TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
+		JPH_INLINE Result TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
 		{
 			return TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
 		}
 
-		JPH_INLINE bool		ShouldVisitBlock(UVec4Arg inResult) const
+		JPH_INLINE bool ShouldVisitBlock(UVec4Arg inResult) const
 		{
 			return inResult.TestAnyTrue();
 		}
 
-		JPH_INLINE bool		ShouldVisitSubShape(UVec4Arg inResult, uint inIndexInBlock) const
+		JPH_INLINE bool ShouldVisitSubShape(UVec4Arg inResult, uint inIndexInBlock) const
 		{
 			return inResult[inIndexInBlock] != 0;
 		}
@@ -531,17 +528,17 @@ void MutableCompoundShape::sCollideShapeVsCompound(const Shape *inShape1, const 
 
 		using Result = UVec4;
 
-		JPH_INLINE Result	TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
+		JPH_INLINE Result TestBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ) const
 		{
 			return TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
 		}
 
-		JPH_INLINE bool		ShouldVisitBlock(UVec4Arg inResult) const
+		JPH_INLINE bool ShouldVisitBlock(UVec4Arg inResult) const
 		{
 			return inResult.TestAnyTrue();
 		}
 
-		JPH_INLINE bool		ShouldVisitSubShape(UVec4Arg inResult, uint inIndexInBlock) const
+		JPH_INLINE bool ShouldVisitSubShape(UVec4Arg inResult, uint inIndexInBlock) const
 		{
 			return inResult[inIndexInBlock] != 0;
 		}
@@ -575,7 +572,8 @@ void MutableCompoundShape::RestoreBinaryState(StreamIn &inStream)
 void MutableCompoundShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::MutableCompound);
-	f.mConstruct = []() -> Shape * { return new MutableCompoundShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new MutableCompoundShape; };
 	f.mColor = Color::sDarkOrange;
 
 	for (EShapeSubType s : sAllSubShapeTypes)

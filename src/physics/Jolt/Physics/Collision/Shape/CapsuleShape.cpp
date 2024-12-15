@@ -2,23 +2,23 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
-#include <Jolt/Physics/Collision/Shape/SphereShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/Shape/GetTrianglesContext.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/CollidePointResult.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/CollideSoftBodyVertexIterator.h>
-#include <Jolt/Geometry/RayCapsule.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../../Collision/Shape/CapsuleShape.h"
+#include "../../Collision/Shape/SphereShape.h"
+#include "../../Collision/Shape/ScaleHelpers.h"
+#include "../../Collision/Shape/GetTrianglesContext.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/CastResult.h"
+#include "../../Collision/CollidePointResult.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../Collision/CollideSoftBodyVertexIterator.h"
+#include "../../../Geometry/RayCapsule.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -33,19 +33,22 @@ JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(CapsuleShapeSettings)
 
 static const int cCapsuleDetailLevel = 2;
 
-static const StaticArray<Vec3, 192> sCapsuleTopTriangles = []() {
+static const StaticArray<Vec3, 192> sCapsuleTopTriangles = []()
+{
 	StaticArray<Vec3, 192> verts;
 	GetTrianglesContextVertexList::sCreateHalfUnitSphereTop(verts, cCapsuleDetailLevel);
 	return verts;
 }();
 
-static const StaticArray<Vec3, 96> sCapsuleMiddleTriangles = []() {
+static const StaticArray<Vec3, 96> sCapsuleMiddleTriangles = []()
+{
 	StaticArray<Vec3, 96> verts;
 	GetTrianglesContextVertexList::sCreateUnitOpenCylinder(verts, cCapsuleDetailLevel);
 	return verts;
 }();
 
-static const StaticArray<Vec3, 192> sCapsuleBottomTriangles = []() {
+static const StaticArray<Vec3, 192> sCapsuleBottomTriangles = []()
+{
 	StaticArray<Vec3, 192> verts;
 	GetTrianglesContextVertexList::sCreateHalfUnitSphereBottom(verts, cCapsuleDetailLevel);
 	return verts;
@@ -68,10 +71,9 @@ ShapeSettings::ShapeResult CapsuleShapeSettings::Create() const
 	return mCachedResult;
 }
 
-CapsuleShape::CapsuleShape(const CapsuleShapeSettings &inSettings, ShapeResult &outResult) :
-	ConvexShape(EShapeSubType::Capsule, inSettings, outResult),
-	mRadius(inSettings.mRadius),
-	mHalfHeightOfCylinder(inSettings.mHalfHeightOfCylinder)
+CapsuleShape::CapsuleShape(const CapsuleShapeSettings &inSettings, ShapeResult &outResult) : ConvexShape(EShapeSubType::Capsule, inSettings, outResult),
+																																														 mRadius(inSettings.mRadius),
+																																														 mHalfHeightOfCylinder(inSettings.mHalfHeightOfCylinder)
 {
 	if (inSettings.mHalfHeightOfCylinder <= 0.0f)
 	{
@@ -91,15 +93,14 @@ CapsuleShape::CapsuleShape(const CapsuleShapeSettings &inSettings, ShapeResult &
 class CapsuleShape::CapsuleNoConvex final : public Support
 {
 public:
-					CapsuleNoConvex(Vec3Arg inHalfHeightOfCylinder, float inConvexRadius) :
-		mHalfHeightOfCylinder(inHalfHeightOfCylinder),
-		mConvexRadius(inConvexRadius)
+	CapsuleNoConvex(Vec3Arg inHalfHeightOfCylinder, float inConvexRadius) : mHalfHeightOfCylinder(inHalfHeightOfCylinder),
+																																					mConvexRadius(inConvexRadius)
 	{
 		static_assert(sizeof(CapsuleNoConvex) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(CapsuleNoConvex)));
 	}
 
-	virtual Vec3	GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		if (inDirection.GetY() > 0)
 			return mHalfHeightOfCylinder;
@@ -107,31 +108,30 @@ public:
 			return -mHalfHeightOfCylinder;
 	}
 
-	virtual float	GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return mConvexRadius;
 	}
 
 private:
-	Vec3			mHalfHeightOfCylinder;
-	float			mConvexRadius;
+	Vec3 mHalfHeightOfCylinder;
+	float mConvexRadius;
 };
 
 class CapsuleShape::CapsuleWithConvex final : public Support
 {
 public:
-					CapsuleWithConvex(Vec3Arg inHalfHeightOfCylinder, float inRadius) :
-		mHalfHeightOfCylinder(inHalfHeightOfCylinder),
-		mRadius(inRadius)
+	CapsuleWithConvex(Vec3Arg inHalfHeightOfCylinder, float inRadius) : mHalfHeightOfCylinder(inHalfHeightOfCylinder),
+																																			mRadius(inRadius)
 	{
 		static_assert(sizeof(CapsuleWithConvex) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(CapsuleWithConvex)));
 	}
 
-	virtual Vec3	GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		float len = inDirection.Length();
-		Vec3 radius = len > 0.0f? inDirection * (mRadius / len) : Vec3::sZero();
+		Vec3 radius = len > 0.0f ? inDirection * (mRadius / len) : Vec3::sZero();
 
 		if (inDirection.GetY() > 0)
 			return radius + mHalfHeightOfCylinder;
@@ -139,14 +139,14 @@ public:
 			return radius - mHalfHeightOfCylinder;
 	}
 
-	virtual float	GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return 0.0f;
 	}
 
 private:
-	Vec3			mHalfHeightOfCylinder;
-	float			mRadius;
+	Vec3 mHalfHeightOfCylinder;
+	float mRadius;
 };
 
 const ConvexShape::Support *CapsuleShape::GetSupportFunction(ESupportMode inMode, SupportBuffer &inBuffer, Vec3Arg inScale) const
@@ -279,8 +279,8 @@ AABox CapsuleShape::GetWorldSpaceBounds(Mat44Arg inCenterOfMassTransform, Vec3Ar
 #ifdef JPH_DEBUG_RENDERER
 void CapsuleShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassTransform, Vec3Arg inScale, ColorArg inColor, bool inUseMaterialColors, bool inDrawWireframe) const
 {
-	DebugRenderer::EDrawMode draw_mode = inDrawWireframe? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
-	inRenderer->DrawCapsule(inCenterOfMassTransform * Mat44::sScale(inScale.Abs().GetX()), mHalfHeightOfCylinder, mRadius, inUseMaterialColors? GetMaterial()->GetDebugColor() : inColor, DebugRenderer::ECastShadow::On, draw_mode);
+	DebugRenderer::EDrawMode draw_mode = inDrawWireframe ? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
+	inRenderer->DrawCapsule(inCenterOfMassTransform * Mat44::sScale(inScale.Abs().GetX()), mHalfHeightOfCylinder, mRadius, inUseMaterialColors ? GetMaterial()->GetDebugColor() : inColor, DebugRenderer::ECastShadow::On, draw_mode);
 }
 #endif // JPH_DEBUG_RENDERER
 
@@ -318,7 +318,7 @@ void CapsuleShape::CollidePoint(Vec3Arg inPoint, const SubShapeIDCreator &inSubS
 	bool in_cylinder = delta_y <= 0.0f && xz_sq <= radius_sq;
 
 	if (in_sphere || in_cylinder)
-		ioCollector.AddHit({ TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID() });
+		ioCollector.AddHit({TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID()});
 }
 
 void CapsuleShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale, const CollideSoftBodyVertexIterator &inVertices, uint inNumVertices, int inCollidingShapeIndex) const
@@ -347,7 +347,7 @@ void CapsuleShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Vec
 				if (v.UpdatePenetration(penetration))
 				{
 					// Calculate contact point and normal
-					normal = normal_length > 0.0f? normal / normal_length : Vec3::sAxisX();
+					normal = normal_length > 0.0f ? normal / normal_length : Vec3::sAxisX();
 					Vec3 point = radius * normal;
 
 					// Store collision
@@ -431,7 +431,8 @@ Vec3 CapsuleShape::MakeScaleValid(Vec3Arg inScale) const
 void CapsuleShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::Capsule);
-	f.mConstruct = []() -> Shape * { return new CapsuleShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new CapsuleShape; };
 	f.mColor = Color::sGreen;
 }
 

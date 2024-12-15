@@ -4,17 +4,17 @@
 
 #pragma once
 
-#include <Jolt/Geometry/Ellipse.h>
-#include <Jolt/Physics/Constraints/ConstraintPart/RotationEulerConstraintPart.h>
-#include <Jolt/Physics/Constraints/ConstraintPart/AngleConstraintPart.h>
+#include "../../../Geometry/Ellipse.h"
+#include "../../Constraints/ConstraintPart/RotationEulerConstraintPart.h"
+#include "../../Constraints/ConstraintPart/AngleConstraintPart.h"
 
 JPH_NAMESPACE_BEGIN
 
 /// How the swing limit behaves
 enum class ESwingType : uint8
 {
-	Cone,						///< Swing is limited by a cone shape, note that this cone starts to deform for larger swing angles. Cone limits only support limits that are symmetric around 0.
-	Pyramid,					///< Swing is limited by a pyramid shape, note that this pyramid starts to deform for larger swing angles.
+	Cone,		 ///< Swing is limited by a cone shape, note that this cone starts to deform for larger swing angles. Cone limits only support limits that are symmetric around 0.
+	Pyramid, ///< Swing is limited by a pyramid shape, note that this pyramid starts to deform for larger swing angles.
 };
 
 /// Quaternion based constraint that decomposes the rotation in constraint space in swing and twist: q = q_swing * q_twist
@@ -33,19 +33,19 @@ class SwingTwistConstraintPart
 {
 public:
 	/// Override the swing type
-	void						SetSwingType(ESwingType inSwingType)
+	void SetSwingType(ESwingType inSwingType)
 	{
 		mSwingType = inSwingType;
 	}
 
 	/// Get the swing type for this part
-	ESwingType					GetSwingType() const
+	ESwingType GetSwingType() const
 	{
 		return mSwingType;
 	}
 
 	/// Set limits for this constraint (see description above for parameters)
-	void						SetLimits(float inTwistMinAngle, float inTwistMaxAngle, float inSwingYMinAngle, float inSwingYMaxAngle, float inSwingZMinAngle, float inSwingZMaxAngle)
+	void SetLimits(float inTwistMinAngle, float inTwistMaxAngle, float inSwingYMinAngle, float inSwingYMaxAngle, float inSwingZMinAngle, float inSwingZMaxAngle)
 	{
 		constexpr float cLockedAngle = DegreesToRadians(0.5f);
 		constexpr float cFreeAngle = DegreesToRadians(179.5f);
@@ -149,15 +149,15 @@ public:
 	}
 
 	/// Flags to indicate which axis got clamped by ClampSwingTwist
-	static constexpr uint		cClampedTwistMin = 1 << 0;
-	static constexpr uint		cClampedTwistMax = 1 << 1;
-	static constexpr uint		cClampedSwingYMin = 1 << 2;
-	static constexpr uint		cClampedSwingYMax = 1 << 3;
-	static constexpr uint		cClampedSwingZMin = 1 << 4;
-	static constexpr uint		cClampedSwingZMax = 1 << 5;
+	static constexpr uint cClampedTwistMin = 1 << 0;
+	static constexpr uint cClampedTwistMax = 1 << 1;
+	static constexpr uint cClampedSwingYMin = 1 << 2;
+	static constexpr uint cClampedSwingYMax = 1 << 3;
+	static constexpr uint cClampedSwingZMin = 1 << 4;
+	static constexpr uint cClampedSwingZMax = 1 << 5;
 
 	/// Helper function to determine if we're clamped against the min or max limit
-	static JPH_INLINE bool		sDistanceToMinShorter(float inDeltaMin, float inDeltaMax)
+	static JPH_INLINE bool sDistanceToMinShorter(float inDeltaMin, float inDeltaMax)
 	{
 		// We're outside of the limits, get actual delta to min/max range
 		// Note that a swing/twist of -1 and 1 represent the same angle, so if the difference is bigger than 1, the shortest angle is the other way around (2 - difference)
@@ -165,14 +165,16 @@ public:
 		// when working with extreme values the calculation is off and e.g. when the limit is between 0 and 180 a value of approx -60 will clamp
 		// to 180 rather than 0 (you'd expect anything > -90 to go to 0).
 		inDeltaMin = abs(inDeltaMin);
-		if (inDeltaMin > 1.0f) inDeltaMin = 2.0f - inDeltaMin;
+		if (inDeltaMin > 1.0f)
+			inDeltaMin = 2.0f - inDeltaMin;
 		inDeltaMax = abs(inDeltaMax);
-		if (inDeltaMax > 1.0f) inDeltaMax = 2.0f - inDeltaMax;
+		if (inDeltaMax > 1.0f)
+			inDeltaMax = 2.0f - inDeltaMax;
 		return inDeltaMin < inDeltaMax;
 	}
 
 	/// Clamp twist and swing against the constraint limits, returns which parts were clamped (everything assumed in constraint space)
-	inline void					ClampSwingTwist(Quat &ioSwing, Quat &ioTwist, uint &outClampedAxis) const
+	inline void ClampSwingTwist(Quat &ioSwing, Quat &ioTwist, uint &outClampedAxis) const
 	{
 		// Start with not clamped
 		outClampedAxis = 0;
@@ -193,7 +195,7 @@ public:
 		if (mRotationFlags & TwistXLocked)
 		{
 			// Twist axis is locked, clamp whenever twist is not identity
-			outClampedAxis |= ioTwist.GetX() != 0.0f? (cClampedTwistMin | cClampedTwistMax) : 0;
+			outClampedAxis |= ioTwist.GetX() != 0.0f ? (cClampedTwistMin | cClampedTwistMax) : 0;
 			ioTwist = Quat::sIdentity();
 		}
 		else if ((mRotationFlags & TwistXFree) == 0)
@@ -223,14 +225,14 @@ public:
 			if (mRotationFlags & SwingZLocked)
 			{
 				// Both swing Y and Z are disabled, no degrees of freedom in swing
-				outClampedAxis |= ioSwing.GetY() != 0.0f? (cClampedSwingYMin | cClampedSwingYMax) : 0;
-				outClampedAxis |= ioSwing.GetZ() != 0.0f? (cClampedSwingZMin | cClampedSwingZMax) : 0;
+				outClampedAxis |= ioSwing.GetY() != 0.0f ? (cClampedSwingYMin | cClampedSwingYMax) : 0;
+				outClampedAxis |= ioSwing.GetZ() != 0.0f ? (cClampedSwingZMin | cClampedSwingZMax) : 0;
 				ioSwing = Quat::sIdentity();
 			}
 			else
 			{
 				// Swing Y angle disabled, only 1 degree of freedom in swing
-				outClampedAxis |= ioSwing.GetY() != 0.0f? (cClampedSwingYMin | cClampedSwingYMax) : 0;
+				outClampedAxis |= ioSwing.GetY() != 0.0f ? (cClampedSwingYMin | cClampedSwingYMax) : 0;
 				float delta_min = mSinSwingZHalfMinAngle - ioSwing.GetZ();
 				float delta_max = ioSwing.GetZ() - mSinSwingZHalfMaxAngle;
 				if (delta_min > 0.0f || delta_max > 0.0f)
@@ -257,7 +259,7 @@ public:
 		else if (mRotationFlags & SwingZLocked)
 		{
 			// Swing Z angle disabled, only 1 degree of freedom in swing
-			outClampedAxis |= ioSwing.GetZ() != 0.0f? (cClampedSwingZMin | cClampedSwingZMax) : 0;
+			outClampedAxis |= ioSwing.GetZ() != 0.0f ? (cClampedSwingZMin | cClampedSwingZMax) : 0;
 			float delta_min = mSinSwingYHalfMinAngle - ioSwing.GetY();
 			float delta_max = ioSwing.GetY() - mSinSwingYHalfMaxAngle;
 			if (delta_min > 0.0f || delta_max > 0.0f)
@@ -334,7 +336,7 @@ public:
 	/// @param inBody2 The second body that this constraint is attached to
 	/// @param inConstraintRotation The current rotation of the constraint in constraint space
 	/// @param inConstraintToWorld Rotates from constraint space into world space
-	inline void					CalculateConstraintProperties(const Body &inBody1, const Body &inBody2, QuatArg inConstraintRotation, QuatArg inConstraintToWorld)
+	inline void CalculateConstraintProperties(const Body &inBody1, const Body &inBody2, QuatArg inConstraintRotation, QuatArg inConstraintToWorld)
 	{
 		// Decompose into swing and twist
 		Quat q_swing, q_twist;
@@ -444,7 +446,7 @@ public:
 	}
 
 	/// Deactivate this constraint
-	void						Deactivate()
+	void Deactivate()
 	{
 		mSwingLimitYConstraintPart.Deactivate();
 		mSwingLimitZConstraintPart.Deactivate();
@@ -452,13 +454,13 @@ public:
 	}
 
 	/// Check if constraint is active
-	inline bool					IsActive() const
+	inline bool IsActive() const
 	{
 		return mSwingLimitYConstraintPart.IsActive() || mSwingLimitZConstraintPart.IsActive() || mTwistLimitConstraintPart.IsActive();
 	}
 
 	/// Must be called from the WarmStartVelocityConstraint call to apply the previous frame's impulses
-	inline void					WarmStart(Body &ioBody1, Body &ioBody2, float inWarmStartImpulseRatio)
+	inline void WarmStart(Body &ioBody1, Body &ioBody2, float inWarmStartImpulseRatio)
 	{
 		mSwingLimitYConstraintPart.WarmStart(ioBody1, ioBody2, inWarmStartImpulseRatio);
 		mSwingLimitZConstraintPart.WarmStart(ioBody1, ioBody2, inWarmStartImpulseRatio);
@@ -466,20 +468,20 @@ public:
 	}
 
 	/// Iteratively update the velocity constraint. Makes sure d/dt C(...) = 0, where C is the constraint equation.
-	inline bool					SolveVelocityConstraint(Body &ioBody1, Body &ioBody2)
+	inline bool SolveVelocityConstraint(Body &ioBody1, Body &ioBody2)
 	{
 		bool impulse = false;
 
 		// Solve swing constraint
 		if (mSwingLimitYConstraintPart.IsActive())
-			impulse |= mSwingLimitYConstraintPart.SolveVelocityConstraint(ioBody1, ioBody2, mWorldSpaceSwingLimitYRotationAxis, -FLT_MAX, mSinSwingYHalfMinAngle == mSinSwingYHalfMaxAngle? FLT_MAX : 0.0f);
+			impulse |= mSwingLimitYConstraintPart.SolveVelocityConstraint(ioBody1, ioBody2, mWorldSpaceSwingLimitYRotationAxis, -FLT_MAX, mSinSwingYHalfMinAngle == mSinSwingYHalfMaxAngle ? FLT_MAX : 0.0f);
 
 		if (mSwingLimitZConstraintPart.IsActive())
-			impulse |= mSwingLimitZConstraintPart.SolveVelocityConstraint(ioBody1, ioBody2, mWorldSpaceSwingLimitZRotationAxis, -FLT_MAX, mSinSwingZHalfMinAngle == mSinSwingZHalfMaxAngle? FLT_MAX : 0.0f);
+			impulse |= mSwingLimitZConstraintPart.SolveVelocityConstraint(ioBody1, ioBody2, mWorldSpaceSwingLimitZRotationAxis, -FLT_MAX, mSinSwingZHalfMinAngle == mSinSwingZHalfMaxAngle ? FLT_MAX : 0.0f);
 
 		// Solve twist constraint
 		if (mTwistLimitConstraintPart.IsActive())
-			impulse |= mTwistLimitConstraintPart.SolveVelocityConstraint(ioBody1, ioBody2, mWorldSpaceTwistLimitRotationAxis, -FLT_MAX, mSinTwistHalfMinAngle == mSinTwistHalfMaxAngle? FLT_MAX : 0.0f);
+			impulse |= mTwistLimitConstraintPart.SolveVelocityConstraint(ioBody1, ioBody2, mWorldSpaceTwistLimitRotationAxis, -FLT_MAX, mSinTwistHalfMinAngle == mSinTwistHalfMaxAngle ? FLT_MAX : 0.0f);
 
 		return impulse;
 	}
@@ -490,7 +492,7 @@ public:
 	/// @param inConstraintRotation The current rotation of the constraint in constraint space
 	/// @param inConstraintToBody1 , inConstraintToBody2 Rotates from constraint space to body 1/2 space
 	/// @param inBaumgarte Baumgarte constant (fraction of the error to correct)
-	inline bool					SolvePositionConstraint(Body &ioBody1, Body &ioBody2, QuatArg inConstraintRotation, QuatArg inConstraintToBody1, QuatArg inConstraintToBody2, float inBaumgarte) const
+	inline bool SolvePositionConstraint(Body &ioBody1, Body &ioBody2, QuatArg inConstraintRotation, QuatArg inConstraintToBody1, QuatArg inConstraintToBody2, float inBaumgarte) const
 	{
 		Quat q_swing, q_twist;
 		inConstraintRotation.GetSwingTwist(q_swing, q_twist);
@@ -511,24 +513,24 @@ public:
 	}
 
 	/// Return lagrange multiplier for swing
-	inline float				GetTotalSwingYLambda() const
+	inline float GetTotalSwingYLambda() const
 	{
 		return mSwingLimitYConstraintPart.GetTotalLambda();
 	}
 
-	inline float				GetTotalSwingZLambda() const
+	inline float GetTotalSwingZLambda() const
 	{
 		return mSwingLimitZConstraintPart.GetTotalLambda();
 	}
 
 	/// Return lagrange multiplier for twist
-	inline float				GetTotalTwistLambda() const
+	inline float GetTotalTwistLambda() const
 	{
 		return mTwistLimitConstraintPart.GetTotalLambda();
 	}
 
 	/// Save state of this constraint part
-	void						SaveState(StateRecorder &inStream) const
+	void SaveState(StateRecorder &inStream) const
 	{
 		mSwingLimitYConstraintPart.SaveState(inStream);
 		mSwingLimitZConstraintPart.SaveState(inStream);
@@ -536,7 +538,7 @@ public:
 	}
 
 	/// Restore state of this constraint part
-	void						RestoreState(StateRecorder &inStream)
+	void RestoreState(StateRecorder &inStream)
 	{
 		mSwingLimitYConstraintPart.RestoreState(inStream);
 		mSwingLimitZConstraintPart.RestoreState(inStream);
@@ -549,49 +551,49 @@ private:
 	enum ERotationFlags
 	{
 		/// Indicates that axis is completely locked (cannot rotate around this axis)
-		TwistXLocked			= 1 << 0,
-		SwingYLocked			= 1 << 1,
-		SwingZLocked			= 1 << 2,
+		TwistXLocked = 1 << 0,
+		SwingYLocked = 1 << 1,
+		SwingZLocked = 1 << 2,
 
 		/// Indicates that axis is completely free (can rotate around without limits)
-		TwistXFree				= 1 << 3,
-		SwingYFree				= 1 << 4,
-		SwingZFree				= 1 << 5,
-		SwingYZFree				= SwingYFree | SwingZFree
+		TwistXFree = 1 << 3,
+		SwingYFree = 1 << 4,
+		SwingZFree = 1 << 5,
+		SwingYZFree = SwingYFree | SwingZFree
 	};
 
-	uint8						mRotationFlags;
+	uint8 mRotationFlags;
 
 	// Constants
-	ESwingType					mSwingType = ESwingType::Cone;
-	float						mSinTwistHalfMinAngle;
-	float						mSinTwistHalfMaxAngle;
-	float						mCosTwistHalfMinAngle;
-	float						mCosTwistHalfMaxAngle;
-	float						mSwingYHalfMinAngle;
-	float						mSwingYHalfMaxAngle;
-	float						mSwingZHalfMinAngle;
-	float						mSwingZHalfMaxAngle;
-	float						mSinSwingYHalfMinAngle;
-	float						mSinSwingYHalfMaxAngle;
-	float						mSinSwingZHalfMinAngle;
-	float						mSinSwingZHalfMaxAngle;
-	float						mCosSwingYHalfMinAngle;
-	float						mCosSwingYHalfMaxAngle;
-	float						mCosSwingZHalfMinAngle;
-	float						mCosSwingZHalfMaxAngle;
+	ESwingType mSwingType = ESwingType::Cone;
+	float mSinTwistHalfMinAngle;
+	float mSinTwistHalfMaxAngle;
+	float mCosTwistHalfMinAngle;
+	float mCosTwistHalfMaxAngle;
+	float mSwingYHalfMinAngle;
+	float mSwingYHalfMaxAngle;
+	float mSwingZHalfMinAngle;
+	float mSwingZHalfMaxAngle;
+	float mSinSwingYHalfMinAngle;
+	float mSinSwingYHalfMaxAngle;
+	float mSinSwingZHalfMinAngle;
+	float mSinSwingZHalfMaxAngle;
+	float mCosSwingYHalfMinAngle;
+	float mCosSwingYHalfMaxAngle;
+	float mCosSwingZHalfMinAngle;
+	float mCosSwingZHalfMaxAngle;
 
 	// RUN TIME PROPERTIES FOLLOW
 
 	/// Rotation axis for the angle constraint parts
-	Vec3						mWorldSpaceSwingLimitYRotationAxis;
-	Vec3						mWorldSpaceSwingLimitZRotationAxis;
-	Vec3						mWorldSpaceTwistLimitRotationAxis;
+	Vec3 mWorldSpaceSwingLimitYRotationAxis;
+	Vec3 mWorldSpaceSwingLimitZRotationAxis;
+	Vec3 mWorldSpaceTwistLimitRotationAxis;
 
 	/// The constraint parts
-	AngleConstraintPart			mSwingLimitYConstraintPart;
-	AngleConstraintPart			mSwingLimitZConstraintPart;
-	AngleConstraintPart			mTwistLimitConstraintPart;
+	AngleConstraintPart mSwingLimitYConstraintPart;
+	AngleConstraintPart mSwingLimitZConstraintPart;
+	AngleConstraintPart mTwistLimitConstraintPart;
 };
 
 JPH_NAMESPACE_END

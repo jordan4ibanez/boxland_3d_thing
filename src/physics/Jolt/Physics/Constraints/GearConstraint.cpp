@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/GearConstraint.h>
-#include <Jolt/Physics/Constraints/HingeConstraint.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Constraints/GearConstraint.h"
+#include "../Constraints/HingeConstraint.h"
+#include "../Body/Body.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -51,11 +51,10 @@ TwoBodyConstraint *GearConstraintSettings::Create(Body &inBody1, Body &inBody2) 
 	return new GearConstraint(inBody1, inBody2, *this);
 }
 
-GearConstraint::GearConstraint(Body &inBody1, Body &inBody2, const GearConstraintSettings &inSettings) :
-	TwoBodyConstraint(inBody1, inBody2, inSettings),
-	mLocalSpaceHingeAxis1(inSettings.mHingeAxis1),
-	mLocalSpaceHingeAxis2(inSettings.mHingeAxis2),
-	mRatio(inSettings.mRatio)
+GearConstraint::GearConstraint(Body &inBody1, Body &inBody2, const GearConstraintSettings &inSettings) : TwoBodyConstraint(inBody1, inBody2, inSettings),
+																																																				 mLocalSpaceHingeAxis1(inSettings.mHingeAxis1),
+																																																				 mLocalSpaceHingeAxis2(inSettings.mHingeAxis2),
+																																																				 mRatio(inSettings.mRatio)
 {
 	if (inSettings.mSpace == EConstraintSpace::WorldSpace)
 	{

@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Physics/IslandBuilder.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Physics/PhysicsSettings.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/Atomics.h>
-#include <Jolt/Core/TempAllocator.h>
-#include <Jolt/Core/QuickSort.h>
+#include "IslandBuilder.h"
+#include "Body/Body.h"
+#include "PhysicsSettings.h"
+#include "../Core/Profiler.h"
+#include "../Core/Atomics.h"
+#include "../Core/TempAllocator.h"
+#include "../Core/QuickSort.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -26,7 +26,7 @@ IslandBuilder::~IslandBuilder()
 	JPH_ASSERT(mContactIslandEnds == nullptr);
 	JPH_ASSERT(mIslandsSorted == nullptr);
 
-	delete [] mBodyLinks;
+	delete[] mBodyLinks;
 }
 
 void IslandBuilder::Init(uint32 inMaxActiveBodies)
@@ -35,7 +35,7 @@ void IslandBuilder::Init(uint32 inMaxActiveBodies)
 
 	// Link each body to itself, BuildBodyIslands() will restore this so that we don't need to do this each step
 	JPH_ASSERT(mBodyLinks == nullptr);
-	mBodyLinks = new BodyLink [mMaxActiveBodies];
+	mBodyLinks = new BodyLink[mMaxActiveBodies];
 	for (uint32 i = 0; i < mMaxActiveBodies; ++i)
 		mBodyLinks[i].mLinkedTo.store(i, memory_order_relaxed);
 }
@@ -106,7 +106,7 @@ void IslandBuilder::LinkBodies(uint32 inFirst, uint32 inSecond)
 #ifdef JPH_VALIDATE_ISLAND_BUILDER
 	// Add link to the validation list
 	if (mNumLinkValidation < uint32(mMaxContacts))
-		mLinkValidation[mNumLinkValidation++] = { inFirst, inSecond };
+		mLinkValidation[mNumLinkValidation++] = {inFirst, inSecond};
 	else
 		JPH_ASSERT(false, "Out of links");
 #endif
@@ -161,7 +161,7 @@ void IslandBuilder::LinkConstraint(uint32 inConstraintIndex, uint32 inFirst, uin
 	LinkBodies(inFirst, inSecond);
 
 	JPH_ASSERT(inConstraintIndex < mNumConstraints);
-	uint32 min_value = min(inFirst, inSecond); // Use fact that invalid index is 0xffffffff, we want the active body of two
+	uint32 min_value = min(inFirst, inSecond);		 // Use fact that invalid index is 0xffffffff, we want the active body of two
 	JPH_ASSERT(min_value != Body::cInactiveIndex); // At least one of the bodies must be active
 	mConstraintLinks[inConstraintIndex] = min_value;
 }
@@ -346,8 +346,7 @@ void IslandBuilder::SortIslands(TempAllocator *inTempAllocator)
 		{
 			num_constraints[0] = mConstraintIslandEnds[0] + mContactIslandEnds[0];
 			for (uint32 island = 1; island < mNumIslands; ++island)
-				num_constraints[island] = mConstraintIslandEnds[island] - mConstraintIslandEnds[island - 1]
-										+ mContactIslandEnds[island] - mContactIslandEnds[island - 1];
+				num_constraints[island] = mConstraintIslandEnds[island] - mConstraintIslandEnds[island - 1] + mContactIslandEnds[island] - mContactIslandEnds[island - 1];
 		}
 		else if (mNumContacts > 0)
 		{
@@ -364,9 +363,8 @@ void IslandBuilder::SortIslands(TempAllocator *inTempAllocator)
 
 		// Sort so the biggest islands go first, this means that the jobs that take longest will be running
 		// first which improves the chance that all jobs finish at the same time.
-		QuickSort(mIslandsSorted, mIslandsSorted + mNumIslands, [num_constraints](uint32 inLHS, uint32 inRHS) {
-			return num_constraints[inLHS] > num_constraints[inRHS];
-		});
+		QuickSort(mIslandsSorted, mIslandsSorted + mNumIslands, [num_constraints](uint32 inLHS, uint32 inRHS)
+							{ return num_constraints[inLHS] > num_constraints[inRHS]; });
 
 		inTempAllocator->Free(num_constraints, mNumIslands * sizeof(uint32));
 	}
@@ -389,8 +387,8 @@ void IslandBuilder::Finalize(const BodyID *inActiveBodies, uint32 inNumActiveBod
 void IslandBuilder::GetBodiesInIsland(uint32 inIslandIndex, BodyID *&outBodiesBegin, BodyID *&outBodiesEnd) const
 {
 	JPH_ASSERT(inIslandIndex < mNumIslands);
-	uint32 sorted_index = mIslandsSorted != nullptr? mIslandsSorted[inIslandIndex] : inIslandIndex;
-	outBodiesBegin = sorted_index > 0? mBodyIslands + mBodyIslandEnds[sorted_index - 1] : mBodyIslands;
+	uint32 sorted_index = mIslandsSorted != nullptr ? mIslandsSorted[inIslandIndex] : inIslandIndex;
+	outBodiesBegin = sorted_index > 0 ? mBodyIslands + mBodyIslandEnds[sorted_index - 1] : mBodyIslands;
 	outBodiesEnd = mBodyIslands + mBodyIslandEnds[sorted_index];
 }
 
@@ -406,7 +404,7 @@ bool IslandBuilder::GetConstraintsInIsland(uint32 inIslandIndex, uint32 *&outCon
 	else
 	{
 		uint32 sorted_index = mIslandsSorted[inIslandIndex];
-		outConstraintsBegin = sorted_index > 0? mConstraintIslands + mConstraintIslandEnds[sorted_index - 1] : mConstraintIslands;
+		outConstraintsBegin = sorted_index > 0 ? mConstraintIslands + mConstraintIslandEnds[sorted_index - 1] : mConstraintIslands;
 		outConstraintsEnd = mConstraintIslands + mConstraintIslandEnds[sorted_index];
 		return outConstraintsBegin != outConstraintsEnd;
 	}
@@ -424,7 +422,7 @@ bool IslandBuilder::GetContactsInIsland(uint32 inIslandIndex, uint32 *&outContac
 	else
 	{
 		uint32 sorted_index = mIslandsSorted[inIslandIndex];
-		outContactsBegin = sorted_index > 0? mContactIslands + mContactIslandEnds[sorted_index - 1] : mContactIslands;
+		outContactsBegin = sorted_index > 0 ? mContactIslands + mContactIslandEnds[sorted_index - 1] : mContactIslands;
 		outContactsEnd = mContactIslands + mContactIslandEnds[sorted_index];
 		return outContactsBegin != outContactsEnd;
 	}

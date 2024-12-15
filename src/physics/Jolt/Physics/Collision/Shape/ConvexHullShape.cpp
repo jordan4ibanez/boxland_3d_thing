@@ -2,36 +2,34 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/Shape/PolyhedronSubmergedVolumeCalculator.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/CollidePointResult.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/CollideSoftBodyVertexIterator.h>
-#include <Jolt/Geometry/ConvexHullBuilder.h>
-#include <Jolt/Geometry/ClosestPoint.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StringTools.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/Core/UnorderedMap.h>
-#include <Jolt/Core/UnorderedSet.h>
+#include "../../Collision/Shape/ConvexHullShape.h"
+#include "../../Collision/Shape/ScaleHelpers.h"
+#include "../../Collision/Shape/PolyhedronSubmergedVolumeCalculator.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/CastResult.h"
+#include "../../Collision/CollidePointResult.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../Collision/CollideSoftBodyVertexIterator.h"
+#include "../../../Geometry/ConvexHullBuilder.h"
+#include "../../../Geometry/ClosestPoint.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
+#include "../../../Core/StringTools.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
+#include "../../../Core/UnorderedMap.h"
+#include "../../../Core/UnorderedSet.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(ConvexHullShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(ConvexHullShapeSettings, ConvexShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(ConvexHullShapeSettings){
+		JPH_ADD_BASE_CLASS(ConvexHullShapeSettings, ConvexShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(ConvexHullShapeSettings, mPoints)
-	JPH_ADD_ATTRIBUTE(ConvexHullShapeSettings, mMaxConvexRadius)
-	JPH_ADD_ATTRIBUTE(ConvexHullShapeSettings, mMaxErrorConvexRadius)
-	JPH_ADD_ATTRIBUTE(ConvexHullShapeSettings, mHullTolerance)
-}
+				JPH_ADD_ATTRIBUTE(ConvexHullShapeSettings, mPoints)
+						JPH_ADD_ATTRIBUTE(ConvexHullShapeSettings, mMaxConvexRadius)
+								JPH_ADD_ATTRIBUTE(ConvexHullShapeSettings, mMaxErrorConvexRadius)
+										JPH_ADD_ATTRIBUTE(ConvexHullShapeSettings, mHullTolerance)}
 
 ShapeSettings::ShapeResult ConvexHullShapeSettings::Create() const
 {
@@ -40,9 +38,8 @@ ShapeSettings::ShapeResult ConvexHullShapeSettings::Create() const
 	return mCachedResult;
 }
 
-ConvexHullShape::ConvexHullShape(const ConvexHullShapeSettings &inSettings, ShapeResult &outResult) :
-	ConvexShape(EShapeSubType::ConvexHull, inSettings, outResult),
-	mConvexRadius(inSettings.mMaxConvexRadius)
+ConvexHullShape::ConvexHullShape(const ConvexHullShapeSettings &inSettings, ShapeResult &outResult) : ConvexShape(EShapeSubType::ConvexHull, inSettings, outResult),
+																																																			mConvexRadius(inSettings.mMaxConvexRadius)
 {
 	using BuilderFace = ConvexHullBuilder::Face;
 	using Edge = ConvexHullBuilder::Edge;
@@ -158,7 +155,7 @@ ConvexHullShape::ConvexHullShape(const ConvexHullShapeSettings &inSettings, Shap
 				// Add to point list
 				JPH_ASSERT(mPoints.size() <= 0xff);
 				new_idx = (uint8)mPoints.size();
-				mPoints.push_back({ p });
+				mPoints.push_back({p});
 				vertex_map[original_idx] = new_idx;
 			}
 
@@ -171,7 +168,7 @@ ConvexHullShape::ConvexHullShape(const ConvexHullShapeSettings &inSettings, Shap
 		} while (edge != builder_face->mFirstEdge);
 
 		// Add face
-		mFaces.push_back({ first_vertex, num_vertices });
+		mFaces.push_back({first_vertex, num_vertices});
 
 		// Add plane
 		Plane plane = Plane::sFromPointAndNormal(builder_face->mCentroid - mCenterOfMass, builder_face->mNormal.Normalized());
@@ -210,12 +207,12 @@ ConvexHullShape::ConvexHullShape(const ConvexHullShapeSettings &inSettings, Shap
 		// The largest tetrahedron we can get is ((1, 0, 0) x (0, 1, 0)) . (0, 0, 1) = 1, if the volume is only 5% of that,
 		// the three vectors are too coplanar and we fall back to using only 2 plane normals
 		float biggest_volume = 0.05f;
-		int best3[3] = { -1, -1, -1 };
+		int best3[3] = {-1, -1, -1};
 
 		// When using 2 normals, we get the two with the biggest angle between them with a minimal difference of 1 degree
 		// otherwise we fall back to just using 1 plane normal
 		float smallest_dot = Cos(DegreesToRadians(1.0f));
-		int best2[2] = { -1, -1 };
+		int best2[2] = {-1, -1};
 
 		for (int face1 = 0; face1 < (int)faces.size(); ++face1)
 		{
@@ -252,11 +249,11 @@ ConvexHullShape::ConvexHullShape(const ConvexHullShapeSettings &inSettings, Shap
 
 		// If we didn't find 3 planes, use 2, if we didn't find 2 use 1
 		if (best3[0] != -1)
-			faces = { best3[0], best3[1], best3[2] };
+			faces = {best3[0], best3[1], best3[2]};
 		else if (best2[0] != -1)
-			faces = { best2[0], best2[1] };
+			faces = {best2[0], best2[1]};
 		else
-			faces = { faces[0] };
+			faces = {faces[0]};
 
 		// Copy the faces to the points buffer
 		Point &point = mPoints[p];
@@ -342,7 +339,7 @@ ConvexHullShape::ConvexHullShape(const ConvexHullShapeSettings &inSettings, Shap
 				float max_convex_radius = inSettings.mMaxErrorConvexRadius / (offset - 1.0f);
 				mConvexRadius = min(mConvexRadius, max_convex_radius);
 			}
-		}
+	}
 
 	// Calculate the inner radius by getting the minimum distance from the origin to the planes of the hull
 	mInnerRadius = FLT_MAX;
@@ -396,14 +393,13 @@ Vec3 ConvexHullShape::GetSurfaceNormal(const SubShapeID &inSubShapeID, Vec3Arg i
 class ConvexHullShape::HullNoConvex final : public Support
 {
 public:
-	explicit				HullNoConvex(float inConvexRadius) :
-		mConvexRadius(inConvexRadius)
+	explicit HullNoConvex(float inConvexRadius) : mConvexRadius(inConvexRadius)
 	{
 		static_assert(sizeof(HullNoConvex) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(HullNoConvex)));
 	}
 
-	virtual Vec3			GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		// Find the point with the highest projection on inDirection
 		float best_dot = -FLT_MAX;
@@ -423,39 +419,38 @@ public:
 		return best_point;
 	}
 
-	virtual float			GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return mConvexRadius;
 	}
 
 	using PointsArray = StaticArray<Vec3, cMaxPointsInHull>;
 
-	inline PointsArray &	GetPoints()
+	inline PointsArray &GetPoints()
 	{
 		return mPoints;
 	}
 
-	const PointsArray &		GetPoints() const
+	const PointsArray &GetPoints() const
 	{
 		return mPoints;
 	}
 
 private:
-	float					mConvexRadius;
-	PointsArray				mPoints;
+	float mConvexRadius;
+	PointsArray mPoints;
 };
 
 class ConvexHullShape::HullWithConvex final : public Support
 {
 public:
-	explicit				HullWithConvex(const ConvexHullShape *inShape) :
-		mShape(inShape)
+	explicit HullWithConvex(const ConvexHullShape *inShape) : mShape(inShape)
 	{
 		static_assert(sizeof(HullWithConvex) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(HullWithConvex)));
 	}
 
-	virtual Vec3			GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		// Find the point with the highest projection on inDirection
 		float best_dot = -FLT_MAX;
@@ -475,27 +470,26 @@ public:
 		return best_point;
 	}
 
-	virtual float			GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return 0.0f;
 	}
 
 private:
-	const ConvexHullShape *	mShape;
+	const ConvexHullShape *mShape;
 };
 
 class ConvexHullShape::HullWithConvexScaled final : public Support
 {
 public:
-							HullWithConvexScaled(const ConvexHullShape *inShape, Vec3Arg inScale) :
-		mShape(inShape),
-		mScale(inScale)
+	HullWithConvexScaled(const ConvexHullShape *inShape, Vec3Arg inScale) : mShape(inShape),
+																																					mScale(inScale)
 	{
 		static_assert(sizeof(HullWithConvexScaled) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(HullWithConvexScaled)));
 	}
 
-	virtual Vec3			GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		// Find the point with the highest projection on inDirection
 		float best_dot = -FLT_MAX;
@@ -518,14 +512,14 @@ public:
 		return best_point;
 	}
 
-	virtual float			GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return 0.0f;
 	}
 
 private:
-	const ConvexHullShape *	mShape;
-	Vec3					mScale;
+	const ConvexHullShape *mShape;
+	Vec3 mScale;
 };
 
 const ConvexShape::Support *ConvexHullShape::GetSupportFunction(ESupportMode inMode, SupportBuffer &inBuffer, Vec3Arg inScale) const
@@ -819,23 +813,23 @@ void ConvexHullShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassTr
 			Vec3 v1 = mPoints[first_vtx[1]].mPosition;
 			Vec3 v2 = mPoints[first_vtx[2]].mPosition;
 			Vec3 uv_direction = (v1 - v0).Normalized();
-			triangles.push_back({ v0, v1, v2, Color::sWhite, v0, uv_direction });
+			triangles.push_back({v0, v1, v2, Color::sWhite, v0, uv_direction});
 
 			// Draw any other triangles in this polygon
 			for (const uint8 *v = first_vtx + 3; v < end_vtx; ++v)
-				triangles.push_back({ v0, mPoints[*(v - 1)].mPosition, mPoints[*v].mPosition, Color::sWhite, v0, uv_direction });
+				triangles.push_back({v0, mPoints[*(v - 1)].mPosition, mPoints[*v].mPosition, Color::sWhite, v0, uv_direction});
 		}
 		mGeometry = new DebugRenderer::Geometry(inRenderer->CreateTriangleBatch(triangles), GetLocalBounds());
 	}
 
 	// Test if the shape is scaled inside out
-	DebugRenderer::ECullMode cull_mode = ScaleHelpers::IsInsideOut(inScale)? DebugRenderer::ECullMode::CullFrontFace : DebugRenderer::ECullMode::CullBackFace;
+	DebugRenderer::ECullMode cull_mode = ScaleHelpers::IsInsideOut(inScale) ? DebugRenderer::ECullMode::CullFrontFace : DebugRenderer::ECullMode::CullBackFace;
 
 	// Determine the draw mode
-	DebugRenderer::EDrawMode draw_mode = inDrawWireframe? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
+	DebugRenderer::EDrawMode draw_mode = inDrawWireframe ? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
 
 	// Draw the geometry
-	Color color = inUseMaterialColors? GetMaterial()->GetDebugColor() : inColor;
+	Color color = inUseMaterialColors ? GetMaterial()->GetDebugColor() : inColor;
 	RMat44 transform = inCenterOfMassTransform.PreScaled(inScale);
 	inRenderer->DrawGeometry(transform, color, mGeometry, cull_mode, DebugRenderer::ECastShadow::On, draw_mode);
 
@@ -857,7 +851,7 @@ void ConvexHullShape::DrawShrunkShape(DebugRenderer *inRenderer, RMat44Arg inCen
 {
 	// Get the shrunk points
 	SupportBuffer buffer;
-	const HullNoConvex *support = mConvexRadius > 0.0f? static_cast<const HullNoConvex *>(GetSupportFunction(ESupportMode::ExcludeConvexRadius, buffer, inScale)) : nullptr;
+	const HullNoConvex *support = mConvexRadius > 0.0f ? static_cast<const HullNoConvex *>(GetSupportFunction(ESupportMode::ExcludeConvexRadius, buffer, inScale)) : nullptr;
 
 	RMat44 transform = inCenterOfMassTransform * Mat44::sScale(inScale);
 
@@ -865,7 +859,7 @@ void ConvexHullShape::DrawShrunkShape(DebugRenderer *inRenderer, RMat44Arg inCen
 	{
 		const Point &point = mPoints[p];
 		RVec3 position = transform * point.mPosition;
-		RVec3 shrunk_point = support != nullptr? transform * support->GetPoints()[p] : position;
+		RVec3 shrunk_point = support != nullptr ? transform * support->GetPoints()[p] : position;
 
 		// Draw difference between shrunk position and position
 		inRenderer->DrawLine(position, shrunk_point, Color::sGreen);
@@ -998,8 +992,7 @@ bool ConvexHullShape::CastRay(const RayCast &inRay, const SubShapeIDCreator &inS
 {
 	// Determine if ray hits the shape
 	float min_fraction, max_fraction;
-	if (CastRayHelper(inRay, min_fraction, max_fraction)
-		&& min_fraction < ioHit.mFraction) // Check if this is a closer hit
+	if (CastRayHelper(inRay, min_fraction, max_fraction) && min_fraction < ioHit.mFraction) // Check if this is a closer hit
 	{
 		// Better hit than the current hit
 		ioHit.mFraction = min_fraction;
@@ -1017,8 +1010,7 @@ void ConvexHullShape::CastRay(const RayCast &inRay, const RayCastSettings &inRay
 
 	// Determine if ray hits the shape
 	float min_fraction, max_fraction;
-	if (CastRayHelper(inRay, min_fraction, max_fraction)
-		&& min_fraction < ioCollector.GetEarlyOutFraction()) // Check if this is closer than the early out fraction
+	if (CastRayHelper(inRay, min_fraction, max_fraction) && min_fraction < ioCollector.GetEarlyOutFraction()) // Check if this is closer than the early out fraction
 	{
 		// Better hit than the current hit
 		RayCastResult hit;
@@ -1033,8 +1025,7 @@ void ConvexHullShape::CastRay(const RayCast &inRay, const RayCastSettings &inRay
 		}
 
 		// Check back side hit
-		if (inRayCastSettings.mBackFaceModeConvex == EBackFaceMode::CollideWithBackFaces
-			&& max_fraction < ioCollector.GetEarlyOutFraction())
+		if (inRayCastSettings.mBackFaceModeConvex == EBackFaceMode::CollideWithBackFaces && max_fraction < ioCollector.GetEarlyOutFraction())
 		{
 			hit.mFraction = max_fraction;
 			ioCollector.AddHit(hit);
@@ -1054,7 +1045,7 @@ void ConvexHullShape::CollidePoint(Vec3Arg inPoint, const SubShapeIDCreator &inS
 			return;
 
 	// Point is inside
-	ioCollector.AddHit({ TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID() });
+	ioCollector.AddHit({TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID()});
 }
 
 void ConvexHullShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale, const CollideSoftBodyVertexIterator &inVertices, uint inNumVertices, int inCollidingShapeIndex) const
@@ -1063,7 +1054,7 @@ void ConvexHullShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, 
 
 	Vec3 inv_scale = inScale.Reciprocal();
 	bool is_not_scaled = ScaleHelpers::IsNotScaled(inScale);
-	float scale_flip = ScaleHelpers::IsInsideOut(inScale)? -1.0f : 1.0f;
+	float scale_flip = ScaleHelpers::IsInsideOut(inScale) ? -1.0f : 1.0f;
 
 	for (CollideSoftBodyVertexIterator v = inVertices, sbv_end = inVertices + inNumVertices; v != sbv_end; ++v)
 		if (v.GetInvMass() > 0.0f)
@@ -1153,7 +1144,7 @@ void ConvexHullShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, 
 			if (v.UpdatePenetration(penetration))
 			{
 				// Calculate contact plane
-				normal = normal_length > 0.0f? normal / normal_length : max_plane_normal;
+				normal = normal_length > 0.0f ? normal / normal_length : max_plane_normal;
 				Plane plane = Plane::sFromPointAndNormal(closest_point, normal);
 
 				// Store collision
@@ -1165,11 +1156,11 @@ void ConvexHullShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, 
 class ConvexHullShape::CHSGetTrianglesContext
 {
 public:
-				CHSGetTrianglesContext(Mat44Arg inTransform, bool inIsInsideOut) : mTransform(inTransform), mIsInsideOut(inIsInsideOut) { }
+	CHSGetTrianglesContext(Mat44Arg inTransform, bool inIsInsideOut) : mTransform(inTransform), mIsInsideOut(inIsInsideOut) {}
 
-	Mat44		mTransform;
-	bool		mIsInsideOut;
-	size_t		mCurrentFace = 0;
+	Mat44 mTransform;
+	bool mIsInsideOut;
+	size_t mCurrentFace = 0;
 };
 
 void ConvexHullShape::GetTrianglesStart(GetTrianglesContext &ioContext, const AABox &inBox, Vec3Arg inPositionCOM, QuatArg inRotation, Vec3Arg inScale) const
@@ -1290,18 +1281,15 @@ Shape::Stats ConvexHullShape::GetStats() const
 		triangle_count += f.mNumVertices - 2;
 
 	return Stats(
-		sizeof(*this)
-			+ mPoints.size() * sizeof(Point)
-			+ mFaces.size() * sizeof(Face)
-			+ mPlanes.size() * sizeof(Plane)
-			+ mVertexIdx.size() * sizeof(uint8),
-		triangle_count);
+			sizeof(*this) + mPoints.size() * sizeof(Point) + mFaces.size() * sizeof(Face) + mPlanes.size() * sizeof(Plane) + mVertexIdx.size() * sizeof(uint8),
+			triangle_count);
 }
 
 void ConvexHullShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::ConvexHull);
-	f.mConstruct = []() -> Shape * { return new ConvexHullShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new ConvexHullShape; };
 	f.mColor = Color::sGreen;
 }
 

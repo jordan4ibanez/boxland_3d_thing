@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
 JPH_SUPPRESS_WARNINGS_STD_BEGIN
 #include <cstdlib>
@@ -12,11 +12,11 @@ JPH_SUPPRESS_WARNINGS_STD_END
 JPH_NAMESPACE_BEGIN
 
 #ifdef JPH_DISABLE_CUSTOM_ALLOCATOR
-	#define JPH_ALLOC_FN(x)	x
-	#define JPH_ALLOC_SCOPE
+#define JPH_ALLOC_FN(x) x
+#define JPH_ALLOC_SCOPE
 #else
-	#define JPH_ALLOC_FN(x)	x##Impl
-	#define JPH_ALLOC_SCOPE static
+#define JPH_ALLOC_FN(x) x##Impl
+#define JPH_ALLOC_SCOPE static
 #endif
 
 JPH_ALLOC_SCOPE void *JPH_ALLOC_FN(Allocate)(size_t inSize)

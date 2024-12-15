@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: 2022 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/PulleyConstraint.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Constraints/PulleyConstraint.h"
+#include "../Body/Body.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -64,13 +64,12 @@ TwoBodyConstraint *PulleyConstraintSettings::Create(Body &inBody1, Body &inBody2
 	return new PulleyConstraint(inBody1, inBody2, *this);
 }
 
-PulleyConstraint::PulleyConstraint(Body &inBody1, Body &inBody2, const PulleyConstraintSettings &inSettings) :
-	TwoBodyConstraint(inBody1, inBody2, inSettings),
-	mFixedPosition1(inSettings.mFixedPoint1),
-	mFixedPosition2(inSettings.mFixedPoint2),
-	mRatio(inSettings.mRatio),
-	mMinLength(inSettings.mMinLength),
-	mMaxLength(inSettings.mMaxLength)
+PulleyConstraint::PulleyConstraint(Body &inBody1, Body &inBody2, const PulleyConstraintSettings &inSettings) : TwoBodyConstraint(inBody1, inBody2, inSettings),
+																																																							 mFixedPosition1(inSettings.mFixedPoint1),
+																																																							 mFixedPosition2(inSettings.mFixedPoint2),
+																																																							 mRatio(inSettings.mRatio),
+																																																							 mMinLength(inSettings.mMinLength),
+																																																							 mMaxLength(inSettings.mMaxLength)
 {
 	if (inSettings.mSpace == EConstraintSpace::WorldSpace)
 	{
@@ -147,8 +146,8 @@ void PulleyConstraint::SetupVelocityConstraint(float inDeltaTime)
 	if (min_length_violation || max_length_violation)
 	{
 		// Determine max lambda based on if the length is too big or small
-		mMinLambda = max_length_violation? -FLT_MAX : 0.0f;
-		mMaxLambda = min_length_violation? FLT_MAX : 0.0f;
+		mMinLambda = max_length_violation ? -FLT_MAX : 0.0f;
+		mMaxLambda = min_length_violation ? FLT_MAX : 0.0f;
 
 		CalculateConstraintProperties();
 	}

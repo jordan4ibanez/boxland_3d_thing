@@ -2,35 +2,34 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Character/Character.h>
-#include <Jolt/Physics/Body/BodyCreationSettings.h>
-#include <Jolt/Physics/Body/BodyLock.h>
-#include <Jolt/Physics/Collision/CollideShape.h>
-#include <Jolt/Physics/PhysicsSystem.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../Character/Character.h"
+#include "../Body/BodyCreationSettings.h"
+#include "../Body/BodyLock.h"
+#include "../Collision/CollideShape.h"
+#include "../PhysicsSystem.h"
+#include "../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
 static inline const BodyLockInterface &sGetBodyLockInterface(const PhysicsSystem *inSystem, bool inLockBodies)
 {
-	return inLockBodies? static_cast<const BodyLockInterface &>(inSystem->GetBodyLockInterface()) : static_cast<const BodyLockInterface &>(inSystem->GetBodyLockInterfaceNoLock());
+	return inLockBodies ? static_cast<const BodyLockInterface &>(inSystem->GetBodyLockInterface()) : static_cast<const BodyLockInterface &>(inSystem->GetBodyLockInterfaceNoLock());
 }
 
 static inline BodyInterface &sGetBodyInterface(PhysicsSystem *inSystem, bool inLockBodies)
 {
-	return inLockBodies? inSystem->GetBodyInterface() : inSystem->GetBodyInterfaceNoLock();
+	return inLockBodies ? inSystem->GetBodyInterface() : inSystem->GetBodyInterfaceNoLock();
 }
 
 static inline const NarrowPhaseQuery &sGetNarrowPhaseQuery(const PhysicsSystem *inSystem, bool inLockBodies)
 {
-	return inLockBodies? inSystem->GetNarrowPhaseQuery() : inSystem->GetNarrowPhaseQueryNoLock();
+	return inLockBodies ? inSystem->GetNarrowPhaseQuery() : inSystem->GetNarrowPhaseQueryNoLock();
 }
 
-Character::Character(const CharacterSettings *inSettings, RVec3Arg inPosition, QuatArg inRotation, uint64 inUserData, PhysicsSystem *inSystem) :
-	CharacterBase(inSettings, inSystem),
-	mLayer(inSettings->mLayer)
+Character::Character(const CharacterSettings *inSettings, RVec3Arg inPosition, QuatArg inRotation, uint64 inUserData, PhysicsSystem *inSystem) : CharacterBase(inSettings, inSystem),
+																																																																								 mLayer(inSettings->mLayer)
 {
 	// Construct rigid body
 	BodyCreationSettings settings(mShape, inPosition, inRotation, EMotionType::Dynamic, mLayer);
@@ -137,10 +136,10 @@ void Character::PostSimulation(float inMaxSeparationDistance, bool inLockBodies)
 	{
 	public:
 		// Constructor
-		explicit			MyCollector(Vec3Arg inUp, RVec3 inBaseOffset) : mBaseOffset(inBaseOffset), mUp(inUp) { }
+		explicit MyCollector(Vec3Arg inUp, RVec3 inBaseOffset) : mBaseOffset(inBaseOffset), mUp(inUp) {}
 
 		// See: CollectorType::AddHit
-		virtual void		AddHit(const CollideShapeResult &inResult) override
+		virtual void AddHit(const CollideShapeResult &inResult) override
 		{
 			Vec3 normal = -inResult.mPenetrationAxis.Normalized();
 			float dot = normal.Dot(mUp);
@@ -154,15 +153,15 @@ void Character::PostSimulation(float inMaxSeparationDistance, bool inLockBodies)
 			}
 		}
 
-		BodyID				mGroundBodyID;
-		SubShapeID			mGroundBodySubShapeID;
-		RVec3				mGroundPosition = RVec3::sZero();
-		Vec3				mGroundNormal = Vec3::sZero();
+		BodyID mGroundBodyID;
+		SubShapeID mGroundBodySubShapeID;
+		RVec3 mGroundPosition = RVec3::sZero();
+		Vec3 mGroundNormal = Vec3::sZero();
 
 	private:
-		RVec3				mBaseOffset;
-		Vec3				mUp;
-		float				mBestDot = -FLT_MAX;
+		RVec3 mBaseOffset;
+		Vec3 mUp;
+		float mBestDot = -FLT_MAX;
 	};
 
 	// Collide shape
@@ -285,10 +284,10 @@ bool Character::SetShape(const Shape *inShape, float inMaxPenetrationDepth, bool
 		{
 		public:
 			// Constructor
-			explicit			MyCollector(float inMaxPenetrationDepth) : mMaxPenetrationDepth(inMaxPenetrationDepth) { }
+			explicit MyCollector(float inMaxPenetrationDepth) : mMaxPenetrationDepth(inMaxPenetrationDepth) {}
 
 			// See: CollectorType::AddHit
-			virtual void		AddHit(const CollideShapeResult &inResult) override
+			virtual void AddHit(const CollideShapeResult &inResult) override
 			{
 				if (inResult.mPenetrationDepth > mMaxPenetrationDepth)
 				{
@@ -297,8 +296,8 @@ bool Character::SetShape(const Shape *inShape, float inMaxPenetrationDepth, bool
 				}
 			}
 
-			float				mMaxPenetrationDepth;
-			bool				mHadCollision = false;
+			float mMaxPenetrationDepth;
+			bool mHadCollision = false;
 		};
 
 		// Test if anything is in the way of switching

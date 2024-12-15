@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Geometry/Plane.h>
+#include "../../Geometry/Plane.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -16,21 +16,21 @@ class SoftBodyVertex
 {
 public:
 	/// Reset collision information to prepare for a new collision check
-	inline void		ResetCollision()
+	inline void ResetCollision()
 	{
 		mLargestPenetration = -FLT_MAX;
 		mCollidingShapeIndex = -1;
 		mHasContact = false;
 	}
 
-	Vec3			mPreviousPosition;					///< Internal use only. Position at the previous time step
-	Vec3			mPosition;							///< Position, relative to the center of mass of the soft body
-	Vec3			mVelocity;							///< Velocity, relative to the center of mass of the soft body
-	Plane			mCollisionPlane;					///< Internal use only. Nearest collision plane, relative to the center of mass of the soft body
-	int				mCollidingShapeIndex;				///< Internal use only. Index in the colliding shapes list of the body we may collide with
-	bool			mHasContact;						///< True if the vertex has collided with anything in the last update
-	float			mLargestPenetration;				///< Internal use only. Used while finding the collision plane, stores the largest penetration found so far
-	float			mInvMass;							///< Inverse mass (1 / mass)
+	Vec3 mPreviousPosition;		 ///< Internal use only. Position at the previous time step
+	Vec3 mPosition;						 ///< Position, relative to the center of mass of the soft body
+	Vec3 mVelocity;						 ///< Velocity, relative to the center of mass of the soft body
+	Plane mCollisionPlane;		 ///< Internal use only. Nearest collision plane, relative to the center of mass of the soft body
+	int mCollidingShapeIndex;	 ///< Internal use only. Index in the colliding shapes list of the body we may collide with
+	bool mHasContact;					 ///< True if the vertex has collided with anything in the last update
+	float mLargestPenetration; ///< Internal use only. Used while finding the collision plane, stores the largest penetration found so far
+	float mInvMass;						 ///< Inverse mass (1 / mass)
 };
 
 JPH_NAMESPACE_END

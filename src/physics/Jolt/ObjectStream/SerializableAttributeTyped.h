@@ -6,9 +6,9 @@
 
 #ifdef JPH_OBJECT_STREAM
 
-#include <Jolt/ObjectStream/SerializableAttribute.h>
-#include <Jolt/ObjectStream/GetPrimitiveTypeOfType.h>
-#include <Jolt/ObjectStream/ObjectStream.h>
+#include "../ObjectStream/SerializableAttribute.h"
+#include "../ObjectStream/GetPrimitiveTypeOfType.h"
+#include "../ObjectStream/ObjectStream.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -19,27 +19,12 @@ JPH_NAMESPACE_BEGIN
 template <class MemberType>
 inline void AddSerializableAttributeTyped(RTTI &inRTTI, uint inOffset, const char *inName)
 {
-	inRTTI.AddAttribute(SerializableAttribute(inName, inOffset,
-		[]()
-		{
-			return GetPrimitiveTypeOfType((MemberType *)nullptr);
-		},
-		[](int inArrayDepth, EOSDataType inDataType, const char *inClassName)
-		{
-			return OSIsType((MemberType *)nullptr, inArrayDepth, inDataType, inClassName);
-		},
-		[](IObjectStreamIn &ioStream, void *inObject)
-		{
-			return OSReadData(ioStream, *reinterpret_cast<MemberType *>(inObject));
-		},
-		[](IObjectStreamOut &ioStream, const void *inObject)
-		{
-			OSWriteData(ioStream, *reinterpret_cast<const MemberType *>(inObject));
-		},
-		[](IObjectStreamOut &ioStream)
-		{
-			OSWriteDataType(ioStream, (MemberType *)nullptr);
-		}));
+	inRTTI.AddAttribute(SerializableAttribute(inName, inOffset, []()
+																						{ return GetPrimitiveTypeOfType((MemberType *)nullptr); }, [](int inArrayDepth, EOSDataType inDataType, const char *inClassName)
+																						{ return OSIsType((MemberType *)nullptr, inArrayDepth, inDataType, inClassName); }, [](IObjectStreamIn &ioStream, void *inObject)
+																						{ return OSReadData(ioStream, *reinterpret_cast<MemberType *>(inObject)); }, [](IObjectStreamOut &ioStream, const void *inObject)
+																						{ OSWriteData(ioStream, *reinterpret_cast<const MemberType *>(inObject)); }, [](IObjectStreamOut &ioStream)
+																						{ OSWriteDataType(ioStream, (MemberType *)nullptr); }));
 }
 
 // JPH_ADD_ATTRIBUTE

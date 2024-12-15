@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Math/Vector.h>
-#include <Jolt/Math/GaussianElimination.h>
+#include "../Math/Vector.h"
+#include "../Math/GaussianElimination.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -15,24 +15,29 @@ class [[nodiscard]] Matrix
 {
 public:
 	/// Constructor
-	inline									Matrix() = default;
-	inline									Matrix(const Matrix &inM2)								{ *this = inM2; }
+	inline Matrix() = default;
+	inline Matrix(const Matrix &inM2) { *this = inM2; }
 
 	/// Dimensions
-	inline uint								GetRows() const											{ return Rows; }
-	inline uint								GetCols() const											{ return Cols; }
+	inline uint GetRows() const { return Rows; }
+	inline uint GetCols() const { return Cols; }
 
 	/// Zero matrix
-	inline void								SetZero()
+	inline void SetZero()
 	{
 		for (uint c = 0; c < Cols; ++c)
 			mCol[c].SetZero();
 	}
 
-	inline static Matrix					sZero()													{ Matrix m; m.SetZero(); return m; }
+	inline static Matrix sZero()
+	{
+		Matrix m;
+		m.SetZero();
+		return m;
+	}
 
 	/// Check if this matrix consists of all zeros
-	inline bool								IsZero() const
+	inline bool IsZero() const
 	{
 		for (uint c = 0; c < Cols; ++c)
 			if (!mCol[c].IsZero())
@@ -42,7 +47,7 @@ public:
 	}
 
 	/// Identity matrix
-	inline void								SetIdentity()
+	inline void SetIdentity()
 	{
 		// Clear matrix
 		SetZero();
@@ -52,13 +57,18 @@ public:
 			mCol[rc].mF32[rc] = 1.0f;
 	}
 
-	inline static Matrix					sIdentity()												{ Matrix m; m.SetIdentity(); return m; }
+	inline static Matrix sIdentity()
+	{
+		Matrix m;
+		m.SetIdentity();
+		return m;
+	}
 
 	/// Check if this matrix is identity
-	bool									IsIdentity() const										{ return *this == sIdentity(); }
+	bool IsIdentity() const { return *this == sIdentity(); }
 
 	/// Diagonal matrix
-	inline void								SetDiagonal(const Vector<Rows < Cols? Rows : Cols> &inV)
+	inline void SetDiagonal(const Vector < Rows < Cols ? Rows : Cols > &inV)
 	{
 		// Clear matrix
 		SetZero();
@@ -68,7 +78,7 @@ public:
 			mCol[rc].mF32[rc] = inV[rc];
 	}
 
-	inline static Matrix					sDiagonal(const Vector<Rows < Cols? Rows : Cols> &inV)
+	inline static Matrix sDiagonal(const Vector < Rows < Cols ? Rows : Cols > &inV)
 	{
 		Matrix m;
 		m.SetDiagonal(inV);
@@ -77,22 +87,22 @@ public:
 
 	/// Copy a (part) of another matrix into this matrix
 	template <class OtherMatrix>
-		void								CopyPart(const OtherMatrix &inM, uint inSourceRow, uint inSourceCol, uint inNumRows, uint inNumCols, uint inDestRow, uint inDestCol)
-		{
-			for (uint c = 0; c < inNumCols; ++c)
-				for (uint r = 0; r < inNumRows; ++r)
-					mCol[inDestCol + c].mF32[inDestRow + r] = inM(inSourceRow + r, inSourceCol + c);
-		}
+	void CopyPart(const OtherMatrix &inM, uint inSourceRow, uint inSourceCol, uint inNumRows, uint inNumCols, uint inDestRow, uint inDestCol)
+	{
+		for (uint c = 0; c < inNumCols; ++c)
+			for (uint r = 0; r < inNumRows; ++r)
+				mCol[inDestCol + c].mF32[inDestRow + r] = inM(inSourceRow + r, inSourceCol + c);
+	}
 
 	/// Get float component by element index
-	inline float							operator () (uint inRow, uint inColumn) const
+	inline float operator()(uint inRow, uint inColumn) const
 	{
 		JPH_ASSERT(inRow < Rows);
 		JPH_ASSERT(inColumn < Cols);
 		return mCol[inColumn].mF32[inRow];
 	}
 
-	inline float &							operator () (uint inRow, uint inColumn)
+	inline float &operator()(uint inRow, uint inColumn)
 	{
 		JPH_ASSERT(inRow < Rows);
 		JPH_ASSERT(inColumn < Cols);
@@ -100,7 +110,7 @@ public:
 	}
 
 	/// Comparison
-	inline bool								operator == (const Matrix &inM2) const
+	inline bool operator==(const Matrix &inM2) const
 	{
 		for (uint c = 0; c < Cols; ++c)
 			if (mCol[c] != inM2.mCol[c])
@@ -108,7 +118,7 @@ public:
 		return true;
 	}
 
-	inline bool								operator != (const Matrix &inM2) const
+	inline bool operator!=(const Matrix &inM2) const
 	{
 		for (uint c = 0; c < Cols; ++c)
 			if (mCol[c] != inM2.mCol[c])
@@ -117,7 +127,7 @@ public:
 	}
 
 	/// Assignment
-	inline Matrix &							operator = (const Matrix &inM2)
+	inline Matrix &operator=(const Matrix &inM2)
 	{
 		for (uint c = 0; c < Cols; ++c)
 			mCol[c] = inM2.mCol[c];
@@ -126,7 +136,7 @@ public:
 
 	/// Multiply matrix by matrix
 	template <uint OtherCols>
-	inline Matrix<Rows, OtherCols>	operator * (const Matrix<Cols, OtherCols> &inM) const
+	inline Matrix<Rows, OtherCols> operator*(const Matrix<Cols, OtherCols> &inM) const
 	{
 		Matrix<Rows, OtherCols> m;
 		for (uint c = 0; c < OtherCols; ++c)
@@ -141,7 +151,7 @@ public:
 	}
 
 	/// Multiply vector by matrix
-	inline Vector<Rows>						operator * (const Vector<Cols> &inV) const
+	inline Vector<Rows> operator*(const Vector<Cols> &inV) const
 	{
 		Vector<Rows> v;
 		for (uint r = 0; r < Rows; ++r)
@@ -155,7 +165,7 @@ public:
 	}
 
 	/// Multiply matrix with float
-	inline Matrix							operator * (float inV) const
+	inline Matrix operator*(float inV) const
 	{
 		Matrix m;
 		for (uint c = 0; c < Cols; ++c)
@@ -163,13 +173,13 @@ public:
 		return m;
 	}
 
-	inline friend Matrix					operator * (float inV, const Matrix &inM)
+	inline friend Matrix operator*(float inV, const Matrix &inM)
 	{
 		return inM * inV;
 	}
 
 	/// Per element addition of matrix
-	inline Matrix							operator + (const Matrix &inM) const
+	inline Matrix operator+(const Matrix &inM) const
 	{
 		Matrix m;
 		for (uint c = 0; c < Cols; ++c)
@@ -178,7 +188,7 @@ public:
 	}
 
 	/// Per element subtraction of matrix
-	inline Matrix							operator - (const Matrix &inM) const
+	inline Matrix operator-(const Matrix &inM) const
 	{
 		Matrix m;
 		for (uint c = 0; c < Cols; ++c)
@@ -187,7 +197,7 @@ public:
 	}
 
 	/// Transpose matrix
-	inline Matrix<Cols, Rows>				Transposed() const
+	inline Matrix<Cols, Rows> Transposed() const
 	{
 		Matrix<Cols, Rows> m;
 		for (uint r = 0; r < Rows; ++r)
@@ -197,15 +207,16 @@ public:
 	}
 
 	/// Inverse matrix
-	bool									SetInversed(const Matrix &inM)
+	bool SetInversed(const Matrix &inM)
 	{
-		if constexpr (Rows != Cols) JPH_ASSERT(false);
+		if constexpr (Rows != Cols)
+			JPH_ASSERT(false);
 		Matrix copy(inM);
 		SetIdentity();
 		return GaussianElimination(copy, *this);
 	}
 
-	inline Matrix							Inversed() const
+	inline Matrix Inversed() const
 	{
 		Matrix m;
 		m.SetInversed(*this);
@@ -213,7 +224,7 @@ public:
 	}
 
 	/// To String
-	friend ostream &						operator << (ostream &inStream, const Matrix &inM)
+	friend ostream &operator<<(ostream &inStream, const Matrix &inM)
 	{
 		for (uint i = 0; i < Cols - 1; ++i)
 			inStream << inM.mCol[i] << ", ";
@@ -222,10 +233,10 @@ public:
 	}
 
 	/// Column access
-	const Vector<Rows> &					GetColumn(int inIdx) const					{ return mCol[inIdx]; }
-	Vector<Rows> &							GetColumn(int inIdx)						{ return mCol[inIdx]; }
+	const Vector<Rows> &GetColumn(int inIdx) const { return mCol[inIdx]; }
+	Vector<Rows> &GetColumn(int inIdx) { return mCol[inIdx]; }
 
-	Vector<Rows>							mCol[Cols];									///< Column
+	Vector<Rows> mCol[Cols]; ///< Column
 };
 
 // The template specialization doesn't sit well with Doxygen

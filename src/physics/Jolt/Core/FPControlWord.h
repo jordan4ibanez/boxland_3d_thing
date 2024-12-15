@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Core/NonCopyable.h>
+#include "../Core/NonCopyable.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -20,19 +20,19 @@ template <uint Value, uint Mask>
 class FPControlWord : public NonCopyable
 {
 public:
-				FPControlWord()
+	FPControlWord()
 	{
 		mPrevState = _mm_getcsr();
 		_mm_setcsr((mPrevState & ~Mask) | Value);
 	}
 
-				~FPControlWord()
+	~FPControlWord()
 	{
 		_mm_setcsr((_mm_getcsr() & ~Mask) | (mPrevState & Mask));
 	}
 
 private:
-	uint		mPrevState;
+	uint mPrevState;
 };
 
 #elif defined(JPH_CPU_ARM) && defined(JPH_COMPILER_MSVC)
@@ -43,7 +43,7 @@ template <unsigned int Value, unsigned int Mask>
 class FPControlWord : public NonCopyable
 {
 public:
-				FPControlWord()
+	FPControlWord()
 	{
 		// Read state before change
 		_controlfp_s(&mPrevState, 0, 0);
@@ -53,7 +53,7 @@ public:
 		_controlfp_s(&dummy, Value, Mask);
 	}
 
-				~FPControlWord()
+	~FPControlWord()
 	{
 		// Restore state
 		unsigned int dummy;
@@ -72,27 +72,27 @@ template <uint64 Value, uint64 Mask>
 class FPControlWord : public NonCopyable
 {
 public:
-				FPControlWord()
+	FPControlWord()
 	{
 		uint64 val;
-		asm volatile("mrs %0, fpcr" : "=r" (val));
+		asm volatile("mrs %0, fpcr" : "=r"(val));
 		mPrevState = val;
 		val &= ~Mask;
 		val |= Value;
-		asm volatile("msr fpcr, %0" : /* no output */ : "r" (val));
+		asm volatile("msr fpcr, %0" : /* no output */ : "r"(val));
 	}
 
-				~FPControlWord()
+	~FPControlWord()
 	{
 		uint64 val;
-		asm volatile("mrs %0, fpcr" : "=r" (val));
+		asm volatile("mrs %0, fpcr" : "=r"(val));
 		val &= ~Mask;
 		val |= mPrevState & Mask;
-		asm volatile("msr fpcr, %0" : /* no output */ : "r" (val));
+		asm volatile("msr fpcr, %0" : /* no output */ : "r"(val));
 	}
 
 private:
-	uint64		mPrevState;
+	uint64 mPrevState;
 };
 
 #elif defined(JPH_CPU_ARM)
@@ -106,24 +106,24 @@ public:
 	FPControlWord()
 	{
 		uint32 val;
-		asm volatile("vmrs %0, fpscr" : "=r" (val));
+		asm volatile("vmrs %0, fpscr" : "=r"(val));
 		mPrevState = val;
 		val &= ~Mask;
 		val |= Value;
-		asm volatile("vmsr fpscr, %0" : /* no output */ : "r" (val));
+		asm volatile("vmsr fpscr, %0" : /* no output */ : "r"(val));
 	}
 
 	~FPControlWord()
 	{
 		uint32 val;
-		asm volatile("vmrs %0, fpscr" : "=r" (val));
+		asm volatile("vmrs %0, fpscr" : "=r"(val));
 		val &= ~Mask;
 		val |= mPrevState & Mask;
-		asm volatile("vmsr fpscr, %0" : /* no output */ : "r" (val));
+		asm volatile("vmsr fpscr, %0" : /* no output */ : "r"(val));
 	}
 
 private:
-	uint32		mPrevState;
+	uint32 mPrevState;
 };
 
 #else

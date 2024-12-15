@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Physics/Constraints/ConstraintPart/SpringPart.h>
-#include <Jolt/Physics/Constraints/SpringSettings.h>
-#include <Jolt/Physics/StateRecorder.h>
-#include <Jolt/Physics/DeterminismLog.h>
+#include "../../Body/Body.h"
+#include "../../Constraints/ConstraintPart/SpringPart.h"
+#include "../../Constraints/SpringSettings.h"
+#include "../../StateRecorder.h"
+#include "../../DeterminismLog.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -43,7 +43,7 @@ class AxisConstraintPart
 {
 	/// Internal helper function to update velocities of bodies after Lagrange multiplier is calculated
 	template <EMotionType Type1, EMotionType Type2>
-	JPH_INLINE bool				ApplyVelocityStep(MotionProperties *ioMotionProperties1, float inInvMass1, MotionProperties *ioMotionProperties2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inLambda) const
+	JPH_INLINE bool ApplyVelocityStep(MotionProperties *ioMotionProperties1, float inInvMass1, MotionProperties *ioMotionProperties2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inLambda) const
 	{
 		// Apply impulse if delta is not zero
 		if (inLambda != 0.0f)
@@ -73,7 +73,7 @@ class AxisConstraintPart
 
 	/// Internal helper function to calculate the inverse effective mass
 	template <EMotionType Type1, EMotionType Type2>
-	JPH_INLINE float			TemplatedCalculateInverseEffectiveMass(float inInvMass1, Mat44Arg inInvI1, Vec3Arg inR1PlusU, float inInvMass2, Mat44Arg inInvI2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis)
+	JPH_INLINE float TemplatedCalculateInverseEffectiveMass(float inInvMass1, Mat44Arg inInvI1, Vec3Arg inR1PlusU, float inInvMass2, Mat44Arg inInvI2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis)
 	{
 		JPH_ASSERT(inWorldSpaceAxis.IsNormalized(1.0e-5f));
 
@@ -86,9 +86,9 @@ class AxisConstraintPart
 		}
 		else
 		{
-		#ifdef JPH_DEBUG
+#ifdef JPH_DEBUG
 			Vec3::sNaN().StoreFloat3(&mR1PlusUxAxis);
-		#endif
+#endif
 		}
 
 		Vec3 r2_x_axis;
@@ -99,9 +99,9 @@ class AxisConstraintPart
 		}
 		else
 		{
-		#ifdef JPH_DEBUG
+#ifdef JPH_DEBUG
 			Vec3::sNaN().StoreFloat3(&mR2xAxis);
-		#endif
+#endif
 		}
 
 		// Calculate inverse effective mass: K = J M^-1 J^T
@@ -136,32 +136,32 @@ class AxisConstraintPart
 	}
 
 	/// Internal helper function to calculate the inverse effective mass
-	JPH_INLINE float			CalculateInverseEffectiveMass(const Body &inBody1, Vec3Arg inR1PlusU, const Body &inBody2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis)
+	JPH_INLINE float CalculateInverseEffectiveMass(const Body &inBody1, Vec3Arg inR1PlusU, const Body &inBody2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis)
 	{
 		// Dispatch to the correct templated form
 		switch (inBody1.GetMotionType())
 		{
 		case EMotionType::Dynamic:
+		{
+			const MotionProperties *mp1 = inBody1.GetMotionPropertiesUnchecked();
+			float inv_m1 = mp1->GetInverseMass();
+			Mat44 inv_i1 = inBody1.GetInverseInertia();
+			switch (inBody2.GetMotionType())
 			{
-				const MotionProperties *mp1 = inBody1.GetMotionPropertiesUnchecked();
-				float inv_m1 = mp1->GetInverseMass();
-				Mat44 inv_i1 = inBody1.GetInverseInertia();
-				switch (inBody2.GetMotionType())
-				{
-				case EMotionType::Dynamic:
-					return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Dynamic>(inv_m1, inv_i1, inR1PlusU, inBody2.GetMotionPropertiesUnchecked()->GetInverseMass(), inBody2.GetInverseInertia(), inR2, inWorldSpaceAxis);
+			case EMotionType::Dynamic:
+				return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Dynamic>(inv_m1, inv_i1, inR1PlusU, inBody2.GetMotionPropertiesUnchecked()->GetInverseMass(), inBody2.GetInverseInertia(), inR2, inWorldSpaceAxis);
 
-				case EMotionType::Kinematic:
-					return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Kinematic>(inv_m1, inv_i1, inR1PlusU, 0 /* Will not be used */, Mat44() /* Will not be used */, inR2, inWorldSpaceAxis);
+			case EMotionType::Kinematic:
+				return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Kinematic>(inv_m1, inv_i1, inR1PlusU, 0 /* Will not be used */, Mat44() /* Will not be used */, inR2, inWorldSpaceAxis);
 
-				case EMotionType::Static:
-					return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Static>(inv_m1, inv_i1, inR1PlusU, 0 /* Will not be used */, Mat44() /* Will not be used */, inR2, inWorldSpaceAxis);
+			case EMotionType::Static:
+				return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Static>(inv_m1, inv_i1, inR1PlusU, 0 /* Will not be used */, Mat44() /* Will not be used */, inR2, inWorldSpaceAxis);
 
-				default:
-					break;
-				}
+			default:
 				break;
 			}
+			break;
+		}
 
 		case EMotionType::Kinematic:
 			JPH_ASSERT(inBody2.IsDynamic());
@@ -180,30 +180,30 @@ class AxisConstraintPart
 	}
 
 	/// Internal helper function to calculate the inverse effective mass, version that supports mass scaling
-	JPH_INLINE float			CalculateInverseEffectiveMassWithMassOverride(const Body &inBody1, float inInvMass1, float inInvInertiaScale1, Vec3Arg inR1PlusU, const Body &inBody2, float inInvMass2, float inInvInertiaScale2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis)
+	JPH_INLINE float CalculateInverseEffectiveMassWithMassOverride(const Body &inBody1, float inInvMass1, float inInvInertiaScale1, Vec3Arg inR1PlusU, const Body &inBody2, float inInvMass2, float inInvInertiaScale2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis)
 	{
 		// Dispatch to the correct templated form
 		switch (inBody1.GetMotionType())
 		{
 		case EMotionType::Dynamic:
+		{
+			Mat44 inv_i1 = inInvInertiaScale1 * inBody1.GetInverseInertia();
+			switch (inBody2.GetMotionType())
 			{
-				Mat44 inv_i1 = inInvInertiaScale1 * inBody1.GetInverseInertia();
-				switch (inBody2.GetMotionType())
-				{
-				case EMotionType::Dynamic:
-					return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Dynamic>(inInvMass1, inv_i1, inR1PlusU, inInvMass2, inInvInertiaScale2 * inBody2.GetInverseInertia(), inR2, inWorldSpaceAxis);
+			case EMotionType::Dynamic:
+				return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Dynamic>(inInvMass1, inv_i1, inR1PlusU, inInvMass2, inInvInertiaScale2 * inBody2.GetInverseInertia(), inR2, inWorldSpaceAxis);
 
-				case EMotionType::Kinematic:
-					return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Kinematic>(inInvMass1, inv_i1, inR1PlusU, 0 /* Will not be used */, Mat44() /* Will not be used */, inR2, inWorldSpaceAxis);
+			case EMotionType::Kinematic:
+				return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Kinematic>(inInvMass1, inv_i1, inR1PlusU, 0 /* Will not be used */, Mat44() /* Will not be used */, inR2, inWorldSpaceAxis);
 
-				case EMotionType::Static:
-					return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Static>(inInvMass1, inv_i1, inR1PlusU, 0 /* Will not be used */, Mat44() /* Will not be used */, inR2, inWorldSpaceAxis);
+			case EMotionType::Static:
+				return TemplatedCalculateInverseEffectiveMass<EMotionType::Dynamic, EMotionType::Static>(inInvMass1, inv_i1, inR1PlusU, 0 /* Will not be used */, Mat44() /* Will not be used */, inR2, inWorldSpaceAxis);
 
-				default:
-					break;
-				}
+			default:
 				break;
 			}
+			break;
+		}
 
 		case EMotionType::Kinematic:
 			JPH_ASSERT(inBody2.IsDynamic());
@@ -224,7 +224,7 @@ class AxisConstraintPart
 public:
 	/// Templated form of CalculateConstraintProperties with the motion types baked in
 	template <EMotionType Type1, EMotionType Type2>
-	JPH_INLINE void				TemplatedCalculateConstraintProperties(float inInvMass1, Mat44Arg inInvI1, Vec3Arg inR1PlusU, float inInvMass2, Mat44Arg inInvI2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias = 0.0f)
+	JPH_INLINE void TemplatedCalculateConstraintProperties(float inInvMass1, Mat44Arg inInvI1, Vec3Arg inR1PlusU, float inInvMass2, Mat44Arg inInvI2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias = 0.0f)
 	{
 		float inv_effective_mass = TemplatedCalculateInverseEffectiveMass<Type1, Type2>(inInvMass1, inInvI1, inR1PlusU, inInvMass2, inInvI2, inR2, inWorldSpaceAxis);
 
@@ -246,7 +246,7 @@ public:
 	/// @param inR2 See equations above (r2)
 	/// @param inWorldSpaceAxis Axis along which the constraint acts (normalized, pointing from body 1 to 2)
 	/// @param inBias Bias term (b) for the constraint impulse: lambda = J v + b
-	inline void					CalculateConstraintProperties(const Body &inBody1, Vec3Arg inR1PlusU, const Body &inBody2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias = 0.0f)
+	inline void CalculateConstraintProperties(const Body &inBody1, Vec3Arg inR1PlusU, const Body &inBody2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias = 0.0f)
 	{
 		float inv_effective_mass = CalculateInverseEffectiveMass(inBody1, inR1PlusU, inBody2, inR2, inWorldSpaceAxis);
 
@@ -270,7 +270,7 @@ public:
 	/// @param inR2 See equations above (r2)
 	/// @param inWorldSpaceAxis Axis along which the constraint acts (normalized, pointing from body 1 to 2)
 	/// @param inBias Bias term (b) for the constraint impulse: lambda = J v + b
-	inline void					CalculateConstraintPropertiesWithMassOverride(const Body &inBody1, float inInvMass1, float inInvInertiaScale1, Vec3Arg inR1PlusU, const Body &inBody2, float inInvMass2, float inInvInertiaScale2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias = 0.0f)
+	inline void CalculateConstraintPropertiesWithMassOverride(const Body &inBody1, float inInvMass1, float inInvInertiaScale1, Vec3Arg inR1PlusU, const Body &inBody2, float inInvMass2, float inInvInertiaScale2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias = 0.0f)
 	{
 		float inv_effective_mass = CalculateInverseEffectiveMassWithMassOverride(inBody1, inInvMass1, inInvInertiaScale1, inR1PlusU, inBody2, inInvMass2, inInvInertiaScale2, inR2, inWorldSpaceAxis);
 
@@ -294,7 +294,7 @@ public:
 	///	@param inC Value of the constraint equation (C).
 	///	@param inFrequency Oscillation frequency (Hz).
 	///	@param inDamping Damping factor (0 = no damping, 1 = critical damping).
-	inline void					CalculateConstraintPropertiesWithFrequencyAndDamping(float inDeltaTime, const Body &inBody1, Vec3Arg inR1PlusU, const Body &inBody2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias, float inC, float inFrequency, float inDamping)
+	inline void CalculateConstraintPropertiesWithFrequencyAndDamping(float inDeltaTime, const Body &inBody1, Vec3Arg inR1PlusU, const Body &inBody2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias, float inC, float inFrequency, float inDamping)
 	{
 		float inv_effective_mass = CalculateInverseEffectiveMass(inBody1, inR1PlusU, inBody2, inR2, inWorldSpaceAxis);
 
@@ -315,7 +315,7 @@ public:
 	///	@param inC Value of the constraint equation (C).
 	///	@param inStiffness Spring stiffness k.
 	///	@param inDamping Spring damping coefficient c.
-	inline void					CalculateConstraintPropertiesWithStiffnessAndDamping(float inDeltaTime, const Body &inBody1, Vec3Arg inR1PlusU, const Body &inBody2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias, float inC, float inStiffness, float inDamping)
+	inline void CalculateConstraintPropertiesWithStiffnessAndDamping(float inDeltaTime, const Body &inBody1, Vec3Arg inR1PlusU, const Body &inBody2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias, float inC, float inStiffness, float inDamping)
 	{
 		float inv_effective_mass = CalculateInverseEffectiveMass(inBody1, inR1PlusU, inBody2, inR2, inWorldSpaceAxis);
 
@@ -326,7 +326,7 @@ public:
 	}
 
 	/// Selects one of the above functions based on the spring settings
-	inline void					CalculateConstraintPropertiesWithSettings(float inDeltaTime, const Body &inBody1, Vec3Arg inR1PlusU, const Body &inBody2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias, float inC, const SpringSettings &inSpringSettings)
+	inline void CalculateConstraintPropertiesWithSettings(float inDeltaTime, const Body &inBody1, Vec3Arg inR1PlusU, const Body &inBody2, Vec3Arg inR2, Vec3Arg inWorldSpaceAxis, float inBias, float inC, const SpringSettings &inSpringSettings)
 	{
 		float inv_effective_mass = CalculateInverseEffectiveMass(inBody1, inR1PlusU, inBody2, inR2, inWorldSpaceAxis);
 
@@ -339,21 +339,21 @@ public:
 	}
 
 	/// Deactivate this constraint
-	inline void					Deactivate()
+	inline void Deactivate()
 	{
 		mEffectiveMass = 0.0f;
 		mTotalLambda = 0.0f;
 	}
 
 	/// Check if constraint is active
-	inline bool					IsActive() const
+	inline bool IsActive() const
 	{
 		return mEffectiveMass != 0.0f;
 	}
 
 	/// Templated form of WarmStart with the motion types baked in
 	template <EMotionType Type1, EMotionType Type2>
-	inline void					TemplatedWarmStart(MotionProperties *ioMotionProperties1, float inInvMass1, MotionProperties *ioMotionProperties2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inWarmStartImpulseRatio)
+	inline void TemplatedWarmStart(MotionProperties *ioMotionProperties1, float inInvMass1, MotionProperties *ioMotionProperties2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inWarmStartImpulseRatio)
 	{
 		mTotalLambda *= inWarmStartImpulseRatio;
 
@@ -365,7 +365,7 @@ public:
 	/// @param ioBody2 The second body that this constraint is attached to
 	/// @param inWorldSpaceAxis Axis along which the constraint acts (normalized)
 	/// @param inWarmStartImpulseRatio Ratio of new step to old time step (dt_new / dt_old) for scaling the lagrange multiplier of the previous frame
-	inline void					WarmStart(Body &ioBody1, Body &ioBody2, Vec3Arg inWorldSpaceAxis, float inWarmStartImpulseRatio)
+	inline void WarmStart(Body &ioBody1, Body &ioBody2, Vec3Arg inWorldSpaceAxis, float inWarmStartImpulseRatio)
 	{
 		EMotionType motion_type1 = ioBody1.GetMotionType();
 		MotionProperties *motion_properties1 = ioBody1.GetMotionPropertiesUnchecked();
@@ -391,7 +391,7 @@ public:
 
 	/// Templated form of SolveVelocityConstraint with the motion types baked in, part 1: get the total lambda
 	template <EMotionType Type1, EMotionType Type2>
-	JPH_INLINE float			TemplatedSolveVelocityConstraintGetTotalLambda(const MotionProperties *ioMotionProperties1, const MotionProperties *ioMotionProperties2, Vec3Arg inWorldSpaceAxis) const
+	JPH_INLINE float TemplatedSolveVelocityConstraintGetTotalLambda(const MotionProperties *ioMotionProperties1, const MotionProperties *ioMotionProperties2, Vec3Arg inWorldSpaceAxis) const
 	{
 		// Calculate jacobian multiplied by linear velocity
 		float jv;
@@ -421,17 +421,17 @@ public:
 
 	/// Templated form of SolveVelocityConstraint with the motion types baked in, part 2: apply new lambda
 	template <EMotionType Type1, EMotionType Type2>
-	JPH_INLINE bool				TemplatedSolveVelocityConstraintApplyLambda(MotionProperties *ioMotionProperties1, float inInvMass1, MotionProperties *ioMotionProperties2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inTotalLambda)
+	JPH_INLINE bool TemplatedSolveVelocityConstraintApplyLambda(MotionProperties *ioMotionProperties1, float inInvMass1, MotionProperties *ioMotionProperties2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inTotalLambda)
 	{
 		float delta_lambda = inTotalLambda - mTotalLambda; // Calculate change in lambda
-		mTotalLambda = inTotalLambda; // Store accumulated impulse
+		mTotalLambda = inTotalLambda;											 // Store accumulated impulse
 
 		return ApplyVelocityStep<Type1, Type2>(ioMotionProperties1, inInvMass1, ioMotionProperties2, inInvMass2, inWorldSpaceAxis, delta_lambda);
 	}
 
 	/// Templated form of SolveVelocityConstraint with the motion types baked in
 	template <EMotionType Type1, EMotionType Type2>
-	inline bool					TemplatedSolveVelocityConstraint(MotionProperties *ioMotionProperties1, float inInvMass1, MotionProperties *ioMotionProperties2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inMinLambda, float inMaxLambda)
+	inline bool TemplatedSolveVelocityConstraint(MotionProperties *ioMotionProperties1, float inInvMass1, MotionProperties *ioMotionProperties2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inMinLambda, float inMaxLambda)
 	{
 		float total_lambda = TemplatedSolveVelocityConstraintGetTotalLambda<Type1, Type2>(ioMotionProperties1, ioMotionProperties2, inWorldSpaceAxis);
 
@@ -447,7 +447,7 @@ public:
 	/// @param inWorldSpaceAxis Axis along which the constraint acts (normalized)
 	/// @param inMinLambda Minimum value of constraint impulse to apply (N s)
 	/// @param inMaxLambda Maximum value of constraint impulse to apply (N s)
-	inline bool					SolveVelocityConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inWorldSpaceAxis, float inMinLambda, float inMaxLambda)
+	inline bool SolveVelocityConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inWorldSpaceAxis, float inMinLambda, float inMaxLambda)
 	{
 		EMotionType motion_type1 = ioBody1.GetMotionType();
 		MotionProperties *motion_properties1 = ioBody1.GetMotionPropertiesUnchecked();
@@ -500,7 +500,7 @@ public:
 	/// @param inWorldSpaceAxis Axis along which the constraint acts (normalized)
 	/// @param inMinLambda Minimum value of constraint impulse to apply (N s)
 	/// @param inMaxLambda Maximum value of constraint impulse to apply (N s)
-	inline bool					SolveVelocityConstraintWithMassOverride(Body &ioBody1, float inInvMass1, Body &ioBody2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inMinLambda, float inMaxLambda)
+	inline bool SolveVelocityConstraintWithMassOverride(Body &ioBody1, float inInvMass1, Body &ioBody2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inMinLambda, float inMaxLambda)
 	{
 		EMotionType motion_type1 = ioBody1.GetMotionType();
 		MotionProperties *motion_properties1 = ioBody1.GetMotionPropertiesUnchecked();
@@ -551,7 +551,7 @@ public:
 	/// @param inWorldSpaceAxis Axis along which the constraint acts (normalized)
 	/// @param inC Value of the constraint equation (C)
 	/// @param inBaumgarte Baumgarte constant (fraction of the error to correct)
-	inline bool					SolvePositionConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inWorldSpaceAxis, float inC, float inBaumgarte) const
+	inline bool SolvePositionConstraint(Body &ioBody1, Body &ioBody2, Vec3Arg inWorldSpaceAxis, float inC, float inBaumgarte) const
 	{
 		// Only apply position constraint when the constraint is hard, otherwise the velocity bias will fix the constraint
 		if (inC != 0.0f && !mSpringPart.IsActive())
@@ -602,7 +602,7 @@ public:
 	/// @param inWorldSpaceAxis Axis along which the constraint acts (normalized)
 	/// @param inC Value of the constraint equation (C)
 	/// @param inBaumgarte Baumgarte constant (fraction of the error to correct)
-	inline bool					SolvePositionConstraintWithMassOverride(Body &ioBody1, float inInvMass1, Body &ioBody2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inC, float inBaumgarte) const
+	inline bool SolvePositionConstraintWithMassOverride(Body &ioBody1, float inInvMass1, Body &ioBody2, float inInvMass2, Vec3Arg inWorldSpaceAxis, float inC, float inBaumgarte) const
 	{
 		// Only apply position constraint when the constraint is hard, otherwise the velocity bias will fix the constraint
 		if (inC != 0.0f && !mSpringPart.IsActive())
@@ -646,37 +646,37 @@ public:
 	}
 
 	/// Override total lagrange multiplier, can be used to set the initial value for warm starting
-	inline void					SetTotalLambda(float inLambda)
+	inline void SetTotalLambda(float inLambda)
 	{
 		mTotalLambda = inLambda;
 	}
 
 	/// Return lagrange multiplier
-	inline float				GetTotalLambda() const
+	inline float GetTotalLambda() const
 	{
 		return mTotalLambda;
 	}
 
 	/// Save state of this constraint part
-	void						SaveState(StateRecorder &inStream) const
+	void SaveState(StateRecorder &inStream) const
 	{
 		inStream.Write(mTotalLambda);
 	}
 
 	/// Restore state of this constraint part
-	void						RestoreState(StateRecorder &inStream)
+	void RestoreState(StateRecorder &inStream)
 	{
 		inStream.Read(mTotalLambda);
 	}
 
 private:
-	Float3						mR1PlusUxAxis;
-	Float3						mR2xAxis;
-	Float3						mInvI1_R1PlusUxAxis;
-	Float3						mInvI2_R2xAxis;
-	float						mEffectiveMass = 0.0f;
-	SpringPart					mSpringPart;
-	float						mTotalLambda = 0.0f;
+	Float3 mR1PlusUxAxis;
+	Float3 mR2xAxis;
+	Float3 mInvI1_R1PlusUxAxis;
+	Float3 mInvI2_R2xAxis;
+	float mEffectiveMass = 0.0f;
+	SpringPart mSpringPart;
+	float mTotalLambda = 0.0f;
 };
 
 JPH_NAMESPACE_END

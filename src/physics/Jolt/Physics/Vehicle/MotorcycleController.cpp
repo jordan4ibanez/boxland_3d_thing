@@ -2,30 +2,28 @@
 // SPDX-FileCopyrightText: 2023 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Vehicle/MotorcycleController.h>
-#include <Jolt/Physics/PhysicsSystem.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Vehicle/MotorcycleController.h"
+#include "../PhysicsSystem.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(MotorcycleControllerSettings)
-{
-	JPH_ADD_BASE_CLASS(MotorcycleControllerSettings, VehicleControllerSettings)
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(MotorcycleControllerSettings){
+		JPH_ADD_BASE_CLASS(MotorcycleControllerSettings, VehicleControllerSettings)
 
-	JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mMaxLeanAngle)
-	JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mLeanSpringConstant)
-	JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mLeanSpringDamping)
-	JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mLeanSpringIntegrationCoefficient)
-	JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mLeanSpringIntegrationCoefficientDecay)
-	JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mLeanSmoothingFactor)
-}
+				JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mMaxLeanAngle)
+						JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mLeanSpringConstant)
+								JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mLeanSpringDamping)
+										JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mLeanSpringIntegrationCoefficient)
+												JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mLeanSpringIntegrationCoefficientDecay)
+														JPH_ADD_ATTRIBUTE(MotorcycleControllerSettings, mLeanSmoothingFactor)}
 
 VehicleController *MotorcycleControllerSettings::ConstructController(VehicleConstraint &inConstraint) const
 {
@@ -56,14 +54,13 @@ void MotorcycleControllerSettings::RestoreBinaryState(StreamIn &inStream)
 	inStream.Read(mLeanSmoothingFactor);
 }
 
-MotorcycleController::MotorcycleController(const MotorcycleControllerSettings &inSettings, VehicleConstraint &inConstraint) :
-	WheeledVehicleController(inSettings, inConstraint),
-	mMaxLeanAngle(inSettings.mMaxLeanAngle),
-	mLeanSpringConstant(inSettings.mLeanSpringConstant),
-	mLeanSpringDamping(inSettings.mLeanSpringDamping),
-	mLeanSpringIntegrationCoefficient(inSettings.mLeanSpringIntegrationCoefficient),
-	mLeanSpringIntegrationCoefficientDecay(inSettings.mLeanSpringIntegrationCoefficientDecay),
-	mLeanSmoothingFactor(inSettings.mLeanSmoothingFactor)
+MotorcycleController::MotorcycleController(const MotorcycleControllerSettings &inSettings, VehicleConstraint &inConstraint) : WheeledVehicleController(inSettings, inConstraint),
+																																																															mMaxLeanAngle(inSettings.mMaxLeanAngle),
+																																																															mLeanSpringConstant(inSettings.mLeanSpringConstant),
+																																																															mLeanSpringDamping(inSettings.mLeanSpringDamping),
+																																																															mLeanSpringIntegrationCoefficient(inSettings.mLeanSpringIntegrationCoefficient),
+																																																															mLeanSpringIntegrationCoefficientDecay(inSettings.mLeanSpringIntegrationCoefficientDecay),
+																																																															mLeanSmoothingFactor(inSettings.mLeanSmoothingFactor)
 {
 }
 
@@ -77,7 +74,7 @@ float MotorcycleController::GetWheelBase() const
 
 		// Measure distance along the forward axis by looking at the fully extended suspension.
 		// If the suspension force point is active, use that instead.
-		Vec3 force_point = s->mEnableSuspensionForcePoint? s->mSuspensionForcePoint : s->mPosition + s->mSuspensionDirection * s->mSuspensionMaxLength;
+		Vec3 force_point = s->mEnableSuspensionForcePoint ? s->mSuspensionForcePoint : s->mPosition + s->mSuspensionDirection * s->mSuspensionMaxLength;
 		float value = force_point.Dot(mConstraint.GetLocalForward());
 
 		// Update min and max
@@ -146,7 +143,7 @@ void MotorcycleController::PreCollide(float inDeltaTime, PhysicsSystem &inPhysic
 	// TurnRadius = WheelBase / (Sin(SteerAngle) * Cos(CasterAngle))
 	// => SteerAngle = ASin(WheelBase * Tan(LeanAngle) * Gravity / (Velocity^2 * Cos(CasterAngle))
 	// The caster angle is different for each wheel so we can only calculate part of the equation here
-	float max_steer_angle_factor = wheel_base * Tan(mMaxLeanAngle) * (mConstraint.IsGravityOverridden()? mConstraint.GetGravityOverride() : inPhysicsSystem.GetGravity()).Length();
+	float max_steer_angle_factor = wheel_base * Tan(mMaxLeanAngle) * (mConstraint.IsGravityOverridden() ? mConstraint.GetGravityOverride() : inPhysicsSystem.GetGravity()).Length();
 
 	// Calculate forward velocity
 	float velocity = body->GetLinearVelocity().Dot(forward);
@@ -171,8 +168,7 @@ void MotorcycleController::PreCollide(float inDeltaTime, PhysicsSystem &inPhysic
 			float steer_angle = steer_strength * w->GetSettings()->mMaxSteerAngle;
 
 			// Clamp to max steering angle
-			if (mEnableLeanSteeringLimit
-				&& velocity_sq > 1.0e-6f && cos_caster_angle > 1.0e-6f)
+			if (mEnableLeanSteeringLimit && velocity_sq > 1.0e-6f && cos_caster_angle > 1.0e-6f)
 			{
 				float max_steer_angle = ASin(max_steer_angle_factor / (velocity_sq * cos_caster_angle));
 				steer_angle = min(steer_angle, max_steer_angle);

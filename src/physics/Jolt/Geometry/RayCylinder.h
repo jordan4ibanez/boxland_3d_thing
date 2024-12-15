@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Math/FindRoot.h>
+#include "../Math/FindRoot.h"
 
 JPH_NAMESPACE_BEGIN
 

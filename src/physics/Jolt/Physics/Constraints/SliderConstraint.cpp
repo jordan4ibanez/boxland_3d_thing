@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/SliderConstraint.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Constraints/SliderConstraint.h"
+#include "../Body/Body.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -89,10 +89,9 @@ TwoBodyConstraint *SliderConstraintSettings::Create(Body &inBody1, Body &inBody2
 	return new SliderConstraint(inBody1, inBody2, *this);
 }
 
-SliderConstraint::SliderConstraint(Body &inBody1, Body &inBody2, const SliderConstraintSettings &inSettings) :
-	TwoBodyConstraint(inBody1, inBody2, inSettings),
-	mMaxFrictionForce(inSettings.mMaxFrictionForce),
-	mMotorSettings(inSettings.mMotorSettings)
+SliderConstraint::SliderConstraint(Body &inBody1, Body &inBody2, const SliderConstraintSettings &inSettings) : TwoBodyConstraint(inBody1, inBody2, inSettings),
+																																																							 mMaxFrictionForce(inSettings.mMaxFrictionForce),
+																																																							 mMotorSettings(inSettings.mMotorSettings)
 {
 	// Store inverse of initial rotation from body 1 to body 2 in body 1 space
 	mInvInitialOrientation = RotationEulerConstraintPart::sGetInvInitialOrientationXY(inSettings.mSliderAxis1, inSettings.mNormalAxis1, inSettings.mSliderAxis2, inSettings.mNormalAxis2);
@@ -225,7 +224,7 @@ void SliderConstraint::CalculatePositionLimitsConstraintProperties(float inDelta
 	// Check if distance is within limits
 	bool below_min = mD <= mLimitsMin;
 	if (mHasLimits && (below_min || mD >= mLimitsMax))
-		mPositionLimitsConstraintPart.CalculateConstraintPropertiesWithSettings(inDeltaTime, *mBody1, mR1 + mU, *mBody2, mR2, mWorldSpaceSliderAxis, 0.0f, mD - (below_min? mLimitsMin : mLimitsMax), mLimitsSpringSettings);
+		mPositionLimitsConstraintPart.CalculateConstraintPropertiesWithSettings(inDeltaTime, *mBody1, mR1 + mU, *mBody2, mR2, mWorldSpaceSliderAxis, 0.0f, mD - (below_min ? mLimitsMin : mLimitsMax), mLimitsSpringSettings);
 	else
 		mPositionLimitsConstraintPart.Deactivate();
 }
@@ -293,11 +292,11 @@ bool SliderConstraint::SolveVelocityConstraint(float inDeltaTime)
 		switch (mMotorState)
 		{
 		case EMotorState::Off:
-			{
-				float max_lambda = mMaxFrictionForce * inDeltaTime;
-				motor = mMotorConstraintPart.SolveVelocityConstraint(*mBody1, *mBody2, mWorldSpaceSliderAxis, -max_lambda, max_lambda);
-				break;
-			}
+		{
+			float max_lambda = mMaxFrictionForce * inDeltaTime;
+			motor = mMotorConstraintPart.SolveVelocityConstraint(*mBody1, *mBody2, mWorldSpaceSliderAxis, -max_lambda, max_lambda);
+			break;
+		}
 
 		case EMotorState::Velocity:
 		case EMotorState::Position:
@@ -401,12 +400,12 @@ void SliderConstraint::DrawConstraint(DebugRenderer *inRenderer) const
 		break;
 
 	case EMotorState::Velocity:
-		{
-			Vec3 cur_vel = (mBody2->GetLinearVelocity() - mBody1->GetLinearVelocity()).Dot(slider_axis) * slider_axis;
-			inRenderer->DrawLine(position2, position2 + cur_vel, Color::sBlue);
-			inRenderer->DrawArrow(position2 + cur_vel, position2 + mTargetVelocity * slider_axis, Color::sRed, 0.1f);
-			break;
-		}
+	{
+		Vec3 cur_vel = (mBody2->GetLinearVelocity() - mBody1->GetLinearVelocity()).Dot(slider_axis) * slider_axis;
+		inRenderer->DrawLine(position2, position2 + cur_vel, Color::sBlue);
+		inRenderer->DrawArrow(position2 + cur_vel, position2 + mTargetVelocity * slider_axis, Color::sRed, 0.1f);
+		break;
+	}
 
 	case EMotorState::Off:
 		break;

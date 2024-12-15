@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/TriangleSplitter/TriangleSplitter.h>
-#include <Jolt/Geometry/AABox.h>
+#include "../TriangleSplitter/TriangleSplitter.h"
+#include "../Geometry/AABox.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -14,39 +14,39 @@ class JPH_EXPORT TriangleSplitterBinning : public TriangleSplitter
 {
 public:
 	/// Constructor
-							TriangleSplitterBinning(const VertexList &inVertices, const IndexedTriangleList &inTriangles, uint inMinNumBins = 8, uint inMaxNumBins = 128, uint inNumTrianglesPerBin = 6);
+	TriangleSplitterBinning(const VertexList &inVertices, const IndexedTriangleList &inTriangles, uint inMinNumBins = 8, uint inMaxNumBins = 128, uint inNumTrianglesPerBin = 6);
 
 	// See TriangleSplitter::GetStats
-	virtual void			GetStats(Stats &outStats) const override
+	virtual void GetStats(Stats &outStats) const override
 	{
 		outStats.mSplitterName = "TriangleSplitterBinning";
 	}
 
 	// See TriangleSplitter::Split
-	virtual bool			Split(const Range &inTriangles, Range &outLeft, Range &outRight) override;
+	virtual bool Split(const Range &inTriangles, Range &outLeft, Range &outRight) override;
 
 private:
 	// Configuration
-	const uint				mMinNumBins;
-	const uint				mMaxNumBins;
-	const uint				mNumTrianglesPerBin;
+	const uint mMinNumBins;
+	const uint mMaxNumBins;
+	const uint mNumTrianglesPerBin;
 
 	struct Bin
 	{
 		// Properties of this bin
-		AABox				mBounds;
-		float				mMinCentroid;
-		uint				mNumTriangles;
+		AABox mBounds;
+		float mMinCentroid;
+		uint mNumTriangles;
 
 		// Accumulated data from left most / right most bin to current (including this bin)
-		AABox				mBoundsAccumulatedLeft;
-		AABox				mBoundsAccumulatedRight;
-		uint				mNumTrianglesAccumulatedLeft;
-		uint				mNumTrianglesAccumulatedRight;
+		AABox mBoundsAccumulatedLeft;
+		AABox mBoundsAccumulatedRight;
+		uint mNumTrianglesAccumulatedLeft;
+		uint mNumTrianglesAccumulatedRight;
 	};
 
 	// Scratch area to store the bins
-	Array<Bin>				mBins;
+	Array<Bin> mBins;
 };
 
 JPH_NAMESPACE_END

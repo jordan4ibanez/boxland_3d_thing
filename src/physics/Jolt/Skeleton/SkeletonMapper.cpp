@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Skeleton/SkeletonMapper.h>
+#include "../Skeleton/SkeletonMapper.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -57,13 +57,12 @@ void SkeletonMapper::Initialize(const Skeleton *inSkeleton1, const Mat44 *inNeut
 			{
 				cur_chain.push_back(cur);
 				cur = inSkeleton2->GetJoint(cur).mParentJointIndex;
-			}
-			while (cur >= 0 && cur != start && !mapped2[cur]);
+			} while (cur >= 0 && cur != start && !mapped2[cur]);
 			cur_chain.push_back(start);
 
-			if (cur == start // This should be the correct chain
-				&& cur_chain.size() > 2 // It should have joints between the mapped joints
-				&& cur_chain.size() > chain2.size()) // And it should be the longest so far
+			if (cur == start												 // This should be the correct chain
+					&& cur_chain.size() > 2							 // It should have joints between the mapped joints
+					&& cur_chain.size() > chain2.size()) // And it should be the longest so far
 			{
 				chain2.swap(cur_chain);
 				chain2_m = m2;
@@ -80,8 +79,7 @@ void SkeletonMapper::Initialize(const Skeleton *inSkeleton1, const Mat44 *inNeut
 			{
 				chain1.push_back(cur);
 				cur = inSkeleton1->GetJoint(cur).mParentJointIndex;
-			}
-			while (cur >= 0 && cur != start && !mapped1[cur]);
+			} while (cur >= 0 && cur != start && !mapped1[cur]);
 			chain1.push_back(start);
 
 			// If the chain exists in 1 too

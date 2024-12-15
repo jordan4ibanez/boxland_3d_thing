@@ -2,48 +2,47 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Vehicle/VehicleCollisionTester.h>
-#include <Jolt/Physics/Vehicle/VehicleConstraint.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/Shape/SphereShape.h>
-#include <Jolt/Physics/Collision/Shape/CylinderShape.h>
-#include <Jolt/Physics/Collision/CollisionCollectorImpl.h>
-#include <Jolt/Physics/PhysicsSystem.h>
+#include "../Vehicle/VehicleCollisionTester.h"
+#include "../Vehicle/VehicleConstraint.h"
+#include "../Collision/RayCast.h"
+#include "../Collision/ShapeCast.h"
+#include "../Collision/CastResult.h"
+#include "../Collision/Shape/SphereShape.h"
+#include "../Collision/Shape/CylinderShape.h"
+#include "../Collision/CollisionCollectorImpl.h"
+#include "../PhysicsSystem.h"
 
 JPH_NAMESPACE_BEGIN
 
 bool VehicleCollisionTesterRay::Collide(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&outBody, SubShapeID &outSubShapeID, RVec3 &outContactPosition, Vec3 &outContactNormal, float &outSuspensionLength) const
 {
 	const DefaultBroadPhaseLayerFilter default_broadphase_layer_filter = inPhysicsSystem.GetDefaultBroadPhaseLayerFilter(mObjectLayer);
-	const BroadPhaseLayerFilter &broadphase_layer_filter = mBroadPhaseLayerFilter != nullptr? *mBroadPhaseLayerFilter : default_broadphase_layer_filter;
+	const BroadPhaseLayerFilter &broadphase_layer_filter = mBroadPhaseLayerFilter != nullptr ? *mBroadPhaseLayerFilter : default_broadphase_layer_filter;
 
 	const DefaultObjectLayerFilter default_object_layer_filter = inPhysicsSystem.GetDefaultLayerFilter(mObjectLayer);
-	const ObjectLayerFilter &object_layer_filter = mObjectLayerFilter != nullptr? *mObjectLayerFilter : default_object_layer_filter;
+	const ObjectLayerFilter &object_layer_filter = mObjectLayerFilter != nullptr ? *mObjectLayerFilter : default_object_layer_filter;
 
 	const IgnoreSingleBodyFilter default_body_filter(inVehicleBodyID);
-	const BodyFilter &body_filter = mBodyFilter != nullptr? *mBodyFilter : default_body_filter;
+	const BodyFilter &body_filter = mBodyFilter != nullptr ? *mBodyFilter : default_body_filter;
 
 	const WheelSettings *wheel_settings = inVehicleConstraint.GetWheel(inWheelIndex)->GetSettings();
 	float wheel_radius = wheel_settings->mRadius;
 	float ray_length = wheel_settings->mSuspensionMaxLength + wheel_radius;
-	RRayCast ray { inOrigin, ray_length * inDirection };
+	RRayCast ray{inOrigin, ray_length * inDirection};
 
 	class MyCollector : public CastRayCollector
 	{
 	public:
-							MyCollector(PhysicsSystem &inPhysicsSystem, const RRayCast &inRay, Vec3Arg inUpDirection, float inCosMaxSlopeAngle) :
-			mPhysicsSystem(inPhysicsSystem),
-			mRay(inRay),
-			mUpDirection(inUpDirection),
-			mCosMaxSlopeAngle(inCosMaxSlopeAngle)
+		MyCollector(PhysicsSystem &inPhysicsSystem, const RRayCast &inRay, Vec3Arg inUpDirection, float inCosMaxSlopeAngle) : mPhysicsSystem(inPhysicsSystem),
+																																																													mRay(inRay),
+																																																													mUpDirection(inUpDirection),
+																																																													mCosMaxSlopeAngle(inCosMaxSlopeAngle)
 		{
 		}
 
-		virtual void		AddHit(const RayCastResult &inResult) override
+		virtual void AddHit(const RayCastResult &inResult) override
 		{
 			// Test if this collision is closer than the previous one
 			if (inResult.mFraction < GetEarlyOutFraction())
@@ -74,16 +73,16 @@ bool VehicleCollisionTesterRay::Collide(PhysicsSystem &inPhysicsSystem, const Ve
 		}
 
 		// Configuration
-		PhysicsSystem &		mPhysicsSystem;
-		RRayCast			mRay;
-		Vec3				mUpDirection;
-		float				mCosMaxSlopeAngle;
+		PhysicsSystem &mPhysicsSystem;
+		RRayCast mRay;
+		Vec3 mUpDirection;
+		float mCosMaxSlopeAngle;
 
 		// Resulting closest collision
-		const Body *		mBody = nullptr;
-		SubShapeID			mSubShapeID2;
-		RVec3				mContactPosition;
-		Vec3				mContactNormal;
+		const Body *mBody = nullptr;
+		SubShapeID mSubShapeID2;
+		RVec3 mContactPosition;
+		Vec3 mContactNormal;
 	};
 
 	RayCastSettings settings;
@@ -125,13 +124,13 @@ void VehicleCollisionTesterRay::PredictContactProperties(PhysicsSystem &inPhysic
 bool VehicleCollisionTesterCastSphere::Collide(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&outBody, SubShapeID &outSubShapeID, RVec3 &outContactPosition, Vec3 &outContactNormal, float &outSuspensionLength) const
 {
 	const DefaultBroadPhaseLayerFilter default_broadphase_layer_filter = inPhysicsSystem.GetDefaultBroadPhaseLayerFilter(mObjectLayer);
-	const BroadPhaseLayerFilter &broadphase_layer_filter = mBroadPhaseLayerFilter != nullptr? *mBroadPhaseLayerFilter : default_broadphase_layer_filter;
+	const BroadPhaseLayerFilter &broadphase_layer_filter = mBroadPhaseLayerFilter != nullptr ? *mBroadPhaseLayerFilter : default_broadphase_layer_filter;
 
 	const DefaultObjectLayerFilter default_object_layer_filter = inPhysicsSystem.GetDefaultLayerFilter(mObjectLayer);
-	const ObjectLayerFilter &object_layer_filter = mObjectLayerFilter != nullptr? *mObjectLayerFilter : default_object_layer_filter;
+	const ObjectLayerFilter &object_layer_filter = mObjectLayerFilter != nullptr ? *mObjectLayerFilter : default_object_layer_filter;
 
 	const IgnoreSingleBodyFilter default_body_filter(inVehicleBodyID);
-	const BodyFilter &body_filter = mBodyFilter != nullptr? *mBodyFilter : default_body_filter;
+	const BodyFilter &body_filter = mBodyFilter != nullptr ? *mBodyFilter : default_body_filter;
 
 	SphereShape sphere(mRadius);
 	sphere.SetEmbedded();
@@ -148,15 +147,14 @@ bool VehicleCollisionTesterCastSphere::Collide(PhysicsSystem &inPhysicsSystem, c
 	class MyCollector : public CastShapeCollector
 	{
 	public:
-							MyCollector(PhysicsSystem &inPhysicsSystem, const RShapeCast &inShapeCast, Vec3Arg inUpDirection, float inCosMaxSlopeAngle) :
-			mPhysicsSystem(inPhysicsSystem),
-			mShapeCast(inShapeCast),
-			mUpDirection(inUpDirection),
-			mCosMaxSlopeAngle(inCosMaxSlopeAngle)
+		MyCollector(PhysicsSystem &inPhysicsSystem, const RShapeCast &inShapeCast, Vec3Arg inUpDirection, float inCosMaxSlopeAngle) : mPhysicsSystem(inPhysicsSystem),
+																																																																	mShapeCast(inShapeCast),
+																																																																	mUpDirection(inUpDirection),
+																																																																	mCosMaxSlopeAngle(inCosMaxSlopeAngle)
 		{
 		}
 
-		virtual void		AddHit(const ShapeCastResult &inResult) override
+		virtual void AddHit(const ShapeCastResult &inResult) override
 		{
 			// Test if this collision is closer/deeper than the previous one
 			float early_out = inResult.GetEarlyOutFraction();
@@ -188,17 +186,17 @@ bool VehicleCollisionTesterCastSphere::Collide(PhysicsSystem &inPhysicsSystem, c
 		}
 
 		// Configuration
-		PhysicsSystem &		mPhysicsSystem;
-		const RShapeCast &	mShapeCast;
-		Vec3				mUpDirection;
-		float				mCosMaxSlopeAngle;
+		PhysicsSystem &mPhysicsSystem;
+		const RShapeCast &mShapeCast;
+		Vec3 mUpDirection;
+		float mCosMaxSlopeAngle;
 
 		// Resulting closest collision
-		const Body *		mBody = nullptr;
-		SubShapeID			mSubShapeID2;
-		RVec3				mContactPosition;
-		Vec3				mContactNormal;
-		float				mFraction;
+		const Body *mBody = nullptr;
+		SubShapeID mSubShapeID2;
+		RVec3 mContactPosition;
+		Vec3 mContactNormal;
+		float mFraction;
 	};
 
 	MyCollector collector(inPhysicsSystem, shape_cast, mUp, mCosMaxSlopeAngle);
@@ -241,13 +239,13 @@ void VehicleCollisionTesterCastSphere::PredictContactProperties(PhysicsSystem &i
 bool VehicleCollisionTesterCastCylinder::Collide(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&outBody, SubShapeID &outSubShapeID, RVec3 &outContactPosition, Vec3 &outContactNormal, float &outSuspensionLength) const
 {
 	const DefaultBroadPhaseLayerFilter default_broadphase_layer_filter = inPhysicsSystem.GetDefaultBroadPhaseLayerFilter(mObjectLayer);
-	const BroadPhaseLayerFilter &broadphase_layer_filter = mBroadPhaseLayerFilter != nullptr? *mBroadPhaseLayerFilter : default_broadphase_layer_filter;
+	const BroadPhaseLayerFilter &broadphase_layer_filter = mBroadPhaseLayerFilter != nullptr ? *mBroadPhaseLayerFilter : default_broadphase_layer_filter;
 
 	const DefaultObjectLayerFilter default_object_layer_filter = inPhysicsSystem.GetDefaultLayerFilter(mObjectLayer);
-	const ObjectLayerFilter &object_layer_filter = mObjectLayerFilter != nullptr? *mObjectLayerFilter : default_object_layer_filter;
+	const ObjectLayerFilter &object_layer_filter = mObjectLayerFilter != nullptr ? *mObjectLayerFilter : default_object_layer_filter;
 
 	const IgnoreSingleBodyFilter default_body_filter(inVehicleBodyID);
-	const BodyFilter &body_filter = mBodyFilter != nullptr? *mBodyFilter : default_body_filter;
+	const BodyFilter &body_filter = mBodyFilter != nullptr ? *mBodyFilter : default_body_filter;
 
 	const WheelSettings *wheel_settings = inVehicleConstraint.GetWheel(inWheelIndex)->GetSettings();
 	float max_suspension_length = wheel_settings->mSuspensionMaxLength;
@@ -270,13 +268,12 @@ bool VehicleCollisionTesterCastCylinder::Collide(PhysicsSystem &inPhysicsSystem,
 	class MyCollector : public CastShapeCollector
 	{
 	public:
-							MyCollector(PhysicsSystem &inPhysicsSystem, const RShapeCast &inShapeCast) :
-			mPhysicsSystem(inPhysicsSystem),
-			mShapeCast(inShapeCast)
+		MyCollector(PhysicsSystem &inPhysicsSystem, const RShapeCast &inShapeCast) : mPhysicsSystem(inPhysicsSystem),
+																																								 mShapeCast(inShapeCast)
 		{
 		}
 
-		virtual void		AddHit(const ShapeCastResult &inResult) override
+		virtual void AddHit(const ShapeCastResult &inResult) override
 		{
 			// Test if this collision is closer/deeper than the previous one
 			float early_out = inResult.GetEarlyOutFraction();
@@ -303,15 +300,15 @@ bool VehicleCollisionTesterCastCylinder::Collide(PhysicsSystem &inPhysicsSystem,
 		}
 
 		// Configuration
-		PhysicsSystem &		mPhysicsSystem;
-		const RShapeCast &	mShapeCast;
+		PhysicsSystem &mPhysicsSystem;
+		const RShapeCast &mShapeCast;
 
 		// Resulting closest collision
-		const Body *		mBody = nullptr;
-		SubShapeID			mSubShapeID2;
-		RVec3				mContactPosition;
-		Vec3				mContactNormal;
-		float				mFraction;
+		const Body *mBody = nullptr;
+		SubShapeID mSubShapeID2;
+		RVec3 mContactPosition;
+		Vec3 mContactNormal;
+		float mFraction;
 	};
 
 	MyCollector collector(inPhysicsSystem, shape_cast);

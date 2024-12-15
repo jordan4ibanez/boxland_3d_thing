@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2023 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Core/JobSystemSingleThreaded.h>
+#include "../Core/JobSystemSingleThreaded.h"
 
 JPH_NAMESPACE_BEGIN
 

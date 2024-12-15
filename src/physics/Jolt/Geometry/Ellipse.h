@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Math/Float2.h>
+#include "../Math/Float2.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -16,10 +16,14 @@ public:
 	JPH_OVERRIDE_NEW_DELETE
 
 	/// Construct ellipse with radius A along the X-axis and B along the Y-axis
-					Ellipse(float inA, float inB) : mA(inA), mB(inB) { JPH_ASSERT(inA > 0.0f); JPH_ASSERT(inB > 0.0f); }
+	Ellipse(float inA, float inB) : mA(inA), mB(inB)
+	{
+		JPH_ASSERT(inA > 0.0f);
+		JPH_ASSERT(inB > 0.0f);
+	}
 
 	/// Check if inPoint is inside the ellipse
-	bool			IsInside(const Float2 &inPoint) const
+	bool IsInside(const Float2 &inPoint) const
 	{
 		return Square(inPoint.x / mA) + Square(inPoint.y / mB) <= 1.0f;
 	}
@@ -27,7 +31,7 @@ public:
 	/// Get the closest point on the ellipse to inPoint
 	/// Assumes inPoint is outside the ellipse
 	/// @see Rotation Joint Limits in Quaternion Space by Gino van den Bergen, section 10.1 in Game Engine Gems 3.
-	Float2			GetClosestPoint(const Float2 &inPoint) const
+	Float2 GetClosestPoint(const Float2 &inPoint) const
 	{
 		float a_sq = Square(mA);
 		float b_sq = Square(mB);
@@ -53,8 +57,7 @@ public:
 
 			// Get derivative dg/dt = g'(t) = -2 (b^2 y^2 / (t + b^2)^3 + a^2 x^2 / (t + a^2)^3)
 			float gt_accent = -2.0f *
-				(a_sq * Square(inPoint.x) / Cubed(t_plus_a_sq)
-				+ b_sq * Square(inPoint.y) / Cubed(t_plus_b_sq));
+												(a_sq * Square(inPoint.x) / Cubed(t_plus_a_sq) + b_sq * Square(inPoint.y) / Cubed(t_plus_b_sq));
 
 			// Calculate t for next iteration: tn+1 = tn - g(t) / g'(t)
 			float tn = t - gt / gt_accent;
@@ -63,15 +66,15 @@ public:
 	}
 
 	/// Get normal at point inPoint (non-normalized vector)
-	Float2			GetNormal(const Float2 &inPoint) const
+	Float2 GetNormal(const Float2 &inPoint) const
 	{
 		// Calculated by [d/dx f(x, y), d/dy f(x, y)], where f(x, y) is the ellipse equation from above
 		return Float2(inPoint.x / Square(mA), inPoint.y / Square(mB));
 	}
 
 private:
-	float			mA;				///< Radius along X-axis
-	float			mB;				///< Radius along Y-axis
+	float mA; ///< Radius along X-axis
+	float mB; ///< Radius along Y-axis
 };
 
 JPH_NAMESPACE_END

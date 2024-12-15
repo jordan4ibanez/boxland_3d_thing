@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Geometry/ClosestPoint.h>
+#include "../../Geometry/ClosestPoint.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -16,7 +16,7 @@ namespace ActiveEdges
 	/// @param inNormal2 Triangle normal of triangle on the right side of the edge
 	/// @param inEdgeDirection Vector that points along the edge
 	/// @param inCosThresholdAngle Cosine of the threshold angle (if the angle between the two triangles is bigger than this, the edge is active, note that a concave edge is always inactive)
-	inline static bool					IsEdgeActive(Vec3Arg inNormal1, Vec3Arg inNormal2, Vec3Arg inEdgeDirection, float inCosThresholdAngle)
+	inline static bool IsEdgeActive(Vec3Arg inNormal1, Vec3Arg inNormal2, Vec3Arg inEdgeDirection, float inCosThresholdAngle)
 	{
 		// If normals are opposite the edges are active (the triangles are back to back)
 		float cos_angle_normals = inNormal1.Dot(inNormal2);
@@ -39,7 +39,7 @@ namespace ActiveEdges
 	/// @param inNormal Collision normal on the triangle (does not need to be normalized)
 	/// @param inMovementDirection Can be zero. This gives an indication of in which direction the motion is to determine if when we hit an inactive edge/triangle we should return the triangle normal.
 	/// @return Returns inNormal if an active edge was hit, otherwise returns inTriangleNormal
-	inline static Vec3					FixNormal(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inTriangleNormal, uint8 inActiveEdges, Vec3Arg inPoint, Vec3Arg inNormal, Vec3Arg inMovementDirection)
+	inline static Vec3 FixNormal(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inTriangleNormal, uint8 inActiveEdges, Vec3Arg inPoint, Vec3Arg inNormal, Vec3Arg inMovementDirection)
 	{
 		// Check: All of the edges are active, we have the correct normal already. No need to call this function!
 		JPH_ASSERT(inActiveEdges != 0b111);
@@ -107,7 +107,7 @@ namespace ActiveEdges
 		}
 
 		// If this edge is active, use the provided normal instead of the triangle normal
-		return (inActiveEdges & colliding_edge) != 0? inNormal : inTriangleNormal;
+		return (inActiveEdges & colliding_edge) != 0 ? inNormal : inTriangleNormal;
 	}
 }
 

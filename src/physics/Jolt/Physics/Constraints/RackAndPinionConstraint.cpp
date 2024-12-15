@@ -2,17 +2,17 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/RackAndPinionConstraint.h>
-#include <Jolt/Physics/Constraints/HingeConstraint.h>
-#include <Jolt/Physics/Constraints/SliderConstraint.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Constraints/RackAndPinionConstraint.h"
+#include "../Constraints/HingeConstraint.h"
+#include "../Constraints/SliderConstraint.h"
+#include "../Body/Body.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -52,11 +52,10 @@ TwoBodyConstraint *RackAndPinionConstraintSettings::Create(Body &inBody1, Body &
 	return new RackAndPinionConstraint(inBody1, inBody2, *this);
 }
 
-RackAndPinionConstraint::RackAndPinionConstraint(Body &inBody1, Body &inBody2, const RackAndPinionConstraintSettings &inSettings) :
-	TwoBodyConstraint(inBody1, inBody2, inSettings),
-	mLocalSpaceHingeAxis(inSettings.mHingeAxis),
-	mLocalSpaceSliderAxis(inSettings.mSliderAxis),
-	mRatio(inSettings.mRatio)
+RackAndPinionConstraint::RackAndPinionConstraint(Body &inBody1, Body &inBody2, const RackAndPinionConstraintSettings &inSettings) : TwoBodyConstraint(inBody1, inBody2, inSettings),
+																																																																		mLocalSpaceHingeAxis(inSettings.mHingeAxis),
+																																																																		mLocalSpaceSliderAxis(inSettings.mSliderAxis),
+																																																																		mRatio(inSettings.mRatio)
 {
 	if (inSettings.mSpace == EConstraintSpace::WorldSpace)
 	{

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Geometry/AABox.h>
+#include "../Geometry/AABox.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -75,9 +75,9 @@ void ClipPolyVsPoly(const VERTEX_ARRAY &inPolygonToClip, const VERTEX_ARRAY &inC
 		Vec3 clip_normal = inClippingPolygonNormal.Cross(clip_e2 - clip_e1); // Pointing inward to the clipping polygon
 
 		// Get source and target polygon
-		const VERTEX_ARRAY &src_polygon = (i == 0)? inPolygonToClip : tmp_vertices[tmp_vertices_idx];
+		const VERTEX_ARRAY &src_polygon = (i == 0) ? inPolygonToClip : tmp_vertices[tmp_vertices_idx];
 		tmp_vertices_idx ^= 1;
-		VERTEX_ARRAY &tgt_polygon = (i == inClippingPolygon.size() - 1)? outClippedPolygon : tmp_vertices[tmp_vertices_idx];
+		VERTEX_ARRAY &tgt_polygon = (i == inClippingPolygon.size() - 1) ? outClippedPolygon : tmp_vertices[tmp_vertices_idx];
 		tgt_polygon.clear();
 
 		// Clip against the edge
@@ -131,7 +131,7 @@ void ClipPolyVsEdge(const VERTEX_ARRAY &inPolygonToClip, Vec3Arg inEdgeVertex1, 
 			// Solve: (inEdgeVertex1 - X) . edge_normal = 0 and X = e1 + t * (e2 - e1) for X
 			Vec3 e12 = e2 - e1;
 			float denom = e12.Dot(edge_normal);
-			Vec3 clipped_point = denom != 0.0f? e1 + (prev_num / denom) * e12 : e1;
+			Vec3 clipped_point = denom != 0.0f ? e1 + (prev_num / denom) * e12 : e1;
 
 			// Project point on line segment v1, v2 so see if it falls outside if the edge
 			float projection = (clipped_point - v1).Dot(v12);
@@ -177,9 +177,9 @@ void ClipPolyVsAABox(const VERTEX_ARRAY &inPolygonToClip, const AABox &inAABox, 
 			}
 
 			// Get source and target polygon
-			const VERTEX_ARRAY &src_polygon = tmp_vertices_idx == 0? inPolygonToClip : tmp_vertices[tmp_vertices_idx & 1];
+			const VERTEX_ARRAY &src_polygon = tmp_vertices_idx == 0 ? inPolygonToClip : tmp_vertices[tmp_vertices_idx & 1];
 			tmp_vertices_idx++;
-			VERTEX_ARRAY &tgt_polygon = tmp_vertices_idx == 6? outClippedPolygon : tmp_vertices[tmp_vertices_idx & 1];
+			VERTEX_ARRAY &tgt_polygon = tmp_vertices_idx == 6 ? outClippedPolygon : tmp_vertices[tmp_vertices_idx & 1];
 			tgt_polygon.clear();
 
 			// Clip against the edge

@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Physics/Collision/CollisionCollector.h>
-#include <Jolt/Core/QuickSort.h>
+#include "../Collision/CollisionCollector.h"
+#include "../../Core/QuickSort.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -18,7 +18,7 @@ public:
 	using ResultType = typename CollectorType::ResultType;
 
 	// See: CollectorType::Reset
-	virtual void		Reset() override
+	virtual void Reset() override
 	{
 		CollectorType::Reset();
 
@@ -26,24 +26,25 @@ public:
 	}
 
 	// See: CollectorType::AddHit
-	virtual void		AddHit(const ResultType &inResult) override
+	virtual void AddHit(const ResultType &inResult) override
 	{
 		mHits.push_back(inResult);
 	}
 
 	/// Order hits on closest first
-	void				Sort()
+	void Sort()
 	{
-		QuickSort(mHits.begin(), mHits.end(), [](const ResultType &inLHS, const ResultType &inRHS) { return inLHS.GetEarlyOutFraction() < inRHS.GetEarlyOutFraction(); });
+		QuickSort(mHits.begin(), mHits.end(), [](const ResultType &inLHS, const ResultType &inRHS)
+							{ return inLHS.GetEarlyOutFraction() < inRHS.GetEarlyOutFraction(); });
 	}
 
 	/// Check if any hits were collected
-	inline bool			HadHit() const
+	inline bool HadHit() const
 	{
 		return !mHits.empty();
 	}
 
-	Array<ResultType>	mHits;
+	Array<ResultType> mHits;
 };
 
 /// Simple implementation that collects the closest / deepest hit
@@ -55,7 +56,7 @@ public:
 	using ResultType = typename CollectorType::ResultType;
 
 	// See: CollectorType::Reset
-	virtual void		Reset() override
+	virtual void Reset() override
 	{
 		CollectorType::Reset();
 
@@ -63,7 +64,7 @@ public:
 	}
 
 	// See: CollectorType::AddHit
-	virtual void		AddHit(const ResultType &inResult) override
+	virtual void AddHit(const ResultType &inResult) override
 	{
 		float early_out = inResult.GetEarlyOutFraction();
 		if (!mHadHit || early_out < mHit.GetEarlyOutFraction())
@@ -78,15 +79,15 @@ public:
 	}
 
 	/// Check if this collector has had a hit
-	inline bool			HadHit() const
+	inline bool HadHit() const
 	{
 		return mHadHit;
 	}
 
-	ResultType			mHit;
+	ResultType mHit;
 
 private:
-	bool				mHadHit = false;
+	bool mHadHit = false;
 };
 
 /// Simple implementation that collects any hit
@@ -98,7 +99,7 @@ public:
 	using ResultType = typename CollectorType::ResultType;
 
 	// See: CollectorType::Reset
-	virtual void		Reset() override
+	virtual void Reset() override
 	{
 		CollectorType::Reset();
 
@@ -106,7 +107,7 @@ public:
 	}
 
 	// See: CollectorType::AddHit
-	virtual void		AddHit(const ResultType &inResult) override
+	virtual void AddHit(const ResultType &inResult) override
 	{
 		// Test that the collector is not collecting more hits after forcing an early out
 		JPH_ASSERT(!mHadHit);
@@ -120,15 +121,15 @@ public:
 	}
 
 	/// Check if this collector has had a hit
-	inline bool			HadHit() const
+	inline bool HadHit() const
 	{
 		return mHadHit;
 	}
 
-	ResultType			mHit;
+	ResultType mHit;
 
 private:
-	bool				mHadHit = false;
+	bool mHadHit = false;
 };
 
 JPH_NAMESPACE_END

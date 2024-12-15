@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Core/STLAlignedAllocator.h>
+#include "../Core/STLAlignedAllocator.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -16,7 +16,7 @@ class ByteBuffer : public ByteBufferVector
 {
 public:
 	/// Align the size to a multiple of inSize, returns the length after alignment
-	size_t			Align(size_t inSize)
+	size_t Align(size_t inSize)
 	{
 		// Assert power of 2
 		JPH_ASSERT(IsPowerOf2(inSize));
@@ -30,7 +30,7 @@ public:
 
 	/// Allocate block of data of inSize elements and return the pointer
 	template <class Type>
-	Type *			Allocate(size_t inSize = 1)
+	Type *Allocate(size_t inSize = 1)
 	{
 		// Reserve space
 		size_t s = size();
@@ -49,7 +49,7 @@ public:
 
 	/// Append inData to the buffer
 	template <class Type>
-	void			AppendVector(const Array<Type> &inData)
+	void AppendVector(const Array<Type> &inData)
 	{
 		size_t size = inData.size() * sizeof(Type);
 		uint8 *data = Allocate<uint8>(size);
@@ -58,14 +58,14 @@ public:
 
 	/// Get object at inPosition (an offset in bytes)
 	template <class Type>
-	const Type *	Get(size_t inPosition) const
+	const Type *Get(size_t inPosition) const
 	{
 		return reinterpret_cast<const Type *>(&at(inPosition));
 	}
 
 	/// Get object at inPosition (an offset in bytes)
 	template <class Type>
-	Type *			Get(size_t inPosition)
+	Type *Get(size_t inPosition)
 	{
 		return reinterpret_cast<Type *>(&at(inPosition));
 	}

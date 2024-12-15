@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Physics/StateRecorder.h>
-#include <Jolt/Math/Vector.h>
-#include <Jolt/Math/Matrix.h>
+#include "../../Body/Body.h"
+#include "../../StateRecorder.h"
+#include "../../../Math/Vector.h"
+#include "../../../Math/Matrix.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -48,7 +48,7 @@ public:
 
 private:
 	/// Internal helper function to update velocities of bodies after Lagrange multiplier is calculated
-	JPH_INLINE bool				ApplyVelocityStep(Body &ioBody1, Body &ioBody2, const Vec2 &inLambda) const
+	JPH_INLINE bool ApplyVelocityStep(Body &ioBody1, Body &ioBody2, const Vec2 &inLambda) const
 	{
 		// Apply impulse if delta is not zero
 		if (!inLambda.IsZero())
@@ -73,7 +73,7 @@ private:
 
 public:
 	/// Calculate properties used during the functions below
-	inline void					CalculateConstraintProperties(const Body &inBody1, Mat44Arg inRotation1, Vec3Arg inWorldSpaceHingeAxis1, const Body &inBody2, Mat44Arg inRotation2, Vec3Arg inWorldSpaceHingeAxis2)
+	inline void CalculateConstraintProperties(const Body &inBody1, Mat44Arg inRotation1, Vec3Arg inWorldSpaceHingeAxis1, const Body &inBody2, Mat44Arg inRotation2, Vec3Arg inWorldSpaceHingeAxis2)
 	{
 		JPH_ASSERT(inWorldSpaceHingeAxis1.IsNormalized(1.0e-5f));
 		JPH_ASSERT(inWorldSpaceHingeAxis2.IsNormalized(1.0e-5f));
@@ -99,8 +99,8 @@ public:
 		mC2 = a2.Cross(mB2);
 
 		// Calculate properties used during constraint solving
-		mInvI1 = inBody1.IsDynamic()? inBody1.GetMotionProperties()->GetInverseInertiaForRotation(inRotation1) : Mat44::sZero();
-		mInvI2 = inBody2.IsDynamic()? inBody2.GetMotionProperties()->GetInverseInertiaForRotation(inRotation2) : Mat44::sZero();
+		mInvI1 = inBody1.IsDynamic() ? inBody1.GetMotionProperties()->GetInverseInertiaForRotation(inRotation1) : Mat44::sZero();
+		mInvI2 = inBody2.IsDynamic() ? inBody2.GetMotionProperties()->GetInverseInertiaForRotation(inRotation2) : Mat44::sZero();
 		mB2xA1 = mB2.Cross(mA1);
 		mC2xA1 = mC2.Cross(mA1);
 
@@ -116,21 +116,21 @@ public:
 	}
 
 	/// Deactivate this constraint
-	inline void					Deactivate()
+	inline void Deactivate()
 	{
 		mEffectiveMass.SetZero();
 		mTotalLambda.SetZero();
 	}
 
 	/// Must be called from the WarmStartVelocityConstraint call to apply the previous frame's impulses
-	inline void					WarmStart(Body &ioBody1, Body &ioBody2, float inWarmStartImpulseRatio)
+	inline void WarmStart(Body &ioBody1, Body &ioBody2, float inWarmStartImpulseRatio)
 	{
 		mTotalLambda *= inWarmStartImpulseRatio;
 		ApplyVelocityStep(ioBody1, ioBody2, mTotalLambda);
 	}
 
 	/// Iteratively update the velocity constraint. Makes sure d/dt C(...) = 0, where C is the constraint equation.
-	inline bool					SolveVelocityConstraint(Body &ioBody1, Body &ioBody2)
+	inline bool SolveVelocityConstraint(Body &ioBody1, Body &ioBody2)
 	{
 		// Calculate lagrange multiplier:
 		//
@@ -148,7 +148,7 @@ public:
 	}
 
 	/// Iteratively update the position constraint. Makes sure C(...) = 0.
-	inline bool					SolvePositionConstraint(Body &ioBody1, Body &ioBody2, float inBaumgarte) const
+	inline bool SolvePositionConstraint(Body &ioBody1, Body &ioBody2, float inBaumgarte) const
 	{
 		// Constraint needs Axis of body 1 perpendicular to both B and C from body 2 (which are both perpendicular to the Axis of body 2)
 		Vec2 c;
@@ -190,33 +190,33 @@ public:
 	}
 
 	/// Return lagrange multiplier
-	const Vec2 &				GetTotalLambda() const
+	const Vec2 &GetTotalLambda() const
 	{
 		return mTotalLambda;
 	}
 
 	/// Save state of this constraint part
-	void						SaveState(StateRecorder &inStream) const
+	void SaveState(StateRecorder &inStream) const
 	{
 		inStream.Write(mTotalLambda);
 	}
 
 	/// Restore state of this constraint part
-	void						RestoreState(StateRecorder &inStream)
+	void RestoreState(StateRecorder &inStream)
 	{
 		inStream.Read(mTotalLambda);
 	}
 
 private:
-	Vec3						mA1;						///< World space hinge axis for body 1
-	Vec3						mB2;						///< World space perpendiculars of hinge axis for body 2
-	Vec3						mC2;
-	Mat44						mInvI1;
-	Mat44						mInvI2;
-	Vec3						mB2xA1;
-	Vec3						mC2xA1;
-	Mat22						mEffectiveMass;
-	Vec2						mTotalLambda { Vec2::sZero() };
+	Vec3 mA1; ///< World space hinge axis for body 1
+	Vec3 mB2; ///< World space perpendiculars of hinge axis for body 2
+	Vec3 mC2;
+	Mat44 mInvI1;
+	Mat44 mInvI2;
+	Vec3 mB2xA1;
+	Vec3 mC2xA1;
+	Mat22 mEffectiveMass;
+	Vec2 mTotalLambda{Vec2::sZero()};
 };
 
 JPH_NAMESPACE_END

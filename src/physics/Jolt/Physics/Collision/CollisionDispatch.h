@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <Jolt/Physics/Collision/Shape/Shape.h>
-#include <Jolt/Physics/Collision/Shape/SubShapeID.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/ShapeFilter.h>
-#include <Jolt/Physics/Collision/NarrowPhaseStats.h>
+#include "Shape/Shape.h"
+#include "../Collision/Shape/SubShapeID.h"
+#include "ShapeCast.h"
+#include "../Collision/ShapeFilter.h"
+#include "../Collision/NarrowPhaseStats.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -30,7 +30,7 @@ public:
 	/// @param inCollideShapeSettings Options for the CollideShape test
 	/// @param ioCollector The collector that receives the results.
 	/// @param inShapeFilter allows selectively disabling collisions between pairs of (sub) shapes.
-	static inline void		sCollideShapeVsShape(const Shape *inShape1, const Shape *inShape2, Vec3Arg inScale1, Vec3Arg inScale2, Mat44Arg inCenterOfMassTransform1, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, const CollideShapeSettings &inCollideShapeSettings, CollideShapeCollector &ioCollector, const ShapeFilter &inShapeFilter = { })
+	static inline void sCollideShapeVsShape(const Shape *inShape1, const Shape *inShape2, Vec3Arg inScale1, Vec3Arg inScale2, Mat44Arg inCenterOfMassTransform1, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, const CollideShapeSettings &inCollideShapeSettings, CollideShapeCollector &ioCollector, const ShapeFilter &inShapeFilter = {})
 	{
 		JPH_IF_TRACK_NARROWPHASE_STATS(TrackNarrowPhaseStat track(NarrowPhaseStat::sCollideShape[(int)inShape1->GetSubType()][(int)inShape2->GetSubType()]);)
 
@@ -50,7 +50,7 @@ public:
 	/// @param inSubShapeIDCreator1 Class that tracks the current sub shape ID for the casting shape
 	/// @param inSubShapeIDCreator2 Class that tracks the current sub shape ID for the shape we're casting against
 	/// @param ioCollector The collector that receives the results.
-	static inline void		sCastShapeVsShapeLocalSpace(const ShapeCast &inShapeCastLocal, const ShapeCastSettings &inShapeCastSettings, const Shape *inShape, Vec3Arg inScale, const ShapeFilter &inShapeFilter, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, CastShapeCollector &ioCollector)
+	static inline void sCastShapeVsShapeLocalSpace(const ShapeCast &inShapeCastLocal, const ShapeCastSettings &inShapeCastSettings, const Shape *inShape, Vec3Arg inScale, const ShapeFilter &inShapeFilter, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, CastShapeCollector &ioCollector)
 	{
 		JPH_IF_TRACK_NARROWPHASE_STATS(TrackNarrowPhaseStat track(NarrowPhaseStat::sCastShape[(int)inShapeCastLocal.mShape->GetSubType()][(int)inShape->GetSubType()]);)
 
@@ -62,7 +62,7 @@ public:
 	/// See: sCastShapeVsShapeLocalSpace.
 	/// The only difference is that the shape cast (inShapeCastWorld) is provided in world space.
 	/// Note: A shape cast contains the center of mass start of the shape, if you have the world transform of the shape you probably want to construct it using ShapeCast::sFromWorldTransform.
-	static inline void		sCastShapeVsShapeWorldSpace(const ShapeCast &inShapeCastWorld, const ShapeCastSettings &inShapeCastSettings, const Shape *inShape, Vec3Arg inScale, const ShapeFilter &inShapeFilter, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, CastShapeCollector &ioCollector)
+	static inline void sCastShapeVsShapeWorldSpace(const ShapeCast &inShapeCastWorld, const ShapeCastSettings &inShapeCastSettings, const Shape *inShape, Vec3Arg inScale, const ShapeFilter &inShapeFilter, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, CastShapeCollector &ioCollector)
 	{
 		ShapeCast local_shape_cast = inShapeCastWorld.PostTransformed(inCenterOfMassTransform2.InversedRotationTranslation());
 		sCastShapeVsShapeLocalSpace(local_shape_cast, inShapeCastSettings, inShape, inScale, inShapeFilter, inCenterOfMassTransform2, inSubShapeIDCreator1, inSubShapeIDCreator2, ioCollector);
@@ -75,23 +75,23 @@ public:
 	using CastShape = void (*)(const ShapeCast &inShapeCast, const ShapeCastSettings &inShapeCastSettings, const Shape *inShape, Vec3Arg inScale, const ShapeFilter &inShapeFilter, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, CastShapeCollector &ioCollector);
 
 	/// Initialize all collision functions with a function that asserts and returns no collision
-	static void				sInit();
+	static void sInit();
 
 	/// Register a collide shape function in the collision table
-	static void				sRegisterCollideShape(EShapeSubType inType1, EShapeSubType inType2, CollideShape inFunction)	{ sCollideShape[(int)inType1][(int)inType2] = inFunction; }
+	static void sRegisterCollideShape(EShapeSubType inType1, EShapeSubType inType2, CollideShape inFunction) { sCollideShape[(int)inType1][(int)inType2] = inFunction; }
 
 	/// Register a cast shape function in the collision table
-	static void				sRegisterCastShape(EShapeSubType inType1, EShapeSubType inType2, CastShape inFunction)			{ sCastShape[(int)inType1][(int)inType2] = inFunction; }
+	static void sRegisterCastShape(EShapeSubType inType1, EShapeSubType inType2, CastShape inFunction) { sCastShape[(int)inType1][(int)inType2] = inFunction; }
 
 	/// An implementation of CollideShape that swaps inShape1 and inShape2 and swaps the result back, can be registered if the collision function only exists the other way around
-	static void				sReversedCollideShape(const Shape *inShape1, const Shape *inShape2, Vec3Arg inScale1, Vec3Arg inScale2, Mat44Arg inCenterOfMassTransform1, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, const CollideShapeSettings &inCollideShapeSettings, CollideShapeCollector &ioCollector, const ShapeFilter &inShapeFilter);
+	static void sReversedCollideShape(const Shape *inShape1, const Shape *inShape2, Vec3Arg inScale1, Vec3Arg inScale2, Mat44Arg inCenterOfMassTransform1, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, const CollideShapeSettings &inCollideShapeSettings, CollideShapeCollector &ioCollector, const ShapeFilter &inShapeFilter);
 
 	/// An implementation of CastShape that swaps inShape1 and inShape2 and swaps the result back, can be registered if the collision function only exists the other way around
-	static void				sReversedCastShape(const ShapeCast &inShapeCast, const ShapeCastSettings &inShapeCastSettings, const Shape *inShape, Vec3Arg inScale, const ShapeFilter &inShapeFilter, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, CastShapeCollector &ioCollector);
+	static void sReversedCastShape(const ShapeCast &inShapeCast, const ShapeCastSettings &inShapeCastSettings, const Shape *inShape, Vec3Arg inScale, const ShapeFilter &inShapeFilter, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, const SubShapeIDCreator &inSubShapeIDCreator2, CastShapeCollector &ioCollector);
 
 private:
-	static CollideShape		sCollideShape[NumSubShapeTypes][NumSubShapeTypes];
-	static CastShape		sCastShape[NumSubShapeTypes][NumSubShapeTypes];
+	static CollideShape sCollideShape[NumSubShapeTypes][NumSubShapeTypes];
+	static CastShape sCastShape[NumSubShapeTypes][NumSubShapeTypes];
 };
 
 JPH_NAMESPACE_END

@@ -2,45 +2,42 @@
 // SPDX-FileCopyrightText: 2024 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/TaperedCylinderShape.h>
-#include <Jolt/Physics/Collision/Shape/CylinderShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/CollidePointResult.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/CollideSoftBodyVertexIterator.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "TaperedCylinderShape.h"
+#include "CylinderShape.h"
+#include "ScaleHelpers.h"
+#include "../CollidePointResult.h"
+#include "../TransformedShape.h"
+#include "../CollideSoftBodyVertexIterator.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
 
 // Approximation of a face of the tapered cylinder
 static const Vec3 cTaperedCylinderFace[] =
-{
-	Vec3(0.0f,			0.0f,	1.0f),
-	Vec3(0.707106769f,	0.0f,	0.707106769f),
-	Vec3(1.0f,			0.0f,	0.0f),
-	Vec3(0.707106769f,	0.0f,	-0.707106769f),
-	Vec3(-0.0f,			0.0f,	-1.0f),
-	Vec3(-0.707106769f,	0.0f,	-0.707106769f),
-	Vec3(-1.0f,			0.0f,	0.0f),
-	Vec3(-0.707106769f,	0.0f,	0.707106769f)
-};
+		{
+				Vec3(0.0f, 0.0f, 1.0f),
+				Vec3(0.707106769f, 0.0f, 0.707106769f),
+				Vec3(1.0f, 0.0f, 0.0f),
+				Vec3(0.707106769f, 0.0f, -0.707106769f),
+				Vec3(-0.0f, 0.0f, -1.0f),
+				Vec3(-0.707106769f, 0.0f, -0.707106769f),
+				Vec3(-1.0f, 0.0f, 0.0f),
+				Vec3(-0.707106769f, 0.0f, 0.707106769f)};
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(TaperedCylinderShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(TaperedCylinderShapeSettings, ConvexShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(TaperedCylinderShapeSettings){
+		JPH_ADD_BASE_CLASS(TaperedCylinderShapeSettings, ConvexShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(TaperedCylinderShapeSettings, mHalfHeight)
-	JPH_ADD_ATTRIBUTE(TaperedCylinderShapeSettings, mTopRadius)
-	JPH_ADD_ATTRIBUTE(TaperedCylinderShapeSettings, mBottomRadius)
-	JPH_ADD_ATTRIBUTE(TaperedCylinderShapeSettings, mConvexRadius)
-}
+				JPH_ADD_ATTRIBUTE(TaperedCylinderShapeSettings, mHalfHeight)
+						JPH_ADD_ATTRIBUTE(TaperedCylinderShapeSettings, mTopRadius)
+								JPH_ADD_ATTRIBUTE(TaperedCylinderShapeSettings, mBottomRadius)
+										JPH_ADD_ATTRIBUTE(TaperedCylinderShapeSettings, mConvexRadius)}
 
 ShapeSettings::ShapeResult TaperedCylinderShapeSettings::Create() const
 {
@@ -66,20 +63,18 @@ ShapeSettings::ShapeResult TaperedCylinderShapeSettings::Create() const
 	return mCachedResult;
 }
 
-TaperedCylinderShapeSettings::TaperedCylinderShapeSettings(float inHalfHeightOfTaperedCylinder, float inTopRadius, float inBottomRadius, float inConvexRadius, const PhysicsMaterial *inMaterial) :
-	ConvexShapeSettings(inMaterial),
-	mHalfHeight(inHalfHeightOfTaperedCylinder),
-	mTopRadius(inTopRadius),
-	mBottomRadius(inBottomRadius),
-	mConvexRadius(inConvexRadius)
+TaperedCylinderShapeSettings::TaperedCylinderShapeSettings(float inHalfHeightOfTaperedCylinder, float inTopRadius, float inBottomRadius, float inConvexRadius, const PhysicsMaterial *inMaterial) : ConvexShapeSettings(inMaterial),
+																																																																																																		mHalfHeight(inHalfHeightOfTaperedCylinder),
+																																																																																																		mTopRadius(inTopRadius),
+																																																																																																		mBottomRadius(inBottomRadius),
+																																																																																																		mConvexRadius(inConvexRadius)
 {
 }
 
-TaperedCylinderShape::TaperedCylinderShape(const TaperedCylinderShapeSettings &inSettings, ShapeResult &outResult) :
-	ConvexShape(EShapeSubType::TaperedCylinder, inSettings, outResult),
-	mTopRadius(inSettings.mTopRadius),
-	mBottomRadius(inSettings.mBottomRadius),
-	mConvexRadius(inSettings.mConvexRadius)
+TaperedCylinderShape::TaperedCylinderShape(const TaperedCylinderShapeSettings &inSettings, ShapeResult &outResult) : ConvexShape(EShapeSubType::TaperedCylinder, inSettings, outResult),
+																																																										 mTopRadius(inSettings.mTopRadius),
+																																																										 mBottomRadius(inSettings.mBottomRadius),
+																																																										 mConvexRadius(inSettings.mConvexRadius)
 {
 	if (mTopRadius < 0.0f)
 	{
@@ -147,18 +142,17 @@ TaperedCylinderShape::TaperedCylinderShape(const TaperedCylinderShapeSettings &i
 class TaperedCylinderShape::TaperedCylinder final : public Support
 {
 public:
-					TaperedCylinder(float inTop, float inBottom, float inTopRadius, float inBottomRadius, float inConvexRadius) :
-		mTop(inTop),
-		mBottom(inBottom),
-		mTopRadius(inTopRadius),
-		mBottomRadius(inBottomRadius),
-		mConvexRadius(inConvexRadius)
+	TaperedCylinder(float inTop, float inBottom, float inTopRadius, float inBottomRadius, float inConvexRadius) : mTop(inTop),
+																																																								mBottom(inBottom),
+																																																								mTopRadius(inTopRadius),
+																																																								mBottomRadius(inBottomRadius),
+																																																								mConvexRadius(inConvexRadius)
 	{
 		static_assert(sizeof(TaperedCylinder) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(TaperedCylinder)));
 	}
 
-	virtual Vec3	GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		float x = inDirection.GetX(), y = inDirection.GetY(), z = inDirection.GetZ();
 		float o = sqrt(Square(x) + Square(z));
@@ -166,7 +160,7 @@ public:
 		{
 			Vec3 top_support((mTopRadius * x) / o, mTop, (mTopRadius * z) / o);
 			Vec3 bottom_support((mBottomRadius * x) / o, mBottom, (mBottomRadius * z) / o);
-			return inDirection.Dot(top_support) > inDirection.Dot(bottom_support)? top_support : bottom_support;
+			return inDirection.Dot(top_support) > inDirection.Dot(bottom_support) ? top_support : bottom_support;
 		}
 		else
 		{
@@ -177,17 +171,17 @@ public:
 		}
 	}
 
-	virtual float	GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return mConvexRadius;
 	}
 
 private:
-	float			mTop;
-	float			mBottom;
-	float			mTopRadius;
-	float			mBottomRadius;
-	float			mConvexRadius;
+	float mTop;
+	float mBottom;
+	float mTopRadius;
+	float mBottomRadius;
+	float mConvexRadius;
 };
 
 JPH_INLINE void TaperedCylinderShape::GetScaled(Vec3Arg inScale, float &outTop, float &outBottom, float &outTopRadius, float &outBottomRadius, float &outConvexRadius) const
@@ -378,9 +372,9 @@ void TaperedCylinderShape::CollidePoint(Vec3Arg inPoint, const SubShapeIDCreator
 		return;
 
 	// Check if the point is in the tapered cylinder
-	if (inPoint.GetY() >= mBottom && inPoint.GetY() <= mTop // Within height
-		&& Square(inPoint.GetX()) + Square(inPoint.GetZ()) <= Square(mBottomRadius + (inPoint.GetY() - mBottom) * (mTopRadius - mBottomRadius) / (mTop - mBottom))) // Within the radius
-		ioCollector.AddHit({ TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID() });
+	if (inPoint.GetY() >= mBottom && inPoint.GetY() <= mTop																																																					// Within height
+			&& Square(inPoint.GetX()) + Square(inPoint.GetZ()) <= Square(mBottomRadius + (inPoint.GetY() - mBottom) * (mTopRadius - mBottomRadius) / (mTop - mBottom))) // Within the radius
+		ioCollector.AddHit({TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID()});
 }
 
 void TaperedCylinderShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale, const CollideSoftBodyVertexIterator &inVertices, uint inNumVertices, int inCollidingShapeIndex) const
@@ -432,8 +426,8 @@ void TaperedCylinderShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransf
 						_  B |       |
 						 --_ |   A   |
 							 t-------+
-					   C    /         \
-						   /  tapered  \
+						 C    /         \
+							 /  tapered  \
 					_     /  cylinder   \
 					 --_ /               \
 						b-----------------+
@@ -444,28 +438,28 @@ void TaperedCylinderShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransf
 					Lines between B and C and C and D are at a 90 degree angle to the line between t and b
 				*/
 				if (fraction >= bottom_to_top.LengthSq() // Region B: Above the line segment
-					&& !inside_top_radius) // Outside the top radius
+						&& !inside_top_radius)							 // Outside the top radius
 				{
 					// Top support point is closest
 					point = side_support_top;
 					normal = (local_pos - point).NormalizedOr(Vec3::sAxisY());
 				}
-				else if (fraction < 0.0f // Region D: Below the line segment
-					&& !inside_bottom_radius) // Outside the bottom radius
+				else if (fraction < 0.0f					 // Region D: Below the line segment
+								 && !inside_bottom_radius) // Outside the bottom radius
 				{
 					// Bottom support point is closest
 					point = side_support_bottom;
 					normal = (local_pos - point).NormalizedOr(Vec3::sAxisY());
 				}
 				else if (top_penetration < 0.0f // Region A: Above the top plane
-					&& inside_top_radius) // Inside the top radius
+								 && inside_top_radius)	// Inside the top radius
 				{
 					// Top plane is closest
 					point = top_3d;
 					normal = Vec3(0, 1, 0);
 				}
 				else if (bottom_penetration < 0.0f // Region E: Below the bottom plane
-					&& inside_bottom_radius) // Inside the bottom radius
+								 && inside_bottom_radius)	 // Inside the bottom radius
 				{
 					// Bottom plane is closest
 					point = bottom_3d;
@@ -508,10 +502,10 @@ void TaperedCylinderShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransf
 class TaperedCylinderShape::TCSGetTrianglesContext
 {
 public:
-	explicit	TCSGetTrianglesContext(Mat44Arg inTransform) : mTransform(inTransform) { }
+	explicit TCSGetTrianglesContext(Mat44Arg inTransform) : mTransform(inTransform) {}
 
-	Mat44		mTransform;
-	uint		mProcessed = 0; // Which elements we processed, bit 0 = top, bit 1 = bottom, bit 2 = side
+	Mat44 mTransform;
+	uint mProcessed = 0; // Which elements we processed, bit 0 = top, bit 1 = bottom, bit 2 = side
 };
 
 void TaperedCylinderShape::GetTrianglesStart(GetTrianglesContext &ioContext, const AABox &inBox, Vec3Arg inPositionCOM, QuatArg inRotation, Vec3Arg inScale) const
@@ -520,7 +514,7 @@ void TaperedCylinderShape::GetTrianglesStart(GetTrianglesContext &ioContext, con
 	JPH_ASSERT(IsAligned(&ioContext, alignof(TCSGetTrianglesContext)));
 
 	// Make sure the scale is not inside out
-	Vec3 scale = ScaleHelpers::IsInsideOut(inScale)? Vec3(-1, 1, 1) * inScale : inScale;
+	Vec3 scale = ScaleHelpers::IsInsideOut(inScale) ? Vec3(-1, 1, 1) * inScale : inScale;
 
 	// Mark top and bottom processed if their radius is too small
 	TCSGetTrianglesContext *context = new (&ioContext) TCSGetTrianglesContext(Mat44::sRotationTranslation(inRotation, inPositionCOM) * Mat44::sScale(scale));
@@ -566,8 +560,7 @@ int TaperedCylinderShape::GetTrianglesNext(GetTrianglesContext &ioContext, int i
 
 	// Bottom cap
 	Vec3 bottom_3d(0, mBottom, 0);
-	if ((context.mProcessed & 0b010) == 0
-		&& total_num_triangles + cNumVertices - 2 < inMaxTrianglesRequested)
+	if ((context.mProcessed & 0b010) == 0 && total_num_triangles + cNumVertices - 2 < inMaxTrianglesRequested)
 	{
 		Vec3 v0 = context.mTransform * (bottom_3d + mBottomRadius * cTaperedCylinderFace[0]);
 		Vec3 v1 = context.mTransform * (bottom_3d + mBottomRadius * cTaperedCylinderFace[1]);
@@ -588,8 +581,7 @@ int TaperedCylinderShape::GetTrianglesNext(GetTrianglesContext &ioContext, int i
 	}
 
 	// Side
-	if ((context.mProcessed & 0b100) == 0
-		&& total_num_triangles + 2 * cNumVertices < inMaxTrianglesRequested)
+	if ((context.mProcessed & 0b100) == 0 && total_num_triangles + 2 * cNumVertices < inMaxTrianglesRequested)
 	{
 		Vec3 v0t = context.mTransform * (top_3d + mTopRadius * cTaperedCylinderFace[cNumVertices - 1]);
 		Vec3 v0b = context.mTransform * (bottom_3d + mBottomRadius * cTaperedCylinderFace[cNumVertices - 1]);
@@ -629,11 +621,11 @@ int TaperedCylinderShape::GetTrianglesNext(GetTrianglesContext &ioContext, int i
 void TaperedCylinderShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassTransform, Vec3Arg inScale, ColorArg inColor, bool inUseMaterialColors, bool inDrawWireframe) const
 {
 	// Preserve flip along y axis but make sure we're not inside out
-	Vec3 scale = ScaleHelpers::IsInsideOut(inScale)? Vec3(-1, 1, 1) * inScale : inScale;
+	Vec3 scale = ScaleHelpers::IsInsideOut(inScale) ? Vec3(-1, 1, 1) * inScale : inScale;
 	RMat44 world_transform = inCenterOfMassTransform * Mat44::sScale(scale);
 
-	DebugRenderer::EDrawMode draw_mode = inDrawWireframe? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
-	inRenderer->DrawTaperedCylinder(world_transform, mTop, mBottom, mTopRadius, mBottomRadius, inUseMaterialColors? GetMaterial()->GetDebugColor() : inColor, DebugRenderer::ECastShadow::On, draw_mode);
+	DebugRenderer::EDrawMode draw_mode = inDrawWireframe ? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
+	inRenderer->DrawTaperedCylinder(world_transform, mTop, mBottom, mTopRadius, mBottomRadius, inUseMaterialColors ? GetMaterial()->GetDebugColor() : inColor, DebugRenderer::ECastShadow::On, draw_mode);
 }
 #endif // JPH_DEBUG_RENDERER
 
@@ -680,7 +672,8 @@ Vec3 TaperedCylinderShape::MakeScaleValid(Vec3Arg inScale) const
 void TaperedCylinderShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::TaperedCylinder);
-	f.mConstruct = []() -> Shape * { return new TaperedCylinderShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new TaperedCylinderShape; };
 	f.mColor = Color::sGreen;
 }
 

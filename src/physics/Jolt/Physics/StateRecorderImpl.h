@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Physics/StateRecorder.h>
+#include "StateRecorder.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -13,38 +13,38 @@ class JPH_EXPORT StateRecorderImpl final : public StateRecorder
 {
 public:
 	/// Constructor
-						StateRecorderImpl() = default;
-						StateRecorderImpl(StateRecorderImpl &&inRHS)				: StateRecorder(inRHS), mStream(std::move(inRHS.mStream)) { }
+	StateRecorderImpl() = default;
+	StateRecorderImpl(StateRecorderImpl &&inRHS) : StateRecorder(inRHS), mStream(std::move(inRHS.mStream)) {}
 
 	/// Write a string of bytes to the binary stream
-	virtual void		WriteBytes(const void *inData, size_t inNumBytes) override;
+	virtual void WriteBytes(const void *inData, size_t inNumBytes) override;
 
 	/// Rewind the stream for reading
-	void				Rewind();
+	void Rewind();
 
 	/// Clear the stream for reuse
-	void				Clear();
+	void Clear();
 
 	/// Read a string of bytes from the binary stream
-	virtual void		ReadBytes(void *outData, size_t inNumBytes) override;
+	virtual void ReadBytes(void *outData, size_t inNumBytes) override;
 
 	// See StreamIn
-	virtual bool		IsEOF() const override										{ return mStream.eof(); }
+	virtual bool IsEOF() const override { return mStream.eof(); }
 
 	// See StreamIn / StreamOut
-	virtual bool		IsFailed() const override									{ return mStream.fail(); }
+	virtual bool IsFailed() const override { return mStream.fail(); }
 
 	/// Compare this state with a reference state and ensure they are the same
-	bool				IsEqual(StateRecorderImpl &inReference);
+	bool IsEqual(StateRecorderImpl &inReference);
 
 	/// Convert the binary data to a string
-	string				GetData() const												{ return mStream.str(); }
+	string GetData() const { return mStream.str(); }
 
 	/// Get size of the binary data in bytes
-	size_t				GetDataSize()												{ return size_t(mStream.tellp()); }
+	size_t GetDataSize() { return size_t(mStream.tellp()); }
 
 private:
-	std::stringstream	mStream;
+	std::stringstream mStream;
 };
 
 JPH_NAMESPACE_END

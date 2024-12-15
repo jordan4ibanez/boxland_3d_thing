@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/NonCopyable.h>
+#include "../Core/Profiler.h"
+#include "../Core/NonCopyable.h"
 
 JPH_SUPPRESS_WARNINGS_STD_BEGIN
 #include <mutex>
@@ -16,11 +16,11 @@ JPH_SUPPRESS_WARNINGS_STD_END
 JPH_NAMESPACE_BEGIN
 
 // Things we're using from STL
+using std::lock_guard;
 using std::mutex;
+using std::shared_lock;
 using std::shared_mutex;
 using std::thread;
-using std::lock_guard;
-using std::shared_lock;
 using std::unique_lock;
 
 #ifdef JPH_PLATFORM_BLUE
@@ -29,81 +29,81 @@ using std::unique_lock;
 class MutexBase : public NonCopyable
 {
 public:
-					MutexBase()
+	MutexBase()
 	{
 		JPH_PLATFORM_BLUE_MUTEX_INIT(mMutex);
 	}
 
-					~MutexBase()
+	~MutexBase()
 	{
 		JPH_PLATFORM_BLUE_MUTEX_DESTROY(mMutex);
 	}
 
-	inline bool		try_lock()
+	inline bool try_lock()
 	{
 		return JPH_PLATFORM_BLUE_MUTEX_TRYLOCK(mMutex);
 	}
 
-	inline void		lock()
+	inline void lock()
 	{
 		JPH_PLATFORM_BLUE_MUTEX_LOCK(mMutex);
 	}
 
-	inline void		unlock()
+	inline void unlock()
 	{
 		JPH_PLATFORM_BLUE_MUTEX_UNLOCK(mMutex);
 	}
 
 private:
-	JPH_PLATFORM_BLUE_MUTEX		mMutex;
+	JPH_PLATFORM_BLUE_MUTEX mMutex;
 };
 
 // On Platform Blue the shared_mutex class is not very fast so we implement it using the official APIs
 class SharedMutexBase : public NonCopyable
 {
 public:
-					SharedMutexBase()
+	SharedMutexBase()
 	{
 		JPH_PLATFORM_BLUE_RWLOCK_INIT(mRWLock);
 	}
 
-					~SharedMutexBase()
+	~SharedMutexBase()
 	{
 		JPH_PLATFORM_BLUE_RWLOCK_DESTROY(mRWLock);
 	}
 
-	inline bool		try_lock()
+	inline bool try_lock()
 	{
 		return JPH_PLATFORM_BLUE_RWLOCK_TRYWLOCK(mRWLock);
 	}
 
-	inline bool		try_lock_shared()
+	inline bool try_lock_shared()
 	{
 		return JPH_PLATFORM_BLUE_RWLOCK_TRYRLOCK(mRWLock);
 	}
 
-	inline void		lock()
+	inline void lock()
 	{
 		JPH_PLATFORM_BLUE_RWLOCK_WLOCK(mRWLock);
 	}
 
-	inline void		unlock()
+	inline void unlock()
 	{
 		JPH_PLATFORM_BLUE_RWLOCK_WUNLOCK(mRWLock);
 	}
 
-	inline void		lock_shared()
+	inline void lock_shared()
 	{
 		JPH_PLATFORM_BLUE_RWLOCK_RLOCK(mRWLock);
 	}
 
-	inline void		unlock_shared()
+	inline void unlock_shared()
 	{
 		JPH_PLATFORM_BLUE_RWLOCK_RUNLOCK(mRWLock);
 	}
 
 private:
-	JPH_PLATFORM_BLUE_RWLOCK	mRWLock;
+	JPH_PLATFORM_BLUE_RWLOCK mRWLock;
 };
 
 #else
@@ -121,7 +121,7 @@ using SharedMutexBase = shared_mutex;
 class Mutex : public MutexBase
 {
 public:
-	inline bool		try_lock()
+	inline bool try_lock()
 	{
 		JPH_ASSERT(mLockedThreadID != std::this_thread::get_id());
 		if (MutexBase::try_lock())
@@ -132,7 +132,7 @@ public:
 		return false;
 	}
 
-	inline void		lock()
+	inline void lock()
 	{
 		if (!try_lock())
 		{
@@ -142,7 +142,7 @@ public:
 		}
 	}
 
-	inline void		unlock()
+	inline void unlock()
 	{
 		JPH_ASSERT(mLockedThreadID == std::this_thread::get_id());
 		JPH_IF_ENABLE_ASSERTS(mLockedThreadID = thread::id();)
@@ -150,7 +150,7 @@ public:
 	}
 
 #ifdef JPH_ENABLE_ASSERTS
-	inline bool		is_locked()
+	inline bool is_locked()
 	{
 		return mLockedThreadID != thread::id();
 	}
@@ -165,7 +165,7 @@ private:
 class SharedMutex : public SharedMutexBase
 {
 public:
-	inline bool		try_lock()
+	inline bool try_lock()
 	{
 		JPH_ASSERT(mLockedThreadID != std::this_thread::get_id());
 		if (SharedMutexBase::try_lock())
@@ -176,7 +176,7 @@ public:
 		return false;
 	}
 
-	inline void		lock()
+	inline void lock()
 	{
 		if (!try_lock())
 		{
@@ -186,7 +186,7 @@ public:
 		}
 	}
 
-	inline void		unlock()
+	inline void unlock()
 	{
 		JPH_ASSERT(mLockedThreadID == std::this_thread::get_id());
 		JPH_IF_ENABLE_ASSERTS(mLockedThreadID = thread::id();)
@@ -194,13 +194,13 @@ public:
 	}
 
 #ifdef JPH_ENABLE_ASSERTS
-	inline bool		is_locked()
+	inline bool is_locked()
 	{
 		return mLockedThreadID != thread::id();
 	}
 #endif // JPH_ENABLE_ASSERTS
 
-	inline void		lock_shared()
+	inline void lock_shared()
 	{
 		if (!try_lock_shared())
 		{

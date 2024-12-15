@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/GroupFilter.h>
-#include <Jolt/Core/StreamUtils.h>
+#include "../Collision/GroupFilter.h"
+#include "../../Core/StreamUtils.h"
 
 JPH_NAMESPACE_BEGIN
 

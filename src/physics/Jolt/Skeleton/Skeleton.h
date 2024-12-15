@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <Jolt/Core/Reference.h>
-#include <Jolt/Core/Result.h>
-#include <Jolt/ObjectStream/SerializableObject.h>
+#include "../Core/Reference.h"
+#include "../Core/Result.h"
+#include "../ObjectStream/SerializableObject.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -27,46 +27,54 @@ public:
 		JPH_DECLARE_SERIALIZABLE_NON_VIRTUAL(JPH_EXPORT, Joint)
 
 	public:
-							Joint() = default;
-							Joint(const string_view &inName, const string_view &inParentName, int inParentJointIndex) : mName(inName), mParentName(inParentName), mParentJointIndex(inParentJointIndex) { }
+		Joint() = default;
+		Joint(const string_view &inName, const string_view &inParentName, int inParentJointIndex) : mName(inName), mParentName(inParentName), mParentJointIndex(inParentJointIndex) {}
 
-		String				mName;																		///< Name of the joint
-		String				mParentName;																///< Name of parent joint
-		int					mParentJointIndex = -1;														///< Index of parent joint (in mJoints) or -1 if it has no parent
+		String mName;								///< Name of the joint
+		String mParentName;					///< Name of parent joint
+		int mParentJointIndex = -1; ///< Index of parent joint (in mJoints) or -1 if it has no parent
 	};
 
 	using JointVector = Array<Joint>;
 
 	///@name Access to the joints
 	///@{
-	const JointVector &		GetJoints() const															{ return mJoints; }
-	JointVector &			GetJoints()																	{ return mJoints; }
-	int						GetJointCount() const														{ return (int)mJoints.size(); }
-	const Joint &			GetJoint(int inJoint) const													{ return mJoints[inJoint]; }
-	Joint &					GetJoint(int inJoint)														{ return mJoints[inJoint]; }
-	uint					AddJoint(const string_view &inName, const string_view &inParentName = string_view()) { mJoints.emplace_back(inName, inParentName, -1); return (uint)mJoints.size() - 1; }
-	uint					AddJoint(const string_view &inName, int inParentIndex)						{ mJoints.emplace_back(inName, inParentIndex >= 0? mJoints[inParentIndex].mName : String(), inParentIndex); return (uint)mJoints.size() - 1; }
+	const JointVector &GetJoints() const { return mJoints; }
+	JointVector &GetJoints() { return mJoints; }
+	int GetJointCount() const { return (int)mJoints.size(); }
+	const Joint &GetJoint(int inJoint) const { return mJoints[inJoint]; }
+	Joint &GetJoint(int inJoint) { return mJoints[inJoint]; }
+	uint AddJoint(const string_view &inName, const string_view &inParentName = string_view())
+	{
+		mJoints.emplace_back(inName, inParentName, -1);
+		return (uint)mJoints.size() - 1;
+	}
+	uint AddJoint(const string_view &inName, int inParentIndex)
+	{
+		mJoints.emplace_back(inName, inParentIndex >= 0 ? mJoints[inParentIndex].mName : String(), inParentIndex);
+		return (uint)mJoints.size() - 1;
+	}
 	///@}
 
 	/// Find joint by name
-	int						GetJointIndex(const string_view &inName) const;
+	int GetJointIndex(const string_view &inName) const;
 
 	/// Fill in parent joint indices based on name
-	void					CalculateParentJointIndices();
+	void CalculateParentJointIndices();
 
 	/// Many of the algorithms that use the Skeleton class require that parent joints are in the mJoints array before their children.
 	/// This function returns true if this is the case, false if not.
-	bool					AreJointsCorrectlyOrdered() const;
+	bool AreJointsCorrectlyOrdered() const;
 
 	/// Saves the state of this object in binary form to inStream.
-	void					SaveBinaryState(StreamOut &inStream) const;
+	void SaveBinaryState(StreamOut &inStream) const;
 
 	/// Restore the state of this object from inStream.
-	static SkeletonResult	sRestoreFromBinaryState(StreamIn &inStream);
+	static SkeletonResult sRestoreFromBinaryState(StreamIn &inStream);
 
 private:
 	/// Joints
-	JointVector				mJoints;
+	JointVector mJoints;
 };
 
 JPH_NAMESPACE_END

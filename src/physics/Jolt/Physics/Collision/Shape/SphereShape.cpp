@@ -2,33 +2,31 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/SphereShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/Shape/GetTrianglesContext.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/CollidePointResult.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/CollideSoftBodyVertexIterator.h>
-#include <Jolt/Geometry/RaySphere.h>
-#include <Jolt/Geometry/Plane.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/SphereShape.h"
+#include "../../Collision/Shape/ScaleHelpers.h"
+#include "../../Collision/Shape/GetTrianglesContext.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/CastResult.h"
+#include "../../Collision/CollidePointResult.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../Collision/CollideSoftBodyVertexIterator.h"
+#include "../../../Geometry/RaySphere.h"
+#include "../../../Geometry/Plane.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(SphereShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(SphereShapeSettings, ConvexShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(SphereShapeSettings){
+		JPH_ADD_BASE_CLASS(SphereShapeSettings, ConvexShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(SphereShapeSettings, mRadius)
-}
+				JPH_ADD_ATTRIBUTE(SphereShapeSettings, mRadius)}
 
 ShapeSettings::ShapeResult SphereShapeSettings::Create() const
 {
@@ -37,9 +35,8 @@ ShapeSettings::ShapeResult SphereShapeSettings::Create() const
 	return mCachedResult;
 }
 
-SphereShape::SphereShape(const SphereShapeSettings &inSettings, ShapeResult &outResult) :
-	ConvexShape(EShapeSubType::Sphere, inSettings, outResult),
-	mRadius(inSettings.mRadius)
+SphereShape::SphereShape(const SphereShapeSettings &inSettings, ShapeResult &outResult) : ConvexShape(EShapeSubType::Sphere, inSettings, outResult),
+																																													mRadius(inSettings.mRadius)
 {
 	if (inSettings.mRadius <= 0.0f)
 	{
@@ -76,50 +73,48 @@ AABox SphereShape::GetWorldSpaceBounds(Mat44Arg inCenterOfMassTransform, Vec3Arg
 class SphereShape::SphereNoConvex final : public Support
 {
 public:
-	explicit		SphereNoConvex(float inRadius) :
-		mRadius(inRadius)
+	explicit SphereNoConvex(float inRadius) : mRadius(inRadius)
 	{
 		static_assert(sizeof(SphereNoConvex) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(SphereNoConvex)));
 	}
 
-	virtual Vec3	GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		return Vec3::sZero();
 	}
 
-	virtual float	GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return mRadius;
 	}
 
 private:
-	float			mRadius;
+	float mRadius;
 };
 
 class SphereShape::SphereWithConvex final : public Support
 {
 public:
-	explicit		SphereWithConvex(float inRadius) :
-		mRadius(inRadius)
+	explicit SphereWithConvex(float inRadius) : mRadius(inRadius)
 	{
 		static_assert(sizeof(SphereWithConvex) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(SphereWithConvex)));
 	}
 
-	virtual Vec3	GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		float len = inDirection.Length();
-		return len > 0.0f? (mRadius / len) * inDirection : Vec3::sZero();
+		return len > 0.0f ? (mRadius / len) * inDirection : Vec3::sZero();
 	}
 
-	virtual float	GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return 0.0f;
 	}
 
 private:
-	float			mRadius;
+	float mRadius;
 };
 
 const ConvexShape::Support *SphereShape::GetSupportFunction(ESupportMode inMode, SupportBuffer &inBuffer, Vec3Arg inScale) const
@@ -160,7 +155,7 @@ Vec3 SphereShape::GetSurfaceNormal(const SubShapeID &inSubShapeID, Vec3Arg inLoc
 	JPH_ASSERT(inSubShapeID.IsEmpty(), "Invalid subshape ID");
 
 	float len = inLocalSurfacePosition.Length();
-	return len != 0.0f? inLocalSurfacePosition / len : Vec3::sAxisY();
+	return len != 0.0f ? inLocalSurfacePosition / len : Vec3::sAxisY();
 }
 
 void SphereShape::GetSubmergedVolume(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale, const Plane &inSurface, float &outTotalVolume, float &outSubmergedVolume, Vec3 &outCenterOfBuoyancy JPH_IF_DEBUG_RENDERER(, RVec3Arg inBaseOffset)) const
@@ -193,7 +188,7 @@ void SphereShape::GetSubmergedVolume(Mat44Arg inCenterOfMassTransform, Vec3Arg i
 		float z = (3.0f / 4.0f) * Square(2.0f * scaled_radius - h) / (3.0f * scaled_radius - h);
 		outCenterOfBuoyancy = inCenterOfMassTransform.GetTranslation() - z * inSurface.GetNormal(); // Negative normal since we want the portion under the water
 
-	#ifdef JPH_DEBUG_RENDERER
+#ifdef JPH_DEBUG_RENDERER
 		// Draw intersection between sphere and water plane
 		if (sDrawSubmergedVolumes)
 		{
@@ -201,7 +196,7 @@ void SphereShape::GetSubmergedVolume(Mat44Arg inCenterOfMassTransform, Vec3Arg i
 			float circle_radius = sqrt(Square(scaled_radius) - Square(distance_to_surface));
 			DebugRenderer::sInstance->DrawPie(inBaseOffset + circle_center, circle_radius, inSurface.GetNormal(), inSurface.GetNormal().GetNormalizedPerpendicular(), -JPH_PI, JPH_PI, Color::sGreen, DebugRenderer::ECastShadow::Off);
 		}
-	#endif // JPH_DEBUG_RENDERER
+#endif // JPH_DEBUG_RENDERER
 	}
 
 #ifdef JPH_DEBUG_RENDERER
@@ -214,8 +209,8 @@ void SphereShape::GetSubmergedVolume(Mat44Arg inCenterOfMassTransform, Vec3Arg i
 #ifdef JPH_DEBUG_RENDERER
 void SphereShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassTransform, Vec3Arg inScale, ColorArg inColor, bool inUseMaterialColors, bool inDrawWireframe) const
 {
-	DebugRenderer::EDrawMode draw_mode = inDrawWireframe? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
-	inRenderer->DrawUnitSphere(inCenterOfMassTransform * Mat44::sScale(mRadius * inScale.Abs().GetX()), inUseMaterialColors? GetMaterial()->GetDebugColor() : inColor, DebugRenderer::ECastShadow::On, draw_mode);
+	DebugRenderer::EDrawMode draw_mode = inDrawWireframe ? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
+	inRenderer->DrawUnitSphere(inCenterOfMassTransform * Mat44::sScale(mRadius * inScale.Abs().GetX()), inUseMaterialColors ? GetMaterial()->GetDebugColor() : inColor, DebugRenderer::ECastShadow::On, draw_mode);
 }
 #endif // JPH_DEBUG_RENDERER
 
@@ -239,9 +234,9 @@ void SphereShape::CastRay(const RayCast &inRay, const RayCastSettings &inRayCast
 
 	float min_fraction, max_fraction;
 	int num_results = RaySphere(inRay.mOrigin, inRay.mDirection, Vec3::sZero(), mRadius, min_fraction, max_fraction);
-	if (num_results > 0 // Ray should intersect
-		&& max_fraction >= 0.0f // End of ray should be inside sphere
-		&& min_fraction < ioCollector.GetEarlyOutFraction()) // Start of ray should be before early out fraction
+	if (num_results > 0																			 // Ray should intersect
+			&& max_fraction >= 0.0f															 // End of ray should be inside sphere
+			&& min_fraction < ioCollector.GetEarlyOutFraction()) // Start of ray should be before early out fraction
 	{
 		// Better hit than the current hit
 		RayCastResult hit;
@@ -256,9 +251,8 @@ void SphereShape::CastRay(const RayCast &inRay, const RayCastSettings &inRayCast
 		}
 
 		// Check back side hit
-		if (inRayCastSettings.mBackFaceModeConvex == EBackFaceMode::CollideWithBackFaces
-			&& num_results > 1 // Ray should have 2 intersections
-			&& max_fraction < ioCollector.GetEarlyOutFraction()) // End of ray should be before early out fraction
+		if (inRayCastSettings.mBackFaceModeConvex == EBackFaceMode::CollideWithBackFaces && num_results > 1 // Ray should have 2 intersections
+				&& max_fraction < ioCollector.GetEarlyOutFraction())																						// End of ray should be before early out fraction
 		{
 			hit.mFraction = max_fraction;
 			ioCollector.AddHit(hit);
@@ -273,7 +267,7 @@ void SphereShape::CollidePoint(Vec3Arg inPoint, const SubShapeIDCreator &inSubSh
 		return;
 
 	if (inPoint.LengthSq() <= Square(mRadius))
-		ioCollector.AddHit({ TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID() });
+		ioCollector.AddHit({TransformedShape::sGetBodyID(ioCollector.GetContext()), inSubShapeIDCreator.GetID()});
 }
 
 void SphereShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale, const CollideSoftBodyVertexIterator &inVertices, uint inNumVertices, int inCollidingShapeIndex) const
@@ -291,7 +285,7 @@ void SphereShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Vec3
 			if (v.UpdatePenetration(penetration))
 			{
 				// Calculate contact point and normal
-				Vec3 normal = distance > 0.0f? delta / distance : Vec3::sAxisY();
+				Vec3 normal = distance > 0.0f ? delta / distance : Vec3::sAxisY();
 				Vec3 point = center + radius * normal;
 
 				// Store collision
@@ -340,7 +334,8 @@ Vec3 SphereShape::MakeScaleValid(Vec3Arg inScale) const
 void SphereShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::Sphere);
-	f.mConstruct = []() -> Shape * { return new SphereShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new SphereShape; };
 	f.mColor = Color::sGreen;
 }
 

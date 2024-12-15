@@ -2,42 +2,41 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/CollideSphereVsTriangles.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/CollideShape.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/ActiveEdges.h>
-#include <Jolt/Physics/Collision/NarrowPhaseStats.h>
-#include <Jolt/Core/Profiler.h>
+#include "../Collision/CollideSphereVsTriangles.h"
+#include "../Collision/Shape/ScaleHelpers.h"
+#include "../Collision/CollideShape.h"
+#include "../Collision/TransformedShape.h"
+#include "../Collision/ActiveEdges.h"
+#include "../Collision/NarrowPhaseStats.h"
+#include "../../Core/Profiler.h"
 
 JPH_NAMESPACE_BEGIN
 
 static constexpr uint8 sClosestFeatureToActiveEdgesMask[] = {
-	0b000,		// 0b000: Invalid, guarded by an assert
-	0b101,		// 0b001: Vertex 1 -> edge 1 or 3
-	0b011,		// 0b010: Vertex 2 -> edge 1 or 2
-	0b001,		// 0b011: Vertex 1 & 2 -> edge 1
-	0b110,		// 0b100: Vertex 3 -> edge 2 or 3
-	0b100,		// 0b101: Vertex 1 & 3 -> edge 3
-	0b010,		// 0b110: Vertex 2 & 3 -> edge 2
-	// 0b111: Vertex 1, 2 & 3 -> interior, guarded by an if
+		0b000, // 0b000: Invalid, guarded by an assert
+		0b101, // 0b001: Vertex 1 -> edge 1 or 3
+		0b011, // 0b010: Vertex 2 -> edge 1 or 2
+		0b001, // 0b011: Vertex 1 & 2 -> edge 1
+		0b110, // 0b100: Vertex 3 -> edge 2 or 3
+		0b100, // 0b101: Vertex 1 & 3 -> edge 3
+		0b010, // 0b110: Vertex 2 & 3 -> edge 2
+					 // 0b111: Vertex 1, 2 & 3 -> interior, guarded by an if
 };
 
-CollideSphereVsTriangles::CollideSphereVsTriangles(const SphereShape *inShape1, Vec3Arg inScale1, Vec3Arg inScale2, Mat44Arg inCenterOfMassTransform1, Mat44Arg inCenterOfMassTransform2, const SubShapeID &inSubShapeID1, const CollideShapeSettings &inCollideShapeSettings, CollideShapeCollector &ioCollector) :
-	mCollideShapeSettings(inCollideShapeSettings),
-	mCollector(ioCollector),
-	mShape1(inShape1),
-	mScale2(inScale2),
-	mTransform2(inCenterOfMassTransform2),
-	mSubShapeID1(inSubShapeID1)
+CollideSphereVsTriangles::CollideSphereVsTriangles(const SphereShape *inShape1, Vec3Arg inScale1, Vec3Arg inScale2, Mat44Arg inCenterOfMassTransform1, Mat44Arg inCenterOfMassTransform2, const SubShapeID &inSubShapeID1, const CollideShapeSettings &inCollideShapeSettings, CollideShapeCollector &ioCollector) : mCollideShapeSettings(inCollideShapeSettings),
+																																																																																																																																																										 mCollector(ioCollector),
+																																																																																																																																																										 mShape1(inShape1),
+																																																																																																																																																										 mScale2(inScale2),
+																																																																																																																																																										 mTransform2(inCenterOfMassTransform2),
+																																																																																																																																																										 mSubShapeID1(inSubShapeID1)
 {
 	// Calculate the center of the sphere in the space of 2
 	mSphereCenterIn2 = inCenterOfMassTransform2.Multiply3x3Transposed(inCenterOfMassTransform1.GetTranslation() - inCenterOfMassTransform2.GetTranslation());
 
 	// Determine if shape 2 is inside out or not
-	mScaleSign2 = ScaleHelpers::IsInsideOut(inScale2)? -1.0f : 1.0f;
+	mScaleSign2 = ScaleHelpers::IsInsideOut(inScale2) ? -1.0f : 1.0f;
 
 	// Check that the sphere is uniformly scaled
 	JPH_ASSERT(ScaleHelpers::IsUniformScale(inScale1.Abs()));
@@ -82,15 +81,14 @@ void CollideSphereVsTriangles::Collide(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2,
 
 	// Check if we have enabled active edge detection
 	JPH_ASSERT(closest_feature != 0);
-	if (mCollideShapeSettings.mActiveEdgeMode == EActiveEdgeMode::CollideOnlyWithActive
-		&& closest_feature != 0b111 // For an interior hit we should already have the right normal
-		&& (inActiveEdges & sClosestFeatureToActiveEdgesMask[closest_feature]) == 0) // If we didn't hit an active edge we should take the triangle normal
+	if (mCollideShapeSettings.mActiveEdgeMode == EActiveEdgeMode::CollideOnlyWithActive && closest_feature != 0b111 // For an interior hit we should already have the right normal
+			&& (inActiveEdges & sClosestFeatureToActiveEdgesMask[closest_feature]) == 0)																// If we didn't hit an active edge we should take the triangle normal
 	{
 		// Convert the active edge velocity hint to local space
 		Vec3 active_edge_movement_direction = mTransform2.Multiply3x3Transposed(mCollideShapeSettings.mActiveEdgeMovementDirection);
 
 		// See ActiveEdges::FixNormal. If penetration_axis affects the movement less than the triangle normal we keep penetration_axis.
-		Vec3 new_penetration_axis = back_facing? triangle_normal : -triangle_normal;
+		Vec3 new_penetration_axis = back_facing ? triangle_normal : -triangle_normal;
 		if (active_edge_movement_direction.Dot(penetration_axis) * new_penetration_axis.Length() >= active_edge_movement_direction.Dot(new_penetration_axis))
 			penetration_axis = new_penetration_axis;
 	}

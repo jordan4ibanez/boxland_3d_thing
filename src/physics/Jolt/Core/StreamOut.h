@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Core/NonCopyable.h>
+#include "../Core/NonCopyable.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -13,24 +13,24 @@ class JPH_EXPORT StreamOut : public NonCopyable
 {
 public:
 	/// Virtual destructor
-	virtual				~StreamOut() = default;
+	virtual ~StreamOut() = default;
 
 	/// Write a string of bytes to the binary stream
-	virtual void		WriteBytes(const void *inData, size_t inNumBytes) = 0;
+	virtual void WriteBytes(const void *inData, size_t inNumBytes) = 0;
 
 	/// Returns true if there was an IO failure
-	virtual bool		IsFailed() const = 0;
+	virtual bool IsFailed() const = 0;
 
 	/// Write a primitive (e.g. float, int, etc.) to the binary stream
 	template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, bool> = true>
-	void				Write(const T &inT)
+	void Write(const T &inT)
 	{
 		WriteBytes(&inT, sizeof(inT));
 	}
 
 	/// Write a vector of primitives to the binary stream
 	template <class T, class A, std::enable_if_t<std::is_trivially_copyable_v<T>, bool> = true>
-	void				Write(const Array<T, A> &inT)
+	void Write(const Array<T, A> &inT)
 	{
 		uint32 len = uint32(inT.size());
 		Write(len);
@@ -52,7 +52,7 @@ public:
 
 	/// Write a string to the binary stream (writes the number of characters and then the characters)
 	template <class Type, class Traits, class Allocator>
-	void				Write(const std::basic_string<Type, Traits, Allocator> &inString)
+	void Write(const std::basic_string<Type, Traits, Allocator> &inString)
 	{
 		uint32 len = uint32(inString.size());
 		Write(len);
@@ -62,7 +62,7 @@ public:
 
 	/// Write a vector of primitives to the binary stream using a custom write function
 	template <class T, class A, typename F>
-	void				Write(const Array<T, A> &inT, const F &inWriteElement)
+	void Write(const Array<T, A> &inT, const F &inWriteElement)
 	{
 		uint32 len = uint32(inT.size());
 		Write(len);
@@ -72,19 +72,19 @@ public:
 	}
 
 	/// Write a Vec3 (don't write W)
-	void				Write(const Vec3 &inVec)
+	void Write(const Vec3 &inVec)
 	{
 		WriteBytes(&inVec, 3 * sizeof(float));
 	}
 
 	/// Write a DVec3 (don't write W)
-	void				Write(const DVec3 &inVec)
+	void Write(const DVec3 &inVec)
 	{
 		WriteBytes(&inVec, 3 * sizeof(double));
 	}
 
 	/// Write a DMat44 (don't write W component of translation)
-	void				Write(const DMat44 &inVec)
+	void Write(const DMat44 &inVec)
 	{
 		Write(inVec.GetColumn4(0));
 		Write(inVec.GetColumn4(1));

@@ -2,20 +2,20 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Geometry/ConvexHullBuilder.h>
-#include <Jolt/Geometry/ConvexHullBuilder2D.h>
-#include <Jolt/Geometry/ClosestPoint.h>
-#include <Jolt/Core/StringTools.h>
-#include <Jolt/Core/UnorderedSet.h>
+#include "../Geometry/ConvexHullBuilder.h"
+#include "../Geometry/ConvexHullBuilder2D.h"
+#include "../Geometry/ClosestPoint.h"
+#include "../Core/StringTools.h"
+#include "../Core/UnorderedSet.h"
 
 JPH_SUPPRESS_WARNINGS_STD_BEGIN
 #include <fstream>
 JPH_SUPPRESS_WARNINGS_STD_END
 
 #ifdef JPH_CONVEX_BUILDER_DEBUG
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif
 
 JPH_NAMESPACE_BEGIN
@@ -106,8 +106,7 @@ void ConvexHullBuilder::Face::Initialize(int inIdx0, int inIdx1, int inIdx2, con
 	CalculateNormalAndCentroid(inPositions);
 }
 
-ConvexHullBuilder::ConvexHullBuilder(const Positions &inPositions) :
-	mPositions(inPositions)
+ConvexHullBuilder::ConvexHullBuilder(const Positions &inPositions) : mPositions(inPositions)
 {
 #ifdef JPH_CONVEX_BUILDER_DEBUG
 	mIteration = 0;
@@ -188,7 +187,7 @@ float ConvexHullBuilder::GetDistanceToEdgeSq(Vec3Arg inPoint, const Face *inFace
 		edge = edge->mNextEdge;
 	} while (edge != inFace->mFirstEdge);
 
-	return all_inside? 0.0f : edge_dist_sq;
+	return all_inside ? 0.0f : edge_dist_sq;
 }
 
 bool ConvexHullBuilder::AssignPointToFace(int inPositionIdx, const Faces &inFaces, float inToleranceSq)
@@ -210,7 +209,7 @@ bool ConvexHullBuilder::AssignPointToFace(int inPositionIdx, const Faces &inFace
 			if (dist_to_edge_sq > inToleranceSq)
 			{
 				// Point is outside of the face and too far away to discard
-				mCoplanarList.push_back({ inPositionIdx, dist_to_edge_sq });
+				mCoplanarList.push_back({inPositionIdx, dist_to_edge_sq});
 			}
 		}
 		else
@@ -460,7 +459,7 @@ ConvexHullBuilder::EResult ConvexHullBuilder::Initialize(int inMaxVertices, floa
 		DrawState();
 #endif
 
-		return result == ConvexHullBuilder2D::EResult::MaxVerticesReached? EResult::MaxVerticesReached : EResult::Success;
+		return result == ConvexHullBuilder2D::EResult::MaxVerticesReached ? EResult::MaxVerticesReached : EResult::Success;
 	}
 
 	// Ensure the planes are facing outwards
@@ -482,7 +481,7 @@ ConvexHullBuilder::EResult ConvexHullBuilder::Initialize(int inMaxVertices, floa
 	sLinkFace(t3->mFirstEdge, t4->mFirstEdge);
 
 	// Build the initial conflict lists
-	Faces faces { t1, t2, t3, t4 };
+	Faces faces{t1, t2, t3, t4};
 	for (int idx = 0; idx < (int)mPositions.size(); ++idx)
 		if (idx != idx1 && idx != idx2 && idx != idx3 && idx != idx4)
 			AssignPointToFace(idx, faces, tolerance_sq);
@@ -781,8 +780,8 @@ void ConvexHullBuilder::FindEdge(Face *inFacingFace, Vec3Arg inVertex, FullEdges
 	// Instead of recursing, we build our own stack with the information we need
 	struct StackEntry
 	{
-		Edge *		mFirstEdge;
-		Edge *		mCurrentEdge;
+		Edge *mFirstEdge;
+		Edge *mCurrentEdge;
 	};
 	constexpr int cMaxEdgeLength = 128;
 	StackEntry stack[cMaxEdgeLength];
@@ -989,9 +988,7 @@ void ConvexHullBuilder::MergeCoplanarOrConcaveFaces(Face *inFace, float inCoplan
 		float signed_dist_face_centroid_sq = abs(dist_face_centroid) * dist_face_centroid;
 		float face_normal_len_sq = inFace->mNormal.LengthSq();
 		float other_face_normal_len_sq = other_face->mNormal.LengthSq();
-		if ((signed_dist_other_face_centroid_sq > -inCoplanarToleranceSq * face_normal_len_sq
-			|| signed_dist_face_centroid_sq > -inCoplanarToleranceSq * other_face_normal_len_sq)
-			&& inFace->mNormal.Dot(other_face->mNormal) > 0.0f) // Never merge faces that are back to back
+		if ((signed_dist_other_face_centroid_sq > -inCoplanarToleranceSq * face_normal_len_sq || signed_dist_face_centroid_sq > -inCoplanarToleranceSq * other_face_normal_len_sq) && inFace->mNormal.Dot(other_face->mNormal) > 0.0f) // Never merge faces that are back to back
 		{
 			MergeFaces(edge);
 			merged = true;
@@ -1281,7 +1278,7 @@ void ConvexHullBuilder::GetCenterOfMassAndVolume(Vec3 &outCenterOfMass, float &o
 			// Calculate center of mass and mass of this tetrahedron,
 			// see: https://en.wikipedia.org/wiki/Tetrahedron#Volume
 			float volume_tetrahedron = (v1 - v4).Dot((v2 - v4).Cross(v3 - v4)); // Needs to be divided by 6, postpone this until the end of the loop
-			Vec3 center_of_mass_tetrahedron = v1 + v2 + v3 + v4; // Needs to be divided by 4, postpone this until the end of the loop
+			Vec3 center_of_mass_tetrahedron = v1 + v2 + v3 + v4;								// Needs to be divided by 4, postpone this until the end of the loop
 
 			// Accumulate results
 			outVolume += volume_tetrahedron;
@@ -1400,8 +1397,7 @@ void ConvexHullBuilder::DrawState(bool inDrawConflictList) const
 				DebugRenderer::sInstance->DrawLine(p2, p3, Color::sGrey);
 
 				p2 = p3;
-			}
-			while (e != f->mFirstEdge);
+			} while (e != f->mFirstEdge);
 
 			// Draw normal
 			RVec3 centroid = cDrawScale * (mOffset + f->mCentroid);

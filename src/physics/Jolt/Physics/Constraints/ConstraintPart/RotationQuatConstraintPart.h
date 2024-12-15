@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Physics/StateRecorder.h>
+#include "../Body/Body.h"
+#include "../StateRecorder.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -87,7 +87,7 @@ class RotationQuatConstraintPart
 {
 private:
 	/// Internal helper function to update velocities of bodies after Lagrange multiplier is calculated
-	JPH_INLINE bool				ApplyVelocityStep(Body &ioBody1, Body &ioBody2, Vec3Arg inLambda) const
+	JPH_INLINE bool ApplyVelocityStep(Body &ioBody1, Body &ioBody2, Vec3Arg inLambda) const
 	{
 		// Apply impulse if delta is not zero
 		if (inLambda != Vec3::sZero())
@@ -111,7 +111,7 @@ private:
 
 public:
 	/// Return inverse of initial rotation from body 1 to body 2 in body 1 space
-	static Quat					sGetInvInitialOrientation(const Body &inBody1, const Body &inBody2)
+	static Quat sGetInvInitialOrientation(const Body &inBody1, const Body &inBody2)
 	{
 		// q20 = q10 r0
 		// <=> r0 = q10^-1 q20
@@ -126,14 +126,14 @@ public:
 	}
 
 	/// Calculate properties used during the functions below
-	inline void					CalculateConstraintProperties(const Body &inBody1, Mat44Arg inRotation1, const Body &inBody2, Mat44Arg inRotation2, QuatArg inInvInitialOrientation)
+	inline void CalculateConstraintProperties(const Body &inBody1, Mat44Arg inRotation1, const Body &inBody2, Mat44Arg inRotation2, QuatArg inInvInitialOrientation)
 	{
 		// Calculate: JP = 1/2 A ML(q1^*) MR(q2 r0^*) A^T
 		Mat44 jp = (Mat44::sQuatLeftMultiply(0.5f * inBody1.GetRotation().Conjugated()) * Mat44::sQuatRightMultiply(inBody2.GetRotation() * inInvInitialOrientation)).GetRotationSafe();
 
 		// Calculate properties used during constraint solving
-		Mat44 inv_i1 = inBody1.IsDynamic()? inBody1.GetMotionProperties()->GetInverseInertiaForRotation(inRotation1) : Mat44::sZero();
-		Mat44 inv_i2 = inBody2.IsDynamic()? inBody2.GetMotionProperties()->GetInverseInertiaForRotation(inRotation2) : Mat44::sZero();
+		Mat44 inv_i1 = inBody1.IsDynamic() ? inBody1.GetMotionProperties()->GetInverseInertiaForRotation(inRotation1) : Mat44::sZero();
+		Mat44 inv_i2 = inBody2.IsDynamic() ? inBody2.GetMotionProperties()->GetInverseInertiaForRotation(inRotation2) : Mat44::sZero();
 		mInvI1_JPT = inv_i1.Multiply3x3RightTransposed(jp);
 		mInvI2_JPT = inv_i2.Multiply3x3RightTransposed(jp);
 
@@ -147,7 +147,7 @@ public:
 	}
 
 	/// Deactivate this constraint
-	inline void					Deactivate()
+	inline void Deactivate()
 	{
 		mEffectiveMass = Mat44::sZero();
 		mEffectiveMass_JP = Mat44::sZero();
@@ -155,20 +155,20 @@ public:
 	}
 
 	/// Check if constraint is active
-	inline bool					IsActive() const
+	inline bool IsActive() const
 	{
 		return mEffectiveMass(3, 3) != 0.0f;
 	}
 
 	/// Must be called from the WarmStartVelocityConstraint call to apply the previous frame's impulses
-	inline void					WarmStart(Body &ioBody1, Body &ioBody2, float inWarmStartImpulseRatio)
+	inline void WarmStart(Body &ioBody1, Body &ioBody2, float inWarmStartImpulseRatio)
 	{
 		mTotalLambda *= inWarmStartImpulseRatio;
 		ApplyVelocityStep(ioBody1, ioBody2, mTotalLambda);
 	}
 
 	/// Iteratively update the velocity constraint. Makes sure d/dt C(...) = 0, where C is the constraint equation.
-	inline bool					SolveVelocityConstraint(Body &ioBody1, Body &ioBody2)
+	inline bool SolveVelocityConstraint(Body &ioBody1, Body &ioBody2)
 	{
 		// Calculate lagrange multiplier:
 		//
@@ -179,7 +179,7 @@ public:
 	}
 
 	/// Iteratively update the position constraint. Makes sure C(...) = 0.
-	inline bool					SolvePositionConstraint(Body &ioBody1, Body &ioBody2, QuatArg inInvInitialOrientation, float inBaumgarte) const
+	inline bool SolvePositionConstraint(Body &ioBody1, Body &ioBody2, QuatArg inInvInitialOrientation, float inBaumgarte) const
 	{
 		// Calculate constraint equation
 		Vec3 c = (ioBody1.GetRotation().Conjugated() * ioBody2.GetRotation() * inInvInitialOrientation).GetXYZ();
@@ -218,29 +218,29 @@ public:
 	}
 
 	/// Return lagrange multiplier
-	Vec3						GetTotalLambda() const
+	Vec3 GetTotalLambda() const
 	{
 		return mTotalLambda;
 	}
 
 	/// Save state of this constraint part
-	void						SaveState(StateRecorder &inStream) const
+	void SaveState(StateRecorder &inStream) const
 	{
 		inStream.Write(mTotalLambda);
 	}
 
 	/// Restore state of this constraint part
-	void						RestoreState(StateRecorder &inStream)
+	void RestoreState(StateRecorder &inStream)
 	{
 		inStream.Read(mTotalLambda);
 	}
 
 private:
-	Mat44						mInvI1_JPT;
-	Mat44						mInvI2_JPT;
-	Mat44						mEffectiveMass;
-	Mat44						mEffectiveMass_JP;
-	Vec3						mTotalLambda { Vec3::sZero() };
+	Mat44 mInvI1_JPT;
+	Mat44 mInvI2_JPT;
+	Mat44 mEffectiveMass;
+	Mat44 mEffectiveMass_JP;
+	Vec3 mTotalLambda{Vec3::sZero()};
 };
 
 JPH_NAMESPACE_END

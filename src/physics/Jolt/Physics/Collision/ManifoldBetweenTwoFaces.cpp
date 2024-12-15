@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/ManifoldBetweenTwoFaces.h>
-#include <Jolt/Physics/Constraints/ContactConstraintManager.h>
-#include <Jolt/Geometry/ClipPoly.h>
+#include "../Collision/ManifoldBetweenTwoFaces.h"
+#include "../Constraints/ContactConstraintManager.h"
+#include "../../Geometry/ClipPoly.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -134,7 +134,7 @@ void PruneContactPoints(Vec3Arg inPenetrationAxis, ContactPoints &ioContactPoint
 	ioContactPointsOn2 = points_to_keep_on_2;
 }
 
-void ManifoldBetweenTwoFaces(Vec3Arg inContactPoint1, Vec3Arg inContactPoint2, Vec3Arg inPenetrationAxis, float inMaxContactDistanceSq	, const ConvexShape::SupportingFace &inShape1Face, const ConvexShape::SupportingFace &inShape2Face, ContactPoints &outContactPoints1, ContactPoints &outContactPoints2 JPH_IF_DEBUG_RENDERER(, RVec3Arg inCenterOfMass))
+void ManifoldBetweenTwoFaces(Vec3Arg inContactPoint1, Vec3Arg inContactPoint2, Vec3Arg inPenetrationAxis, float inMaxContactDistanceSq, const ConvexShape::SupportingFace &inShape1Face, const ConvexShape::SupportingFace &inShape2Face, ContactPoints &outContactPoints1, ContactPoints &outContactPoints2 JPH_IF_DEBUG_RENDERER(, RVec3Arg inCenterOfMass))
 {
 #ifdef JPH_DEBUG_RENDERER
 	if (ContactConstraintManager::sDrawContactPoint)
@@ -155,8 +155,8 @@ void ManifoldBetweenTwoFaces(Vec3Arg inContactPoint1, Vec3Arg inContactPoint2, V
 	ContactPoints::size_type old_size = outContactPoints1.size();
 
 	// Check if both shapes have polygon faces
-	if (inShape1Face.size() >= 2 // The dynamic shape needs to have at least 2 points or else there can never be more than 1 contact point
-		&& inShape2Face.size() >= 3) // The dynamic/static shape needs to have at least 3 points (in the case that it has 2 points only if the edges match exactly you can have 2 contact points, but this situation is unstable anyhow)
+	if (inShape1Face.size() >= 2		 // The dynamic shape needs to have at least 2 points or else there can never be more than 1 contact point
+			&& inShape2Face.size() >= 3) // The dynamic/static shape needs to have at least 3 points (in the case that it has 2 points only if the edges match exactly you can have 2 contact points, but this situation is unstable anyhow)
 	{
 		// Clip the polygon of face 2 against that of 1
 		ConvexShape::SupportingFace clipped_face;
@@ -187,7 +187,7 @@ void ManifoldBetweenTwoFaces(Vec3Arg inContactPoint1, Vec3Arg inContactPoint2, V
 			// Discard points of faces that are too far away to collide
 			for (Vec3 p2 : clipped_face)
 			{
-				float distance = (p2 - plane_origin).Dot(plane_normal); // Note should divide by length of plane_normal (unnormalized here)
+				float distance = (p2 - plane_origin).Dot(plane_normal);																	 // Note should divide by length of plane_normal (unnormalized here)
 				if (distance <= 0.0f || Square(distance) < inMaxContactDistanceSq * plane_normal_len_sq) // Must be close enough to plane, note we correct for not dividing by plane normal length here
 				{
 					// Project point back on shape 1 using the normal, note we correct for not dividing by plane normal length here:
@@ -200,7 +200,7 @@ void ManifoldBetweenTwoFaces(Vec3Arg inContactPoint1, Vec3Arg inContactPoint2, V
 			}
 		}
 
-	#ifdef JPH_DEBUG_RENDERER
+#ifdef JPH_DEBUG_RENDERER
 		if (ContactConstraintManager::sDrawSupportingFaces)
 		{
 			RMat44 com = RMat44::sTranslation(inCenterOfMass);
@@ -223,7 +223,7 @@ void ManifoldBetweenTwoFaces(Vec3Arg inContactPoint1, Vec3Arg inContactPoint2, V
 			for (ContactPoints::size_type p = old_size; p < outContactPoints1.size(); ++p)
 				DebugRenderer::sInstance->DrawMarker(inCenterOfMass + outContactPoints1[p], Color::sYellow, 0.1f);
 		}
-	#endif // JPH_DEBUG_RENDERER
+#endif // JPH_DEBUG_RENDERER
 	}
 
 	// If the clipping result is empty, use the contact point itself

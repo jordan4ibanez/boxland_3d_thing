@@ -2,21 +2,19 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Physics/PhysicsScene.h>
-#include <Jolt/Physics/PhysicsSystem.h>
-#include <Jolt/Physics/Body/BodyLockMulti.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "PhysicsScene.h"
+#include "PhysicsSystem.h"
+#include "Body/BodyLockMulti.h"
+#include "../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(PhysicsScene)
-{
-	JPH_ADD_ATTRIBUTE(PhysicsScene, mBodies)
-	JPH_ADD_ATTRIBUTE(PhysicsScene, mConstraints)
-	JPH_ADD_ATTRIBUTE(PhysicsScene, mSoftBodies)
-}
+JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(PhysicsScene){
+		JPH_ADD_ATTRIBUTE(PhysicsScene, mBodies)
+				JPH_ADD_ATTRIBUTE(PhysicsScene, mConstraints)
+						JPH_ADD_ATTRIBUTE(PhysicsScene, mSoftBodies)}
 
 JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(PhysicsScene::ConnectedConstraint)
 {
@@ -99,8 +97,8 @@ bool PhysicsScene::CreateBodies(PhysicsSystem *inSystem) const
 	// Create constraints
 	for (const ConnectedConstraint &cc : mConstraints)
 	{
-		BodyID body1_id = cc.mBody1 == cFixedToWorld? BodyID() : body_ids[cc.mBody1];
-		BodyID body2_id = cc.mBody2 == cFixedToWorld? BodyID() : body_ids[cc.mBody2];
+		BodyID body1_id = cc.mBody1 == cFixedToWorld ? BodyID() : body_ids[cc.mBody1];
+		BodyID body2_id = cc.mBody2 == cFixedToWorld ? BodyID() : body_ids[cc.mBody2];
 		Constraint *c = bi.CreateConstraint(cc.mSettings, body1_id, body2_id);
 		inSystem->AddConstraint(c);
 	}
@@ -119,7 +117,7 @@ void PhysicsScene::SaveBinaryState(StreamOut &inStream, bool inSaveShapes, bool 
 	// Save bodies
 	inStream.Write((uint32)mBodies.size());
 	for (const BodyCreationSettings &b : mBodies)
-		b.SaveWithChildren(inStream, inSaveShapes? &shape_to_id : nullptr, inSaveShapes? &material_to_id : nullptr, inSaveGroupFilter? &group_filter_to_id : nullptr);
+		b.SaveWithChildren(inStream, inSaveShapes ? &shape_to_id : nullptr, inSaveShapes ? &material_to_id : nullptr, inSaveGroupFilter ? &group_filter_to_id : nullptr);
 
 	// Save constraints
 	inStream.Write((uint32)mConstraints.size());
@@ -133,7 +131,7 @@ void PhysicsScene::SaveBinaryState(StreamOut &inStream, bool inSaveShapes, bool 
 	// Save soft bodies
 	inStream.Write((uint32)mSoftBodies.size());
 	for (const SoftBodyCreationSettings &b : mSoftBodies)
-		b.SaveWithChildren(inStream, &settings_to_id, &material_to_id, inSaveGroupFilter? &group_filter_to_id : nullptr);
+		b.SaveWithChildren(inStream, &settings_to_id, &material_to_id, inSaveGroupFilter ? &group_filter_to_id : nullptr);
 }
 
 PhysicsScene::PhysicsSceneResult PhysicsScene::sRestoreFromBinaryState(StreamIn &inStream)

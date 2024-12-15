@@ -2,24 +2,22 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
-#include <Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h>
-#include <Jolt/Physics/Collision/Shape/CompoundShapeVisitors.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/Core/TempAllocator.h>
-#include <Jolt/Core/ScopeExit.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/StaticCompoundShape.h"
+#include "../../Collision/Shape/RotatedTranslatedShape.h"
+#include "../../Collision/Shape/CompoundShapeVisitors.h"
+#include "../../../Core/Profiler.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
+#include "../../../Core/TempAllocator.h"
+#include "../../../Core/ScopeExit.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(StaticCompoundShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(StaticCompoundShapeSettings, CompoundShapeSettings)
-}
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(StaticCompoundShapeSettings){
+		JPH_ADD_BASE_CLASS(StaticCompoundShapeSettings, CompoundShapeSettings)}
 
 ShapeSettings::ShapeResult StaticCompoundShapeSettings::Create(TempAllocator &inTempAllocator) const
 {
@@ -34,8 +32,7 @@ ShapeSettings::ShapeResult StaticCompoundShapeSettings::Create(TempAllocator &in
 		{
 			// If there's only 1 part we don't need a StaticCompoundShape
 			const SubShapeSettings &s = mSubShapes[0];
-			if (s.mPosition == Vec3::sZero()
-				&& s.mRotation == Quat::sIdentity())
+			if (s.mPosition == Vec3::sZero() && s.mRotation == Quat::sIdentity())
 			{
 				// No rotation or translation, we can use the shape directly
 				if (s.mShapePtr != nullptr)
@@ -176,8 +173,7 @@ void StaticCompoundShape::sPartition4(uint *ioBodyIdx, AABox *ioBounds, int inBe
 	outSplit[4] = inEnd;
 }
 
-StaticCompoundShape::StaticCompoundShape(const StaticCompoundShapeSettings &inSettings, TempAllocator &inTempAllocator, ShapeResult &outResult) :
-	CompoundShape(EShapeSubType::StaticCompound, inSettings, outResult)
+StaticCompoundShape::StaticCompoundShape(const StaticCompoundShapeSettings &inSettings, TempAllocator &inTempAllocator, ShapeResult &outResult) : CompoundShape(EShapeSubType::StaticCompound, inSettings, outResult)
 {
 	// Check that there's at least 1 shape
 	uint num_subshapes = (uint)inSettings.mSubShapes.size();
@@ -217,12 +213,14 @@ StaticCompoundShape::StaticCompoundShape(const StaticCompoundShapeSettings &inSe
 	// Temporary storage for the bounding boxes of all shapes
 	uint bounds_size = num_subshapes * sizeof(AABox);
 	AABox *bounds = (AABox *)inTempAllocator.Allocate(bounds_size);
-	JPH_SCOPE_EXIT([&inTempAllocator, bounds, bounds_size]{ inTempAllocator.Free(bounds, bounds_size); });
+	JPH_SCOPE_EXIT([&inTempAllocator, bounds, bounds_size]
+								 { inTempAllocator.Free(bounds, bounds_size); });
 
 	// Temporary storage for body indexes (we're shuffling them)
 	uint body_idx_size = num_subshapes * sizeof(uint);
 	uint *body_idx = (uint *)inTempAllocator.Allocate(body_idx_size);
-	JPH_SCOPE_EXIT([&inTempAllocator, body_idx, body_idx_size]{ inTempAllocator.Free(body_idx, body_idx_size); });
+	JPH_SCOPE_EXIT([&inTempAllocator, body_idx, body_idx_size]
+								 { inTempAllocator.Free(body_idx, body_idx_size); });
 
 	// Shift all shapes so that the center of mass is now at the origin and calculate bounds
 	for (uint i = 0; i < num_subshapes; ++i)
@@ -247,14 +245,15 @@ StaticCompoundShape::StaticCompoundShape(const StaticCompoundShapeSettings &inSe
 	// The algorithm is a recursive tree build, but to avoid the call overhead we keep track of a stack here
 	struct StackEntry
 	{
-		uint32			mNodeIdx;					// Node index of node that is generated
-		int				mChildIdx;					// Index of child that we're currently processing
-		int				mSplit[5];					// Indices where the node ID's have been split to form 4 partitions
-		AABox			mBounds;					// Bounding box of this node
+		uint32 mNodeIdx; // Node index of node that is generated
+		int mChildIdx;	 // Index of child that we're currently processing
+		int mSplit[5];	 // Indices where the node ID's have been split to form 4 partitions
+		AABox mBounds;	 // Bounding box of this node
 	};
 	uint stack_size = num_subshapes * sizeof(StackEntry);
 	StackEntry *stack = (StackEntry *)inTempAllocator.Allocate(stack_size);
-	JPH_SCOPE_EXIT([&inTempAllocator, stack, stack_size]{ inTempAllocator.Free(stack, stack_size); });
+	JPH_SCOPE_EXIT([&inTempAllocator, stack, stack_size]
+								 { inTempAllocator.Free(stack, stack_size); });
 	int top = 0;
 
 	// Reserve enough space so that every sub shape gets its own leaf node
@@ -416,8 +415,7 @@ inline void StaticCompoundShape::WalkTree(Visitor &ioVisitor) const
 		do
 			--top;
 		while (top >= 0 && !ioVisitor.ShouldVisitNode(top));
-	}
-	while (top >= 0);
+	} while (top >= 0);
 }
 
 bool StaticCompoundShape::CastRay(const RayCast &inRay, const SubShapeIDCreator &inSubShapeIDCreator, RayCastResult &ioHit) const
@@ -428,12 +426,12 @@ bool StaticCompoundShape::CastRay(const RayCast &inRay, const SubShapeIDCreator 
 	{
 		using CastRayVisitor::CastRayVisitor;
 
-		JPH_INLINE bool		ShouldVisitNode(int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode(int inStackTop) const
 		{
 			return mDistanceStack[inStackTop] < mHit.mFraction;
 		}
 
-		JPH_INLINE int		VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
 		{
 			// Test bounds of 4 children
 			Vec4 distance = TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -442,7 +440,7 @@ bool StaticCompoundShape::CastRay(const RayCast &inRay, const SubShapeIDCreator 
 			return SortReverseAndStore(distance, mHit.mFraction, ioProperties, &mDistanceStack[inStackTop]);
 		}
 
-		float				mDistanceStack[cStackSize];
+		float mDistanceStack[cStackSize];
 	};
 
 	Visitor visitor(inRay, this, inSubShapeIDCreator, ioHit);
@@ -462,12 +460,12 @@ void StaticCompoundShape::CastRay(const RayCast &inRay, const RayCastSettings &i
 	{
 		using CastRayVisitorCollector::CastRayVisitorCollector;
 
-		JPH_INLINE bool		ShouldVisitNode(int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode(int inStackTop) const
 		{
 			return mDistanceStack[inStackTop] < mCollector.GetEarlyOutFraction();
 		}
 
-		JPH_INLINE int		VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
 		{
 			// Test bounds of 4 children
 			Vec4 distance = TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -476,7 +474,7 @@ void StaticCompoundShape::CastRay(const RayCast &inRay, const RayCastSettings &i
 			return SortReverseAndStore(distance, mCollector.GetEarlyOutFraction(), ioProperties, &mDistanceStack[inStackTop]);
 		}
 
-		float				mDistanceStack[cStackSize];
+		float mDistanceStack[cStackSize];
 	};
 
 	Visitor visitor(inRay, inRayCastSettings, this, inSubShapeIDCreator, ioCollector, inShapeFilter);
@@ -491,12 +489,12 @@ void StaticCompoundShape::CollidePoint(Vec3Arg inPoint, const SubShapeIDCreator 
 	{
 		using CollidePointVisitor::CollidePointVisitor;
 
-		JPH_INLINE bool		ShouldVisitNode([[maybe_unused]] int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode([[maybe_unused]] int inStackTop) const
 		{
 			return true;
 		}
 
-		JPH_INLINE int		VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
 		{
 			// Test if point overlaps with box
 			UVec4 collides = TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -516,12 +514,12 @@ void StaticCompoundShape::sCastShapeVsCompound(const ShapeCast &inShapeCast, con
 	{
 		using CastShapeVisitor::CastShapeVisitor;
 
-		JPH_INLINE bool		ShouldVisitNode(int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode(int inStackTop) const
 		{
 			return mDistanceStack[inStackTop] < mCollector.GetPositiveEarlyOutFraction();
 		}
 
-		JPH_INLINE int		VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
 		{
 			// Test bounds of 4 children
 			Vec4 distance = TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -530,7 +528,7 @@ void StaticCompoundShape::sCastShapeVsCompound(const ShapeCast &inShapeCast, con
 			return SortReverseAndStore(distance, mCollector.GetPositiveEarlyOutFraction(), ioProperties, &mDistanceStack[inStackTop]);
 		}
 
-		float				mDistanceStack[cStackSize];
+		float mDistanceStack[cStackSize];
 	};
 
 	JPH_ASSERT(inShape->GetSubType() == EShapeSubType::StaticCompound);
@@ -552,12 +550,12 @@ void StaticCompoundShape::CollectTransformedShapes(const AABox &inBox, Vec3Arg i
 	{
 		using CollectTransformedShapesVisitor::CollectTransformedShapesVisitor;
 
-		JPH_INLINE bool		ShouldVisitNode([[maybe_unused]] int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode([[maybe_unused]] int inStackTop) const
 		{
 			return true;
 		}
 
-		JPH_INLINE int		VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
 		{
 			// Test which nodes collide
 			UVec4 collides = TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -598,12 +596,12 @@ void StaticCompoundShape::sCollideCompoundVsShape(const Shape *inShape1, const S
 	{
 		using CollideCompoundVsShapeVisitor::CollideCompoundVsShapeVisitor;
 
-		JPH_INLINE bool		ShouldVisitNode([[maybe_unused]] int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode([[maybe_unused]] int inStackTop) const
 		{
 			return true;
 		}
 
-		JPH_INLINE int		VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
 		{
 			// Test which nodes collide
 			UVec4 collides = TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -623,12 +621,12 @@ void StaticCompoundShape::sCollideShapeVsCompound(const Shape *inShape1, const S
 	{
 		using CollideShapeVsCompoundVisitor::CollideShapeVsCompoundVisitor;
 
-		JPH_INLINE bool		ShouldVisitNode([[maybe_unused]] int inStackTop) const
+		JPH_INLINE bool ShouldVisitNode([[maybe_unused]] int inStackTop) const
 		{
 			return true;
 		}
 
-		JPH_INLINE int		VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
+		JPH_INLINE int VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
 		{
 			// Test which nodes collide
 			UVec4 collides = TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -660,7 +658,8 @@ void StaticCompoundShape::RestoreBinaryState(StreamIn &inStream)
 void StaticCompoundShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::StaticCompound);
-	f.mConstruct = []() -> Shape * { return new StaticCompoundShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new StaticCompoundShape; };
 	f.mColor = Color::sOrange;
 
 	for (EShapeSubType s : sAllSubShapeTypes)

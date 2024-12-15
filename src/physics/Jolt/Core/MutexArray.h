@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Core/NonCopyable.h>
+#include "../Core/NonCopyable.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -17,17 +17,17 @@ class MutexArray : public NonCopyable
 {
 public:
 	/// Constructor, constructs an empty mutex array that you need to initialize with Init()
-							MutexArray() = default;
+	MutexArray() = default;
 
 	/// Constructor, constructs an array with inNumMutexes entries
-	explicit				MutexArray(uint inNumMutexes) { Init(inNumMutexes); }
+	explicit MutexArray(uint inNumMutexes) { Init(inNumMutexes); }
 
 	/// Destructor
-							~MutexArray() { delete [] mMutexStorage; }
+	~MutexArray() { delete[] mMutexStorage; }
 
 	/// Initialization
 	/// @param inNumMutexes The amount of mutexes to allocate
-	void					Init(uint inNumMutexes)
+	void Init(uint inNumMutexes)
 	{
 		JPH_ASSERT(mMutexStorage == nullptr);
 		JPH_ASSERT(inNumMutexes > 0 && IsPowerOf2(inNumMutexes));
@@ -37,32 +37,32 @@ public:
 	}
 
 	/// Get the number of mutexes that were allocated
-	inline uint				GetNumMutexes() const
+	inline uint GetNumMutexes() const
 	{
 		return mNumMutexes;
 	}
 
 	/// Convert an object index to a mutex index
-	inline uint32			GetMutexIndex(uint32 inObjectIndex) const
+	inline uint32 GetMutexIndex(uint32 inObjectIndex) const
 	{
 		std::hash<uint32> hasher;
 		return hasher(inObjectIndex) & (mNumMutexes - 1);
 	}
 
 	/// Get the mutex belonging to a certain object by index
-	inline MutexType &		GetMutexByObjectIndex(uint32 inObjectIndex)
+	inline MutexType &GetMutexByObjectIndex(uint32 inObjectIndex)
 	{
 		return mMutexStorage[GetMutexIndex(inObjectIndex)].mMutex;
 	}
 
 	/// Get a mutex by index in the array
-	inline MutexType &		GetMutexByIndex(uint32 inMutexIndex)
+	inline MutexType &GetMutexByIndex(uint32 inMutexIndex)
 	{
 		return mMutexStorage[inMutexIndex].mMutex;
 	}
 
 	/// Lock all mutexes
-	void					LockAll()
+	void LockAll()
 	{
 		JPH_PROFILE_FUNCTION();
 
@@ -72,7 +72,7 @@ public:
 	}
 
 	/// Unlock all mutexes
-	void					UnlockAll()
+	void UnlockAll()
 	{
 		JPH_PROFILE_FUNCTION();
 
@@ -87,12 +87,11 @@ private:
 	{
 		JPH_OVERRIDE_NEW_DELETE
 
-		MutexType			mMutex;
+		MutexType mMutex;
 	};
 
-	MutexStorage *			mMutexStorage = nullptr;
-	uint					mNumMutexes = 0;
+	MutexStorage *mMutexStorage = nullptr;
+	uint mNumMutexes = 0;
 };
 
 JPH_NAMESPACE_END
-

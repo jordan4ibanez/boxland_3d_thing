@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Core/FPException.h>
+#include "../Core/FPException.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -75,19 +75,19 @@ bool EigenValueSymmetric(const Matrix &inMatrix, Matrix &outEigVec, Vector &outE
 		// Normal return, convergence to machine underflow
 		if (avg_sm < FLT_MIN) // Original code: sm == 0.0f, when the average is denormal, we also consider it machine underflow
 		{
-			// Sanity checks
-			#ifdef JPH_ENABLE_ASSERTS
-				for (uint c = 0; c < n; ++c)
-				{
-					// Check if the eigenvector is normalized
-					JPH_ASSERT(outEigVec.GetColumn(c).IsNormalized());
+// Sanity checks
+#ifdef JPH_ENABLE_ASSERTS
+			for (uint c = 0; c < n; ++c)
+			{
+				// Check if the eigenvector is normalized
+				JPH_ASSERT(outEigVec.GetColumn(c).IsNormalized());
 
-					// Check if inMatrix * eigen_vector = eigen_value * eigen_vector
-					Vector mat_eigvec = inMatrix * outEigVec.GetColumn(c);
-					Vector eigval_eigvec = outEigVal[c] * outEigVec.GetColumn(c);
-					JPH_ASSERT(mat_eigvec.IsClose(eigval_eigvec, max(mat_eigvec.LengthSq(), eigval_eigvec.LengthSq()) * 1.0e-6f));
-				}
-			#endif
+				// Check if inMatrix * eigen_vector = eigen_value * eigen_vector
+				Vector mat_eigvec = inMatrix * outEigVec.GetColumn(c);
+				Vector eigval_eigvec = outEigVal[c] * outEigVec.GetColumn(c);
+				JPH_ASSERT(mat_eigvec.IsClose(eigval_eigvec, max(mat_eigvec.LengthSq(), eigval_eigvec.LengthSq()) * 1.0e-6f));
+			}
+#endif
 
 			// Success
 			return true;
@@ -95,7 +95,7 @@ bool EigenValueSymmetric(const Matrix &inMatrix, Matrix &outEigVec, Vector &outE
 
 		// On the first three sweeps use a fraction of the sum of the off diagonal elements as threshold
 		// Note that we pick a minimum threshold of FLT_MIN because dividing by a denormalized number is likely to result in infinity.
-		float tresh = sweep < 4? 0.2f * avg_sm : FLT_MIN; // Original code: 0.0f instead of FLT_MIN
+		float tresh = sweep < 4 ? 0.2f * avg_sm : FLT_MIN; // Original code: 0.0f instead of FLT_MIN
 
 		for (uint ip = 0; ip < n - 1; ++ip)
 			for (uint iq = ip + 1; iq < n; ++iq)
@@ -108,9 +108,7 @@ bool EigenValueSymmetric(const Matrix &inMatrix, Matrix &outEigVec, Vector &outE
 				float g = 100.0f * abs_a_pq;
 
 				// After four sweeps, skip the rotation if the off-diagonal element is small
-				if (sweep > 4
-					&& abs(eigval_p) + g == abs(eigval_p)
-					&& abs(eigval_q) + g == abs(eigval_q))
+				if (sweep > 4 && abs(eigval_p) + g == abs(eigval_p) && abs(eigval_q) + g == abs(eigval_q))
 				{
 					a_pq = 0.0f;
 				}
@@ -126,9 +124,10 @@ bool EigenValueSymmetric(const Matrix &inMatrix, Matrix &outEigVec, Vector &outE
 					}
 					else
 					{
-						float theta = 0.5f * h / a_pq; // Warning: Can become infinite if a(ip, iq) is very small which may trigger an invalid float exception
+						float theta = 0.5f * h / a_pq;												// Warning: Can become infinite if a(ip, iq) is very small which may trigger an invalid float exception
 						t = 1.0f / (abs(theta) + sqrt(1.0f + theta * theta)); // If theta becomes inf, t will be 0 so the infinite is not a problem for the algorithm
-						if (theta < 0.0f) t = -t;
+						if (theta < 0.0f)
+							t = -t;
 					}
 
 					float c = 1.0f / sqrt(1.0f + t * t);
@@ -144,19 +143,23 @@ bool EigenValueSymmetric(const Matrix &inMatrix, Matrix &outEigVec, Vector &outE
 					eigval_p -= h;
 					eigval_q += h;
 
-					#define JPH_EVS_ROTATE(a, i, j, k, l)		\
-						g = a(i, j),							\
-						h = a(k, l),							\
-						a(i, j) = g - s * (h + g * tau),		\
-						a(k, l) = h + s * (g - h * tau)
+#define JPH_EVS_ROTATE(a, i, j, k, l) \
+	g = a(i, j),                        \
+	h = a(k, l),                        \
+	a(i, j) = g - s * (h + g * tau),    \
+	a(k, l) = h + s * (g - h * tau)
 
 					uint j;
-					for (j = 0; j < ip; ++j)		JPH_EVS_ROTATE(a, j, ip, j, iq);
-					for (j = ip + 1; j < iq; ++j)	JPH_EVS_ROTATE(a, ip, j, j, iq);
-					for (j = iq + 1; j < n; ++j)	JPH_EVS_ROTATE(a, ip, j, iq, j);
-					for (j = 0; j < n; ++j)			JPH_EVS_ROTATE(outEigVec, j, ip, j, iq);
+					for (j = 0; j < ip; ++j)
+						JPH_EVS_ROTATE(a, j, ip, j, iq);
+					for (j = ip + 1; j < iq; ++j)
+						JPH_EVS_ROTATE(a, ip, j, j, iq);
+					for (j = iq + 1; j < n; ++j)
+						JPH_EVS_ROTATE(a, ip, j, iq, j);
+					for (j = 0; j < n; ++j)
+						JPH_EVS_ROTATE(outEigVec, j, ip, j, iq);
 
-					#undef JPH_EVS_ROTATE
+#undef JPH_EVS_ROTATE
 				}
 			}
 

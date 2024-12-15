@@ -2,32 +2,34 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/ObjectStream/ObjectStreamOut.h>
-#include <Jolt/ObjectStream/ObjectStreamTextOut.h>
-#include <Jolt/ObjectStream/ObjectStreamBinaryOut.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../ObjectStream/ObjectStreamOut.h"
+#include "../ObjectStream/ObjectStreamTextOut.h"
+#include "../ObjectStream/ObjectStreamBinaryOut.h"
+#include "../ObjectStream/TypeDeclarations.h"
 
 #ifdef JPH_OBJECT_STREAM
 
 JPH_NAMESPACE_BEGIN
 
-ObjectStreamOut::ObjectStreamOut(ostream &inStream) :
-	mStream(inStream)
+ObjectStreamOut::ObjectStreamOut(ostream &inStream) : mStream(inStream)
 {
 // Add all primitives to the class set
-#define JPH_DECLARE_PRIMITIVE(name)	mClassSet.insert(JPH_RTTI(name));
-#include <Jolt/ObjectStream/ObjectStreamTypes.h>
+#define JPH_DECLARE_PRIMITIVE(name) mClassSet.insert(JPH_RTTI(name));
+#include "../ObjectStream/ObjectStreamTypes.h"
 }
 
 ObjectStreamOut *ObjectStreamOut::Open(EStreamType inType, ostream &inStream)
 {
 	switch (inType)
 	{
-	case EStreamType::Text:		return new ObjectStreamTextOut(inStream);
-	case EStreamType::Binary:	return new ObjectStreamBinaryOut(inStream);
-	default:					JPH_ASSERT(false);
+	case EStreamType::Text:
+		return new ObjectStreamTextOut(inStream);
+	case EStreamType::Binary:
+		return new ObjectStreamBinaryOut(inStream);
+	default:
+		JPH_ASSERT(false);
 	}
 	return nullptr;
 }

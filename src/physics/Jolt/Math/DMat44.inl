@@ -4,31 +4,27 @@
 
 #pragma once
 
-#include <Jolt/Math/DVec3.h>
+#include "../Math/DVec3.h"
 
 JPH_NAMESPACE_BEGIN
 
-DMat44::DMat44(Vec4Arg inC1, Vec4Arg inC2, Vec4Arg inC3, DVec3Arg inC4) :
-	mCol { inC1, inC2, inC3 },
-	mCol3(inC4)
+DMat44::DMat44(Vec4Arg inC1, Vec4Arg inC2, Vec4Arg inC3, DVec3Arg inC4) : mCol{inC1, inC2, inC3},
+																																					mCol3(inC4)
 {
 }
 
-DMat44::DMat44(Type inC1, Type inC2, Type inC3, DTypeArg inC4) :
-	mCol { inC1, inC2, inC3 },
-	mCol3(inC4)
+DMat44::DMat44(Type inC1, Type inC2, Type inC3, DTypeArg inC4) : mCol{inC1, inC2, inC3},
+																																 mCol3(inC4)
 {
 }
 
-DMat44::DMat44(Mat44Arg inM) :
-	mCol { inM.GetColumn4(0), inM.GetColumn4(1), inM.GetColumn4(2) },
-	mCol3(inM.GetTranslation())
+DMat44::DMat44(Mat44Arg inM) : mCol{inM.GetColumn4(0), inM.GetColumn4(1), inM.GetColumn4(2)},
+															 mCol3(inM.GetTranslation())
 {
 }
 
-DMat44::DMat44(Mat44Arg inRot, DVec3Arg inT) :
-	mCol { inRot.GetColumn4(0), inRot.GetColumn4(1), inRot.GetColumn4(2) },
-	mCol3(inT)
+DMat44::DMat44(Mat44Arg inRot, DVec3Arg inT) : mCol{inRot.GetColumn4(0), inRot.GetColumn4(1), inRot.GetColumn4(2)},
+																							 mCol3(inT)
 {
 }
 
@@ -50,12 +46,9 @@ DMat44 DMat44::sInverseRotationTranslation(QuatArg inR, DVec3Arg inT)
 	return dm;
 }
 
-bool DMat44::operator == (DMat44Arg inM2) const
+bool DMat44::operator==(DMat44Arg inM2) const
 {
-	return mCol[0] == inM2.mCol[0]
-		&& mCol[1] == inM2.mCol[1]
-		&& mCol[2] == inM2.mCol[2]
-		&& mCol3 == inM2.mCol3;
+	return mCol[0] == inM2.mCol[0] && mCol[1] == inM2.mCol[1] && mCol[2] == inM2.mCol[2] && mCol3 == inM2.mCol3;
 }
 
 bool DMat44::IsClose(DMat44Arg inM2, float inMaxDistSq) const
@@ -66,7 +59,7 @@ bool DMat44::IsClose(DMat44Arg inM2, float inMaxDistSq) const
 	return mCol3.IsClose(inM2.mCol3, double(inMaxDistSq));
 }
 
-DVec3 DMat44::operator * (Vec3Arg inV) const
+DVec3 DMat44::operator*(Vec3Arg inV) const
 {
 #if defined(JPH_USE_AVX)
 	__m128 t = _mm_mul_ps(mCol[0].mValue, _mm_shuffle_ps(inV.mValue, inV.mValue, _MM_SHUFFLE(0, 0, 0, 0)));
@@ -79,23 +72,23 @@ DVec3 DMat44::operator * (Vec3Arg inV) const
 	t = _mm_add_ps(t, _mm_mul_ps(mCol[2].mValue, _mm_shuffle_ps(inV.mValue, inV.mValue, _MM_SHUFFLE(2, 2, 2, 2))));
 	__m128d low = _mm_add_pd(mCol3.mValue.mLow, _mm_cvtps_pd(t));
 	__m128d high = _mm_add_pd(mCol3.mValue.mHigh, _mm_cvtps_pd(_mm_shuffle_ps(t, t, _MM_SHUFFLE(2, 2, 2, 2))));
-	return DVec3({ low, high });
+	return DVec3({low, high});
 #elif defined(JPH_USE_NEON)
 	float32x4_t t = vmulq_f32(mCol[0].mValue, vdupq_laneq_f32(inV.mValue, 0));
 	t = vmlaq_f32(t, mCol[1].mValue, vdupq_laneq_f32(inV.mValue, 1));
 	t = vmlaq_f32(t, mCol[2].mValue, vdupq_laneq_f32(inV.mValue, 2));
 	float64x2_t low = vaddq_f64(mCol3.mValue.val[0], vcvt_f64_f32(vget_low_f32(t)));
 	float64x2_t high = vaddq_f64(mCol3.mValue.val[1], vcvt_high_f64_f32(t));
-	return DVec3::sFixW({ low, high });
+	return DVec3::sFixW({low, high});
 #else
 	return DVec3(
-		mCol3.mF64[0] + double(mCol[0].mF32[0] * inV.mF32[0] + mCol[1].mF32[0] * inV.mF32[1] + mCol[2].mF32[0] * inV.mF32[2]),
-		mCol3.mF64[1] + double(mCol[0].mF32[1] * inV.mF32[0] + mCol[1].mF32[1] * inV.mF32[1] + mCol[2].mF32[1] * inV.mF32[2]),
-		mCol3.mF64[2] + double(mCol[0].mF32[2] * inV.mF32[0] + mCol[1].mF32[2] * inV.mF32[1] + mCol[2].mF32[2] * inV.mF32[2]));
+			mCol3.mF64[0] + double(mCol[0].mF32[0] * inV.mF32[0] + mCol[1].mF32[0] * inV.mF32[1] + mCol[2].mF32[0] * inV.mF32[2]),
+			mCol3.mF64[1] + double(mCol[0].mF32[1] * inV.mF32[0] + mCol[1].mF32[1] * inV.mF32[1] + mCol[2].mF32[1] * inV.mF32[2]),
+			mCol3.mF64[2] + double(mCol[0].mF32[2] * inV.mF32[0] + mCol[1].mF32[2] * inV.mF32[1] + mCol[2].mF32[2] * inV.mF32[2]));
 #endif
 }
 
-DVec3 DMat44::operator * (DVec3Arg inV) const
+DVec3 DMat44::operator*(DVec3Arg inV) const
 {
 #if defined(JPH_USE_AVX)
 	__m256d t = _mm256_add_pd(mCol3.mValue, _mm256_mul_pd(_mm256_cvtps_pd(mCol[0].mValue), _mm256_set1_pd(inV.mF64[0])));
@@ -115,7 +108,7 @@ DVec3 DMat44::operator * (DVec3Arg inV) const
 	__m128d t_high = _mm_add_pd(mCol3.mValue.mHigh, _mm_mul_pd(_mm_cvtps_pd(_mm_shuffle_ps(col0, col0, _MM_SHUFFLE(2, 2, 2, 2))), xxxx));
 	t_high = _mm_add_pd(t_high, _mm_mul_pd(_mm_cvtps_pd(_mm_shuffle_ps(col1, col1, _MM_SHUFFLE(2, 2, 2, 2))), yyyy));
 	t_high = _mm_add_pd(t_high, _mm_mul_pd(_mm_cvtps_pd(_mm_shuffle_ps(col2, col2, _MM_SHUFFLE(2, 2, 2, 2))), zzzz));
-	return DVec3({ t_low, t_high });
+	return DVec3({t_low, t_high});
 #elif defined(JPH_USE_NEON)
 	float64x2_t xxxx = vdupq_laneq_f64(inV.mValue.val[0], 0);
 	float64x2_t yyyy = vdupq_laneq_f64(inV.mValue.val[0], 1);
@@ -129,12 +122,12 @@ DVec3 DMat44::operator * (DVec3Arg inV) const
 	float64x2_t t_high = vaddq_f64(mCol3.mValue.val[1], vmulq_f64(vcvt_high_f64_f32(col0), xxxx));
 	t_high = vaddq_f64(t_high, vmulq_f64(vcvt_high_f64_f32(col1), yyyy));
 	t_high = vaddq_f64(t_high, vmulq_f64(vcvt_high_f64_f32(col2), zzzz));
-	return DVec3::sFixW({ t_low, t_high });
+	return DVec3::sFixW({t_low, t_high});
 #else
 	return DVec3(
-		mCol3.mF64[0] + double(mCol[0].mF32[0]) * inV.mF64[0] + double(mCol[1].mF32[0]) * inV.mF64[1] + double(mCol[2].mF32[0]) * inV.mF64[2],
-		mCol3.mF64[1] + double(mCol[0].mF32[1]) * inV.mF64[0] + double(mCol[1].mF32[1]) * inV.mF64[1] + double(mCol[2].mF32[1]) * inV.mF64[2],
-		mCol3.mF64[2] + double(mCol[0].mF32[2]) * inV.mF64[0] + double(mCol[1].mF32[2]) * inV.mF64[1] + double(mCol[2].mF32[2]) * inV.mF64[2]);
+			mCol3.mF64[0] + double(mCol[0].mF32[0]) * inV.mF64[0] + double(mCol[1].mF32[0]) * inV.mF64[1] + double(mCol[2].mF32[0]) * inV.mF64[2],
+			mCol3.mF64[1] + double(mCol[0].mF32[1]) * inV.mF64[0] + double(mCol[1].mF32[1]) * inV.mF64[1] + double(mCol[2].mF32[1]) * inV.mF64[2],
+			mCol3.mF64[2] + double(mCol[0].mF32[2]) * inV.mF64[0] + double(mCol[1].mF32[2]) * inV.mF64[1] + double(mCol[2].mF32[2]) * inV.mF64[2]);
 #endif
 }
 
@@ -158,7 +151,7 @@ DVec3 DMat44::Multiply3x3(DVec3Arg inV) const
 	__m128d t_high = _mm_mul_pd(_mm_cvtps_pd(_mm_shuffle_ps(col0, col0, _MM_SHUFFLE(2, 2, 2, 2))), xxxx);
 	t_high = _mm_add_pd(t_high, _mm_mul_pd(_mm_cvtps_pd(_mm_shuffle_ps(col1, col1, _MM_SHUFFLE(2, 2, 2, 2))), yyyy));
 	t_high = _mm_add_pd(t_high, _mm_mul_pd(_mm_cvtps_pd(_mm_shuffle_ps(col2, col2, _MM_SHUFFLE(2, 2, 2, 2))), zzzz));
-	return DVec3({ t_low, t_high });
+	return DVec3({t_low, t_high});
 #elif defined(JPH_USE_NEON)
 	float64x2_t xxxx = vdupq_laneq_f64(inV.mValue.val[0], 0);
 	float64x2_t yyyy = vdupq_laneq_f64(inV.mValue.val[0], 1);
@@ -172,16 +165,16 @@ DVec3 DMat44::Multiply3x3(DVec3Arg inV) const
 	float64x2_t t_high = vmulq_f64(vcvt_high_f64_f32(col0), xxxx);
 	t_high = vaddq_f64(t_high, vmulq_f64(vcvt_high_f64_f32(col1), yyyy));
 	t_high = vaddq_f64(t_high, vmulq_f64(vcvt_high_f64_f32(col2), zzzz));
-	return DVec3::sFixW({ t_low, t_high });
+	return DVec3::sFixW({t_low, t_high});
 #else
 	return DVec3(
-		double(mCol[0].mF32[0]) * inV.mF64[0] + double(mCol[1].mF32[0]) * inV.mF64[1] + double(mCol[2].mF32[0]) * inV.mF64[2],
-		double(mCol[0].mF32[1]) * inV.mF64[0] + double(mCol[1].mF32[1]) * inV.mF64[1] + double(mCol[2].mF32[1]) * inV.mF64[2],
-		double(mCol[0].mF32[2]) * inV.mF64[0] + double(mCol[1].mF32[2]) * inV.mF64[1] + double(mCol[2].mF32[2]) * inV.mF64[2]);
+			double(mCol[0].mF32[0]) * inV.mF64[0] + double(mCol[1].mF32[0]) * inV.mF64[1] + double(mCol[2].mF32[0]) * inV.mF64[2],
+			double(mCol[0].mF32[1]) * inV.mF64[0] + double(mCol[1].mF32[1]) * inV.mF64[1] + double(mCol[2].mF32[1]) * inV.mF64[2],
+			double(mCol[0].mF32[2]) * inV.mF64[0] + double(mCol[1].mF32[2]) * inV.mF64[1] + double(mCol[2].mF32[2]) * inV.mF64[2]);
 #endif
 }
 
-DMat44 DMat44::operator * (Mat44Arg inM) const
+DMat44 DMat44::operator*(Mat44Arg inM) const
 {
 	DMat44 result;
 
@@ -218,7 +211,7 @@ DMat44 DMat44::operator * (Mat44Arg inM) const
 	return result;
 }
 
-DMat44 DMat44::operator * (DMat44Arg inM) const
+DMat44 DMat44::operator*(DMat44Arg inM) const
 {
 	DMat44 result;
 

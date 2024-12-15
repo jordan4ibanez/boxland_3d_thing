@@ -2,18 +2,18 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Body/BodyInterface.h>
-#include <Jolt/Physics/Collision/BroadPhase/BroadPhase.h>
-#include <Jolt/Physics/Collision/CollisionCollectorImpl.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Physics/Body/BodyManager.h>
-#include <Jolt/Physics/Body/BodyCreationSettings.h>
-#include <Jolt/Physics/Body/BodyLock.h>
-#include <Jolt/Physics/Body/BodyLockMulti.h>
-#include <Jolt/Physics/Collision/PhysicsMaterial.h>
-#include <Jolt/Physics/Constraints/TwoBodyConstraint.h>
+#include "../Body/BodyInterface.h"
+#include "../Collision/BroadPhase/BroadPhase.h"
+#include "../Collision/CollisionCollectorImpl.h"
+#include "../Body/Body.h"
+#include "../Body/BodyManager.h"
+#include "../Body/BodyCreationSettings.h"
+#include "../Body/BodyLock.h"
+#include "../Body/BodyLockMulti.h"
+#include "../Collision/PhysicsMaterial.h"
+#include "../Constraints/TwoBodyConstraint.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -268,7 +268,7 @@ void BodyInterface::ResetSleepTimer(const BodyID &inBodyID)
 
 TwoBodyConstraint *BodyInterface::CreateConstraint(const TwoBodyConstraintSettings *inSettings, const BodyID &inBodyID1, const BodyID &inBodyID2)
 {
-	BodyID constraint_bodies[] = { inBodyID1, inBodyID2 };
+	BodyID constraint_bodies[] = {inBodyID1, inBodyID2};
 	BodyLockMultiWrite lock(*mBodyLockInterface, constraint_bodies, 2);
 
 	Body *body1 = lock.GetBody(0);
@@ -277,12 +277,12 @@ TwoBodyConstraint *BodyInterface::CreateConstraint(const TwoBodyConstraintSettin
 	JPH_ASSERT(body1 != body2);
 	JPH_ASSERT(body1 != nullptr || body2 != nullptr);
 
-	return inSettings->Create(body1 != nullptr? *body1 : Body::sFixedToWorld, body2 != nullptr? *body2 : Body::sFixedToWorld);
+	return inSettings->Create(body1 != nullptr ? *body1 : Body::sFixedToWorld, body2 != nullptr ? *body2 : Body::sFixedToWorld);
 }
 
 void BodyInterface::ActivateConstraint(const TwoBodyConstraint *inConstraint)
 {
-	BodyID bodies[] = { inConstraint->GetBody1()->GetID(), inConstraint->GetBody2()->GetID() };
+	BodyID bodies[] = {inConstraint->GetBody1()->GetID(), inConstraint->GetBody2()->GetID()};
 	ActivateBodies(bodies, 2);
 }
 
@@ -417,8 +417,7 @@ void BodyInterface::SetPositionAndRotationWhenChanged(const BodyID &inBodyID, RV
 		Body &body = lock.GetBody();
 
 		// Check if there is enough change
-		if (!body.GetPosition().IsClose(inPosition)
-			|| !body.GetRotation().IsClose(inRotation))
+		if (!body.GetPosition().IsClose(inPosition) || !body.GetRotation().IsClose(inRotation))
 		{
 			// Update the position
 			body.SetPositionAndRotationInternal(inPosition, inRotation);
@@ -815,8 +814,7 @@ bool BodyInterface::ApplyBuoyancyImpulse(const BodyID &inBodyID, RVec3Arg inSurf
 	if (lock.Succeeded())
 	{
 		Body &body = lock.GetBody();
-		if (body.IsDynamic()
-			&& body.ApplyBuoyancyImpulse(inSurfacePosition, inSurfaceNormal, inBuoyancy, inLinearDrag, inAngularDrag, inFluidVelocity, inGravity, inDeltaTime))
+		if (body.IsDynamic() && body.ApplyBuoyancyImpulse(inSurfacePosition, inSurfaceNormal, inBuoyancy, inLinearDrag, inAngularDrag, inFluidVelocity, inGravity, inDeltaTime))
 		{
 			ActivateBodyInternal(body);
 			return true;

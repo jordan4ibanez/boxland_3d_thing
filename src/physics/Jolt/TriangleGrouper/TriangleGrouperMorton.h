@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/TriangleGrouper/TriangleGrouper.h>
+#include "../TriangleGrouper/TriangleGrouper.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -14,7 +14,7 @@ class JPH_EXPORT TriangleGrouperMorton : public TriangleGrouper
 {
 public:
 	// See: TriangleGrouper::Group
-	virtual void			Group(const VertexList &inVertices, const IndexedTriangleList &inTriangles, int inGroupSize, Array<uint> &outGroupedTriangleIndices) override;
+	virtual void Group(const VertexList &inVertices, const IndexedTriangleList &inTriangles, int inGroupSize, Array<uint> &outGroupedTriangleIndices) override;
 };
 
 JPH_NAMESPACE_END

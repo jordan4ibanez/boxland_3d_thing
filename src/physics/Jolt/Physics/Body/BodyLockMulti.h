@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Physics/Body/BodyLockInterface.h>
+#include "../Body/BodyLockInterface.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -17,11 +17,10 @@ public:
 	using MutexMask = BodyLockInterface::MutexMask;
 
 	/// Constructor will lock the bodies
-								BodyLockMultiBase(const BodyLockInterface &inBodyLockInterface, const BodyID *inBodyIDs, int inNumber) :
-		mBodyLockInterface(inBodyLockInterface),
-		mMutexMask(inBodyLockInterface.GetMutexMask(inBodyIDs, inNumber)),
-		mBodyIDs(inBodyIDs),
-		mNumBodyIDs(inNumber)
+	BodyLockMultiBase(const BodyLockInterface &inBodyLockInterface, const BodyID *inBodyIDs, int inNumber) : mBodyLockInterface(inBodyLockInterface),
+																																																					 mMutexMask(inBodyLockInterface.GetMutexMask(inBodyIDs, inNumber)),
+																																																					 mBodyIDs(inBodyIDs),
+																																																					 mNumBodyIDs(inNumber)
 	{
 		if (mMutexMask != 0)
 		{
@@ -34,7 +33,7 @@ public:
 	}
 
 	/// Destructor will unlock the bodies
-								~BodyLockMultiBase()
+	~BodyLockMultiBase()
 	{
 		if (mMutexMask != 0)
 		{
@@ -46,7 +45,7 @@ public:
 	}
 
 	/// Access the body (returns null if body was not properly locked)
-	inline BodyType *			GetBody(int inBodyIndex) const
+	inline BodyType *GetBody(int inBodyIndex) const
 	{
 		// Range check
 		JPH_ASSERT(inBodyIndex >= 0 && inBodyIndex < mNumBodyIDs);
@@ -61,10 +60,10 @@ public:
 	}
 
 private:
-	const BodyLockInterface &	mBodyLockInterface;
-	MutexMask					mMutexMask;
-	const BodyID *				mBodyIDs;
-	int							mNumBodyIDs;
+	const BodyLockInterface &mBodyLockInterface;
+	MutexMask mMutexMask;
+	const BodyID *mBodyIDs;
+	int mNumBodyIDs;
 };
 
 /// A multi body lock takes a number of body IDs and locks the underlying bodies so that other threads cannot access its members

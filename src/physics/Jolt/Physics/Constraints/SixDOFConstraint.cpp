@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/SixDOFConstraint.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Geometry/Ellipse.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Constraints/SixDOFConstraint.h"
+#include "../Body/Body.h"
+#include "../../Geometry/Ellipse.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -128,7 +128,7 @@ void SixDOFConstraint::UpdateFixedFreeAxis()
 	mFixedAxis = 0;
 	for (int a = 0; a < EAxis::Num; ++a)
 	{
-		float limit = a >= EAxis::RotationX? JPH_PI : FLT_MAX;
+		float limit = a >= EAxis::RotationX ? JPH_PI : FLT_MAX;
 
 		if (mLimitMin[a] >= mLimitMax[a])
 			mFixedAxis |= 1 << a;
@@ -151,8 +151,7 @@ void SixDOFConstraint::UpdateFixedFreeAxis()
 	}
 }
 
-SixDOFConstraint::SixDOFConstraint(Body &inBody1, Body &inBody2, const SixDOFConstraintSettings &inSettings) :
-	TwoBodyConstraint(inBody1, inBody2, inSettings)
+SixDOFConstraint::SixDOFConstraint(Body &inBody1, Body &inBody2, const SixDOFConstraintSettings &inSettings) : TwoBodyConstraint(inBody1, inBody2, inSettings)
 {
 	// Override swing type
 	mSwingTwistConstraintPart.SetSwingType(inSettings.mSwingType);
@@ -274,22 +273,12 @@ Quat SixDOFConstraint::GetRotationInConstraintSpace() const
 
 void SixDOFConstraint::CacheTranslationMotorActive()
 {
-	mTranslationMotorActive = mMotorState[EAxis::TranslationX] != EMotorState::Off
-		|| mMotorState[EAxis::TranslationY] != EMotorState::Off
-		|| mMotorState[EAxis::TranslationZ] != EMotorState::Off
-		|| HasFriction(EAxis::TranslationX)
-		|| HasFriction(EAxis::TranslationY)
-		|| HasFriction(EAxis::TranslationZ);
+	mTranslationMotorActive = mMotorState[EAxis::TranslationX] != EMotorState::Off || mMotorState[EAxis::TranslationY] != EMotorState::Off || mMotorState[EAxis::TranslationZ] != EMotorState::Off || HasFriction(EAxis::TranslationX) || HasFriction(EAxis::TranslationY) || HasFriction(EAxis::TranslationZ);
 }
 
 void SixDOFConstraint::CacheRotationMotorActive()
 {
-	mRotationMotorActive = mMotorState[EAxis::RotationX] != EMotorState::Off
-		|| mMotorState[EAxis::RotationY] != EMotorState::Off
-		|| mMotorState[EAxis::RotationZ] != EMotorState::Off
-		|| HasFriction(EAxis::RotationX)
-		|| HasFriction(EAxis::RotationY)
-		|| HasFriction(EAxis::RotationZ);
+	mRotationMotorActive = mMotorState[EAxis::RotationX] != EMotorState::Off || mMotorState[EAxis::RotationY] != EMotorState::Off || mMotorState[EAxis::RotationZ] != EMotorState::Off || HasFriction(EAxis::RotationX) || HasFriction(EAxis::RotationY) || HasFriction(EAxis::RotationZ);
 }
 
 void SixDOFConstraint::CacheRotationPositionMotorActive()
@@ -302,9 +291,7 @@ void SixDOFConstraint::CacheRotationPositionMotorActive()
 
 void SixDOFConstraint::CacheHasSpringLimits()
 {
-	mHasSpringLimits = mLimitsSpringSettings[EAxis::TranslationX].mFrequency > 0.0f
-		|| mLimitsSpringSettings[EAxis::TranslationY].mFrequency > 0.0f
-		|| mLimitsSpringSettings[EAxis::TranslationZ].mFrequency > 0.0f;
+	mHasSpringLimits = mLimitsSpringSettings[EAxis::TranslationX].mFrequency > 0.0f || mLimitsSpringSettings[EAxis::TranslationY].mFrequency > 0.0f || mLimitsSpringSettings[EAxis::TranslationZ].mFrequency > 0.0f;
 }
 
 void SixDOFConstraint::SetMotorState(EAxis inAxis, EMotorState inState)
@@ -428,14 +415,14 @@ void SixDOFConstraint::SetupVelocityConstraint(float inDeltaTime)
 				break;
 
 			case EMotorState::Position:
-				{
-					const SpringSettings &spring_settings = mMotorSettings[i].mSpringSettings;
-					if (spring_settings.HasStiffness())
-						mMotorTranslationConstraintPart[i].CalculateConstraintPropertiesWithSettings(inDeltaTime, *mBody1, r1_plus_u, *mBody2, r2, translation_axis, 0.0f, translation_axis.Dot(u) - mTargetPosition[i], spring_settings);
-					else
-						mMotorTranslationConstraintPart[i].Deactivate();
-					break;
-				}
+			{
+				const SpringSettings &spring_settings = mMotorSettings[i].mSpringSettings;
+				if (spring_settings.HasStiffness())
+					mMotorTranslationConstraintPart[i].CalculateConstraintPropertiesWithSettings(inDeltaTime, *mBody1, r1_plus_u, *mBody2, r2, translation_axis, 0.0f, translation_axis.Dot(u) - mTargetPosition[i], spring_settings);
+				else
+					mMotorTranslationConstraintPart[i].Deactivate();
+				break;
+			}
 			}
 		}
 	}
@@ -466,7 +453,7 @@ void SixDOFConstraint::SetupVelocityConstraint(float inDeltaTime)
 				mRotationAxis[i] = ws_axis.GetColumn3(i);
 
 			// Get target orientation along the shortest path from q
-			Quat target_orientation = q.Dot(mTargetOrientation) > 0.0f? mTargetOrientation : -mTargetOrientation;
+			Quat target_orientation = q.Dot(mTargetOrientation) > 0.0f ? mTargetOrientation : -mTargetOrientation;
 
 			// The definition of the constraint rotation q:
 			// R2 * ConstraintToBody2 = R1 * ConstraintToBody1 * q (1)
@@ -559,14 +546,14 @@ void SixDOFConstraint::SetupVelocityConstraint(float inDeltaTime)
 					break;
 
 				case EMotorState::Position:
-					{
-						const SpringSettings &spring_settings = mMotorSettings[axis].mSpringSettings;
-						if (spring_settings.HasStiffness())
-							mMotorRotationConstraintPart[i].CalculateConstraintPropertiesWithSettings(inDeltaTime, *mBody1, *mBody2, rotation_axis, 0.0f, rotation_error[i], spring_settings);
-						else
-							mMotorRotationConstraintPart[i].Deactivate();
-						break;
-					}
+				{
+					const SpringSettings &spring_settings = mMotorSettings[axis].mSpringSettings;
+					if (spring_settings.HasStiffness())
+						mMotorRotationConstraintPart[i].CalculateConstraintPropertiesWithSettings(inDeltaTime, *mBody1, *mBody2, rotation_axis, 0.0f, rotation_error[i], spring_settings);
+					else
+						mMotorRotationConstraintPart[i].Deactivate();
+					break;
+				}
 				}
 			}
 		}
@@ -748,9 +735,16 @@ bool SixDOFConstraint::SolvePositionConstraint(float inDeltaTime, float inBaumga
 				Vec3 translation_axis;
 				switch (i)
 				{
-				case 0:							translation_axis = constraint_body1_to_world.RotateAxisX(); break;
-				case 1:							translation_axis = constraint_body1_to_world.RotateAxisY(); break;
-				default:	JPH_ASSERT(i == 2); translation_axis = constraint_body1_to_world.RotateAxisZ(); break;
+				case 0:
+					translation_axis = constraint_body1_to_world.RotateAxisX();
+					break;
+				case 1:
+					translation_axis = constraint_body1_to_world.RotateAxisY();
+					break;
+				default:
+					JPH_ASSERT(i == 2);
+					translation_axis = constraint_body1_to_world.RotateAxisZ();
+					break;
 				}
 
 				// Determine position error

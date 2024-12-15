@@ -2,49 +2,49 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Body/BodyManager.h>
-#include <Jolt/Physics/PhysicsSettings.h>
-#include <Jolt/Physics/Body/BodyCreationSettings.h>
-#include <Jolt/Physics/Body/BodyLock.h>
-#include <Jolt/Physics/Body/BodyActivationListener.h>
-#include <Jolt/Physics/SoftBody/SoftBodyMotionProperties.h>
-#include <Jolt/Physics/SoftBody/SoftBodyCreationSettings.h>
-#include <Jolt/Physics/SoftBody/SoftBodyShape.h>
-#include <Jolt/Physics/StateRecorder.h>
-#include <Jolt/Core/StringTools.h>
-#include <Jolt/Core/QuickSort.h>
+#include "../Body/BodyManager.h"
+#include "../PhysicsSettings.h"
+#include "../Body/BodyCreationSettings.h"
+#include "../Body/BodyLock.h"
+#include "../Body/BodyActivationListener.h"
+#include "../SoftBody/SoftBodyMotionProperties.h"
+#include "../SoftBody/SoftBodyCreationSettings.h"
+#include "../SoftBody/SoftBodyShape.h"
+#include "../StateRecorder.h"
+#include "../../Core/StringTools.h"
+#include "../../Core/QuickSort.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
-	#include <Jolt/Physics/Body/BodyFilter.h>
+#include "../Renderer/DebugRenderer.h"
+#include "../Body/BodyFilter.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
 
 #ifdef JPH_ENABLE_ASSERTS
-	static thread_local bool sOverrideAllowActivation = false;
-	static thread_local bool sOverrideAllowDeactivation = false;
+static thread_local bool sOverrideAllowActivation = false;
+static thread_local bool sOverrideAllowDeactivation = false;
 
-	bool BodyManager::sGetOverrideAllowActivation()
-	{
-		return sOverrideAllowActivation;
-	}
+bool BodyManager::sGetOverrideAllowActivation()
+{
+	return sOverrideAllowActivation;
+}
 
-	void BodyManager::sSetOverrideAllowActivation(bool inValue)
-	{
-		sOverrideAllowActivation = inValue;
-	}
+void BodyManager::sSetOverrideAllowActivation(bool inValue)
+{
+	sOverrideAllowActivation = inValue;
+}
 
-	bool BodyManager::sGetOverrideAllowDeactivation()
-	{
-		return sOverrideAllowDeactivation;
-	}
+bool BodyManager::sGetOverrideAllowDeactivation()
+{
+	return sOverrideAllowDeactivation;
+}
 
-	void BodyManager::sSetOverrideAllowDeactivation(bool inValue)
-	{
-		sOverrideAllowDeactivation = inValue;
-	}
+void BodyManager::sSetOverrideAllowDeactivation(bool inValue)
+{
+	sOverrideAllowDeactivation = inValue;
+}
 #endif
 
 // Helper class that combines a body and its motion properties
@@ -53,20 +53,20 @@ class BodyWithMotionProperties : public Body
 public:
 	JPH_OVERRIDE_NEW_DELETE
 
-	MotionProperties			mMotionProperties;
+	MotionProperties mMotionProperties;
 };
 
 // Helper class that combines a soft body its motion properties and shape
 class SoftBodyWithMotionPropertiesAndShape : public Body
 {
 public:
-								SoftBodyWithMotionPropertiesAndShape()
+	SoftBodyWithMotionPropertiesAndShape()
 	{
 		mShape.SetEmbedded();
 	}
 
-	SoftBodyMotionProperties	mMotionProperties;
-	SoftBodyShape				mShape;
+	SoftBodyMotionProperties mMotionProperties;
+	SoftBodyShape mShape;
 };
 
 inline void BodyManager::sDeleteBody(Body *inBody)
@@ -96,7 +96,7 @@ BodyManager::~BodyManager()
 			sDeleteBody(b);
 
 	for (BodyID *active_bodies : mActiveBodies)
-		delete [] active_bodies;
+		delete[] active_bodies;
 }
 
 void BodyManager::Init(uint inMaxBodies, uint inNumBodyMutexes, const BroadPhaseLayerInterface &inLayerInterface)
@@ -104,7 +104,7 @@ void BodyManager::Init(uint inMaxBodies, uint inNumBodyMutexes, const BroadPhase
 	UniqueLock lock(mBodiesMutex JPH_IF_ENABLE_ASSERTS(, this, EPhysicsLockTypes::BodiesList));
 
 	// Num body mutexes must be a power of two and not bigger than our MutexMask
-	uint num_body_mutexes = Clamp<uint>(GetNextPowerOf2(inNumBodyMutexes == 0? 2 * thread::hardware_concurrency() : inNumBodyMutexes), 1, sizeof(MutexMask) * 8);
+	uint num_body_mutexes = Clamp<uint>(GetNextPowerOf2(inNumBodyMutexes == 0 ? 2 * thread::hardware_concurrency() : inNumBodyMutexes), 1, sizeof(MutexMask) * 8);
 #ifdef JPH_TSAN_ENABLED
 	num_body_mutexes = min(num_body_mutexes, 32U); // TSAN errors out when locking too many mutexes on the same thread, see: https://github.com/google/sanitizers/issues/950
 #endif
@@ -119,7 +119,7 @@ void BodyManager::Init(uint inMaxBodies, uint inNumBodyMutexes, const BroadPhase
 	for (BodyID *&active_bodies : mActiveBodies)
 	{
 		JPH_ASSERT(active_bodies == nullptr);
-		active_bodies = new BodyID [inMaxBodies];
+		active_bodies = new BodyID[inMaxBodies];
 	}
 
 	// Allocate space for sequence numbers
@@ -270,7 +270,7 @@ Body *BodyManager::AllocateSoftBody(const SoftBodyCreationSettings &inSoftBodyCr
 	JPH_IF_ENABLE_ASSERTS(mp->mCachedMotionType = body->mMotionType;)
 	mp->Initialize(inSoftBodyCreationSettings);
 
-	body->SetPositionAndRotationInternal(inSoftBodyCreationSettings.mPosition, inSoftBodyCreationSettings.mMakeRotationIdentity? Quat::sIdentity() : inSoftBodyCreationSettings.mRotation);
+	body->SetPositionAndRotationInternal(inSoftBodyCreationSettings.mPosition, inSoftBodyCreationSettings.mMakeRotationIdentity ? Quat::sIdentity() : inSoftBodyCreationSettings.mRotation);
 
 	return body;
 }
@@ -597,8 +597,7 @@ void BodyManager::DeactivateBodies(const BodyID *inBodyIDs, int inNumber)
 			JPH_ASSERT(body.GetID() == body_id);
 			JPH_ASSERT(body.IsInBroadPhase(), "Use BodyInterface::AddBody to add the body first!");
 
-			if (body.mMotionProperties != nullptr
-				&& body.mMotionProperties->mIndexInActiveBodies != Body::cInactiveIndex)
+			if (body.mMotionProperties != nullptr && body.mMotionProperties->mIndexInActiveBodies != Body::cInactiveIndex)
 			{
 				// Remove the body from the active bodies list
 				RemoveBodyFromActiveBodies(body);
@@ -965,11 +964,11 @@ void BodyManager::Draw(const DrawSettings &inDrawSettings, const PhysicsSettings
 						break;
 
 					case EMotionType::Kinematic:
-						color = body->IsActive()? Color::sGreen : Color::sRed;
+						color = body->IsActive() ? Color::sGreen : Color::sRed;
 						break;
 
 					case EMotionType::Dynamic:
-						color = body->IsActive()? Color::sYellow : Color::sRed;
+						color = body->IsActive() ? Color::sYellow : Color::sRed;
 						break;
 
 					default:
@@ -989,11 +988,11 @@ void BodyManager::Draw(const DrawSettings &inDrawSettings, const PhysicsSettings
 
 					case EMotionType::Kinematic:
 					case EMotionType::Dynamic:
-						{
-							uint32 idx = body->GetMotionProperties()->GetIslandIndexInternal();
-							color = idx != Body::cInactiveIndex? Color::sGetDistinctColor(idx) : Color::sLightGrey;
-						}
-						break;
+					{
+						uint32 idx = body->GetMotionProperties()->GetIslandIndexInternal();
+						color = idx != Body::cInactiveIndex ? Color::sGetDistinctColor(idx) : Color::sLightGrey;
+					}
+					break;
 
 					default:
 						JPH_ASSERT(false);
@@ -1047,8 +1046,7 @@ void BodyManager::Draw(const DrawSettings &inDrawSettings, const PhysicsSettings
 			if (inDrawSettings.mDrawMassAndInertia && body->IsDynamic())
 			{
 				const MotionProperties *mp = body->GetMotionProperties();
-				if (mp->GetInverseMass() > 0.0f
-					&& !Vec3::sEquals(mp->GetInverseInertiaDiagonal(), Vec3::sZero()).TestAnyXYZTrue())
+				if (mp->GetInverseMass() > 0.0f && !Vec3::sEquals(mp->GetInverseInertiaDiagonal(), Vec3::sZero()).TestAnyXYZTrue())
 				{
 					// Invert mass again
 					float mass = 1.0f / mp->GetInverseMass();

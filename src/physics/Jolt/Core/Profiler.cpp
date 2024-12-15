@@ -2,12 +2,12 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/Color.h>
-#include <Jolt/Core/StringTools.h>
-#include <Jolt/Core/QuickSort.h>
+#include "../Core/Profiler.h"
+#include "../Core/Color.h"
+#include "../Core/StringTools.h"
+#include "../Core/QuickSort.h"
 
 JPH_SUPPRESS_WARNINGS_STD_BEGIN
 #include <fstream>
@@ -17,8 +17,8 @@ JPH_NAMESPACE_BEGIN
 
 #if defined(JPH_EXTERNAL_PROFILE) && defined(JPH_SHARED_LIBRARY)
 
-ProfileStartMeasurementFunction ProfileStartMeasurement = [](const char *, uint32, uint8 *) { };
-ProfileEndMeasurementFunction ProfileEndMeasurement = [](uint8 *) { };
+ProfileStartMeasurementFunction ProfileStartMeasurement = [](const char *, uint32, uint8 *) {};
+ProfileEndMeasurementFunction ProfileEndMeasurement = [](uint8 *) {};
 
 #elif defined(JPH_PROFILE_ENABLED)
 
@@ -29,19 +29,19 @@ ProfileEndMeasurementFunction ProfileEndMeasurement = [](uint8 *) { };
 Profiler *Profiler::sInstance = nullptr;
 
 #ifdef JPH_SHARED_LIBRARY
-	static thread_local ProfileThread *sInstance = nullptr;
+static thread_local ProfileThread *sInstance = nullptr;
 
-	ProfileThread *ProfileThread::sGetInstance()
-	{
-		return sInstance;
-	}
+ProfileThread *ProfileThread::sGetInstance()
+{
+	return sInstance;
+}
 
-	void ProfileThread::sSetInstance(ProfileThread *inInstance)
-	{
-		sInstance = inInstance;
-	}
+void ProfileThread::sSetInstance(ProfileThread *inInstance)
+{
+	sInstance = inInstance;
+}
 #else
-	thread_local ProfileThread *ProfileThread::sInstance = nullptr;
+thread_local ProfileThread *ProfileThread::sInstance = nullptr;
 #endif
 
 bool ProfileMeasurement::sOutOfSamplesReported = false;
@@ -160,7 +160,7 @@ void Profiler::DumpInternal()
 	// some other thread is running, we may get some garbage information from the previous frame
 	Threads threads;
 	for (ProfileThread *t : mThreads)
-		threads.push_back({ t->mThreadName, t->mSamples, t->mSamples + t->mCurrentSample });
+		threads.push_back({t->mThreadName, t->mSamples, t->mSamples + t->mCurrentSample});
 
 	// Shift all samples so that the first sample is at zero
 	uint64 min_cycle = 0xffffffffffffffffUL;

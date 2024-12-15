@@ -2,14 +2,13 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/TriangleSplitter/TriangleSplitterMean.h>
+#include "../TriangleSplitter/TriangleSplitterMean.h"
 
 JPH_NAMESPACE_BEGIN
 
-TriangleSplitterMean::TriangleSplitterMean(const VertexList &inVertices, const IndexedTriangleList &inTriangles) :
-	TriangleSplitter(inVertices, inTriangles)
+TriangleSplitterMean::TriangleSplitterMean(const VertexList &inVertices, const IndexedTriangleList &inTriangles) : TriangleSplitter(inVertices, inTriangles)
 {
 }
 

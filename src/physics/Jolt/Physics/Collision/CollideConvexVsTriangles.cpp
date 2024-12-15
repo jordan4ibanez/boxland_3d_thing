@@ -2,27 +2,26 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/CollideConvexVsTriangles.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/CollideShape.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/ActiveEdges.h>
-#include <Jolt/Physics/Collision/NarrowPhaseStats.h>
-#include <Jolt/Geometry/EPAPenetrationDepth.h>
-#include <Jolt/Geometry/Plane.h>
+#include "../Collision/CollideConvexVsTriangles.h"
+#include "../Collision/Shape/ScaleHelpers.h"
+#include "../Collision/CollideShape.h"
+#include "../Collision/TransformedShape.h"
+#include "../Collision/ActiveEdges.h"
+#include "../Collision/NarrowPhaseStats.h"
+#include "../../Geometry/EPAPenetrationDepth.h"
+#include "../../Geometry/Plane.h"
 
 JPH_NAMESPACE_BEGIN
 
-CollideConvexVsTriangles::CollideConvexVsTriangles(const ConvexShape *inShape1, Vec3Arg inScale1, Vec3Arg inScale2, Mat44Arg inCenterOfMassTransform1, Mat44Arg inCenterOfMassTransform2, const SubShapeID &inSubShapeID1, const CollideShapeSettings &inCollideShapeSettings, CollideShapeCollector &ioCollector) :
-	mCollideShapeSettings(inCollideShapeSettings),
-	mCollector(ioCollector),
-	mShape1(inShape1),
-	mScale1(inScale1),
-	mScale2(inScale2),
-	mTransform1(inCenterOfMassTransform1),
-	mSubShapeID1(inSubShapeID1)
+CollideConvexVsTriangles::CollideConvexVsTriangles(const ConvexShape *inShape1, Vec3Arg inScale1, Vec3Arg inScale2, Mat44Arg inCenterOfMassTransform1, Mat44Arg inCenterOfMassTransform2, const SubShapeID &inSubShapeID1, const CollideShapeSettings &inCollideShapeSettings, CollideShapeCollector &ioCollector) : mCollideShapeSettings(inCollideShapeSettings),
+																																																																																																																																																										 mCollector(ioCollector),
+																																																																																																																																																										 mShape1(inShape1),
+																																																																																																																																																										 mScale1(inScale1),
+																																																																																																																																																										 mScale2(inScale2),
+																																																																																																																																																										 mTransform1(inCenterOfMassTransform1),
+																																																																																																																																																										 mSubShapeID1(inSubShapeID1)
 {
 	// Get transforms
 	Mat44 inverse_transform2 = inCenterOfMassTransform2.InversedRotationTranslation();
@@ -32,10 +31,10 @@ CollideConvexVsTriangles::CollideConvexVsTriangles(const ConvexShape *inShape1, 
 	// Calculate bounds
 	mBoundsOf1 = inShape1->GetLocalBounds().Scaled(inScale1);
 	mBoundsOf1.ExpandBy(Vec3::sReplicate(inCollideShapeSettings.mMaxSeparationDistance));
-	mBoundsOf1InSpaceOf2 = mBoundsOf1.Transformed(transform1_to_2);	// Convert bounding box of 1 into space of 2
+	mBoundsOf1InSpaceOf2 = mBoundsOf1.Transformed(transform1_to_2); // Convert bounding box of 1 into space of 2
 
 	// Determine if shape 2 is inside out or not
-	mScaleSign2 = ScaleHelpers::IsInsideOut(inScale2)? -1.0f : 1.0f;
+	mScaleSign2 = ScaleHelpers::IsInsideOut(inScale2) ? -1.0f : 1.0f;
 }
 
 void CollideConvexVsTriangles::Collide(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8 inActiveEdges, const SubShapeID &inSubShapeID2)
@@ -118,7 +117,7 @@ void CollideConvexVsTriangles::Collide(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2,
 
 		// Update the penetration axis to account for active edges
 		// Note that we flip the triangle normal as the penetration axis is pointing towards the triangle instead of away
-		penetration_axis = ActiveEdges::FixNormal(v0, v1, v2, back_facing? triangle_normal : -triangle_normal, inActiveEdges, point2, penetration_axis, active_edge_movement_direction);
+		penetration_axis = ActiveEdges::FixNormal(v0, v1, v2, back_facing ? triangle_normal : -triangle_normal, inActiveEdges, point2, penetration_axis, active_edge_movement_direction);
 	}
 
 	// Convert to world space

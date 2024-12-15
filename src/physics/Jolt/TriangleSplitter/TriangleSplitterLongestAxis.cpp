@@ -2,15 +2,14 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/TriangleSplitter/TriangleSplitterLongestAxis.h>
-#include <Jolt/Geometry/AABox.h>
+#include "../TriangleSplitter/TriangleSplitterLongestAxis.h"
+#include "../Geometry/AABox.h"
 
 JPH_NAMESPACE_BEGIN
 
-TriangleSplitterLongestAxis::TriangleSplitterLongestAxis(const VertexList &inVertices, const IndexedTriangleList &inTriangles) :
-	TriangleSplitter(inVertices, inTriangles)
+TriangleSplitterLongestAxis::TriangleSplitterLongestAxis(const VertexList &inVertices, const IndexedTriangleList &inTriangles) : TriangleSplitter(inVertices, inTriangles)
 {
 }
 

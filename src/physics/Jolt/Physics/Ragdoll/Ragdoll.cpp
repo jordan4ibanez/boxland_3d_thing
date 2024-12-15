@@ -2,34 +2,30 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Ragdoll/Ragdoll.h>
-#include <Jolt/Physics/Constraints/SwingTwistConstraint.h>
-#include <Jolt/Physics/PhysicsSystem.h>
-#include <Jolt/Physics/Body/BodyLockMulti.h>
-#include <Jolt/Physics/Collision/GroupFilterTable.h>
-#include <Jolt/Physics/Collision/CollisionCollectorImpl.h>
-#include <Jolt/Physics/Collision/CollideShape.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Ragdoll/Ragdoll.h"
+#include "../Constraints/SwingTwistConstraint.h"
+#include "../PhysicsSystem.h"
+#include "../Body/BodyLockMulti.h"
+#include "../Collision/GroupFilterTable.h"
+#include "../Collision/CollisionCollectorImpl.h"
+#include "../Collision/CollideShape.h"
+#include "../Collision/CollisionDispatch.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(RagdollSettings::Part)
-{
-	JPH_ADD_BASE_CLASS(RagdollSettings::Part, BodyCreationSettings)
+JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(RagdollSettings::Part){
+		JPH_ADD_BASE_CLASS(RagdollSettings::Part, BodyCreationSettings)
 
-	JPH_ADD_ATTRIBUTE(RagdollSettings::Part, mToParent)
-}
+				JPH_ADD_ATTRIBUTE(RagdollSettings::Part, mToParent)}
 
-JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(RagdollSettings::AdditionalConstraint)
-{
-	JPH_ADD_ATTRIBUTE(RagdollSettings::AdditionalConstraint, mBodyIdx)
-	JPH_ADD_ATTRIBUTE(RagdollSettings::AdditionalConstraint, mConstraint)
-}
+JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(RagdollSettings::AdditionalConstraint){
+		JPH_ADD_ATTRIBUTE(RagdollSettings::AdditionalConstraint, mBodyIdx)
+				JPH_ADD_ATTRIBUTE(RagdollSettings::AdditionalConstraint, mConstraint)}
 
 JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(RagdollSettings)
 {
@@ -40,12 +36,12 @@ JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(RagdollSettings)
 
 static inline BodyInterface &sGetBodyInterface(PhysicsSystem *inSystem, bool inLockBodies)
 {
-	return inLockBodies? inSystem->GetBodyInterface() : inSystem->GetBodyInterfaceNoLock();
+	return inLockBodies ? inSystem->GetBodyInterface() : inSystem->GetBodyInterfaceNoLock();
 }
 
 static inline const BodyLockInterface &sGetBodyLockInterface(const PhysicsSystem *inSystem, bool inLockBodies)
 {
-	return inLockBodies? static_cast<const BodyLockInterface &>(inSystem->GetBodyLockInterface()) : static_cast<const BodyLockInterface &>(inSystem->GetBodyLockInterfaceNoLock());
+	return inLockBodies ? static_cast<const BodyLockInterface &>(inSystem->GetBodyLockInterface()) : static_cast<const BodyLockInterface &>(inSystem->GetBodyLockInterfaceNoLock());
 }
 
 bool RagdollSettings::Stabilize()
@@ -146,9 +142,9 @@ bool RagdollSettings::Stabilize()
 			// Get the principal moments of inertia for all parts
 			struct Principal
 			{
-				Mat44	mRotation;
-				Vec3	mDiagonal;
-				float	mChildSum = 0.0f;
+				Mat44 mRotation;
+				Vec3 mDiagonal;
+				float mChildSum = 0.0f;
 			};
 			Array<Principal> principals;
 			principals.resize(mParts.size());
@@ -270,7 +266,7 @@ void RagdollSettings::SaveBinaryState(StreamOut &inStream, bool inSaveShapes, bo
 	for (const Part &p : mParts)
 	{
 		// Write body creation settings
-		p.SaveWithChildren(inStream, inSaveShapes? &shape_to_id : nullptr, inSaveShapes? &material_to_id : nullptr, inSaveGroupFilter? &group_filter_to_id : nullptr);
+		p.SaveWithChildren(inStream, inSaveShapes ? &shape_to_id : nullptr, inSaveShapes ? &material_to_id : nullptr, inSaveGroupFilter ? &group_filter_to_id : nullptr);
 
 		// Save constraint
 		inStream.Write(p.mToParent != nullptr);

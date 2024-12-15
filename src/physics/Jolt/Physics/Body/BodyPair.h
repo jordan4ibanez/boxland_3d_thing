@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Physics/Body/BodyID.h>
-#include <Jolt/Core/HashCombine.h>
+#include "../Body/BodyID.h"
+#include "../../Core/HashCombine.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -15,20 +15,20 @@ struct alignas(uint64) BodyPair
 	JPH_OVERRIDE_NEW_DELETE
 
 	/// Constructor
-							BodyPair() = default;
-							BodyPair(BodyID inA, BodyID inB)							: mBodyA(inA), mBodyB(inB) { }
+	BodyPair() = default;
+	BodyPair(BodyID inA, BodyID inB) : mBodyA(inA), mBodyB(inB) {}
 
 	/// Equals operator
-	bool					operator == (const BodyPair &inRHS) const					{ return *reinterpret_cast<const uint64 *>(this) == *reinterpret_cast<const uint64 *>(&inRHS); }
+	bool operator==(const BodyPair &inRHS) const { return *reinterpret_cast<const uint64 *>(this) == *reinterpret_cast<const uint64 *>(&inRHS); }
 
 	/// Smaller than operator, used for consistently ordering body pairs
-	bool					operator < (const BodyPair &inRHS) const					{ return *reinterpret_cast<const uint64 *>(this) < *reinterpret_cast<const uint64 *>(&inRHS); }
+	bool operator<(const BodyPair &inRHS) const { return *reinterpret_cast<const uint64 *>(this) < *reinterpret_cast<const uint64 *>(&inRHS); }
 
 	/// Get the hash value of this object
-	uint64					GetHash() const												{ return Hash64(*reinterpret_cast<const uint64 *>(this)); }
+	uint64 GetHash() const { return Hash64(*reinterpret_cast<const uint64 *>(this)); }
 
-	BodyID					mBodyA;
-	BodyID					mBodyB;
+	BodyID mBodyA;
+	BodyID mBodyB;
 };
 
 static_assert(sizeof(BodyPair) == sizeof(uint64), "Mismatch in class size");

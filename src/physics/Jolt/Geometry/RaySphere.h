@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Math/FindRoot.h>
+#include "../Math/FindRoot.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -23,7 +23,7 @@ JPH_INLINE float RaySphere(Vec3Arg inRayOrigin, Vec3Arg inRayDirection, Vec3Arg 
 	float c = center_origin.LengthSq() - inSphereRadius * inSphereRadius;
 	float fraction1, fraction2;
 	if (FindRoot(a, b, c, fraction1, fraction2) == 0)
-		return c <= 0.0f? 0.0f : FLT_MAX; // Return if origin is inside the sphere
+		return c <= 0.0f ? 0.0f : FLT_MAX; // Return if origin is inside the sphere
 
 	// Sort so that the smallest is first
 	if (fraction1 > fraction2)

@@ -2,19 +2,18 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/TriangleSplitter/TriangleSplitterFixedLeafSize.h>
-#include <Jolt/TriangleGrouper/TriangleGrouperClosestCentroid.h>
+#include "../TriangleSplitter/TriangleSplitterFixedLeafSize.h"
+#include "../TriangleGrouper/TriangleGrouperClosestCentroid.h"
 
 JPH_NAMESPACE_BEGIN
 
-TriangleSplitterFixedLeafSize::TriangleSplitterFixedLeafSize(const VertexList &inVertices, const IndexedTriangleList &inTriangles, uint inLeafSize, uint inMinNumBins, uint inMaxNumBins, uint inNumTrianglesPerBin) :
-	TriangleSplitter(inVertices, inTriangles),
-	mLeafSize(inLeafSize),
-	mMinNumBins(inMinNumBins),
-	mMaxNumBins(inMaxNumBins),
-	mNumTrianglesPerBin(inNumTrianglesPerBin)
+TriangleSplitterFixedLeafSize::TriangleSplitterFixedLeafSize(const VertexList &inVertices, const IndexedTriangleList &inTriangles, uint inLeafSize, uint inMinNumBins, uint inMaxNumBins, uint inNumTrianglesPerBin) : TriangleSplitter(inVertices, inTriangles),
+																																																																																																											 mLeafSize(inLeafSize),
+																																																																																																											 mMinNumBins(inMinNumBins),
+																																																																																																											 mMaxNumBins(inMaxNumBins),
+																																																																																																											 mNumTrianglesPerBin(inNumTrianglesPerBin)
 {
 	// Group the triangles
 	TriangleGrouperClosestCentroid grouper;

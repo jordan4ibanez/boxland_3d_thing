@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Core/Reference.h>
-#include <Jolt/ObjectStream/SerializableObject.h>
+#include "../Core/Reference.h"
+#include "../ObjectStream/SerializableObject.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -24,13 +24,13 @@ public:
 
 	public:
 		/// Convert from a local space matrix
-		void							FromMatrix(Mat44Arg inMatrix);
+		void FromMatrix(Mat44Arg inMatrix);
 
 		/// Convert to matrix representation
-		inline Mat44					ToMatrix() const									{ return Mat44::sRotationTranslation(mRotation, mTranslation); }
+		inline Mat44 ToMatrix() const { return Mat44::sRotationTranslation(mRotation, mTranslation); }
 
-		Quat							mRotation = Quat::sIdentity();						///< Local space rotation of the joint
-		Vec3							mTranslation = Vec3::sZero();						///< Local space translation of the joint
+		Quat mRotation = Quat::sIdentity(); ///< Local space rotation of the joint
+		Vec3 mTranslation = Vec3::sZero();	///< Local space translation of the joint
 	};
 
 	/// Contains the state of a single joint at a particular time
@@ -39,7 +39,7 @@ public:
 		JPH_DECLARE_SERIALIZABLE_NON_VIRTUAL(JPH_EXPORT, Keyframe)
 
 	public:
-		float							mTime = 0.0f;										///< Time of keyframe in seconds
+		float mTime = 0.0f; ///< Time of keyframe in seconds
 	};
 
 	using KeyframeVector = Array<Keyframe>;
@@ -50,28 +50,28 @@ public:
 		JPH_DECLARE_SERIALIZABLE_NON_VIRTUAL(JPH_EXPORT, AnimatedJoint)
 
 	public:
-		String							mJointName;											///< Name of the joint
-		KeyframeVector					mKeyframes;											///< List of keyframes over time
+		String mJointName;				 ///< Name of the joint
+		KeyframeVector mKeyframes; ///< List of keyframes over time
 	};
 
 	using AnimatedJointVector = Array<AnimatedJoint>;
 
 	/// Get the length (in seconds) of this animation
-	float								GetDuration() const;
+	float GetDuration() const;
 
 	/// Scale the size of all joints by inScale
-	void								ScaleJoints(float inScale);
+	void ScaleJoints(float inScale);
 
 	/// Get the (interpolated) joint transforms at time inTime
-	void								Sample(float inTime, SkeletonPose &ioPose) const;
+	void Sample(float inTime, SkeletonPose &ioPose) const;
 
 	/// Get joint samples
-	const AnimatedJointVector &			GetAnimatedJoints() const							{ return mAnimatedJoints; }
-	AnimatedJointVector &				GetAnimatedJoints()									{ return mAnimatedJoints; }
+	const AnimatedJointVector &GetAnimatedJoints() const { return mAnimatedJoints; }
+	AnimatedJointVector &GetAnimatedJoints() { return mAnimatedJoints; }
 
 private:
-	AnimatedJointVector					mAnimatedJoints;									///< List of joints and keyframes
-	bool								mIsLooping = true;									///< If this animation loops back to start
+	AnimatedJointVector mAnimatedJoints; ///< List of joints and keyframes
+	bool mIsLooping = true;							 ///< If this animation loops back to start
 };
 
 JPH_NAMESPACE_END

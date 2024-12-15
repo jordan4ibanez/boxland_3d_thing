@@ -2,20 +2,20 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/Shape.h>
-#include <Jolt/Physics/Collision/Shape/ScaledShape.h>
-#include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/PhysicsMaterial.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/CollidePointResult.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/Core/Factory.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/Shape.h"
+#include "../../Collision/Shape/ScaledShape.h"
+#include "../../Collision/Shape/StaticCompoundShape.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../Collision/PhysicsMaterial.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/CastResult.h"
+#include "../../Collision/CollidePointResult.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
+#include "../../../Core/Factory.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -257,12 +257,12 @@ Shape::ShapeResult Shape::ScaleShape(Vec3Arg inScale) const
 	// Collect the leaf shapes and their transforms
 	struct Collector : TransformedShapeCollector
 	{
-		virtual void				AddHit(const ResultType &inResult) override
+		virtual void AddHit(const ResultType &inResult) override
 		{
 			mShapes.push_back(inResult);
 		}
 
-		Array<TransformedShape>		mShapes;
+		Array<TransformedShape> mShapes;
 	};
 	Collector collector;
 	TransformShape(Mat44::sScale(inScale) * Mat44::sTranslation(GetCenterOfMass()), collector);
@@ -296,7 +296,7 @@ void Shape::sCollidePointUsingRayCast(const Shape &inShape, Vec3Arg inPoint, con
 		class HitCountCollector : public CastRayCollector
 		{
 		public:
-			virtual void	AddHit(const RayCastResult &inResult) override
+			virtual void AddHit(const RayCastResult &inResult) override
 			{
 				// Store the last sub shape ID so that we can provide something to our outer hit collector
 				mSubShapeID = inResult.mSubShapeID2;
@@ -304,8 +304,8 @@ void Shape::sCollidePointUsingRayCast(const Shape &inShape, Vec3Arg inPoint, con
 				++mHitCount;
 			}
 
-			int				mHitCount = 0;
-			SubShapeID		mSubShapeID;
+			int mHitCount = 0;
+			SubShapeID mSubShapeID;
 		};
 		HitCountCollector collector;
 
@@ -314,11 +314,11 @@ void Shape::sCollidePointUsingRayCast(const Shape &inShape, Vec3Arg inPoint, con
 		settings.SetBackFaceMode(EBackFaceMode::CollideWithBackFaces);
 
 		// Cast a ray that's 10% longer than the height of our bounding box
-		inShape.CastRay(RayCast { inPoint, 1.1f * bounds.GetSize().GetY() * Vec3::sAxisY() }, settings, inSubShapeIDCreator, collector, inShapeFilter);
+		inShape.CastRay(RayCast{inPoint, 1.1f * bounds.GetSize().GetY() * Vec3::sAxisY()}, settings, inSubShapeIDCreator, collector, inShapeFilter);
 
 		// Odd amount of hits means inside
 		if ((collector.mHitCount & 1) == 1)
-			ioCollector.AddHit({ TransformedShape::sGetBodyID(ioCollector.GetContext()), collector.mSubShapeID });
+			ioCollector.AddHit({TransformedShape::sGetBodyID(ioCollector.GetContext()), collector.mSubShapeID});
 	}
 }
 

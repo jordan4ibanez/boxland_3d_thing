@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Physics/Collision/BroadPhase/BroadPhaseLayer.h>
+#include "../Collision/BroadPhase/BroadPhaseLayer.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -14,7 +14,7 @@ class ObjectVsBroadPhaseLayerFilterTable : public ObjectVsBroadPhaseLayerFilter
 {
 private:
 	/// Get which bit corresponds to the pair (inLayer1, inLayer2)
-	uint					GetBit(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const
+	uint GetBit(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const
 	{
 		// Calculate at which bit the entry for this pair resides
 		return inLayer1 * mNumBroadPhaseLayers + (BroadPhaseLayer::Type)inLayer2;
@@ -28,8 +28,7 @@ public:
 	/// @param inNumBroadPhaseLayers Number of broad phase layers
 	/// @param inObjectLayerPairFilter The object layer pair filter that determines which object layers can collide
 	/// @param inNumObjectLayers Number of object layers
-							ObjectVsBroadPhaseLayerFilterTable(const BroadPhaseLayerInterface &inBroadPhaseLayerInterface, uint inNumBroadPhaseLayers, const ObjectLayerPairFilter &inObjectLayerPairFilter, uint inNumObjectLayers) :
-		mNumBroadPhaseLayers(inNumBroadPhaseLayers)
+	ObjectVsBroadPhaseLayerFilterTable(const BroadPhaseLayerInterface &inBroadPhaseLayerInterface, uint inNumBroadPhaseLayers, const ObjectLayerPairFilter &inObjectLayerPairFilter, uint inNumObjectLayers) : mNumBroadPhaseLayers(inNumBroadPhaseLayers)
 	{
 		// Resize table and set all entries to false
 		mTable.resize((inNumBroadPhaseLayers * inNumObjectLayers + 7) / 8, 0);
@@ -52,15 +51,15 @@ public:
 	}
 
 	/// Returns true if an object layer should collide with a broadphase layer
-	virtual bool			ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const override
+	virtual bool ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const override
 	{
 		uint bit = GetBit(inLayer1, inLayer2);
 		return (mTable[bit >> 3] & (1 << (bit & 0b111))) != 0;
 	}
 
 private:
-	uint					mNumBroadPhaseLayers;						///< The total number of broadphase layers
-	Array<uint8>			mTable;										///< The table of bits that indicates which layers collide
+	uint mNumBroadPhaseLayers; ///< The total number of broadphase layers
+	Array<uint8> mTable;			 ///< The table of bits that indicates which layers collide
 };
 
 JPH_NAMESPACE_END

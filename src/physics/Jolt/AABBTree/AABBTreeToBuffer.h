@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <Jolt/AABBTree/AABBTreeBuilder.h>
-#include <Jolt/Core/ByteBuffer.h>
-#include <Jolt/Geometry/IndexedTriangle.h>
+#include "../AABBTree/AABBTreeBuilder.h"
+#include "../Core/ByteBuffer.h"
+#include "../Geometry/IndexedTriangle.h"
 
 JPH_SUPPRESS_WARNINGS_STD_BEGIN
 #include <deque>
@@ -14,7 +14,8 @@ JPH_SUPPRESS_WARNINGS_STD_END
 
 JPH_NAMESPACE_BEGIN
 
-template <class T> using Deque = std::deque<T, STLAllocator<T>>;
+template <class T>
+using Deque = std::deque<T, STLAllocator<T>>;
 
 /// Conversion algorithm that converts an AABB tree to an optimized binary buffer
 template <class TriangleCodec, class NodeCodec>
@@ -37,7 +38,7 @@ public:
 	static const int TriangleHeaderSize = TriangleCodec::TriangleHeaderSize;
 
 	/// Convert AABB tree. Returns false if failed.
-	bool							Convert(const VertexList &inVertices, const AABBTreeBuilder::Node *inRoot, bool inStoreUserData, const char *&outError)
+	bool Convert(const VertexList &inVertices, const AABBTreeBuilder::Node *inRoot, bool inStoreUserData, const char *&outError)
 	{
 		const typename NodeCodec::EncodingContext node_ctx;
 		typename TriangleCodec::EncodingContext tri_ctx(inVertices);
@@ -53,21 +54,21 @@ public:
 		mNodesSize = 0;
 
 		// Add headers
-		NodeHeader *header = HeaderSize > 0? mTree.Allocate<NodeHeader>() : nullptr;
-		TriangleHeader *triangle_header = TriangleHeaderSize > 0? mTree.Allocate<TriangleHeader>() : nullptr;
+		NodeHeader *header = HeaderSize > 0 ? mTree.Allocate<NodeHeader>() : nullptr;
+		TriangleHeader *triangle_header = TriangleHeaderSize > 0 ? mTree.Allocate<TriangleHeader>() : nullptr;
 
 		struct NodeData
 		{
-			const AABBTreeBuilder::Node *	mNode = nullptr;							// Node that this entry belongs to
-			Vec3							mNodeBoundsMin;								// Quantized node bounds
-			Vec3							mNodeBoundsMax;
-			uint							mNodeStart = uint(-1);						// Start of node in mTree
-			uint							mTriangleStart = uint(-1);					// Start of the triangle data in mTree
-			uint							mNumChildren = 0;							// Number of children
-			uint							mChildNodeStart[NumChildrenPerNode];		// Start of the children of the node in mTree
-			uint							mChildTrianglesStart[NumChildrenPerNode];	// Start of the triangle data in mTree
-			uint *							mParentChildNodeStart = nullptr;			// Where to store mNodeStart (to patch mChildNodeStart of my parent)
-			uint *							mParentTrianglesStart = nullptr;			// Where to store mTriangleStart (to patch mChildTrianglesStart of my parent)
+			const AABBTreeBuilder::Node *mNode = nullptr; // Node that this entry belongs to
+			Vec3 mNodeBoundsMin;													// Quantized node bounds
+			Vec3 mNodeBoundsMax;
+			uint mNodeStart = uint(-1);										 // Start of node in mTree
+			uint mTriangleStart = uint(-1);								 // Start of the triangle data in mTree
+			uint mNumChildren = 0;												 // Number of children
+			uint mChildNodeStart[NumChildrenPerNode];			 // Start of the children of the node in mTree
+			uint mChildTrianglesStart[NumChildrenPerNode]; // Start of the triangle data in mTree
+			uint *mParentChildNodeStart = nullptr;				 // Where to store mNodeStart (to patch mChildNodeStart of my parent)
+			uint *mParentTrianglesStart = nullptr;				 // Where to store mTriangleStart (to patch mChildTrianglesStart of my parent)
 		};
 
 		Deque<NodeData *> to_process;
@@ -208,38 +209,38 @@ public:
 	}
 
 	/// Get resulting data
-	inline const ByteBuffer &		GetBuffer() const
+	inline const ByteBuffer &GetBuffer() const
 	{
 		return mTree;
 	}
 
 	/// Get resulting data
-	inline ByteBuffer &				GetBuffer()
+	inline ByteBuffer &GetBuffer()
 	{
 		return mTree;
 	}
 
 	/// Get header for tree
-	inline const NodeHeader *		GetNodeHeader() const
+	inline const NodeHeader *GetNodeHeader() const
 	{
 		return mTree.Get<NodeHeader>(0);
 	}
 
 	/// Get header for triangles
-	inline const TriangleHeader *	GetTriangleHeader() const
+	inline const TriangleHeader *GetTriangleHeader() const
 	{
 		return mTree.Get<TriangleHeader>(HeaderSize);
 	}
 
 	/// Get root of resulting tree
-	inline const void *				GetRoot() const
+	inline const void *GetRoot() const
 	{
 		return mTree.Get<void>(HeaderSize + TriangleHeaderSize);
 	}
 
 private:
-	ByteBuffer						mTree;									///< Resulting tree structure
-	uint							mNodesSize;								///< Size in bytes of the nodes in the buffer
+	ByteBuffer mTree; ///< Resulting tree structure
+	uint mNodesSize;	///< Size in bytes of the nodes in the buffer
 };
 
 JPH_NAMESPACE_END

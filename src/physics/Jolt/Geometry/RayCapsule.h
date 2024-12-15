@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Geometry/RayCylinder.h>
-#include <Jolt/Geometry/RaySphere.h>
+#include "../Geometry/RayCylinder.h"
+#include "../Geometry/RaySphere.h"
 
 JPH_NAMESPACE_BEGIN
 

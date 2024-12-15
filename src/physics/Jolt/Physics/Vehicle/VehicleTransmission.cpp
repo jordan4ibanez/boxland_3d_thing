@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Vehicle/VehicleTransmission.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../Vehicle/VehicleTransmission.h"
+#include "../../ObjectStream/TypeDeclarations.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -55,11 +55,11 @@ void VehicleTransmission::Update(float inDeltaTime, float inCurrentRPM, float in
 	{
 		// Switch gears based on rpm
 		int old_gear = mCurrentGear;
-		if (mCurrentGear == 0 // In neutral
-			|| inForwardInput * float(mCurrentGear) < 0.0f) // Changing between forward / reverse
+		if (mCurrentGear == 0																// In neutral
+				|| inForwardInput * float(mCurrentGear) < 0.0f) // Changing between forward / reverse
 		{
 			// Switch to first gear or reverse depending on input
-			mCurrentGear = inForwardInput > 0.0f? 1 : (inForwardInput < 0.0f? -1 : 0);
+			mCurrentGear = inForwardInput > 0.0f ? 1 : (inForwardInput < 0.0f ? -1 : 0);
 		}
 		else if (mGearSwitchLatencyTimeLeft == 0.0f) // If not in the timout after switching gears
 		{
@@ -83,14 +83,14 @@ void VehicleTransmission::Update(float inDeltaTime, float inCurrentRPM, float in
 				if (mCurrentGear < 0)
 				{
 					// Shift down, reverse
-					int max_gear = inForwardInput != 0.0f? -1 : 0;
+					int max_gear = inForwardInput != 0.0f ? -1 : 0;
 					if (mCurrentGear < max_gear)
 						mCurrentGear++;
 				}
 				else
 				{
 					// Shift down, forward
-					int min_gear = inForwardInput != 0.0f? 1 : 0;
+					int min_gear = inForwardInput != 0.0f ? 1 : 0;
 					if (mCurrentGear > min_gear)
 						mCurrentGear--;
 				}
@@ -100,7 +100,7 @@ void VehicleTransmission::Update(float inDeltaTime, float inCurrentRPM, float in
 		if (old_gear != mCurrentGear)
 		{
 			// We've shifted gear, start switch countdown
-			mGearSwitchTimeLeft = old_gear != 0? mSwitchTime : 0.0f;
+			mGearSwitchTimeLeft = old_gear != 0 ? mSwitchTime : 0.0f;
 			mClutchReleaseTimeLeft = mClutchReleaseTime;
 			mGearSwitchLatencyTimeLeft = mSwitchLatency;
 			mClutchFriction = 0.0f;

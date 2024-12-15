@@ -2,10 +2,10 @@
 // SPDX-FileCopyrightText: 2023 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Core/JobSystemWithBarrier.h>
-#include <Jolt/Core/Profiler.h>
+#include "../Core/JobSystemWithBarrier.h"
+#include "../Core/Profiler.h"
 
 JPH_SUPPRESS_WARNINGS_STD_BEGIN
 #include <thread>
@@ -173,7 +173,7 @@ void JobSystemWithBarrier::Init(uint inMaxBarriers)
 
 	// Init freelist of barriers
 	mMaxBarriers = inMaxBarriers;
-	mBarriers = new BarrierImpl [inMaxBarriers];
+	mBarriers = new BarrierImpl[inMaxBarriers];
 }
 
 JobSystemWithBarrier::JobSystemWithBarrier(uint inMaxBarriers)
@@ -188,7 +188,7 @@ JobSystemWithBarrier::~JobSystemWithBarrier()
 	for (const BarrierImpl *b = mBarriers, *b_end = mBarriers + mMaxBarriers; b < b_end; ++b)
 		JPH_ASSERT(!b->mInUse);
 #endif // JPH_ENABLE_ASSERTS
-	delete [] mBarriers;
+	delete[] mBarriers;
 }
 
 JobSystem::Barrier *JobSystemWithBarrier::CreateBarrier()

@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/DistanceConstraint.h>
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "../Constraints/DistanceConstraint.h"
+#include "../Body/Body.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -60,10 +60,9 @@ TwoBodyConstraint *DistanceConstraintSettings::Create(Body &inBody1, Body &inBod
 	return new DistanceConstraint(inBody1, inBody2, *this);
 }
 
-DistanceConstraint::DistanceConstraint(Body &inBody1, Body &inBody2, const DistanceConstraintSettings &inSettings) :
-	TwoBodyConstraint(inBody1, inBody2, inSettings),
-	mMinDistance(inSettings.mMinDistance),
-	mMaxDistance(inSettings.mMaxDistance)
+DistanceConstraint::DistanceConstraint(Body &inBody1, Body &inBody2, const DistanceConstraintSettings &inSettings) : TwoBodyConstraint(inBody1, inBody2, inSettings),
+																																																										 mMinDistance(inSettings.mMinDistance),
+																																																										 mMaxDistance(inSettings.mMaxDistance)
 {
 	if (inSettings.mSpace == EConstraintSpace::WorldSpace)
 	{
@@ -91,8 +90,8 @@ DistanceConstraint::DistanceConstraint(Body &inBody1, Body &inBody2, const Dista
 	}
 	else
 	{
-		min_distance = mMinDistance < 0.0f? min(distance, mMaxDistance) : mMinDistance;
-		max_distance = mMaxDistance < 0.0f? max(distance, mMinDistance) : mMaxDistance;
+		min_distance = mMinDistance < 0.0f ? min(distance, mMaxDistance) : mMinDistance;
+		max_distance = mMaxDistance < 0.0f ? max(distance, mMinDistance) : mMaxDistance;
 	}
 	SetDistance(min_distance, max_distance);
 
@@ -212,13 +211,13 @@ void DistanceConstraint::DrawConstraint(DebugRenderer *inRenderer) const
 	float len = delta.Length();
 	if (len < mMinDistance)
 	{
-		RVec3 real_end_pos = mWorldSpacePosition1 + (len > 0.0f? delta * mMinDistance / len : Vec3(0, len, 0));
+		RVec3 real_end_pos = mWorldSpacePosition1 + (len > 0.0f ? delta * mMinDistance / len : Vec3(0, len, 0));
 		inRenderer->DrawLine(mWorldSpacePosition1, mWorldSpacePosition2, Color::sGreen);
 		inRenderer->DrawLine(mWorldSpacePosition2, real_end_pos, Color::sYellow);
 	}
 	else if (len > mMaxDistance)
 	{
-		RVec3 real_end_pos = mWorldSpacePosition1 + (len > 0.0f? delta * mMaxDistance / len : Vec3(0, len, 0));
+		RVec3 real_end_pos = mWorldSpacePosition1 + (len > 0.0f ? delta * mMaxDistance / len : Vec3(0, len, 0));
 		inRenderer->DrawLine(mWorldSpacePosition1, real_end_pos, Color::sGreen);
 		inRenderer->DrawLine(real_end_pos, mWorldSpacePosition2, Color::sRed);
 	}

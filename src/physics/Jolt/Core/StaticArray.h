@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Jolt/Core/HashCombine.h>
+#include "../Core/HashCombine.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -20,10 +20,10 @@ public:
 	static constexpr uint Capacity = N;
 
 	/// Default constructor
-						StaticArray() = default;
+	StaticArray() = default;
 
 	/// Constructor from initializer list
-	explicit			StaticArray(std::initializer_list<T> inList)
+	explicit StaticArray(std::initializer_list<T> inList)
 	{
 		JPH_ASSERT(inList.size() <= N);
 		for (const T &v : inList)
@@ -31,7 +31,7 @@ public:
 	}
 
 	/// Copy constructor
-						StaticArray(const StaticArray<T, N> &inRHS)
+	StaticArray(const StaticArray<T, N> &inRHS)
 	{
 		while (mSize < inRHS.mSize)
 		{
@@ -41,7 +41,7 @@ public:
 	}
 
 	/// Destruct all elements
-						~StaticArray()
+	~StaticArray()
 	{
 		if constexpr (!is_trivially_destructible<T>())
 			for (T *e = reinterpret_cast<T *>(mElements), *end = e + mSize; e < end; ++e)
@@ -49,7 +49,7 @@ public:
 	}
 
 	/// Destruct all elements and set length to zero
-	void				clear()
+	void clear()
 	{
 		if constexpr (!is_trivially_destructible<T>())
 			for (T *e = reinterpret_cast<T *>(mElements), *end = e + mSize; e < end; ++e)
@@ -58,7 +58,7 @@ public:
 	}
 
 	/// Add element to the back of the array
-	void				push_back(const T &inElement)
+	void push_back(const T &inElement)
 	{
 		JPH_ASSERT(mSize < N);
 		::new (&mElements[mSize++]) T(inElement);
@@ -66,39 +66,39 @@ public:
 
 	/// Construct element at the back of the array
 	template <class... A>
-	void				emplace_back(A &&... inElement)
+	void emplace_back(A &&...inElement)
 	{
 		JPH_ASSERT(mSize < N);
 		::new (&mElements[mSize++]) T(std::forward<A>(inElement)...);
 	}
 
 	/// Remove element from the back of the array
-	void				pop_back()
+	void pop_back()
 	{
 		JPH_ASSERT(mSize > 0);
 		reinterpret_cast<T &>(mElements[--mSize]).~T();
 	}
 
 	/// Returns true if there are no elements in the array
-	bool				empty() const
+	bool empty() const
 	{
 		return mSize == 0;
 	}
 
 	/// Returns amount of elements in the array
-	size_type			size() const
+	size_type size() const
 	{
 		return mSize;
 	}
 
 	/// Returns maximum amount of elements the array can hold
-	size_type			capacity() const
+	size_type capacity() const
 	{
 		return N;
 	}
 
 	/// Resize array to new length
-	void				resize(size_type inNewSize)
+	void resize(size_type inNewSize)
 	{
 		JPH_ASSERT(inNewSize <= N);
 		if constexpr (!is_trivially_constructible<T>())
@@ -113,92 +113,92 @@ public:
 	using const_iterator = const T *;
 
 	/// Iterators
-	const_iterator		begin() const
+	const_iterator begin() const
 	{
 		return reinterpret_cast<const T *>(mElements);
 	}
 
-	const_iterator		end() const
+	const_iterator end() const
 	{
 		return reinterpret_cast<const T *>(mElements + mSize);
 	}
 
 	using iterator = T *;
 
-	iterator			begin()
+	iterator begin()
 	{
 		return reinterpret_cast<T *>(mElements);
 	}
 
-	iterator			end()
+	iterator end()
 	{
 		return reinterpret_cast<T *>(mElements + mSize);
 	}
 
-	const T *			data() const
+	const T *data() const
 	{
 		return reinterpret_cast<const T *>(mElements);
 	}
 
-	T *					data()
+	T *data()
 	{
 		return reinterpret_cast<T *>(mElements);
 	}
 
 	/// Access element
-	T &					operator [] (size_type inIdx)
+	T &operator[](size_type inIdx)
 	{
 		JPH_ASSERT(inIdx < mSize);
 		return reinterpret_cast<T &>(mElements[inIdx]);
 	}
 
-	const T &			operator [] (size_type inIdx) const
+	const T &operator[](size_type inIdx) const
 	{
 		JPH_ASSERT(inIdx < mSize);
 		return reinterpret_cast<const T &>(mElements[inIdx]);
 	}
 
 	/// Access element
-	T &					at(size_type inIdx)
+	T &at(size_type inIdx)
 	{
 		JPH_ASSERT(inIdx < mSize);
 		return reinterpret_cast<T &>(mElements[inIdx]);
 	}
 
-	const T &			at(size_type inIdx) const
+	const T &at(size_type inIdx) const
 	{
 		JPH_ASSERT(inIdx < mSize);
 		return reinterpret_cast<const T &>(mElements[inIdx]);
 	}
 
 	/// First element in the array
-	const T &			front() const
+	const T &front() const
 	{
 		JPH_ASSERT(mSize > 0);
 		return reinterpret_cast<const T &>(mElements[0]);
 	}
 
-	T &					front()
+	T &front()
 	{
 		JPH_ASSERT(mSize > 0);
 		return reinterpret_cast<T &>(mElements[0]);
 	}
 
 	/// Last element in the array
-	const T &			back() const
+	const T &back() const
 	{
 		JPH_ASSERT(mSize > 0);
 		return reinterpret_cast<const T &>(mElements[mSize - 1]);
 	}
 
-	T &					back()
+	T &back()
 	{
 		JPH_ASSERT(mSize > 0);
 		return reinterpret_cast<T &>(mElements[mSize - 1]);
 	}
 
 	/// Remove one element from the array
-	void				erase(const_iterator inIter)
+	void erase(const_iterator inIter)
 	{
 		size_type p = size_type(inIter - begin());
 		JPH_ASSERT(p < mSize);
@@ -209,7 +209,7 @@ public:
 	}
 
 	/// Remove multiple element from the array
-	void				erase(const_iterator inBegin, const_iterator inEnd)
+	void erase(const_iterator inBegin, const_iterator inEnd)
 	{
 		size_type p = size_type(inBegin - begin());
 		size_type n = size_type(inEnd - inBegin);
@@ -222,7 +222,7 @@ public:
 	}
 
 	/// Assignment operator
-	StaticArray<T, N> &	operator = (const StaticArray<T, N> &inRHS)
+	StaticArray<T, N> &operator=(const StaticArray<T, N> &inRHS)
 	{
 		size_type rhs_size = inRHS.size();
 
@@ -242,7 +242,7 @@ public:
 
 	/// Assignment operator with static array of different max length
 	template <uint M>
-	StaticArray<T, N> &	operator = (const StaticArray<T, M> &inRHS)
+	StaticArray<T, N> &operator=(const StaticArray<T, M> &inRHS)
 	{
 		size_type rhs_size = inRHS.size();
 		JPH_ASSERT(rhs_size <= N);
@@ -262,7 +262,7 @@ public:
 	}
 
 	/// Comparing arrays
-	bool				operator == (const StaticArray<T, N> &inRHS) const
+	bool operator==(const StaticArray<T, N> &inRHS) const
 	{
 		if (mSize != inRHS.mSize)
 			return false;
@@ -272,7 +272,7 @@ public:
 		return true;
 	}
 
-	bool				operator != (const StaticArray<T, N> &inRHS) const
+	bool operator!=(const StaticArray<T, N> &inRHS) const
 	{
 		if (mSize != inRHS.mSize)
 			return true;
@@ -285,14 +285,14 @@ public:
 protected:
 	struct alignas(T) Storage
 	{
-		uint8			mData[sizeof(T)];
+		uint8 mData[sizeof(T)];
 	};
 
 	static_assert(sizeof(T) == sizeof(Storage), "Mismatch in size");
 	static_assert(alignof(T) == alignof(Storage), "Mismatch in alignment");
 
-	size_type			mSize = 0;
-	Storage				mElements[N];
+	size_type mSize = 0;
+	Storage mElements[N];
 };
 
 JPH_NAMESPACE_END
@@ -306,7 +306,7 @@ namespace std
 	template <class T, JPH::uint N>
 	struct hash<JPH::StaticArray<T, N>>
 	{
-		size_t operator () (const JPH::StaticArray<T, N> &inRHS) const
+		size_t operator()(const JPH::StaticArray<T, N> &inRHS) const
 		{
 			std::size_t ret = 0;
 

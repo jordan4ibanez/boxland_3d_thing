@@ -2,16 +2,16 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
-#include <Jolt/Physics/Collision/BroadPhase/BroadPhaseBruteForce.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/AABoxCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Body/BodyManager.h>
-#include <Jolt/Physics/Body/BodyPair.h>
-#include <Jolt/Geometry/RayAABox.h>
-#include <Jolt/Geometry/OrientedBox.h>
-#include <Jolt/Core/QuickSort.h>
+#include "../../../Jolt.h"
+#include "../../Collision/BroadPhase/BroadPhaseBruteForce.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/AABoxCast.h"
+#include "../../Collision/CastResult.h"
+#include "../../Body/BodyManager.h"
+#include "../../Body/BodyPair.h"
+#include "../../../Geometry/RayAABox.h"
+#include "../../../Geometry/OrientedBox.h"
+#include "../../../Core/QuickSort.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -80,7 +80,7 @@ void BroadPhaseBruteForce::NotifyBodiesAABBChanged(BodyID *ioBodies, int inNumbe
 	// Do nothing, we directly reference the body
 }
 
-void BroadPhaseBruteForce::NotifyBodiesLayerChanged(BodyID * ioBodies, int inNumber)
+void BroadPhaseBruteForce::NotifyBodiesLayerChanged(BodyID *ioBodies, int inNumber)
 {
 	// Do nothing, we directly reference the body
 }
@@ -108,7 +108,7 @@ void BroadPhaseBruteForce::CastRay(const RayCast &inRay, RayCastBodyCollector &i
 			if (fraction < early_out_fraction)
 			{
 				// Store hit
-				BroadPhaseCastResult result { b, fraction };
+				BroadPhaseCastResult result{b, fraction};
 				ioCollector.AddHit(result);
 				if (ioCollector.ShouldEarlyOut())
 					break;
@@ -244,7 +244,7 @@ void BroadPhaseBruteForce::CastAABoxNoLock(const AABoxCast &inBox, CastShapeBody
 			if (fraction < early_out_fraction)
 			{
 				// Store hit
-				BroadPhaseCastResult result { b, fraction };
+				BroadPhaseCastResult result{b, fraction};
 				ioCollector.AddHit(result);
 				if (ioCollector.ShouldEarlyOut())
 					break;
@@ -295,7 +295,7 @@ void BroadPhaseBruteForce::FindCollidingPairs(BodyID *ioActiveBodies, int inNumA
 				continue;
 
 			// Store overlapping pair
-			ioPairCollector.AddHit({ b1_id, b2_id });
+			ioPairCollector.AddHit({b1_id, b2_id});
 		}
 	}
 }

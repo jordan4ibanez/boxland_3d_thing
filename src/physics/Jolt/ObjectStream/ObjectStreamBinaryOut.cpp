@@ -2,17 +2,16 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
 #ifdef JPH_OBJECT_STREAM
 
-#include <Jolt/ObjectStream/ObjectStreamBinaryOut.h>
-#include <Jolt/Core/StringTools.h>
+#include "../ObjectStream/ObjectStreamBinaryOut.h"
+#include "../Core/StringTools.h"
 
 JPH_NAMESPACE_BEGIN
 
-ObjectStreamBinaryOut::ObjectStreamBinaryOut(ostream &inStream) :
-	ObjectStreamOut(inStream)
+ObjectStreamBinaryOut::ObjectStreamBinaryOut(ostream &inStream) : ObjectStreamOut(inStream)
 {
 	String header;
 	header = StringFormat("BOS%2d.%02d", ObjectStream::sVersion, ObjectStream::sRevision);
@@ -152,4 +151,3 @@ void ObjectStreamBinaryOut::WritePrimitiveData(const DMat44 &inPrimitive)
 JPH_NAMESPACE_END
 
 #endif // JPH_OBJECT_STREAM
-

@@ -2,28 +2,27 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Collision/CastSphereVsTriangles.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/Shape/SphereShape.h>
-#include <Jolt/Physics/Collision/ActiveEdges.h>
-#include <Jolt/Physics/Collision/NarrowPhaseStats.h>
-#include <Jolt/Geometry/ClosestPoint.h>
-#include <Jolt/Geometry/RaySphere.h>
-#include <Jolt/Core/Profiler.h>
+#include "../Collision/CastSphereVsTriangles.h"
+#include "../Collision/TransformedShape.h"
+#include "../Collision/Shape/ScaleHelpers.h"
+#include "../Collision/Shape/SphereShape.h"
+#include "../Collision/ActiveEdges.h"
+#include "../Collision/NarrowPhaseStats.h"
+#include "../../Geometry/ClosestPoint.h"
+#include "../../Geometry/RaySphere.h"
+#include "../../Core/Profiler.h"
 
 JPH_NAMESPACE_BEGIN
 
-CastSphereVsTriangles::CastSphereVsTriangles(const ShapeCast &inShapeCast, const ShapeCastSettings &inShapeCastSettings, Vec3Arg inScale, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, CastShapeCollector &ioCollector) :
-	mStart(inShapeCast.mCenterOfMassStart.GetTranslation()),
-	mDirection(inShapeCast.mDirection),
-	mShapeCastSettings(inShapeCastSettings),
-	mCenterOfMassTransform2(inCenterOfMassTransform2),
-	mScale(inScale),
-	mSubShapeIDCreator1(inSubShapeIDCreator1),
-	mCollector(ioCollector)
+CastSphereVsTriangles::CastSphereVsTriangles(const ShapeCast &inShapeCast, const ShapeCastSettings &inShapeCastSettings, Vec3Arg inScale, Mat44Arg inCenterOfMassTransform2, const SubShapeIDCreator &inSubShapeIDCreator1, CastShapeCollector &ioCollector) : mStart(inShapeCast.mCenterOfMassStart.GetTranslation()),
+																																																																																																																															 mDirection(inShapeCast.mDirection),
+																																																																																																																															 mShapeCastSettings(inShapeCastSettings),
+																																																																																																																															 mCenterOfMassTransform2(inCenterOfMassTransform2),
+																																																																																																																															 mScale(inScale),
+																																																																																																																															 mSubShapeIDCreator1(inSubShapeIDCreator1),
+																																																																																																																															 mCollector(ioCollector)
 {
 	// Cast to sphere shape
 	JPH_ASSERT(inShapeCast.mShape->GetSubType() == EShapeSubType::Sphere);
@@ -33,7 +32,7 @@ CastSphereVsTriangles::CastSphereVsTriangles(const ShapeCast &inShapeCast, const
 	mRadius = sphere->GetRadius() * abs(inShapeCast.mScale.GetX());
 
 	// Determine if shape is inside out or not
-	mScaleSign = ScaleHelpers::IsInsideOut(inScale)? -1.0f : 1.0f;
+	mScaleSign = ScaleHelpers::IsInsideOut(inScale) ? -1.0f : 1.0f;
 }
 
 void CastSphereVsTriangles::AddHit(bool inBackFacing, const SubShapeID &inSubShapeID2, float inFraction, Vec3Arg inContactPointA, Vec3Arg inContactPointB, Vec3Arg inContactNormal)
@@ -63,7 +62,7 @@ void CastSphereVsTriangles::AddHitWithActiveEdgeDetection(Vec3Arg inV0, Vec3Arg 
 
 		// Update the contact normal to account for active edges
 		// Note that we flip the triangle normal as the penetration axis is pointing towards the triangle instead of away
-		contact_normal = ActiveEdges::FixNormal(inV0, inV1, inV2, inBackFacing? inTriangleNormal : -inTriangleNormal, inActiveEdges, inContactPointB, inContactNormal, active_edge_movement_direction);
+		contact_normal = ActiveEdges::FixNormal(inV0, inV1, inV2, inBackFacing ? inTriangleNormal : -inTriangleNormal, inActiveEdges, inContactPointB, inContactNormal, active_edge_movement_direction);
 	}
 
 	AddHit(inBackFacing, inSubShapeID2, inFraction, inContactPointA, inContactPointB, contact_normal);
@@ -99,7 +98,7 @@ float CastSphereVsTriangles::RayCylinder(Vec3Arg inRayDirection, Vec3Arg inCylin
 	// Solving this gives the following:
 	float a = axis_len_sq * inRayDirection.LengthSq() - Square(direction_dot_axis);
 	if (abs(a) < 1.0e-6f)
-		return FLT_MAX; // Segment runs parallel to cylinder axis, stop processing, we will either hit at fraction = 0 or we'll hit a vertex
+		return FLT_MAX;																																				 // Segment runs parallel to cylinder axis, stop processing, we will either hit at fraction = 0 or we'll hit a vertex
 	float b = axis_len_sq * start.Dot(inRayDirection) - direction_dot_axis * start_dot_axis; // should be multiplied by 2, instead we'll divide a and c by 2 when we solve the quadratic equation
 	float c = axis_len_sq * (start.LengthSq() - Square(inRadius)) - Square(start_dot_axis);
 	float det = Square(b) - a * c; // normally 4 * a * c but since both a and c need to be divided by 2 we lose the 4
@@ -153,7 +152,7 @@ void CastSphereVsTriangles::Cast(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8
 				return;
 
 			// Generate contact point
-			Vec3 contact_normal = q_len > 0.0f? q / q_len : Vec3::sAxisY();
+			Vec3 contact_normal = q_len > 0.0f ? q / q_len : Vec3::sAxisY();
 			Vec3 contact_point_a = q + contact_normal * penetration_depth;
 			Vec3 contact_point_b = q;
 			AddHitWithActiveEdgeDetection(v0, v1, v2, back_facing, triangle_normal, inActiveEdges, inSubShapeID2, 0.0f, contact_point_a, contact_point_b, contact_normal);
@@ -171,8 +170,8 @@ void CastSphereVsTriangles::Cast(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8
 			float plane_intersection = (v0 - d).Dot(triangle_normal) / normal_dot_direction;
 
 			// Check if sphere will hit in the interval that we're interested in
-			if (plane_intersection * abs_normal_dot_direction < -mRadius	// Sphere hits the plane before the sweep, cannot intersect
-				|| plane_intersection >= mCollector.GetEarlyOutFraction())	// Sphere hits the plane after the sweep / early out fraction, cannot intersect
+			if (plane_intersection * abs_normal_dot_direction < -mRadius	 // Sphere hits the plane before the sweep, cannot intersect
+					|| plane_intersection >= mCollector.GetEarlyOutFraction()) // Sphere hits the plane after the sweep / early out fraction, cannot intersect
 				return;
 
 			// We can only report an interior hit if we're hitting the plane during our sweep and not before
@@ -183,11 +182,10 @@ void CastSphereVsTriangles::Cast(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8
 
 				// Check if this is an interior point
 				float u, v, w;
-				if (ClosestPoint::GetBaryCentricCoordinates(v0 - p, v1 - p, v2 - p, u, v, w)
-					&& u >= 0.0f && v >= 0.0f && w >= 0.0f)
+				if (ClosestPoint::GetBaryCentricCoordinates(v0 - p, v1 - p, v2 - p, u, v, w) && u >= 0.0f && v >= 0.0f && w >= 0.0f)
 				{
 					// Interior point, we found the collision point. We don't need to check active edges.
-					AddHit(back_facing, inSubShapeID2, plane_intersection, p, p, back_facing? triangle_normal : -triangle_normal);
+					AddHit(back_facing, inSubShapeID2, plane_intersection, p, p, back_facing ? triangle_normal : -triangle_normal);
 					return;
 				}
 			}

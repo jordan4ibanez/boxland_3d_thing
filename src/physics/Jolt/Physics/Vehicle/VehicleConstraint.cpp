@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Vehicle/VehicleConstraint.h>
-#include <Jolt/Physics/Vehicle/VehicleController.h>
-#include <Jolt/Physics/PhysicsSystem.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/Core/Factory.h>
+#include "../Vehicle/VehicleConstraint.h"
+#include "../Vehicle/VehicleController.h"
+#include "../PhysicsSystem.h"
+#include "../../ObjectStream/TypeDeclarations.h"
+#include "../../Core/StreamIn.h"
+#include "../../Core/StreamOut.h"
+#include "../../Core/Factory.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -75,12 +75,11 @@ void VehicleConstraintSettings::RestoreBinaryState(StreamIn &inStream)
 	mController->RestoreBinaryState(inStream);
 }
 
-VehicleConstraint::VehicleConstraint(Body &inVehicleBody, const VehicleConstraintSettings &inSettings) :
-	Constraint(inSettings),
-	mBody(&inVehicleBody),
-	mForward(inSettings.mForward),
-	mUp(inSettings.mUp),
-	mWorldUp(inSettings.mUp)
+VehicleConstraint::VehicleConstraint(Body &inVehicleBody, const VehicleConstraintSettings &inSettings) : Constraint(inSettings),
+																																																				 mBody(&inVehicleBody),
+																																																				 mForward(inSettings.mForward),
+																																																				 mUp(inSettings.mUp),
+																																																				 mWorldUp(inSettings.mUp)
 {
 	// Check sanity of incoming settings
 	JPH_ASSERT(inSettings.mUp.IsNormalized());
@@ -191,7 +190,7 @@ void VehicleConstraint::OnStep(const PhysicsStepListenerContext &inContext)
 	mIsActive = mBody->IsActive();
 
 	// Test how often we need to update the wheels
-	uint num_steps_between_collisions = mIsActive? mNumStepsBetweenCollisionTestActive : mNumStepsBetweenCollisionTestInactive;
+	uint num_steps_between_collisions = mIsActive ? mNumStepsBetweenCollisionTestActive : mNumStepsBetweenCollisionTestInactive;
 
 	RMat44 body_transform = mBody->GetWorldTransform();
 
@@ -206,8 +205,7 @@ void VehicleConstraint::OnStep(const PhysicsStepListenerContext &inContext)
 		Vec3 ws_direction = body_transform.Multiply3x3(settings->mSuspensionDirection);
 
 		// Test if we need to update this wheel
-		if (num_steps_between_collisions == 0
-			|| (mCurrentStep + wheel_index) % num_steps_between_collisions != 0)
+		if (num_steps_between_collisions == 0 || (mCurrentStep + wheel_index) % num_steps_between_collisions != 0)
 		{
 			// Simplified wheel contact test
 			if (!w->mContactBodyID.IsInvalid())
@@ -444,7 +442,7 @@ void VehicleConstraint::SetupVelocityConstraint(float inDeltaTime)
 				{
 					// Calculate effective mass based on vehicle configuration (the stiffness of the spring should not be affected by the dynamics of the vehicle): K = 1 / (J M^-1 J^T)
 					// Note that if no suspension force point is supplied we don't know where the force is applied so we assume it is applied at average suspension length
-					Vec3 force_point = settings->mEnableSuspensionForcePoint? settings->mSuspensionForcePoint : settings->mPosition + 0.5f * (settings->mSuspensionMinLength + settings->mSuspensionMaxLength) * settings->mSuspensionDirection;
+					Vec3 force_point = settings->mEnableSuspensionForcePoint ? settings->mSuspensionForcePoint : settings->mPosition + 0.5f * (settings->mSuspensionMinLength + settings->mSuspensionMaxLength) * settings->mSuspensionDirection;
 					Vec3 force_point_x_neg_up = force_point.Cross(-mUp);
 					const MotionProperties *mp = mBody->GetMotionProperties();
 					float effective_mass = 1.0f / (mp->GetInverseMass() + force_point_x_neg_up.Dot(mp->GetLocalSpaceInverseInertia().Multiply3x3(force_point_x_neg_up)));
@@ -643,10 +641,10 @@ void VehicleConstraint::SaveState(StateRecorder &inStream) const
 	{
 		inStream.Write(w->mAngularVelocity);
 		inStream.Write(w->mAngle);
-		inStream.Write(w->mContactBodyID); // Used by MotorcycleController::PreCollide
-		inStream.Write(w->mContactPosition); // Used by VehicleCollisionTester::PredictContactProperties
-		inStream.Write(w->mContactNormal); // Used by MotorcycleController::PreCollide
-		inStream.Write(w->mContactLateral); // Used by MotorcycleController::PreCollide
+		inStream.Write(w->mContactBodyID);		// Used by MotorcycleController::PreCollide
+		inStream.Write(w->mContactPosition);	// Used by VehicleCollisionTester::PredictContactProperties
+		inStream.Write(w->mContactNormal);		// Used by MotorcycleController::PreCollide
+		inStream.Write(w->mContactLateral);		// Used by MotorcycleController::PreCollide
 		inStream.Write(w->mSuspensionLength); // Used by VehicleCollisionTester::PredictContactProperties
 
 		w->mSuspensionPart.SaveState(inStream);

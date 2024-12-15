@@ -2,43 +2,41 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/TriangleShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/Shape/GetTrianglesContext.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/CollidePointResult.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/CastConvexVsTriangles.h>
-#include <Jolt/Physics/Collision/CastSphereVsTriangles.h>
-#include <Jolt/Physics/Collision/CollideConvexVsTriangles.h>
-#include <Jolt/Physics/Collision/CollideSphereVsTriangles.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/Physics/Collision/CollideSoftBodyVerticesVsTriangles.h>
-#include <Jolt/Geometry/ConvexSupport.h>
-#include <Jolt/Geometry/RayTriangle.h>
-#include <Jolt/Geometry/ClosestPoint.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
+#include "TriangleShape.h"
+#include "ScaleHelpers.h"
+#include "GetTrianglesContext.h"
+#include "../RayCast.h"
+#include "../ShapeCast.h"
+#include "../CastResult.h"
+#include "../CollidePointResult.h"
+#include "../TransformedShape.h"
+#include "../CastConvexVsTriangles.h"
+#include "../CastSphereVsTriangles.h"
+#include "../CollideConvexVsTriangles.h"
+#include "../CollideSphereVsTriangles.h"
+#include "../CollisionDispatch.h"
+#include "../CollideSoftBodyVerticesVsTriangles.h"
+#include "../../../Geometry/ConvexSupport.h"
+#include "../../../Geometry/RayTriangle.h"
+#include "../../../Geometry/ClosestPoint.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
 
-JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(TriangleShapeSettings)
-{
-	JPH_ADD_BASE_CLASS(TriangleShapeSettings, ConvexShapeSettings)
+JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(TriangleShapeSettings){
+		JPH_ADD_BASE_CLASS(TriangleShapeSettings, ConvexShapeSettings)
 
-	JPH_ADD_ATTRIBUTE(TriangleShapeSettings, mV1)
-	JPH_ADD_ATTRIBUTE(TriangleShapeSettings, mV2)
-	JPH_ADD_ATTRIBUTE(TriangleShapeSettings, mV3)
-	JPH_ADD_ATTRIBUTE(TriangleShapeSettings, mConvexRadius)
-}
+				JPH_ADD_ATTRIBUTE(TriangleShapeSettings, mV1)
+						JPH_ADD_ATTRIBUTE(TriangleShapeSettings, mV2)
+								JPH_ADD_ATTRIBUTE(TriangleShapeSettings, mV3)
+										JPH_ADD_ATTRIBUTE(TriangleShapeSettings, mConvexRadius)}
 
 ShapeSettings::ShapeResult TriangleShapeSettings::Create() const
 {
@@ -47,12 +45,11 @@ ShapeSettings::ShapeResult TriangleShapeSettings::Create() const
 	return mCachedResult;
 }
 
-TriangleShape::TriangleShape(const TriangleShapeSettings &inSettings, ShapeResult &outResult) :
-	ConvexShape(EShapeSubType::Triangle, inSettings, outResult),
-	mV1(inSettings.mV1),
-	mV2(inSettings.mV2),
-	mV3(inSettings.mV3),
-	mConvexRadius(inSettings.mConvexRadius)
+TriangleShape::TriangleShape(const TriangleShapeSettings &inSettings, ShapeResult &outResult) : ConvexShape(EShapeSubType::Triangle, inSettings, outResult),
+																																																mV1(inSettings.mV1),
+																																																mV2(inSettings.mV2),
+																																																mV3(inSettings.mV3),
+																																																mConvexRadius(inSettings.mConvexRadius)
 {
 	if (inSettings.mConvexRadius < 0.0f)
 	{
@@ -90,39 +87,37 @@ AABox TriangleShape::GetWorldSpaceBounds(Mat44Arg inCenterOfMassTransform, Vec3A
 class TriangleShape::TriangleNoConvex final : public Support
 {
 public:
-							TriangleNoConvex(Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inV3) :
-		mTriangleSuport(inV1, inV2, inV3)
+	TriangleNoConvex(Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inV3) : mTriangleSuport(inV1, inV2, inV3)
 	{
 		static_assert(sizeof(TriangleNoConvex) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(TriangleNoConvex)));
 	}
 
-	virtual Vec3			GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		return mTriangleSuport.GetSupport(inDirection);
 	}
 
-	virtual float			GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return 0.0f;
 	}
 
 private:
-	TriangleConvexSupport	mTriangleSuport;
+	TriangleConvexSupport mTriangleSuport;
 };
 
 class TriangleShape::TriangleWithConvex final : public Support
 {
 public:
-							TriangleWithConvex(Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inV3, float inConvexRadius) :
-		mConvexRadius(inConvexRadius),
-		mTriangleSuport(inV1, inV2, inV3)
+	TriangleWithConvex(Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inV3, float inConvexRadius) : mConvexRadius(inConvexRadius),
+																																											 mTriangleSuport(inV1, inV2, inV3)
 	{
 		static_assert(sizeof(TriangleWithConvex) <= sizeof(SupportBuffer), "Buffer size too small");
 		JPH_ASSERT(IsAligned(this, alignof(TriangleWithConvex)));
 	}
 
-	virtual Vec3			GetSupport(Vec3Arg inDirection) const override
+	virtual Vec3 GetSupport(Vec3Arg inDirection) const override
 	{
 		Vec3 support = mTriangleSuport.GetSupport(inDirection);
 		float len = inDirection.Length();
@@ -131,14 +126,14 @@ public:
 		return support;
 	}
 
-	virtual float			GetConvexRadius() const override
+	virtual float GetConvexRadius() const override
 	{
 		return mConvexRadius;
 	}
 
 private:
-	float					mConvexRadius;
-	TriangleConvexSupport	mTriangleSuport;
+	float mConvexRadius;
+	TriangleConvexSupport mTriangleSuport;
 };
 
 const ConvexShape::Support *TriangleShape::GetSupportFunction(ESupportMode inMode, SupportBuffer &inBuffer, Vec3Arg inScale) const
@@ -202,7 +197,7 @@ Vec3 TriangleShape::GetSurfaceNormal(const SubShapeID &inSubShapeID, Vec3Arg inL
 
 	Vec3 cross = (mV2 - mV1).Cross(mV3 - mV1);
 	float len = cross.Length();
-	return len != 0.0f? cross / len : Vec3::sAxisY();
+	return len != 0.0f ? cross / len : Vec3::sAxisY();
 }
 
 void TriangleShape::GetSubmergedVolume(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale, const Plane &inSurface, float &outTotalVolume, float &outSubmergedVolume, Vec3 &outCenterOfBuoyancy JPH_IF_DEBUG_RENDERER(, RVec3Arg inBaseOffset)) const
@@ -223,9 +218,9 @@ void TriangleShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassTran
 		swap(v1, v2);
 
 	if (inDrawWireframe)
-		inRenderer->DrawWireTriangle(v1, v2, v3, inUseMaterialColors? GetMaterial()->GetDebugColor() : inColor);
+		inRenderer->DrawWireTriangle(v1, v2, v3, inUseMaterialColors ? GetMaterial()->GetDebugColor() : inColor);
 	else
-		inRenderer->DrawTriangle(v1, v2, v3, inUseMaterialColors? GetMaterial()->GetDebugColor() : inColor);
+		inRenderer->DrawTriangle(v1, v2, v3, inUseMaterialColors ? GetMaterial()->GetDebugColor() : inColor);
 }
 #endif // JPH_DEBUG_RENDERER
 
@@ -325,13 +320,13 @@ void TriangleShape::sCastSphereVsTriangle(const ShapeCast &inShapeCast, const Sh
 class TriangleShape::TSGetTrianglesContext
 {
 public:
-					TSGetTrianglesContext(Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inV3) : mV1(inV1), mV2(inV2), mV3(inV3) { }
+	TSGetTrianglesContext(Vec3Arg inV1, Vec3Arg inV2, Vec3Arg inV3) : mV1(inV1), mV2(inV2), mV3(inV3) {}
 
-	Vec3			mV1;
-	Vec3			mV2;
-	Vec3			mV3;
+	Vec3 mV1;
+	Vec3 mV2;
+	Vec3 mV3;
 
-	bool			mIsDone = false;
+	bool mIsDone = false;
 };
 
 void TriangleShape::GetTrianglesStart(GetTrianglesContext &ioContext, const AABox &inBox, Vec3Arg inPositionCOM, QuatArg inRotation, Vec3Arg inScale) const
@@ -406,7 +401,8 @@ Vec3 TriangleShape::MakeScaleValid(Vec3Arg inScale) const
 void TriangleShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::Triangle);
-	f.mConstruct = []() -> Shape * { return new TriangleShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new TriangleShape; };
 	f.mColor = Color::sGreen;
 
 	for (EShapeSubType s : sConvexSubShapeTypes)

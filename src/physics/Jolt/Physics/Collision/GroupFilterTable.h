@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Jolt/Physics/Collision/GroupFilter.h>
-#include <Jolt/Physics/Collision/CollisionGroup.h>
+#include "../Collision/GroupFilter.h"
+#include "../Collision/CollisionGroup.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -41,7 +41,7 @@ private:
 	using SubGroupID = CollisionGroup::SubGroupID;
 
 	/// Get which bit corresponds to the pair (inSubGroup1, inSubGroup2)
-	int						GetBit(SubGroupID inSubGroup1, SubGroupID inSubGroup2) const
+	int GetBit(SubGroupID inSubGroup1, SubGroupID inSubGroup2) const
 	{
 		JPH_ASSERT(inSubGroup1 != inSubGroup2);
 
@@ -59,8 +59,7 @@ private:
 
 public:
 	/// Constructs the table with inNumSubGroups subgroups, initially all collision pairs are enabled except when the sub group ID is the same
-	explicit				GroupFilterTable(uint inNumSubGroups = 0) :
-		mNumSubGroups(inNumSubGroups)
+	explicit GroupFilterTable(uint inNumSubGroups = 0) : mNumSubGroups(inNumSubGroups)
 	{
 		// By default everything collides
 		int table_size = ((inNumSubGroups * (inNumSubGroups - 1)) / 2 + 7) / 8;
@@ -68,24 +67,24 @@ public:
 	}
 
 	/// Copy constructor
-							GroupFilterTable(const GroupFilterTable &inRHS) : mNumSubGroups(inRHS.mNumSubGroups), mTable(inRHS.mTable) { }
+	GroupFilterTable(const GroupFilterTable &inRHS) : mNumSubGroups(inRHS.mNumSubGroups), mTable(inRHS.mTable) {}
 
 	/// Disable collision between two sub groups
-	void					DisableCollision(SubGroupID inSubGroup1, SubGroupID inSubGroup2)
+	void DisableCollision(SubGroupID inSubGroup1, SubGroupID inSubGroup2)
 	{
 		int bit = GetBit(inSubGroup1, inSubGroup2);
 		mTable[bit >> 3] &= (0xff ^ (1 << (bit & 0b111)));
 	}
 
 	/// Enable collision between two sub groups
-	void					EnableCollision(SubGroupID inSubGroup1, SubGroupID inSubGroup2)
+	void EnableCollision(SubGroupID inSubGroup1, SubGroupID inSubGroup2)
 	{
 		int bit = GetBit(inSubGroup1, inSubGroup2);
 		mTable[bit >> 3] |= 1 << (bit & 0b111);
 	}
 
 	/// Check if the collision between two subgroups is enabled
-	inline bool				IsCollisionEnabled(SubGroupID inSubGroup1, SubGroupID inSubGroup2) const
+	inline bool IsCollisionEnabled(SubGroupID inSubGroup1, SubGroupID inSubGroup2) const
 	{
 		// Test if the bit is set for this group pair
 		int bit = GetBit(inSubGroup1, inSubGroup2);
@@ -93,7 +92,7 @@ public:
 	}
 
 	/// Checks if two CollisionGroups collide
-	virtual bool			CanCollide(const CollisionGroup &inGroup1, const CollisionGroup &inGroup2) const override
+	virtual bool CanCollide(const CollisionGroup &inGroup1, const CollisionGroup &inGroup2) const override
 	{
 		// If one of the groups is cInvalidGroup the objects will collide (note that the if following this if will ensure that group2 is not cInvalidGroup)
 		if (inGroup1.GetGroupID() == CollisionGroup::cInvalidGroup)
@@ -116,15 +115,15 @@ public:
 	}
 
 	// See: GroupFilter::SaveBinaryState
-	virtual void			SaveBinaryState(StreamOut &inStream) const override;
+	virtual void SaveBinaryState(StreamOut &inStream) const override;
 
 protected:
 	// See: GroupFilter::RestoreBinaryState
-	virtual void			RestoreBinaryState(StreamIn &inStream) override;
+	virtual void RestoreBinaryState(StreamIn &inStream) override;
 
 private:
-	uint					mNumSubGroups;									///< The number of subgroups that this group filter supports
-	Array<uint8>			mTable;											///< The table of bits that indicates which pairs collide
+	uint mNumSubGroups;	 ///< The number of subgroups that this group filter supports
+	Array<uint8> mTable; ///< The table of bits that indicates which pairs collide
 };
 
 JPH_NAMESPACE_END

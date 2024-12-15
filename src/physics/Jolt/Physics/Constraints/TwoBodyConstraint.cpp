@@ -2,15 +2,15 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Constraints/TwoBodyConstraint.h>
-#include <Jolt/Physics/IslandBuilder.h>
-#include <Jolt/Physics/LargeIslandSplitter.h>
-#include <Jolt/Physics/Body/BodyManager.h>
+#include "../Constraints/TwoBodyConstraint.h"
+#include "../IslandBuilder.h"
+#include "../LargeIslandSplitter.h"
+#include "../Body/BodyManager.h"
 
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN

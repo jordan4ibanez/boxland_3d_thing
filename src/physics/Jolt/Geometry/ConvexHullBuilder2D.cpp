@@ -2,12 +2,12 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/Geometry/ConvexHullBuilder2D.h>
+#include "../Geometry/ConvexHullBuilder2D.h"
 
 #ifdef JPH_CONVEX_BUILDER_2D_DEBUG
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif
 
 JPH_NAMESPACE_BEGIN
@@ -29,8 +29,7 @@ void ConvexHullBuilder2D::Edge::CalculateNormalAndCenter(const Vec3 *inPositions
 	mNormal = Vec3(edge.GetY(), -edge.GetX(), 0);
 }
 
-ConvexHullBuilder2D::ConvexHullBuilder2D(const Positions &inPositions) :
-	mPositions(inPositions)
+ConvexHullBuilder2D::ConvexHullBuilder2D(const Positions &inPositions) : mPositions(inPositions)
 {
 #ifdef JPH_CONVEX_BUILDER_2D_DEBUG
 	// Center the drawing of the first hull around the origin and calculate the delta offset between states
@@ -185,7 +184,7 @@ ConvexHullBuilder2D::EResult ConvexHullBuilder2D::Initialize(int inIdx1, int inI
 	mNumEdges = 3;
 
 	// Build the initial conflict lists
-	Array<Edge *> edges { e1, e2, e3 };
+	Array<Edge *> edges{e1, e2, e3};
 	for (Edge *edge : edges)
 		edge->CalculateNormalAndCenter(mPositions.data());
 	for (int idx = 0; idx < (int)mPositions.size(); ++idx)
@@ -262,7 +261,7 @@ ConvexHullBuilder2D::EResult ConvexHullBuilder2D::Initialize(int inIdx1, int inI
 		mNumEdges += 2;
 
 		// Calculate normals
-		Array<Edge *> new_edges { e1, e2 };
+		Array<Edge *> new_edges{e1, e2};
 		for (Edge *new_edge : new_edges)
 			new_edge->CalculateNormalAndCenter(mPositions.data());
 
@@ -285,9 +284,9 @@ ConvexHullBuilder2D::EResult ConvexHullBuilder2D::Initialize(int inIdx1, int inI
 		}
 
 		JPH_IF_ENABLE_ASSERTS(ValidateEdges();)
-	#ifdef JPH_CONVEX_BUILDER_2D_DEBUG
+#ifdef JPH_CONVEX_BUILDER_2D_DEBUG
 		DrawState();
-	#endif
+#endif
 	}
 
 	// Convert the edge list to a list of indices

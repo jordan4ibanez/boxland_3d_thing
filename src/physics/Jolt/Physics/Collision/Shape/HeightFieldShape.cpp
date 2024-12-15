@@ -2,39 +2,39 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../../Jolt.h"
 
-#include <Jolt/Physics/Collision/Shape/HeightFieldShape.h>
-#include <Jolt/Physics/Collision/Shape/ConvexShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaleHelpers.h>
-#include <Jolt/Physics/Collision/Shape/SphereShape.h>
-#include <Jolt/Physics/Collision/RayCast.h>
-#include <Jolt/Physics/Collision/ShapeCast.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Collision/CollidePointResult.h>
-#include <Jolt/Physics/Collision/ShapeFilter.h>
-#include <Jolt/Physics/Collision/CastConvexVsTriangles.h>
-#include <Jolt/Physics/Collision/CastSphereVsTriangles.h>
-#include <Jolt/Physics/Collision/CollideConvexVsTriangles.h>
-#include <Jolt/Physics/Collision/CollideSphereVsTriangles.h>
-#include <Jolt/Physics/Collision/TransformedShape.h>
-#include <Jolt/Physics/Collision/ActiveEdges.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/Physics/Collision/SortReverseAndStore.h>
-#include <Jolt/Physics/Collision/CollideSoftBodyVerticesVsTriangles.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/StringTools.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/Core/TempAllocator.h>
-#include <Jolt/Core/ScopeExit.h>
-#include <Jolt/Geometry/AABox4.h>
-#include <Jolt/Geometry/RayTriangle.h>
-#include <Jolt/Geometry/RayAABox.h>
-#include <Jolt/Geometry/OrientedBox.h>
-#include <Jolt/ObjectStream/TypeDeclarations.h>
+#include "../../Collision/Shape/HeightFieldShape.h"
+#include "../../Collision/Shape/ConvexShape.h"
+#include "../../Collision/Shape/ScaleHelpers.h"
+#include "../../Collision/Shape/SphereShape.h"
+#include "../../Collision/RayCast.h"
+#include "../../Collision/ShapeCast.h"
+#include "../../Collision/CastResult.h"
+#include "../../Collision/CollidePointResult.h"
+#include "../../Collision/ShapeFilter.h"
+#include "../../Collision/CastConvexVsTriangles.h"
+#include "../../Collision/CastSphereVsTriangles.h"
+#include "../../Collision/CollideConvexVsTriangles.h"
+#include "../../Collision/CollideSphereVsTriangles.h"
+#include "../../Collision/TransformedShape.h"
+#include "../../Collision/ActiveEdges.h"
+#include "../../Collision/CollisionDispatch.h"
+#include "../../Collision/SortReverseAndStore.h"
+#include "../../Collision/CollideSoftBodyVerticesVsTriangles.h"
+#include "../../../Core/Profiler.h"
+#include "../../../Core/StringTools.h"
+#include "../../../Core/StreamIn.h"
+#include "../../../Core/StreamOut.h"
+#include "../../../Core/TempAllocator.h"
+#include "../../../Core/ScopeExit.h"
+#include "../../../Geometry/AABox4.h"
+#include "../../../Geometry/RayTriangle.h"
+#include "../../../Geometry/RayAABox.h"
+#include "../../../Geometry/OrientedBox.h"
+#include "../../../ObjectStream/TypeDeclarations.h"
 
-//#define JPH_DEBUG_HEIGHT_FIELD
+// #define JPH_DEBUG_HEIGHT_FIELD
 
 JPH_NAMESPACE_BEGIN
 
@@ -63,28 +63,27 @@ JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(HeightFieldShapeSettings)
 }
 
 const uint HeightFieldShape::sGridOffsets[] =
-{
-	0,			// level:  0, max x/y:     0, offset: 0
-	1,			// level:  1, max x/y:     1, offset: 1
-	5,			// level:  2, max x/y:     3, offset: 1 + 4
-	21,			// level:  3, max x/y:     7, offset: 1 + 4 + 16
-	85,			// level:  4, max x/y:    15, offset: 1 + 4 + 16 + 64
-	341,		// level:  5, max x/y:    31, offset: 1 + 4 + 16 + 64 + 256
-	1365,		// level:  6, max x/y:    63, offset: 1 + 4 + 16 + 64 + 256 + 1024
-	5461,		// level:  7, max x/y:   127, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096
-	21845,		// level:  8, max x/y:   255, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
-	87381,		// level:  9, max x/y:   511, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
-	349525,		// level: 10, max x/y:  1023, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
-	1398101,	// level: 11, max x/y:  2047, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
-	5592405,	// level: 12, max x/y:  4095, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
-	22369621,	// level: 13, max x/y:  8191, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
-	89478485,	// level: 14, max x/y: 16383, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
+		{
+				0,				// level:  0, max x/y:     0, offset: 0
+				1,				// level:  1, max x/y:     1, offset: 1
+				5,				// level:  2, max x/y:     3, offset: 1 + 4
+				21,				// level:  3, max x/y:     7, offset: 1 + 4 + 16
+				85,				// level:  4, max x/y:    15, offset: 1 + 4 + 16 + 64
+				341,			// level:  5, max x/y:    31, offset: 1 + 4 + 16 + 64 + 256
+				1365,			// level:  6, max x/y:    63, offset: 1 + 4 + 16 + 64 + 256 + 1024
+				5461,			// level:  7, max x/y:   127, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096
+				21845,		// level:  8, max x/y:   255, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
+				87381,		// level:  9, max x/y:   511, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
+				349525,		// level: 10, max x/y:  1023, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
+				1398101,	// level: 11, max x/y:  2047, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
+				5592405,	// level: 12, max x/y:  4095, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
+				22369621, // level: 13, max x/y:  8191, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
+				89478485, // level: 14, max x/y: 16383, offset: 1 + 4 + 16 + 64 + 256 + 1024 + 4096 + ...
 };
 
-HeightFieldShapeSettings::HeightFieldShapeSettings(const float *inSamples, Vec3Arg inOffset, Vec3Arg inScale, uint32 inSampleCount, const uint8 *inMaterialIndices, const PhysicsMaterialList &inMaterialList) :
-	mOffset(inOffset),
-	mScale(inScale),
-	mSampleCount(inSampleCount)
+HeightFieldShapeSettings::HeightFieldShapeSettings(const float *inSamples, Vec3Arg inOffset, Vec3Arg inScale, uint32 inSampleCount, const uint8 *inMaterialIndices, const PhysicsMaterialList &inMaterialList) : mOffset(inOffset),
+																																																																																																								 mScale(inScale),
+																																																																																																								 mSampleCount(inSampleCount)
 {
 	mHeightSamples.assign(inSamples, inSamples + Square(inSampleCount));
 
@@ -193,7 +192,6 @@ uint32 HeightFieldShapeSettings::CalculateBitsPerSampleForError(float inMaxError
 						}
 				}
 			}
-
 	}
 
 	return bits_per_sample;
@@ -204,7 +202,8 @@ void HeightFieldShape::CalculateActiveEdges(uint inX, uint inY, uint inSizeX, ui
 	// Allocate temporary buffer for normals
 	uint normals_size = 2 * inSizeX * inSizeY * sizeof(Vec3);
 	Vec3 *normals = (Vec3 *)inAllocator.Allocate(normals_size);
-	JPH_SCOPE_EXIT([&inAllocator, normals, normals_size]{ inAllocator.Free(normals, normals_size); });
+	JPH_SCOPE_EXIT([&inAllocator, normals, normals_size]
+								 { inAllocator.Free(normals, normals_size); });
 
 	// Calculate triangle normals and make normals zero for triangles that are missing
 	Vec3 *out_normal = normals;
@@ -362,7 +361,7 @@ void HeightFieldShape::StoreMaterialIndices(const HeightFieldShapeSettings &inSe
 			for (uint x = 0; x < out_count_min_1; ++x)
 			{
 				// Read material
-				uint16 material_index = x < in_count_min_1 && y < in_count_min_1? uint16(inSettings.mMaterialIndices[x + y * in_count_min_1]) : 0;
+				uint16 material_index = x < in_count_min_1 && y < in_count_min_1 ? uint16(inSettings.mMaterialIndices[x + y * in_count_min_1]) : 0;
 
 				// Calculate byte and bit position where the material index needs to go
 				uint sample_pos = x + y * out_count_min_1;
@@ -398,13 +397,12 @@ void HeightFieldShape::AllocateBuffers()
 	mActiveEdges = mHeightSamples + mHeightSamplesSize;
 }
 
-HeightFieldShape::HeightFieldShape(const HeightFieldShapeSettings &inSettings, ShapeResult &outResult) :
-	Shape(EShapeType::HeightField, EShapeSubType::HeightField, inSettings, outResult),
-	mOffset(inSettings.mOffset),
-	mScale(inSettings.mScale),
-	mSampleCount(((inSettings.mSampleCount + inSettings.mBlockSize - 1) / inSettings.mBlockSize) * inSettings.mBlockSize), // Round sample count to nearest block size
-	mBlockSize(inSettings.mBlockSize),
-	mBitsPerSample(uint8(inSettings.mBitsPerSample))
+HeightFieldShape::HeightFieldShape(const HeightFieldShapeSettings &inSettings, ShapeResult &outResult) : Shape(EShapeType::HeightField, EShapeSubType::HeightField, inSettings, outResult),
+																																																				 mOffset(inSettings.mOffset),
+																																																				 mScale(inSettings.mScale),
+																																																				 mSampleCount(((inSettings.mSampleCount + inSettings.mBlockSize - 1) / inSettings.mBlockSize) * inSettings.mBlockSize), // Round sample count to nearest block size
+																																																				 mBlockSize(inSettings.mBlockSize),
+																																																				 mBitsPerSample(uint8(inSettings.mBitsPerSample))
 {
 	CacheValues();
 
@@ -539,8 +537,8 @@ HeightFieldShape::HeightFieldShape(const HeightFieldShapeSettings &inSettings, S
 	// Temporary data structure used during creating of a hierarchy of grids
 	struct Range
 	{
-		uint16	mMin;
-		uint16	mMax;
+		uint16 mMin;
+		uint16 mMax;
 	};
 
 	// Reserve size for temporary range data + reserve 1 extra for a 1x1 grid that we won't store but use for calculating the bounding box
@@ -557,8 +555,8 @@ HeightFieldShape::HeightFieldShape(const HeightFieldShapeSettings &inSettings, S
 		{
 			range_dst->mMin = 0xffff;
 			range_dst->mMax = 0;
-			uint max_bx = x == num_blocks_pow2 - 1? mBlockSize : mBlockSize + 1; // for interior blocks take 1 more because the triangles connect to the next block so we must include their height too
-			uint max_by = y == num_blocks_pow2 - 1? mBlockSize : mBlockSize + 1;
+			uint max_bx = x == num_blocks_pow2 - 1 ? mBlockSize : mBlockSize + 1; // for interior blocks take 1 more because the triangles connect to the next block so we must include their height too
+			uint max_by = y == num_blocks_pow2 - 1 ? mBlockSize : mBlockSize + 1;
 			for (uint by = 0; by < max_by; ++by)
 				for (uint bx = 0; bx < max_bx; ++bx)
 				{
@@ -664,7 +662,7 @@ HeightFieldShape::HeightFieldShape(const HeightFieldShapeSettings &inSettings, S
 		{
 			uint32 output_value;
 
-			float h = x < inSettings.mSampleCount && y < inSettings.mSampleCount? inSettings.mHeightSamples[x + y * inSettings.mSampleCount] : cNoCollisionValue;
+			float h = x < inSettings.mSampleCount && y < inSettings.mSampleCount ? inSettings.mHeightSamples[x + y * inSettings.mSampleCount] : cNoCollisionValue;
 			if (h == cNoCollisionValue)
 			{
 				// No collision
@@ -947,7 +945,7 @@ void HeightFieldShape::GetHeights(uint inX, uint inY, uint inSizeX, uint inSizeY
 						uint8 height_sample = GetHeightSample(inX + output_x, inY + output_y);
 
 						// Dequantize
-						float h = height_sample != mSampleMask? offset + height_sample * scale : cNoCollisionValue;
+						float h = height_sample != mSampleMask ? offset + height_sample * scale : cNoCollisionValue;
 						outHeights[output_y * inHeightsStride + output_x] = h;
 					}
 			}
@@ -970,14 +968,32 @@ void HeightFieldShape::SetHeights(uint inX, uint inY, uint inSizeX, uint inSizeY
 	uint affected_y = inY;
 	uint affected_size_x = inSizeX;
 	uint affected_size_y = inSizeY;
-	if (inX > 0) { affected_x -= mBlockSize; affected_size_x += mBlockSize; need_temp_heights = true; }
-	if (inY > 0) { affected_y -= mBlockSize; affected_size_y += mBlockSize; need_temp_heights = true; }
+	if (inX > 0)
+	{
+		affected_x -= mBlockSize;
+		affected_size_x += mBlockSize;
+		need_temp_heights = true;
+	}
+	if (inY > 0)
+	{
+		affected_y -= mBlockSize;
+		affected_size_y += mBlockSize;
+		need_temp_heights = true;
+	}
 
 	// If we have a block in positive x/y direction, our ranges are affected by it so we need to take it into account
 	uint heights_size_x = affected_size_x;
 	uint heights_size_y = affected_size_y;
-	if (inX + inSizeX < mSampleCount) { heights_size_x += mBlockSize; need_temp_heights = true; }
-	if (inY + inSizeY < mSampleCount) { heights_size_y += mBlockSize; need_temp_heights = true; }
+	if (inX + inSizeX < mSampleCount)
+	{
+		heights_size_x += mBlockSize;
+		need_temp_heights = true;
+	}
+	if (inY + inSizeY < mSampleCount)
+	{
+		heights_size_y += mBlockSize;
+		need_temp_heights = true;
+	}
 
 	// Get heights for affected area
 	const float *heights;
@@ -1093,7 +1109,7 @@ void HeightFieldShape::SetHeights(uint inX, uint inY, uint inSizeX, uint inSizeY
 				{
 					// Quantize height
 					float h = heights[sample_y * heights_stride + sample_x];
-					uint8 quantized_height = h != cNoCollisionValue? uint8(Clamp((int)floor((h - offset) / scale), 0, int(mSampleMask) - 1)) : mSampleMask;
+					uint8 quantized_height = h != cNoCollisionValue ? uint8(Clamp((int)floor((h - offset) / scale), 0, int(mSampleMask) - 1)) : mSampleMask;
 
 					// Determine bit position of sample
 					uint sample = ((affected_y + sample_y) * mSampleCount + affected_x + sample_x) * uint(mBitsPerSample);
@@ -1113,8 +1129,8 @@ void HeightFieldShape::SetHeights(uint inX, uint inY, uint inSizeX, uint inSizeY
 
 	// Update active edges
 	// Note that we must take an extra row on all sides to account for connecting triangles
-	uint ae_x = inX > 1? inX - 2 : 0;
-	uint ae_y = inY > 1? inY - 2 : 0;
+	uint ae_x = inX > 1 ? inX - 2 : 0;
+	uint ae_y = inY > 1 ? inY - 2 : 0;
 	uint ae_sx = min(inX + inSizeX + 1, mSampleCount - 1) - ae_x;
 	uint ae_sy = min(inY + inSizeY + 1, mSampleCount - 1) - ae_y;
 	CalculateActiveEdges(ae_x, ae_y, ae_sx, ae_sy, heights, affected_x, affected_y, heights_stride, 1.0f, inActiveEdgeCosThresholdAngle, inAllocator);
@@ -1131,8 +1147,16 @@ void HeightFieldShape::SetHeights(uint inX, uint inY, uint inSizeX, uint inSizeY
 		sGetRangeBlockOffsetAndStride(num_blocks >> 1, max_level - 1, dst_range_block_offset, dst_range_block_stride);
 
 		// We'll be processing 2x2 blocks below so we need the start coordinates to be even and we extend the number of blocks to correct for that
-		if (block_start_x & 1) { --block_start_x; ++num_blocks_x; }
-		if (block_start_y & 1) { --block_start_y; ++num_blocks_y; }
+		if (block_start_x & 1)
+		{
+			--block_start_x;
+			++num_blocks_x;
+		}
+		if (block_start_y & 1)
+		{
+			--block_start_y;
+			++num_blocks_y;
+		}
 
 		// Loop over all affected blocks
 		uint block_end_x = block_start_x + num_blocks_x;
@@ -1251,9 +1275,10 @@ bool HeightFieldShape::SetMaterials(uint inX, uint inY, uint inSizeX, uint inSiz
 	JPH_ASSERT(inX + inSizeX < mSampleCount && inY + inSizeY < mSampleCount);
 
 	// Remap materials
-	uint material_remap_table_size = uint(inMaterialList != nullptr? inMaterialList->size() : mMaterials.size());
+	uint material_remap_table_size = uint(inMaterialList != nullptr ? inMaterialList->size() : mMaterials.size());
 	uint8 *material_remap_table = (uint8 *)inAllocator.Allocate(material_remap_table_size);
-	JPH_SCOPE_EXIT([&inAllocator, material_remap_table, material_remap_table_size]{ inAllocator.Free(material_remap_table, material_remap_table_size); });
+	JPH_SCOPE_EXIT([&inAllocator, material_remap_table, material_remap_table_size]
+								 { inAllocator.Free(material_remap_table, material_remap_table_size); });
 	if (inMaterialList != nullptr)
 	{
 		// Conservatively reserve more space if the incoming material list is bigger
@@ -1527,9 +1552,9 @@ inline uint8 HeightFieldShape::GetEdgeFlags(uint inX, uint inY, uint inTriangle)
 	else
 	{
 		// We don't store this triangle directly, we need to look at our three neighbours to construct the edge flags
-		uint8 edge0 = (GetEdgeFlags(inX, inY, 0) & 0b100) != 0? 0b001 : 0; // Diagonal edge
-		uint8 edge1 = inX == mSampleCount - 2 || (GetEdgeFlags(inX + 1, inY, 0) & 0b001) != 0? 0b010 : 0; // Vertical edge
-		uint8 edge2 = inY == 0 || (GetEdgeFlags(inX, inY - 1, 0) & 0b010) != 0? 0b100 : 0; // Horizontal edge
+		uint8 edge0 = (GetEdgeFlags(inX, inY, 0) & 0b100) != 0 ? 0b001 : 0;																 // Diagonal edge
+		uint8 edge1 = inX == mSampleCount - 2 || (GetEdgeFlags(inX + 1, inY, 0) & 0b001) != 0 ? 0b010 : 0; // Vertical edge
+		uint8 edge2 = inY == 0 || (GetEdgeFlags(inX, inY - 1, 0) & 0b010) != 0 ? 0b100 : 0;								 // Horizontal edge
 		return edge0 | edge1 | edge2;
 	}
 }
@@ -1582,7 +1607,7 @@ void HeightFieldShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassT
 						{
 							Vec3 x1y1 = GetPosition(x, y);
 							Vec3 x2y2 = GetPosition(x + 1, y + 1);
-							Color color = inUseMaterialColors? GetMaterial(x, y)->GetDebugColor() : Color::sWhite;
+							Color color = inUseMaterialColors ? GetMaterial(x, y)->GetDebugColor() : Color::sWhite;
 
 							if (!IsNoCollision(x, y + 1))
 							{
@@ -1637,10 +1662,10 @@ void HeightFieldShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassT
 	RMat44 transform = inCenterOfMassTransform.PreScaled(inScale);
 
 	// Test if the shape is scaled inside out
-	DebugRenderer::ECullMode cull_mode = ScaleHelpers::IsInsideOut(inScale)? DebugRenderer::ECullMode::CullFrontFace : DebugRenderer::ECullMode::CullBackFace;
+	DebugRenderer::ECullMode cull_mode = ScaleHelpers::IsInsideOut(inScale) ? DebugRenderer::ECullMode::CullFrontFace : DebugRenderer::ECullMode::CullBackFace;
 
 	// Determine the draw mode
-	DebugRenderer::EDrawMode draw_mode = inDrawWireframe? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
+	DebugRenderer::EDrawMode draw_mode = inDrawWireframe ? DebugRenderer::EDrawMode::Wireframe : DebugRenderer::EDrawMode::Solid;
 
 	// Draw the geometry
 	for (const DebugRenderer::GeometryRef &b : mGeometry)
@@ -1650,36 +1675,35 @@ void HeightFieldShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassT
 	{
 		struct Visitor
 		{
-			JPH_INLINE explicit		Visitor(const HeightFieldShape *inShape, DebugRenderer *inRenderer, RMat44Arg inTransform) :
-				mShape(inShape),
-				mRenderer(inRenderer),
-				mTransform(inTransform)
+			JPH_INLINE explicit Visitor(const HeightFieldShape *inShape, DebugRenderer *inRenderer, RMat44Arg inTransform) : mShape(inShape),
+																																																											 mRenderer(inRenderer),
+																																																											 mTransform(inTransform)
 			{
 			}
 
-			JPH_INLINE bool			ShouldAbort() const
+			JPH_INLINE bool ShouldAbort() const
 			{
 				return false;
 			}
 
-			JPH_INLINE bool			ShouldVisitRangeBlock([[maybe_unused]] int inStackTop) const
+			JPH_INLINE bool ShouldVisitRangeBlock([[maybe_unused]] int inStackTop) const
 			{
 				return true;
 			}
 
-			JPH_INLINE int			VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
+			JPH_INLINE int VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
 			{
 				UVec4 valid = Vec4::sLessOrEqual(inBoundsMinY, inBoundsMaxY);
 				return CountAndSortTrues(valid, ioProperties);
 			}
 
-			JPH_INLINE void			VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2) const
+			JPH_INLINE void VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2) const
 			{
 				// Determine active edges
 				uint8 active_edges = mShape->GetEdgeFlags(inX, inY, inTriangle);
 
 				// Loop through edges
-				Vec3 v[] = { inV0, inV1, inV2 };
+				Vec3 v[] = {inV0, inV1, inV2};
 				for (uint edge_idx = 0; edge_idx < 3; ++edge_idx)
 				{
 					RVec3 v1 = mTransform * v[edge_idx];
@@ -1694,8 +1718,8 @@ void HeightFieldShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassT
 			}
 
 			const HeightFieldShape *mShape;
-			DebugRenderer *			mRenderer;
-			RMat44					mTransform;
+			DebugRenderer *mRenderer;
+			RMat44 mTransform;
 		};
 
 		Visitor visitor(this, inRenderer, inCenterOfMassTransform.PreScaled(inScale));
@@ -1707,8 +1731,7 @@ void HeightFieldShape::Draw(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassT
 class HeightFieldShape::DecodingContext
 {
 public:
-	JPH_INLINE explicit			DecodingContext(const HeightFieldShape *inShape) :
-		mShape(inShape)
+	JPH_INLINE explicit DecodingContext(const HeightFieldShape *inShape) : mShape(inShape)
 	{
 		static_assert(sizeof(sGridOffsets) / sizeof(uint) == cNumBitsXY + 1, "Offsets array is not long enough");
 
@@ -1717,7 +1740,7 @@ public:
 	}
 
 	template <class Visitor>
-	JPH_INLINE void				WalkHeightField(Visitor &ioVisitor)
+	JPH_INLINE void WalkHeightField(Visitor &ioVisitor)
 	{
 		// Early out if there's no collision
 		if (mShape->mHeightSamplesSize == 0)
@@ -1846,12 +1869,12 @@ public:
 				uint32 block_size_x = max_x - min_x - half_block_size;
 				uint32 block_size_y = max_y - min_y - half_block_size;
 				Range ranges[] =
-				{
-					{ 0, 0,									half_block_size, half_block_size },
-					{ half_block_size, 0,					block_size_x, half_block_size },
-					{ 0, half_block_size,					half_block_size, block_size_y },
-					{ half_block_size, half_block_size,		block_size_x, block_size_y },
-				};
+						{
+								{0, 0, half_block_size, half_block_size},
+								{half_block_size, 0, block_size_x, half_block_size},
+								{0, half_block_size, half_block_size, block_size_y},
+								{half_block_size, half_block_size, block_size_x, block_size_y},
+						};
 
 				// Calculate the min and max of each of the blocks
 				Mat44 block_min, block_max;
@@ -1892,7 +1915,7 @@ public:
 					block_max.SetColumn4(block, Vec4(value_max));
 				}
 
-			#ifdef JPH_DEBUG_HEIGHT_FIELD
+#ifdef JPH_DEBUG_HEIGHT_FIELD
 				// Draw the bounding boxes of the sub-nodes
 				for (int block = 0; block < 4; ++block)
 				{
@@ -1900,7 +1923,7 @@ public:
 					if (bounds.IsValid())
 						DebugRenderer::sInstance->DrawWireBox(bounds, Color::sYellow);
 				}
-			#endif // JPH_DEBUG_HEIGHT_FIELD
+#endif // JPH_DEBUG_HEIGHT_FIELD
 
 				// Transpose so we have the mins and maxes of each of the blocks in rows instead of columns
 				Mat44 transposed_min = block_min.Transposed();
@@ -1964,9 +1987,9 @@ public:
 										v2 = start_vertex[1];
 									}
 
-								#ifdef JPH_DEBUG_HEIGHT_FIELD
+#ifdef JPH_DEBUG_HEIGHT_FIELD
 									DebugRenderer::sInstance->DrawWireTriangle(RVec3(v0), RVec3(v1), RVec3(v2), Color::sWhite);
-								#endif
+#endif
 
 									// Call visitor
 									ioVisitor.VisitTriangle(v_x, v_y, t, v0, v1, v2);
@@ -2011,7 +2034,7 @@ public:
 				// Calculate properties of child blocks
 				UVec4 properties = UVec4::sReplicate(((level + 1) << cLevelShift) + (y << (cNumBitsXY + 1)) + (x << 1)) + UVec4(0, 1, 1 << cNumBitsXY, (1 << cNumBitsXY) + 1);
 
-			#ifdef JPH_DEBUG_HEIGHT_FIELD
+#ifdef JPH_DEBUG_HEIGHT_FIELD
 				// Draw boxes
 				for (int i = 0; i < 4; ++i)
 				{
@@ -2019,7 +2042,7 @@ public:
 					if (b.IsValid())
 						DebugRenderer::sInstance->DrawWireBox(b, Color::sGreen);
 				}
-			#endif
+#endif
 
 				// Check which sub nodes to visit
 				int num_results = ioVisitor.VisitRangeBlock(bounds_minx, bounds_miny, bounds_minz, bounds_maxx, bounds_maxy, bounds_maxz, properties, mTop);
@@ -2038,20 +2061,19 @@ public:
 			do
 				--mTop;
 			while (mTop >= 0 && !ioVisitor.ShouldVisitRangeBlock(mTop));
-		}
-		while (mTop >= 0);
+		} while (mTop >= 0);
 	}
 
 	// This can be used to have the visitor early out (ioVisitor.ShouldAbort() returns true) and later continue again (call WalkHeightField() again)
-	JPH_INLINE bool				IsDoneWalking() const
+	JPH_INLINE bool IsDoneWalking() const
 	{
 		return mTop < 0;
 	}
 
 private:
-	const HeightFieldShape *	mShape;
-	int							mTop = 0;
-	uint32						mPropertiesStack[cStackSize];
+	const HeightFieldShape *mShape;
+	int mTop = 0;
+	uint32 mPropertiesStack[cStackSize];
 };
 
 template <class Visitor>
@@ -2067,27 +2089,26 @@ bool HeightFieldShape::CastRay(const RayCast &inRay, const SubShapeIDCreator &in
 
 	struct Visitor
 	{
-		JPH_INLINE explicit		Visitor(const HeightFieldShape *inShape, const RayCast &inRay, const SubShapeIDCreator &inSubShapeIDCreator, RayCastResult &ioHit) :
-			mHit(ioHit),
-			mRayOrigin(inRay.mOrigin),
-			mRayDirection(inRay.mDirection),
-			mRayInvDirection(inRay.mDirection),
-			mShape(inShape),
-			mSubShapeIDCreator(inSubShapeIDCreator)
+		JPH_INLINE explicit Visitor(const HeightFieldShape *inShape, const RayCast &inRay, const SubShapeIDCreator &inSubShapeIDCreator, RayCastResult &ioHit) : mHit(ioHit),
+																																																																														 mRayOrigin(inRay.mOrigin),
+																																																																														 mRayDirection(inRay.mDirection),
+																																																																														 mRayInvDirection(inRay.mDirection),
+																																																																														 mShape(inShape),
+																																																																														 mSubShapeIDCreator(inSubShapeIDCreator)
 		{
 		}
 
-		JPH_INLINE bool			ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mHit.mFraction <= 0.0f;
 		}
 
-		JPH_INLINE bool			ShouldVisitRangeBlock(int inStackTop) const
+		JPH_INLINE bool ShouldVisitRangeBlock(int inStackTop) const
 		{
 			return mDistanceStack[inStackTop] < mHit.mFraction;
 		}
 
-		JPH_INLINE int			VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
+		JPH_INLINE int VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
 		{
 			// Test bounds of 4 children
 			Vec4 distance = RayAABox4(mRayOrigin, mRayInvDirection, inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -2096,7 +2117,7 @@ bool HeightFieldShape::CastRay(const RayCast &inRay, const SubShapeIDCreator &in
 			return SortReverseAndStore(distance, mHit.mFraction, ioProperties, &mDistanceStack[inStackTop]);
 		}
 
-		JPH_INLINE void			VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
+		JPH_INLINE void VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
 		{
 			float fraction = RayTriangle(mRayOrigin, mRayDirection, inV0, inV1, inV2);
 			if (fraction < mHit.mFraction)
@@ -2108,14 +2129,14 @@ bool HeightFieldShape::CastRay(const RayCast &inRay, const SubShapeIDCreator &in
 			}
 		}
 
-		RayCastResult &			mHit;
-		Vec3					mRayOrigin;
-		Vec3					mRayDirection;
-		RayInvDirection			mRayInvDirection;
+		RayCastResult &mHit;
+		Vec3 mRayOrigin;
+		Vec3 mRayDirection;
+		RayInvDirection mRayInvDirection;
 		const HeightFieldShape *mShape;
-		SubShapeIDCreator		mSubShapeIDCreator;
-		bool					mReturnValue = false;
-		float					mDistanceStack[cStackSize];
+		SubShapeIDCreator mSubShapeIDCreator;
+		bool mReturnValue = false;
+		float mDistanceStack[cStackSize];
 	};
 
 	Visitor visitor(this, inRay, inSubShapeIDCreator, ioHit);
@@ -2134,28 +2155,27 @@ void HeightFieldShape::CastRay(const RayCast &inRay, const RayCastSettings &inRa
 
 	struct Visitor
 	{
-		JPH_INLINE explicit		Visitor(const HeightFieldShape *inShape, const RayCast &inRay, const RayCastSettings &inRayCastSettings, const SubShapeIDCreator &inSubShapeIDCreator, CastRayCollector &ioCollector) :
-			mCollector(ioCollector),
-			mRayOrigin(inRay.mOrigin),
-			mRayDirection(inRay.mDirection),
-			mRayInvDirection(inRay.mDirection),
-			mBackFaceMode(inRayCastSettings.mBackFaceModeTriangles),
-			mShape(inShape),
-			mSubShapeIDCreator(inSubShapeIDCreator)
+		JPH_INLINE explicit Visitor(const HeightFieldShape *inShape, const RayCast &inRay, const RayCastSettings &inRayCastSettings, const SubShapeIDCreator &inSubShapeIDCreator, CastRayCollector &ioCollector) : mCollector(ioCollector),
+																																																																																																								mRayOrigin(inRay.mOrigin),
+																																																																																																								mRayDirection(inRay.mDirection),
+																																																																																																								mRayInvDirection(inRay.mDirection),
+																																																																																																								mBackFaceMode(inRayCastSettings.mBackFaceModeTriangles),
+																																																																																																								mShape(inShape),
+																																																																																																								mSubShapeIDCreator(inSubShapeIDCreator)
 		{
 		}
 
-		JPH_INLINE bool			ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
-		JPH_INLINE bool			ShouldVisitRangeBlock(int inStackTop) const
+		JPH_INLINE bool ShouldVisitRangeBlock(int inStackTop) const
 		{
 			return mDistanceStack[inStackTop] < mCollector.GetEarlyOutFraction();
 		}
 
-		JPH_INLINE int			VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
+		JPH_INLINE int VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
 		{
 			// Test bounds of 4 children
 			Vec4 distance = RayAABox4(mRayOrigin, mRayInvDirection, inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -2164,7 +2184,7 @@ void HeightFieldShape::CastRay(const RayCast &inRay, const RayCastSettings &inRa
 			return SortReverseAndStore(distance, mCollector.GetEarlyOutFraction(), ioProperties, &mDistanceStack[inStackTop]);
 		}
 
-		JPH_INLINE void			VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2) const
+		JPH_INLINE void VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2) const
 		{
 			// Back facing check
 			if (mBackFaceMode == EBackFaceMode::IgnoreBackFaces && (inV2 - inV0).Cross(inV1 - inV0).Dot(mRayDirection) < 0)
@@ -2182,14 +2202,14 @@ void HeightFieldShape::CastRay(const RayCast &inRay, const RayCastSettings &inRa
 			}
 		}
 
-		CastRayCollector &		mCollector;
-		Vec3					mRayOrigin;
-		Vec3					mRayDirection;
-		RayInvDirection			mRayInvDirection;
-		EBackFaceMode			mBackFaceMode;
+		CastRayCollector &mCollector;
+		Vec3 mRayOrigin;
+		Vec3 mRayDirection;
+		RayInvDirection mRayInvDirection;
+		EBackFaceMode mBackFaceMode;
 		const HeightFieldShape *mShape;
-		SubShapeIDCreator		mSubShapeIDCreator;
-		float					mDistanceStack[cStackSize];
+		SubShapeIDCreator mSubShapeIDCreator;
+		float mDistanceStack[cStackSize];
 	};
 
 	Visitor visitor(this, inRay, inRayCastSettings, inSubShapeIDCreator, ioCollector);
@@ -2209,17 +2229,17 @@ void HeightFieldShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform,
 	{
 		using CollideSoftBodyVerticesVsTriangles::CollideSoftBodyVerticesVsTriangles;
 
-		JPH_INLINE bool	ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return false;
 		}
 
-		JPH_INLINE bool	ShouldVisitRangeBlock([[maybe_unused]] int inStackTop) const
+		JPH_INLINE bool ShouldVisitRangeBlock([[maybe_unused]] int inStackTop) const
 		{
 			return mDistanceStack[inStackTop] < mClosestDistanceSq;
 		}
 
-		JPH_INLINE int	VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
+		JPH_INLINE int VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
 		{
 			// Get distance to vertex
 			Vec4 dist_sq = AABox4DistanceSqToPoint(mLocalPosition, inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
@@ -2231,12 +2251,12 @@ void HeightFieldShape::CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform,
 			return SortReverseAndStore(dist_sq, mClosestDistanceSq, ioProperties, &mDistanceStack[inStackTop]);
 		}
 
-		JPH_INLINE void	VisitTriangle([[maybe_unused]] uint inX, [[maybe_unused]] uint inY, [[maybe_unused]] uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
+		JPH_INLINE void VisitTriangle([[maybe_unused]] uint inX, [[maybe_unused]] uint inY, [[maybe_unused]] uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
 		{
 			ProcessTriangle(inV0, inV1, inV2);
 		}
 
-		float			mDistanceStack[cStackSize];
+		float mDistanceStack[cStackSize];
 	};
 
 	Visitor visitor(inCenterOfMassTransform, inScale);
@@ -2258,17 +2278,17 @@ void HeightFieldShape::sCastConvexVsHeightField(const ShapeCast &inShapeCast, co
 	{
 		using CastConvexVsTriangles::CastConvexVsTriangles;
 
-		JPH_INLINE bool				ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
-		JPH_INLINE bool				ShouldVisitRangeBlock(int inStackTop) const
+		JPH_INLINE bool ShouldVisitRangeBlock(int inStackTop) const
 		{
 			return mDistanceStack[inStackTop] < mCollector.GetPositiveEarlyOutFraction();
 		}
 
-		JPH_INLINE int				VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
+		JPH_INLINE int VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
 		{
 			// Scale the bounding boxes of this node
 			Vec4 bounds_min_x, bounds_min_y, bounds_min_z, bounds_max_x, bounds_max_y, bounds_max_z;
@@ -2287,7 +2307,7 @@ void HeightFieldShape::sCastConvexVsHeightField(const ShapeCast &inShapeCast, co
 			return SortReverseAndStore(distance, mCollector.GetPositiveEarlyOutFraction(), ioProperties, &mDistanceStack[inStackTop]);
 		}
 
-		JPH_INLINE void				VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
+		JPH_INLINE void VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
 		{
 			// Create sub shape id for this part
 			SubShapeID triangle_sub_shape_id = mShape2->EncodeSubShapeID(mSubShapeIDCreator2, inX, inY, inTriangle);
@@ -2298,12 +2318,12 @@ void HeightFieldShape::sCastConvexVsHeightField(const ShapeCast &inShapeCast, co
 			Cast(inV0, inV1, inV2, active_edges, triangle_sub_shape_id);
 		}
 
-		const HeightFieldShape *	mShape2;
-		RayInvDirection				mInvDirection;
-		Vec3						mBoxCenter;
-		Vec3						mBoxExtent;
-		SubShapeIDCreator			mSubShapeIDCreator2;
-		float						mDistanceStack[cStackSize];
+		const HeightFieldShape *mShape2;
+		RayInvDirection mInvDirection;
+		Vec3 mBoxCenter;
+		Vec3 mBoxExtent;
+		SubShapeIDCreator mSubShapeIDCreator2;
+		float mDistanceStack[cStackSize];
 	};
 
 	JPH_ASSERT(inShape->GetSubType() == EShapeSubType::HeightField);
@@ -2326,17 +2346,17 @@ void HeightFieldShape::sCastSphereVsHeightField(const ShapeCast &inShapeCast, co
 	{
 		using CastSphereVsTriangles::CastSphereVsTriangles;
 
-		JPH_INLINE bool				ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
-		JPH_INLINE bool				ShouldVisitRangeBlock(int inStackTop) const
+		JPH_INLINE bool ShouldVisitRangeBlock(int inStackTop) const
 		{
 			return mDistanceStack[inStackTop] < mCollector.GetPositiveEarlyOutFraction();
 		}
 
-		JPH_INLINE int				VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
+		JPH_INLINE int VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop)
 		{
 			// Scale the bounding boxes of this node
 			Vec4 bounds_min_x, bounds_min_y, bounds_min_z, bounds_max_x, bounds_max_y, bounds_max_z;
@@ -2355,7 +2375,7 @@ void HeightFieldShape::sCastSphereVsHeightField(const ShapeCast &inShapeCast, co
 			return SortReverseAndStore(distance, mCollector.GetPositiveEarlyOutFraction(), ioProperties, &mDistanceStack[inStackTop]);
 		}
 
-		JPH_INLINE void				VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
+		JPH_INLINE void VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
 		{
 			// Create sub shape id for this part
 			SubShapeID triangle_sub_shape_id = mShape2->EncodeSubShapeID(mSubShapeIDCreator2, inX, inY, inTriangle);
@@ -2366,10 +2386,10 @@ void HeightFieldShape::sCastSphereVsHeightField(const ShapeCast &inShapeCast, co
 			Cast(inV0, inV1, inV2, active_edges, triangle_sub_shape_id);
 		}
 
-		const HeightFieldShape *	mShape2;
-		RayInvDirection				mInvDirection;
-		SubShapeIDCreator			mSubShapeIDCreator2;
-		float						mDistanceStack[cStackSize];
+		const HeightFieldShape *mShape2;
+		RayInvDirection mInvDirection;
+		SubShapeIDCreator mSubShapeIDCreator2;
+		float mDistanceStack[cStackSize];
 	};
 
 	JPH_ASSERT(inShape->GetSubType() == EShapeSubType::HeightField);
@@ -2384,27 +2404,26 @@ void HeightFieldShape::sCastSphereVsHeightField(const ShapeCast &inShapeCast, co
 
 struct HeightFieldShape::HSGetTrianglesContext
 {
-			HSGetTrianglesContext(const HeightFieldShape *inShape, const AABox &inBox, Vec3Arg inPositionCOM, QuatArg inRotation, Vec3Arg inScale) :
-		mDecodeCtx(inShape),
-		mShape(inShape),
-		mLocalBox(Mat44::sInverseRotationTranslation(inRotation, inPositionCOM), inBox),
-		mHeightFieldScale(inScale),
-		mLocalToWorld(Mat44::sRotationTranslation(inRotation, inPositionCOM) * Mat44::sScale(inScale)),
-		mIsInsideOut(ScaleHelpers::IsInsideOut(inScale))
+	HSGetTrianglesContext(const HeightFieldShape *inShape, const AABox &inBox, Vec3Arg inPositionCOM, QuatArg inRotation, Vec3Arg inScale) : mDecodeCtx(inShape),
+																																																																					 mShape(inShape),
+																																																																					 mLocalBox(Mat44::sInverseRotationTranslation(inRotation, inPositionCOM), inBox),
+																																																																					 mHeightFieldScale(inScale),
+																																																																					 mLocalToWorld(Mat44::sRotationTranslation(inRotation, inPositionCOM) * Mat44::sScale(inScale)),
+																																																																					 mIsInsideOut(ScaleHelpers::IsInsideOut(inScale))
 	{
 	}
 
-	bool	ShouldAbort() const
+	bool ShouldAbort() const
 	{
 		return mShouldAbort;
 	}
 
-	bool	ShouldVisitRangeBlock([[maybe_unused]] int inStackTop) const
+	bool ShouldVisitRangeBlock([[maybe_unused]] int inStackTop) const
 	{
 		return true;
 	}
 
-	int		VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
+	int VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
 	{
 		// Scale the bounding boxes of this node
 		Vec4 bounds_min_x, bounds_min_y, bounds_min_z, bounds_max_x, bounds_max_y, bounds_max_z;
@@ -2419,7 +2438,7 @@ struct HeightFieldShape::HSGetTrianglesContext
 		return CountAndSortTrues(collides, ioProperties);
 	}
 
-	void	VisitTriangle(uint inX, uint inY, [[maybe_unused]] uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
+	void VisitTriangle(uint inX, uint inY, [[maybe_unused]] uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
 	{
 		// When the buffer is full and we cannot process the triangles, abort the height field walk. The next time GetTrianglesNext is called we will continue here.
 		if (mNumTrianglesFound + 1 > mMaxTrianglesRequested)
@@ -2452,17 +2471,17 @@ struct HeightFieldShape::HSGetTrianglesContext
 		mNumTrianglesFound++;
 	}
 
-	DecodingContext				mDecodeCtx;
-	const HeightFieldShape *	mShape;
-	OrientedBox					mLocalBox;
-	Vec3						mHeightFieldScale;
-	Mat44						mLocalToWorld;
-	int							mMaxTrianglesRequested;
-	Float3 *					mTriangleVertices;
-	int							mNumTrianglesFound;
-	const PhysicsMaterial **	mMaterials;
-	bool						mShouldAbort;
-	bool						mIsInsideOut;
+	DecodingContext mDecodeCtx;
+	const HeightFieldShape *mShape;
+	OrientedBox mLocalBox;
+	Vec3 mHeightFieldScale;
+	Mat44 mLocalToWorld;
+	int mMaxTrianglesRequested;
+	Float3 *mTriangleVertices;
+	int mNumTrianglesFound;
+	const PhysicsMaterial **mMaterials;
+	bool mShouldAbort;
+	bool mIsInsideOut;
 };
 
 void HeightFieldShape::GetTrianglesStart(GetTrianglesContext &ioContext, const AABox &inBox, Vec3Arg inPositionCOM, QuatArg inRotation, Vec3Arg inScale) const
@@ -2509,17 +2528,17 @@ void HeightFieldShape::sCollideConvexVsHeightField(const Shape *inShape1, const 
 	{
 		using CollideConvexVsTriangles::CollideConvexVsTriangles;
 
-		JPH_INLINE bool				ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
-		JPH_INLINE bool				ShouldVisitRangeBlock([[maybe_unused]] int inStackTop) const
+		JPH_INLINE bool ShouldVisitRangeBlock([[maybe_unused]] int inStackTop) const
 		{
 			return true;
 		}
 
-		JPH_INLINE int				VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
+		JPH_INLINE int VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
 		{
 			// Scale the bounding boxes of this node
 			Vec4 bounds_min_x, bounds_min_y, bounds_min_z, bounds_max_x, bounds_max_y, bounds_max_z;
@@ -2534,7 +2553,7 @@ void HeightFieldShape::sCollideConvexVsHeightField(const Shape *inShape1, const 
 			return CountAndSortTrues(collides, ioProperties);
 		}
 
-		JPH_INLINE void				VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
+		JPH_INLINE void VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
 		{
 			// Create ID for triangle
 			SubShapeID triangle_sub_shape_id = mShape2->EncodeSubShapeID(mSubShapeIDCreator2, inX, inY, inTriangle);
@@ -2545,8 +2564,8 @@ void HeightFieldShape::sCollideConvexVsHeightField(const Shape *inShape1, const 
 			Collide(inV0, inV1, inV2, active_edges, triangle_sub_shape_id);
 		}
 
-		const HeightFieldShape *	mShape2;
-		SubShapeIDCreator			mSubShapeIDCreator2;
+		const HeightFieldShape *mShape2;
+		SubShapeIDCreator mSubShapeIDCreator2;
 	};
 
 	Visitor visitor(shape1, inScale1, inScale2, inCenterOfMassTransform1, inCenterOfMassTransform2, inSubShapeIDCreator1.GetID(), inCollideShapeSettings, ioCollector);
@@ -2569,17 +2588,17 @@ void HeightFieldShape::sCollideSphereVsHeightField(const Shape *inShape1, const 
 	{
 		using CollideSphereVsTriangles::CollideSphereVsTriangles;
 
-		JPH_INLINE bool				ShouldAbort() const
+		JPH_INLINE bool ShouldAbort() const
 		{
 			return mCollector.ShouldEarlyOut();
 		}
 
-		JPH_INLINE bool				ShouldVisitRangeBlock([[maybe_unused]] int inStackTop) const
+		JPH_INLINE bool ShouldVisitRangeBlock([[maybe_unused]] int inStackTop) const
 		{
 			return true;
 		}
 
-		JPH_INLINE int				VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
+		JPH_INLINE int VisitRangeBlock(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, [[maybe_unused]] int inStackTop) const
 		{
 			// Scale the bounding boxes of this node
 			Vec4 bounds_min_x, bounds_min_y, bounds_min_z, bounds_max_x, bounds_max_y, bounds_max_z;
@@ -2594,7 +2613,7 @@ void HeightFieldShape::sCollideSphereVsHeightField(const Shape *inShape1, const 
 			return CountAndSortTrues(collides, ioProperties);
 		}
 
-		JPH_INLINE void				VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
+		JPH_INLINE void VisitTriangle(uint inX, uint inY, uint inTriangle, Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2)
 		{
 			// Create ID for triangle
 			SubShapeID triangle_sub_shape_id = mShape2->EncodeSubShapeID(mSubShapeIDCreator2, inX, inY, inTriangle);
@@ -2605,8 +2624,8 @@ void HeightFieldShape::sCollideSphereVsHeightField(const Shape *inShape1, const 
 			Collide(inV0, inV1, inV2, active_edges, triangle_sub_shape_id);
 		}
 
-		const HeightFieldShape *	mShape2;
-		SubShapeIDCreator			mSubShapeIDCreator2;
+		const HeightFieldShape *mShape2;
+		SubShapeIDCreator mSubShapeIDCreator2;
 	};
 
 	Visitor visitor(shape1, inScale1, inScale2, inCenterOfMassTransform1, inCenterOfMassTransform2, inSubShapeIDCreator1.GetID(), inCollideShapeSettings, ioCollector);
@@ -2682,19 +2701,15 @@ void HeightFieldShape::RestoreMaterialState(const PhysicsMaterialRefC *inMateria
 Shape::Stats HeightFieldShape::GetStats() const
 {
 	return Stats(
-		sizeof(*this)
-			+ mMaterials.size() * sizeof(Ref<PhysicsMaterial>)
-			+ mRangeBlocksSize * sizeof(RangeBlock)
-			+ mHeightSamplesSize * sizeof(uint8)
-			+ mActiveEdgesSize * sizeof(uint8)
-			+ mMaterialIndices.size() * sizeof(uint8),
-		mHeightSamplesSize == 0? 0 : Square(mSampleCount - 1) * 2);
+			sizeof(*this) + mMaterials.size() * sizeof(Ref<PhysicsMaterial>) + mRangeBlocksSize * sizeof(RangeBlock) + mHeightSamplesSize * sizeof(uint8) + mActiveEdgesSize * sizeof(uint8) + mMaterialIndices.size() * sizeof(uint8),
+			mHeightSamplesSize == 0 ? 0 : Square(mSampleCount - 1) * 2);
 }
 
 void HeightFieldShape::sRegister()
 {
 	ShapeFunctions &f = ShapeFunctions::sGet(EShapeSubType::HeightField);
-	f.mConstruct = []() -> Shape * { return new HeightFieldShape; };
+	f.mConstruct = []() -> Shape *
+	{ return new HeightFieldShape; };
 	f.mColor = Color::sPurple;
 
 	for (EShapeSubType s : sConvexSubShapeTypes)

@@ -2,15 +2,14 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../Jolt.h"
 
-#include <Jolt/TriangleSplitter/TriangleSplitter.h>
+#include "../TriangleSplitter/TriangleSplitter.h"
 
 JPH_NAMESPACE_BEGIN
 
-TriangleSplitter::TriangleSplitter(const VertexList &inVertices, const IndexedTriangleList &inTriangles) :
-	mVertices(inVertices),
-	mTriangles(inTriangles)
+TriangleSplitter::TriangleSplitter(const VertexList &inVertices, const IndexedTriangleList &inTriangles) : mVertices(inVertices),
+																																																					 mTriangles(inTriangles)
 {
 	mSortedTriangleIdx.resize(inTriangles.size());
 	mCentroids.resize(inTriangles.size());

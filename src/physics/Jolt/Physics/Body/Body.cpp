@@ -2,19 +2,19 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt/Jolt.h>
+#include "../../Jolt.h"
 
-#include <Jolt/Physics/Body/Body.h>
-#include <Jolt/Physics/Body/BodyCreationSettings.h>
-#include <Jolt/Physics/SoftBody/SoftBodyCreationSettings.h>
-#include <Jolt/Physics/SoftBody/SoftBodyMotionProperties.h>
-#include <Jolt/Physics/PhysicsSettings.h>
-#include <Jolt/Physics/StateRecorder.h>
-#include <Jolt/Physics/Collision/Shape/EmptyShape.h>
-#include <Jolt/Core/StringTools.h>
-#include <Jolt/Core/Profiler.h>
+#include "../Body/Body.h"
+#include "../Body/BodyCreationSettings.h"
+#include "../SoftBody/SoftBodyCreationSettings.h"
+#include "../SoftBody/SoftBodyMotionProperties.h"
+#include "../PhysicsSettings.h"
+#include "../StateRecorder.h"
+#include "../Collision/Shape/EmptyShape.h"
+#include "../../Core/StringTools.h"
+#include "../../Core/Profiler.h"
 #ifdef JPH_DEBUG_RENDERER
-	#include <Jolt/Renderer/DebugRenderer.h>
+#include "../Renderer/DebugRenderer.h"
 #endif // JPH_DEBUG_RENDERER
 
 JPH_NAMESPACE_BEGIN
@@ -22,14 +22,13 @@ JPH_NAMESPACE_BEGIN
 static const EmptyShape sFixedToWorldShape;
 Body Body::sFixedToWorld(false);
 
-Body::Body(bool) :
-	mPosition(Vec3::sZero()),
-	mRotation(Quat::sIdentity()),
-	mShape(&sFixedToWorldShape), // Dummy shape
-	mFriction(0.0f),
-	mRestitution(0.0f),
-	mObjectLayer(cObjectLayerInvalid),
-	mMotionType(EMotionType::Static)
+Body::Body(bool) : mPosition(Vec3::sZero()),
+									 mRotation(Quat::sIdentity()),
+									 mShape(&sFixedToWorldShape), // Dummy shape
+									 mFriction(0.0f),
+									 mRestitution(0.0f),
+									 mObjectLayer(cObjectLayerInvalid),
+									 mMotionType(EMotionType::Static)
 {
 	sFixedToWorldShape.SetEmbedded();
 }
@@ -204,7 +203,7 @@ bool Body::ApplyBuoyancyImpulse(RVec3Arg inSurfacePosition, Vec3Arg inSurfaceNor
 	// If we're not submerged, there's no point in doing the rest of the calculations
 	if (submerged_volume > 0.0f)
 	{
-	#ifdef JPH_DEBUG_RENDERER
+#ifdef JPH_DEBUG_RENDERER
 		// Draw submerged volume properties
 		if (Shape::sDrawSubmergedVolumes)
 		{
@@ -212,7 +211,7 @@ bool Body::ApplyBuoyancyImpulse(RVec3Arg inSurfacePosition, Vec3Arg inSurfaceNor
 			DebugRenderer::sInstance->DrawMarker(center_of_buoyancy, Color::sWhite, 2.0f);
 			DebugRenderer::sInstance->DrawText3D(center_of_buoyancy, StringFormat("%.3f / %.3f", (double)submerged_volume, (double)total_volume));
 		}
-	#endif // JPH_DEBUG_RENDERER
+#endif // JPH_DEBUG_RENDERER
 
 		// When buoyancy is 1 we want neutral buoyancy, this means that the density of the liquid is the same as the density of the body at that point.
 		// Buoyancy > 1 should make the object float, < 1 should make it sink.
@@ -325,30 +324,30 @@ BodyCreationSettings Body::GetBodyCreationSettings() const
 
 	result.mPosition = GetPosition();
 	result.mRotation = GetRotation();
-	result.mLinearVelocity = mMotionProperties != nullptr? mMotionProperties->GetLinearVelocity() : Vec3::sZero();
-	result.mAngularVelocity = mMotionProperties != nullptr? mMotionProperties->GetAngularVelocity() : Vec3::sZero();
+	result.mLinearVelocity = mMotionProperties != nullptr ? mMotionProperties->GetLinearVelocity() : Vec3::sZero();
+	result.mAngularVelocity = mMotionProperties != nullptr ? mMotionProperties->GetAngularVelocity() : Vec3::sZero();
 	result.mObjectLayer = GetObjectLayer();
 	result.mUserData = mUserData;
 	result.mCollisionGroup = GetCollisionGroup();
 	result.mMotionType = GetMotionType();
-	result.mAllowedDOFs = mMotionProperties != nullptr? mMotionProperties->GetAllowedDOFs() : EAllowedDOFs::All;
+	result.mAllowedDOFs = mMotionProperties != nullptr ? mMotionProperties->GetAllowedDOFs() : EAllowedDOFs::All;
 	result.mAllowDynamicOrKinematic = mMotionProperties != nullptr;
 	result.mIsSensor = IsSensor();
 	result.mCollideKinematicVsNonDynamic = GetCollideKinematicVsNonDynamic();
 	result.mUseManifoldReduction = GetUseManifoldReduction();
 	result.mApplyGyroscopicForce = GetApplyGyroscopicForce();
-	result.mMotionQuality = mMotionProperties != nullptr? mMotionProperties->GetMotionQuality() : EMotionQuality::Discrete;
+	result.mMotionQuality = mMotionProperties != nullptr ? mMotionProperties->GetMotionQuality() : EMotionQuality::Discrete;
 	result.mEnhancedInternalEdgeRemoval = GetEnhancedInternalEdgeRemoval();
-	result.mAllowSleeping = mMotionProperties != nullptr? GetAllowSleeping() : true;
+	result.mAllowSleeping = mMotionProperties != nullptr ? GetAllowSleeping() : true;
 	result.mFriction = GetFriction();
 	result.mRestitution = GetRestitution();
-	result.mLinearDamping = mMotionProperties != nullptr? mMotionProperties->GetLinearDamping() : 0.0f;
-	result.mAngularDamping = mMotionProperties != nullptr? mMotionProperties->GetAngularDamping() : 0.0f;
-	result.mMaxLinearVelocity = mMotionProperties != nullptr? mMotionProperties->GetMaxLinearVelocity() : 0.0f;
-	result.mMaxAngularVelocity = mMotionProperties != nullptr? mMotionProperties->GetMaxAngularVelocity() : 0.0f;
-	result.mGravityFactor = mMotionProperties != nullptr? mMotionProperties->GetGravityFactor() : 1.0f;
-	result.mNumVelocityStepsOverride = mMotionProperties != nullptr? mMotionProperties->GetNumVelocityStepsOverride() : 0;
-	result.mNumPositionStepsOverride = mMotionProperties != nullptr? mMotionProperties->GetNumPositionStepsOverride() : 0;
+	result.mLinearDamping = mMotionProperties != nullptr ? mMotionProperties->GetLinearDamping() : 0.0f;
+	result.mAngularDamping = mMotionProperties != nullptr ? mMotionProperties->GetAngularDamping() : 0.0f;
+	result.mMaxLinearVelocity = mMotionProperties != nullptr ? mMotionProperties->GetMaxLinearVelocity() : 0.0f;
+	result.mMaxAngularVelocity = mMotionProperties != nullptr ? mMotionProperties->GetMaxAngularVelocity() : 0.0f;
+	result.mGravityFactor = mMotionProperties != nullptr ? mMotionProperties->GetGravityFactor() : 1.0f;
+	result.mNumVelocityStepsOverride = mMotionProperties != nullptr ? mMotionProperties->GetNumVelocityStepsOverride() : 0;
+	result.mNumPositionStepsOverride = mMotionProperties != nullptr ? mMotionProperties->GetNumPositionStepsOverride() : 0;
 	result.mOverrideMassProperties = EOverrideMassProperties::MassAndInertiaProvided;
 
 	// Invert inertia and mass
@@ -358,7 +357,7 @@ BodyCreationSettings Body::GetBodyCreationSettings() const
 		Mat44 inv_inertia = mMotionProperties->GetLocalSpaceInverseInertiaUnchecked();
 
 		// Get mass
-		result.mMassPropertiesOverride.mMass = inv_mass != 0.0f? 1.0f / inv_mass : FLT_MAX;
+		result.mMassPropertiesOverride.mMass = inv_mass != 0.0f ? 1.0f / inv_mass : FLT_MAX;
 
 		// Get inertia
 		Mat44 inertia;

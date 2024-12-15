@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include <Jolt/Core/Reference.h>
-#include <Jolt/Core/Color.h>
-#include <Jolt/Core/Profiler.h>
-#include <Jolt/Core/NonCopyable.h>
-#include <Jolt/Core/StaticArray.h>
-#include <Jolt/Core/Atomics.h>
+#include "../Core/Reference.h"
+#include "../Core/Color.h"
+#include "../Core/Profiler.h"
+#include "../Core/NonCopyable.h"
+#include "../Core/StaticArray.h"
+#include "../Core/Atomics.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -80,36 +80,36 @@ public:
 	{
 	public:
 		/// Constructor
-		inline				JobHandle()									= default;
-		inline				JobHandle(const JobHandle &inHandle)		= default;
-		inline				JobHandle(JobHandle &&inHandle) noexcept	: Ref<Job>(std::move(inHandle)) { }
+		inline JobHandle() = default;
+		inline JobHandle(const JobHandle &inHandle) = default;
+		inline JobHandle(JobHandle &&inHandle) noexcept : Ref<Job>(std::move(inHandle)) {}
 
 		/// Constructor, only to be used by JobSystem
-		inline explicit		JobHandle(Job *inJob)						: Ref<Job>(inJob) { }
+		inline explicit JobHandle(Job *inJob) : Ref<Job>(inJob) {}
 
 		/// Assignment
-		inline JobHandle &	operator = (const JobHandle &inHandle)		= default;
-		inline JobHandle &	operator = (JobHandle &&inHandle) noexcept	= default;
+		inline JobHandle &operator=(const JobHandle &inHandle) = default;
+		inline JobHandle &operator=(JobHandle &&inHandle) noexcept = default;
 
 		/// Check if this handle contains a job
-		inline bool			IsValid() const								{ return GetPtr() != nullptr; }
+		inline bool IsValid() const { return GetPtr() != nullptr; }
 
 		/// Check if this job has finished executing
-		inline bool			IsDone() const								{ return GetPtr() != nullptr && GetPtr()->IsDone(); }
+		inline bool IsDone() const { return GetPtr() != nullptr && GetPtr()->IsDone(); }
 
 		/// Add to the dependency counter.
-		inline void			AddDependency(int inCount = 1) const		{ GetPtr()->AddDependency(inCount); }
+		inline void AddDependency(int inCount = 1) const { GetPtr()->AddDependency(inCount); }
 
 		/// Remove from the dependency counter. Job will start whenever the dependency counter reaches zero
 		/// and if it does it is no longer valid to call the AddDependency/RemoveDependency functions.
-		inline void			RemoveDependency(int inCount = 1) const		{ GetPtr()->RemoveDependencyAndQueue(inCount); }
+		inline void RemoveDependency(int inCount = 1) const { GetPtr()->RemoveDependencyAndQueue(inCount); }
 
 		/// Remove a dependency from a batch of jobs at once, this can be more efficient than removing them one by one as it requires less locking
-		static inline void	sRemoveDependencies(const JobHandle *inHandles, uint inNumHandles, int inCount = 1);
+		static inline void sRemoveDependencies(const JobHandle *inHandles, uint inNumHandles, int inCount = 1);
 
 		/// Helper function to remove dependencies on a static array of job handles
 		template <uint N>
-		static inline void	sRemoveDependencies(StaticArray<JobHandle, N> &inHandles, int inCount = 1)
+		static inline void sRemoveDependencies(StaticArray<JobHandle, N> &inHandles, int inCount = 1)
 		{
 			sRemoveDependencies(inHandles.data(), inHandles.size(), inCount);
 		}
@@ -126,44 +126,44 @@ public:
 
 		/// Add a job to this barrier
 		/// Note that jobs can keep being added to the barrier while waiting for the barrier
-		virtual void		AddJob(const JobHandle &inJob) = 0;
+		virtual void AddJob(const JobHandle &inJob) = 0;
 
 		/// Add multiple jobs to this barrier
 		/// Note that jobs can keep being added to the barrier while waiting for the barrier
-		virtual void		AddJobs(const JobHandle *inHandles, uint inNumHandles) = 0;
+		virtual void AddJobs(const JobHandle *inHandles, uint inNumHandles) = 0;
 
 	protected:
 		/// Job needs to be able to call OnJobFinished
 		friend class Job;
 
 		/// Destructor, you should call JobSystem::DestroyBarrier instead of destructing this object directly
-		virtual				~Barrier() = default;
+		virtual ~Barrier() = default;
 
 		/// Called by a Job to mark that it is finished
-		virtual void		OnJobFinished(Job *inJob) = 0;
+		virtual void OnJobFinished(Job *inJob) = 0;
 	};
 
 	/// Main function of the job
 	using JobFunction = function<void()>;
 
 	/// Destructor
-	virtual					~JobSystem() = default;
+	virtual ~JobSystem() = default;
 
 	/// Get maximum number of concurrently executing jobs
-	virtual int				GetMaxConcurrency() const = 0;
+	virtual int GetMaxConcurrency() const = 0;
 
 	/// Create a new job, the job is started immediately if inNumDependencies == 0 otherwise it starts when
 	/// RemoveDependency causes the dependency counter to reach 0.
-	virtual JobHandle		CreateJob(const char *inName, ColorArg inColor, const JobFunction &inJobFunction, uint32 inNumDependencies = 0) = 0;
+	virtual JobHandle CreateJob(const char *inName, ColorArg inColor, const JobFunction &inJobFunction, uint32 inNumDependencies = 0) = 0;
 
 	/// Create a new barrier, used to wait on jobs
-	virtual Barrier *		CreateBarrier() = 0;
+	virtual Barrier *CreateBarrier() = 0;
 
 	/// Destroy a barrier when it is no longer used. The barrier should be empty at this point.
-	virtual void			DestroyBarrier(Barrier *inBarrier) = 0;
+	virtual void DestroyBarrier(Barrier *inBarrier) = 0;
 
 	/// Wait for a set of jobs to be finished, note that only 1 thread can be waiting on a barrier at a time
-	virtual void			WaitForJobs(Barrier *inBarrier) = 0;
+	virtual void WaitForJobs(Barrier *inBarrier) = 0;
 
 protected:
 	/// A class that contains information for a single unit of work
@@ -173,29 +173,29 @@ protected:
 		JPH_OVERRIDE_NEW_DELETE
 
 		/// Constructor
-							Job([[maybe_unused]] const char *inJobName, [[maybe_unused]] ColorArg inColor, JobSystem *inJobSystem, const JobFunction &inJobFunction, uint32 inNumDependencies) :
-		#if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
-			mJobName(inJobName),
-			mColor(inColor),
-		#endif // defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
-			mJobSystem(inJobSystem),
-			mJobFunction(inJobFunction),
-			mNumDependencies(inNumDependencies)
+		Job([[maybe_unused]] const char *inJobName, [[maybe_unused]] ColorArg inColor, JobSystem *inJobSystem, const JobFunction &inJobFunction, uint32 inNumDependencies) :
+#if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
+																																																																																				 mJobName(inJobName),
+																																																																																				 mColor(inColor),
+#endif // defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
+																																																																																				 mJobSystem(inJobSystem),
+																																																																																				 mJobFunction(inJobFunction),
+																																																																																				 mNumDependencies(inNumDependencies)
 		{
 		}
 
 		/// Get the jobs system to which this job belongs
-		inline JobSystem *	GetJobSystem()								{ return mJobSystem; }
+		inline JobSystem *GetJobSystem() { return mJobSystem; }
 
 		/// Add or release a reference to this object
-		inline void			AddRef()
+		inline void AddRef()
 		{
 			// Adding a reference can use relaxed memory ordering
 			mReferenceCount.fetch_add(1, memory_order_relaxed);
 		}
-		inline void			Release()
+		inline void Release()
 		{
-		#ifndef JPH_TSAN_ENABLED
+#ifndef JPH_TSAN_ENABLED
 			// Releasing a reference must use release semantics...
 			if (mReferenceCount.fetch_sub(1, memory_order_release) == 1)
 			{
@@ -203,26 +203,26 @@ protected:
 				atomic_thread_fence(memory_order_acquire);
 				mJobSystem->FreeJob(this);
 			}
-		#else
+#else
 			// But under TSAN, we cannot use atomic_thread_fence, so we use an acq_rel operation unconditionally instead
 			if (mReferenceCount.fetch_sub(1, memory_order_acq_rel) == 1)
 				mJobSystem->FreeJob(this);
-		#endif
+#endif
 		}
 
 		/// Add to the dependency counter.
-		inline void			AddDependency(int inCount);
+		inline void AddDependency(int inCount);
 
 		/// Remove from the dependency counter. Returns true whenever the dependency counter reaches zero
 		/// and if it does it is no longer valid to call the AddDependency/RemoveDependency functions.
-		inline bool			RemoveDependency(int inCount);
+		inline bool RemoveDependency(int inCount);
 
 		/// Remove from the dependency counter. Job will be queued whenever the dependency counter reaches zero
 		/// and if it does it is no longer valid to call the AddDependency/RemoveDependency functions.
-		inline void			RemoveDependencyAndQueue(int inCount);
+		inline void RemoveDependencyAndQueue(int inCount);
 
 		/// Set the job barrier that this job belongs to and returns false if this was not possible because the job already finished
-		inline bool			SetBarrier(Barrier *inBarrier)
+		inline bool SetBarrier(Barrier *inBarrier)
 		{
 			intptr_t barrier = 0;
 			if (mBarrier.compare_exchange_strong(barrier, reinterpret_cast<intptr_t>(inBarrier), memory_order_relaxed))
@@ -232,7 +232,7 @@ protected:
 		}
 
 		/// Run the job function, returns the number of dependencies that this job still has or cExecutingState or cDoneState
-		inline uint32		Execute()
+		inline uint32 Execute()
 		{
 			// Transition job to executing state
 			uint32 state = 0; // We can only start running with a dependency counter of 0
@@ -267,41 +267,41 @@ protected:
 		}
 
 		/// Test if the job can be executed
-		inline bool			CanBeExecuted() const						{ return mNumDependencies.load(memory_order_relaxed) == 0; }
+		inline bool CanBeExecuted() const { return mNumDependencies.load(memory_order_relaxed) == 0; }
 
 		/// Test if the job finished executing
-		inline bool			IsDone() const								{ return mNumDependencies.load(memory_order_relaxed) == cDoneState; }
+		inline bool IsDone() const { return mNumDependencies.load(memory_order_relaxed) == cDoneState; }
 
-	#if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
+#if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
 		/// Get the name of the job
-		const char *		GetName() const								{ return mJobName; }
-	#endif // defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
+		const char *GetName() const { return mJobName; }
+#endif // defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
 
-		static constexpr uint32 cExecutingState = 0xe0e0e0e0;			///< Value of mNumDependencies when job is executing
-		static constexpr uint32 cDoneState		= 0xd0d0d0d0;			///< Value of mNumDependencies when job is done executing
+		static constexpr uint32 cExecutingState = 0xe0e0e0e0; ///< Value of mNumDependencies when job is executing
+		static constexpr uint32 cDoneState = 0xd0d0d0d0;			///< Value of mNumDependencies when job is done executing
 
-		static constexpr intptr_t cBarrierDoneState = ~intptr_t(0);		///< Value to use when the barrier has been triggered
+		static constexpr intptr_t cBarrierDoneState = ~intptr_t(0); ///< Value to use when the barrier has been triggered
 
-private:
-	#if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
-		const char *		mJobName;									///< Name of the job
-		Color				mColor;										///< Color of the job in the profiler
-	#endif // defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
-		JobSystem *			mJobSystem;									///< The job system we belong to
-		atomic<intptr_t>	mBarrier = 0;								///< Barrier that this job is associated with (is a Barrier pointer)
-		JobFunction			mJobFunction;								///< Main job function
-		atomic<uint32>		mReferenceCount = 0;						///< Amount of JobHandles pointing to this job
-		atomic<uint32>		mNumDependencies;							///< Amount of jobs that need to complete before this job can run
+	private:
+#if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
+		const char *mJobName;								///< Name of the job
+		Color mColor;												///< Color of the job in the profiler
+#endif																	// defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
+		JobSystem *mJobSystem;							///< The job system we belong to
+		atomic<intptr_t> mBarrier = 0;			///< Barrier that this job is associated with (is a Barrier pointer)
+		JobFunction mJobFunction;						///< Main job function
+		atomic<uint32> mReferenceCount = 0; ///< Amount of JobHandles pointing to this job
+		atomic<uint32> mNumDependencies;		///< Amount of jobs that need to complete before this job can run
 	};
 
 	/// Adds a job to the job queue
-	virtual void			QueueJob(Job *inJob) = 0;
+	virtual void QueueJob(Job *inJob) = 0;
 
 	/// Adds a number of jobs at once to the job queue
-	virtual void			QueueJobs(Job **inJobs, uint inNumJobs) = 0;
+	virtual void QueueJobs(Job **inJobs, uint inNumJobs) = 0;
 
 	/// Frees a job
-	virtual void			FreeJob(Job *inJob) = 0;
+	virtual void FreeJob(Job *inJob) = 0;
 };
 
 using JobHandle = JobSystem::JobHandle;
