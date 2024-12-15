@@ -460,17 +460,14 @@ contains
   end subroutine gl_uniform_mat4f
 
 
-  subroutine gl_uniform_vec3f(location, value)
+  subroutine gl_uniform_vec3f(location, x, y, z)
     use :: vector_3f
     implicit none
 
     integer(c_int32_t), intent(in), value :: location
-    type(vec3f), intent(in), target :: value
-    logical(c_bool) :: transpose
+    real(c_float), intent(in), value :: x,y,z
 
-    transpose = .false.
-
-    call internal_gl_uniform_3_fv(location, 1, transpose, c_loc(value))
+    call internal_gl_uniform_3f(location, x,y,z)
   end subroutine gl_uniform_vec3f
 
 
