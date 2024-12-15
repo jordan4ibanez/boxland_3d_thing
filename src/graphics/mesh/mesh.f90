@@ -7,6 +7,7 @@ module mesh
   use :: opengl
   use :: shader
   use :: mod_mesh_intrinsics
+  use :: forterm
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -101,7 +102,6 @@ contains
   !* Get a mesh from the hash table.
   !* The mesh is a clone. To update, set_mesh().
   function get_mesh(vao_id, gotten_mesh) result(exists)
-    use :: terminal
     implicit none
 
     integer(c_int), intent(in), value :: vao_id
@@ -128,7 +128,6 @@ contains
   !* The mesh is a clone. To update, set_mesh().
   !! This is slower than get_mesh.
   function get_mesh_by_name(mesh_name, gotten_mesh) result(exists)
-    use :: terminal
     implicit none
 
     character(len = *, kind = c_char), intent(in) :: mesh_name
@@ -160,7 +159,6 @@ contains
 
   !* Draw a mesh.
   subroutine mesh_draw(vao_id)
-    use :: terminal
     implicit none
 
     integer(c_int), intent(in), value :: vao_id
@@ -182,7 +180,6 @@ contains
   !* Draw a mesh by name.
   !! This is slower than mesh_draw.
   subroutine mesh_draw_by_name(mesh_name)
-    use :: terminal
     implicit none
 
     character(len = *, kind = c_char), intent(in) :: mesh_name
@@ -203,7 +200,6 @@ contains
 
   !* Delete a mesh.
   subroutine mesh_delete(vao_id)
-    use :: terminal
     implicit none
 
     integer(c_int), intent(in), value :: vao_id
@@ -224,7 +220,6 @@ contains
   !* Delete a mesh by name.
   !! This is slower than mesh_delete.
   subroutine mesh_delete_by_name(mesh_name)
-    use :: terminal
     implicit none
 
     character(len = *, kind = c_char), intent(in) :: mesh_name
@@ -275,7 +270,6 @@ contains
 
   !* Completely wipe out all existing meshes.
   subroutine mesh_destroy_database()
-    use :: terminal
     implicit none
 
     call mesh_database%destroy()
