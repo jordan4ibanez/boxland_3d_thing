@@ -23,6 +23,8 @@ module collider_mod
 
   ! Don't try to raw initialize this lol.
   type, abstract :: collider
+  contains
+    ! procedure ::
   end type collider
 
 
@@ -45,6 +47,16 @@ module collider_mod
 
 
 contains
+
+
+  function new_collider_sphere(radius) result(sph)
+    implicit none
+
+    real(c_float), intent(in), value :: radius
+    type(collider_sphere) :: sph
+
+    sph%radius = radius
+  end function new_collider_sphere
 
 
 
