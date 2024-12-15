@@ -9,8 +9,11 @@ program main
   use :: camera
   use :: mouse
   use :: keyboard
+  use :: math_helpers
   use, intrinsic :: iso_c_binding
   implicit none
+
+  real :: blah = 0.0
 
   call glfw_set_error_callback()
   if (.not. glfw_init()) then
@@ -65,15 +68,20 @@ program main
 
 
   do while (.not. glfw_window_should_close())
+    call delta_tick()
     call gl_clear_color_scalar(0.0)
     call gl_clear_color_and_depth_buffer()
     call mouse_update()
     call camera_update_3d()
     call camera_freecam_hackjob()
 
-    call camera_set_object_color(1.0, 1.0, 1.0)
+    blah = blah + delta_get_f32() * 2.0
 
-    call camera_set_object_matrix_f32(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+    call camera_set_object_color(sin(blah * 2.0), cos(blah / 2.0), asin(blah * (-1.0)))
+
+    ! print*,blah
+
+    call camera_set_object_matrix_f32(0.0, sin(blah) / 2.21, 1.0, 0.0, blah, 0.0, 1.0, 1.0, 1.0)
 
     call mesh_draw_by_name("car")
 
