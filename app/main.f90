@@ -53,7 +53,6 @@ program main
 
 
   ! Time to draw le square.
-
   call mesh_create_3d_named("car", &
     [ &
     -0.5, -0.5, 0.0, &
@@ -77,7 +76,7 @@ program main
 
     blah = blah + delta_get_f32() * 2.0
 
-    call camera_set_object_color(sin(blah * 2.0), cos(blah / 2.0), asin(blah * (-1.0)))
+    call camera_set_object_color(clamp_f32(cos(cos(mod(blah, 6.28))), 0.0, 1.0), clamp_f32(tan(mod(blah, 6.28)), 0.2, 1.0), clamp_f32(sin(mod(blah, 6.28)), 0.1, 1.0))
 
     ! print*,blah
 
