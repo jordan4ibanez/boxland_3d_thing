@@ -13,7 +13,7 @@ module mod_mesh_intrinsics
     integer(c_int) :: vao = 0
     integer(c_int) :: vbo_position = 0
     integer(c_int) :: vbo_texture_coordinate = 0
-    integer(c_int) :: vbo_color = 0
+    ! integer(c_int) :: vbo_color = 0
     integer(c_int) :: vbo_indices = 0
     integer(c_int) :: indices_length = 0
   end type mesh_data
@@ -91,38 +91,38 @@ contains
   end function upload_texture_coordinate
 
 
-  integer function upload_colors(colors) result(vbo_position)
-    implicit none
+  ! integer function upload_colors(colors) result(vbo_position)
+  !   implicit none
 
-    real(c_float), dimension(:), intent(in), target :: colors
-    integer(c_int) :: color_vbo_position
+  !   real(c_float), dimension(:), intent(in), target :: colors
+  !   integer(c_int) :: color_vbo_position
 
-    color_vbo_position = ATTRIBUTE_COLOR
+  !   color_vbo_position = ATTRIBUTE_COLOR
 
-    ! Create the VBO context.
-    vbo_position = gl_gen_buffers()
+  !   ! Create the VBO context.
+  !   vbo_position = gl_gen_buffers()
 
-    if (debug_mode) then
-      print"(A)","vbo color: ["//int_to_string(vbo_position)//"]"
-    end if
+  !   if (debug_mode) then
+  !     print"(A)","vbo color: ["//int_to_string(vbo_position)//"]"
+  !   end if
 
-    ! Walk into the VBO context.
-    call gl_bind_buffer(GL_ARRAY_BUFFER, vbo_position)
+  !   ! Walk into the VBO context.
+  !   call gl_bind_buffer(GL_ARRAY_BUFFER, vbo_position)
 
-    ! Pass this data into the OpenGL state machine.
-    call gl_buffer_float_array(colors)
+  !   ! Pass this data into the OpenGL state machine.
+  !   call gl_buffer_float_array(colors)
 
-    ! Width = 3 because this is a vec3
-    ! false because this is not normalized
-    ! 0 stride
-    call gl_vertex_attrib_pointer(color_vbo_position, 3, GL_FLOAT, .false., 0)
+  !   ! Width = 3 because this is a vec3
+  !   ! false because this is not normalized
+  !   ! 0 stride
+  !   call gl_vertex_attrib_pointer(color_vbo_position, 3, GL_FLOAT, .false., 0)
 
-    ! Enable this new data.
-    call gl_enable_vertex_attrib_array(color_vbo_position)
+  !   ! Enable this new data.
+  !   call gl_enable_vertex_attrib_array(color_vbo_position)
 
-    ! Now unbind.
-    call gl_bind_buffer(GL_ARRAY_BUFFER, 0)
-  end function upload_colors
+  !   ! Now unbind.
+  !   call gl_bind_buffer(GL_ARRAY_BUFFER, 0)
+  ! end function upload_colors
 
 
   integer function upload_indices(indices) result(vbo_position)
@@ -181,7 +181,7 @@ contains
 
     new_mesh%vbo_texture_coordinate = upload_texture_coordinate(texture_coordinates)
 
-    new_mesh%vbo_color = upload_colors(colors)
+    ! new_mesh%vbo_color = upload_colors(colors)
 
     new_mesh%vbo_indices = upload_indices(indices)
 

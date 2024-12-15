@@ -312,12 +312,12 @@ contains
     ! end if
 
     ! Colors
-    call gl_disable_vertex_attrib_array(ATTRIBUTE_COLOR)
-    call gl_delete_buffers(mesh_pointer%vbo_color)
+    ! call gl_disable_vertex_attrib_array(ATTRIBUTE_COLOR)
+    ! call gl_delete_buffers(mesh_pointer%vbo_color)
 
-    if (gl_is_buffer(mesh_pointer%vbo_color)) then
-      error stop "[Mesh]: Failed to delete VBO [color] for mesh ID ["//int_to_string(mesh_pointer%vao)//"]"
-    end if
+    ! if (gl_is_buffer(mesh_pointer%vbo_color)) then
+    !   error stop "[Mesh]: Failed to delete VBO [color] for mesh ID ["//int_to_string(mesh_pointer%vao)//"]"
+    ! end if
     ! if (debug_mode) then
     !   print"(A)", "[Mesh]: Deleted VBO [color] at location["//int_to_string(gotten_mesh%vbo_color)//"]"
     ! end if
