@@ -22,6 +22,7 @@ files_f90 = { git = "https://github.com/jordan4ibanez/files_f90" }
 string_f90 = { git = "https://github.com/jordan4ibanez/string_f90" }
 constants_f90 = { git = "https://github.com/jordan4ibanez/constants_f90" }
 forterm = { git = "https://github.com/jordan4ibanez/forterm" }
+fglm = { git = "https://github.com/jordan4ibanez/fglm" }
 
 [install]
 library = false

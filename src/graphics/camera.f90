@@ -6,6 +6,7 @@ module camera
   use :: shader
   use :: opengl
   use :: glfw
+  use :: constants_f90
   use, intrinsic :: iso_c_binding
   implicit none
 
