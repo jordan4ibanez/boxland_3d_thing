@@ -5,12 +5,12 @@
 #pragma once
 
 // Project includes
-#include <Jolt/Core/Core.h>
-#include <Jolt/Core/ARMNeon.h>
-#include <Jolt/Core/Memory.h>
-#include <Jolt/Core/IssueReporting.h>
-#include <Jolt/Core/Array.h>
-#include <Jolt/Math/Math.h>
-#include <Jolt/Math/Vec4.h>
-#include <Jolt/Math/Mat44.h>
-#include <Jolt/Math/Real.h>
+#include "Core/Core.h"
+#include "Core/ARMNeon.h"
+#include "Core/Memory.h"
+#include "Core/IssueReporting.h"
+#include "Core/Array.h"
+#include "Math/Math.h"
+#include "Math/Vec4.h"
+#include "Math/Mat44.h"
+#include "Math/Real.h"
