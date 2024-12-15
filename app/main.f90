@@ -10,6 +10,7 @@ program main
   use :: mouse
   use :: keyboard
   use :: math_helpers
+  use :: jolt_physics_bindings
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -66,7 +67,7 @@ program main
 
 
 
-  do while (.not. glfw_window_should_close())
+  do while (glfw_window_should_close())
     call delta_tick()
     call gl_clear_color_scalar(0.0)
     call gl_clear_color_and_depth_buffer()
@@ -92,4 +93,6 @@ program main
   call shader_destroy_database()
   call glfw_terminate()
   ! call print_color(NOTIFICATION, "[jordan4ibanez]: Why you running this piece of crap?")
+
+  call print_hi()
 end program main
