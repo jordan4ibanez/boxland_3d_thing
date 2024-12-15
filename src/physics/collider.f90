@@ -1,13 +1,13 @@
 module collider_mod
   use, intrinsic :: iso_c_binding
-  use :: vector_3f
+  use :: vector_3d
   implicit none
 
 
   type collider_contact
-    type(vec3f) :: collision_point_1
-    type(vec3f) :: collision_point_2
-    type(vec3f) :: normal
+    type(vec3d) :: collision_point_1
+    type(vec3d) :: collision_point_2
+    type(vec3d) :: normal
   end type collider_contact
 
 
@@ -17,7 +17,7 @@ module collider_mod
 
   type :: collider_convex_hull_face
     integer(c_int32_t), dimension(:), pointer :: elements => null()
-    type(vec3f) :: normal
+    type(vec3d) :: normal
   end type collider_convex_hull_face
 
 
@@ -29,8 +29,8 @@ module collider_mod
 
 
   type, extends(collider) :: collider_convex_hull
-    type(vec3f), dimension(:), pointer :: vertices => null()
-    type(vec3f), dimension(:), pointer :: transformed_vertices => null()
+    type(vec3d), dimension(:), pointer :: vertices => null()
+    type(vec3d), dimension(:), pointer :: transformed_vertices => null()
     type(collider_convex_hull_face), dimension(:), pointer :: faces => null()
     type(collider_convex_hull_face), dimension(:), pointer :: transformed_faces => null()
 
@@ -42,7 +42,7 @@ module collider_mod
 
   type, extends(collider) :: collider_sphere
     real(c_float) :: radius = 0
-    type(vec3f) :: center
+    type(vec3d) :: center
   end type collider_sphere
 
 
