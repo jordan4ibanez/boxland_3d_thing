@@ -24,8 +24,9 @@ module shader
   integer(c_int), parameter :: ATTRIBUTE_TEXTURE_COORDINATE = 1
   integer(c_int), parameter :: ATTRIBUTE_COLOR = 2
 
-  integer(c_int) :: UNIFORM_CAMERA_MATRIX
-  integer(c_int) :: UNIFORM_OBJECT_MATRIX
+  integer(c_int32_t) :: UNIFORM_CAMERA_MATRIX
+  integer(c_int32_t) :: UNIFORM_OBJECT_MATRIX
+  integer(c_int32_t) :: UNIFORM_COLOR_VEC3
 
   !* Type: Integer(c_int)
   type(hashmap_string_key) :: shader_database
