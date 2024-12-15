@@ -3,6 +3,7 @@ module font
   use :: vector_2i
   use :: memory_texture_module
   use :: hashmap_str
+  use :: forterm
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -254,7 +255,6 @@ contains
 
   !* Get a character's OpenGL data.
   function get_character(char, gl_char_information) result(exists)
-    use :: terminal
     implicit none
 
     character, intent(in) :: char
