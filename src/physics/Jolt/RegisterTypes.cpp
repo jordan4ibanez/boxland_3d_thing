@@ -2,32 +2,32 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include <Jolt.h>
+#include "Jolt.h"
 
-#include <Jolt/RegisterTypes.h>
-#include <Jolt/Core/Factory.h>
-#include <Jolt/Core/RTTI.h>
-#include <Jolt/Core/TickCounter.h>
-#include <Jolt/Physics/Collision/CollisionDispatch.h>
-#include <Jolt/Physics/Collision/Shape/TriangleShape.h>
-#include <Jolt/Physics/Collision/Shape/PlaneShape.h>
-#include <Jolt/Physics/Collision/Shape/SphereShape.h>
-#include <Jolt/Physics/Collision/Shape/BoxShape.h>
-#include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
-#include <Jolt/Physics/Collision/Shape/TaperedCapsuleShape.h>
-#include <Jolt/Physics/Collision/Shape/CylinderShape.h>
-#include <Jolt/Physics/Collision/Shape/TaperedCylinderShape.h>
-#include <Jolt/Physics/Collision/Shape/ScaledShape.h>
-#include <Jolt/Physics/Collision/Shape/MeshShape.h>
-#include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
-#include <Jolt/Physics/Collision/Shape/HeightFieldShape.h>
-#include <Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h>
-#include <Jolt/Physics/Collision/Shape/OffsetCenterOfMassShape.h>
-#include <Jolt/Physics/Collision/Shape/MutableCompoundShape.h>
-#include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
-#include <Jolt/Physics/Collision/Shape/EmptyShape.h>
-#include <Jolt/Physics/Collision/PhysicsMaterialSimple.h>
-#include <Jolt/Physics/SoftBody/SoftBodyShape.h>
+#include "RegisterTypes.h"
+#include "Core/Factory.h"
+#include "Core/RTTI.h"
+#include "Core/TickCounter.h"
+#include "Physics/Collision/CollisionDispatch.h"
+#include "Physics/Collision/Shape/TriangleShape.h"
+#include "Physics/Collision/Shape/PlaneShape.h"
+#include "Physics/Collision/Shape/SphereShape.h"
+#include "Physics/Collision/Shape/BoxShape.h"
+#include "Physics/Collision/Shape/CapsuleShape.h"
+#include "Physics/Collision/Shape/TaperedCapsuleShape.h"
+#include "Physics/Collision/Shape/CylinderShape.h"
+#include "Physics/Collision/Shape/TaperedCylinderShape.h"
+#include "Physics/Collision/Shape/ScaledShape.h"
+#include "Physics/Collision/Shape/MeshShape.h"
+#include "Physics/Collision/Shape/ConvexHullShape.h"
+#include "Physics/Collision/Shape/HeightFieldShape.h"
+#include "Physics/Collision/Shape/RotatedTranslatedShape.h"
+#include "Physics/Collision/Shape/OffsetCenterOfMassShape.h"
+#include "Physics/Collision/Shape/MutableCompoundShape.h"
+#include "Physics/Collision/Shape/StaticCompoundShape.h"
+#include "Physics/Collision/Shape/EmptyShape.h"
+#include "Physics/Collision/PhysicsMaterialSimple.h"
+#include "Physics/SoftBody/SoftBodyShape.h"
 
 JPH_DECLARE_RTTI_WITH_NAMESPACE_FOR_FACTORY(JPH_EXPORT, JPH, Skeleton)
 JPH_DECLARE_RTTI_WITH_NAMESPACE_FOR_FACTORY(JPH_EXPORT, JPH, SkeletalAnimation)
