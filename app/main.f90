@@ -8,7 +8,7 @@ program main
   use :: forterm
   use, intrinsic :: iso_c_binding
   implicit none
-  
+
   call glfw_set_error_callback()
   if (.not. glfw_init()) then
     error stop "Failed to init glfw."
@@ -42,6 +42,10 @@ program main
   call shader_module_initialize()
   call shader_create("main", "./shaders/vertex.vert", "./shaders/fragment.frag")
 
+
+  do while (.not. glfw_window_should_close())
+
+  end do
 
 
 
