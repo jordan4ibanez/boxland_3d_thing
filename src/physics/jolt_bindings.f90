@@ -752,17 +752,23 @@ module jolt_bindings
   end type JPH_PhysicsSettings
 
 
-  interface
-
+!! todo: these are bind(c) prototypes
 ! typedef void(JPH_API_CALL* JPH_TraceFunc)(const char* mssage)
 ! typedef bool(JPH_API_CALL* JPH_AssertFailureFunc)(const char* expression, const char* mssage, const char* file, uint32_t line)
-
 ! typedef void JPH_JobFunction(void* arg)
 ! typedef void JPH_QueueJobCallback(void* context, JPH_JobFunction* job, void* arg)
 ! typedef void JPH_QueueJobsCallback(void* context, JPH_JobFunction* job, void** args, uint32_t count)
 
+  interface
 
-!  JPH_JobSystem* JPH_JobSystemThreadPool_Create(const JobSystemThreadPoolConfig* config)
+
+  function JPH_JobSystemThreadPool_Create(JobSystemThreadPoolConf) result(JPH_JobSystem) bind(c, name = "JPH_JobSystemThreadPool_Create")
+    use, intrinsic :: iso_c_binding
+    implicit none
+
+    type(c_ptr), intent(in), value :: JobSystemThreadPoolConf
+    type(c_ptr) :: JPH_JobSystem
+  end function 
 
 ! JPH_CAPI JPH_JobSystem* JPH_JobSystemCallback_Create(const JPH_JobSystemConfig* config)
 
@@ -799,7 +805,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_ObjectLayerPairFilterTable_DisableCollision(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
 
 ! JPH_CAPI void JPH_ObjectLayerPairFilterTable_EnableCollision(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
-  
+
 ! JPH_CAPI bool JPH_ObjectLayerPairFilterTable_ShouldCollide(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
 
 !  !* JPH_ObjectVsBroadPhaseLayerFilter */
