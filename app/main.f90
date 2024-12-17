@@ -17,7 +17,8 @@ program main
 
   real :: blah = 0.0
   real, parameter :: gravity = 10.0
-  type(vec3d) :: ground_pos, car_pos
+  type(vec3d) :: ground_pos, car_pos, car_velocity, car_rotation
+  real :: size = 0.05
 
   call glfw_set_error_callback()
   if (.not. glfw_init()) then
@@ -72,6 +73,22 @@ program main
   car_pos = [0.0, 1.0, 0.0]
 
 
+  call mesh_create_3d_named("point", &
+    [ &
+    -size, size, -size, &
+    -size, size, size, &
+    size, size, size, &
+    size, size, -size,  &
+
+    -size, -size, -size, &
+    -size, -size, size, &
+    size, -size, size, &
+    size, -size, -size  &
+    ], &
+    [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], &
+    [0,1,2,2,3,0, 4,5,6,6,7,4] &
+    )
+
   call mesh_create_3d_named("ground", &
     [ &
     -10.0, 0.0, -10.0, &
@@ -98,13 +115,20 @@ program main
     call camera_update_3d()
 
 
-    blah = blah + delta_get_f32() * 2.0
+    car_rotation%x = car_rotation%x + 0.01
 
+
+
+
+    blah = blah + delta_get_f32() * 2.0
     call camera_set_object_color(clamp_f32(cos(cos(mod(blah, 6.28))), 0.0, 1.0), clamp_f32(tan(mod(blah, 6.28)), 0.2, 1.0), clamp_f32(sin(mod(blah, 6.28)), 0.1, 1.0))
 
-    call camera_set_object_matrix_f64(car_pos%x, car_pos%y, car_pos%z, 0.0_8, 0.0_8, 0.0_8, 1.0_8, 1.0_8, 1.0_8)
-
+    call camera_set_object_matrix_f64(car_pos%x, car_pos%y, car_pos%z, car_rotation%x, car_rotation%y, car_rotation%z, 1.0_8, 1.0_8, 1.0_8)
     call mesh_draw_by_name("car")
+
+    call camera_set_object_color(1.0, 0.0, 0.5)
+    call camera_set_object_matrix_f32(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+    call mesh_draw_by_name("point")
 
     call camera_set_object_color(0.5, 0.5, 0.5)
     call camera_set_object_matrix_f32(0.0, -2.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
