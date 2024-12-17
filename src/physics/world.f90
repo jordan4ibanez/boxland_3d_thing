@@ -22,6 +22,8 @@ module world
   type(c_ptr) :: broad_phase_layer_interface_table
   type(c_ptr) :: object_vs_broad_phase_layer_filter
   type(JPH_PhysicsSystemSettings), target :: settings
+  type(c_ptr) :: system
+  type(c_ptr) :: body_interface
 
 contains
 
@@ -60,7 +62,8 @@ contains
     settings%broadPhaseLayerInterface = broad_phase_layer_interface_table
     settings%objectLayerPairFilter= object_layer_pair_filter_table
     settings%objectVsBroadPhaseLayerFilter = object_vs_broad_phase_layer_filter
-
+    system = JPH_PhysicsSystem_Create(c_loc(settings))
+    body_interface = JPH_PhysicsSystem_GetBodyInterface(system)
 
     print"(A)","World created."
   end subroutine world_create
