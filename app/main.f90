@@ -18,7 +18,7 @@ program main
 
   real :: blah = 0.0
   real, parameter :: gravity = 10.0
-  type(vec3d) :: ground_pos, car_pos, car_velocity, car_rotation
+  type(vec3d) :: ground_pos, car_pos, car_velocity, car_rotation, point_pos
   type(vec2f) :: car_size
   real :: size = 0.05
 
@@ -118,7 +118,7 @@ program main
     call camera_update_3d()
 
 
-    car_rotation%x = car_rotation%x + 0.01
+    car_rotation%y = car_rotation%y + 0.01
 
 
     blah = blah + delta_get_f32() * 2.0
@@ -128,11 +128,12 @@ program main
     call mesh_draw_by_name("car")
 
     call camera_set_object_color(1.0, 0.0, 0.5)
-    call camera_set_object_matrix_f32(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+    call camera_set_object_matrix_f32(real(point_pos%x), real(point_pos%y), real(point_pos%z), 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
     call mesh_draw_by_name("point")
 
+
     call camera_set_object_color(0.5, 0.5, 0.5)
-    call camera_set_object_matrix_f32(0.0, -2.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+    call camera_set_object_matrix_f32(real(ground_pos%x), real(ground_pos%y), real(ground_pos%z), 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
 
     call mesh_draw_by_name("ground")
 
