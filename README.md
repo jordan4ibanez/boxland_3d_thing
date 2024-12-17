@@ -8,6 +8,9 @@ But this time, I literally have NO IDEA what I'm doing.
 
 This needs glfw 3.4 which ubuntu 24.04 and fedora 41 do not ship so they're unsupported. If your distro hasn't updated to glfw 3.4 it's unsupported. 
 
+
+I think this depends on ODE.
+
 # Notes
 https://github.com/jslee02/awesome-collision-detection
 
