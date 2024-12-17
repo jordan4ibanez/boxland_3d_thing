@@ -865,9 +865,23 @@ module jolt_bindings
       type(c_ptr) :: ObjectLayerPairFilter
     end function
 
-! JPH_CAPI JPH_ObjectLayer JPH_ObjectLayerPairFilterMask_GetObjectLayer(uint32_t group, uint32_t mask)
 
-! JPH_CAPI uint32_t JPH_ObjectLayerPairFilterMask_GetGroup(JPH_ObjectLayer layer)
+    function JPH_ObjectLayerPairFilterMask_GetObjectLayer(group, mask) result(ObjectLayer) bind(c, name = "JPH_ObjectLayerPairFilterMask_GetObjectLayer")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      integer(c_int32_t), intent(in), value :: group, mask
+      integer(c_int16_t) :: ObjectLayer
+    end function
+
+
+    function JPH_ObjectLayerPairFilterMask_GetGroup(layer) result(group) bind(c, name = "JPH_ObjectLayerPairFilterMask_GetGroup")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      integer(c_int16_t), intent(in), value :: layer
+      integer(c_int32_t) :: group
+    end function
 
 ! JPH_CAPI uint32_t JPH_ObjectLayerPairFilterMask_GetMask(JPH_ObjectLayer layer)
 
