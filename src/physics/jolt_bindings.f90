@@ -1417,7 +1417,14 @@ module jolt_bindings
       type(c_ptr) :: mat
     end function
 
-! JPH_CAPI void JPH_Shape_GetSurfaceNormal(const JPH_Shape* shape, JPH_SubShapeID subShapeID, JPH_Vec3* localPosition, JPH_Vec3* normal)
+
+    subroutine JPH_Shape_GetSurfaceNormal(shape, subShapeID, localPosition, normal) bind(c, name = "JPH_Shape_GetSurfaceNormal")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape, localPosition, normal
+      integer(c_int32_t), intent(in), value :: subShapeID
+    end subroutine
 
 ! JPH_CAPI float JPH_Shape_GetVolume(const JPH_Shape* shape)
 
