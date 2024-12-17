@@ -45,6 +45,8 @@ contains
 
     call JPH_SetTraceHandler(c_funloc(trace_output_handler))
 
+    call JPH_SetAssertFailureHandler(c_funloc(assert_handler))
+
     job_system_threadpool = JPH_JobSystemThreadPool_Create(c_null_ptr)
 
     ! We're only using 2 layers.
@@ -103,6 +105,35 @@ contains
     print*,message
   end subroutine
 
+
+  function assert_handler(inexpression, inmessage, infile, inline) result(b) bind(c)
+    implicit none
+
+    type(c_ptr), intent(in), value :: inexpression, inmessage, infile
+    integer(c_int32_t), intent(in), value :: inline
+    logical(c_bool) :: b
+    character(len = :, kind = c_char), pointer :: m
+
+    b = .true.
+
+    if (c_associated(inexpression)) then
+      m => string_from_c(inexpression)
+      print*,m
+    end if
+
+    if (c_associated(inmessage)) then
+      m => string_from_c(inmessage)
+      print*,m
+    end if
+
+    if (c_associated(infile)) then
+      m => string_from_c(infile)
+      print*,m
+    end if
+
+    print*,"line: ", inline
+
+  end function assert_handler
 
 
   subroutine world_destroy()
