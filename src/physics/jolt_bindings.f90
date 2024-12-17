@@ -1289,8 +1289,15 @@ module jolt_bindings
       integer(c_int64_t), intent(in), value :: userdata
     end subroutine
 
+
     !* Shape.
-! JPH_CAPI void JPH_Shape_Destroy(JPH_Shape* shape)
+
+    subroutine JPH_Shape_Destroy(shape) bind(c, name = "JPH_Shape_Destroy")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+    end subroutine
 
 ! JPH_CAPI JPH_ShapeType JPH_Shape_GetType(const JPH_Shape* shape)
 
