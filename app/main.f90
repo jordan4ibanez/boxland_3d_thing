@@ -13,8 +13,7 @@ program main
   use :: vector_3d
   use :: vector_2f
   use :: constants_f90
-  ! use :: bullet_bindings
-  ! use :: jolt_physics_bindings
+  use :: jolt_bindings
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -64,6 +63,11 @@ program main
 
   ! call createEmptyDynamicsWorld()
 
+  if (.not. jph_init()) then
+    error stop "Failed to initialize Jolt Physics."
+  else
+    print"(A)", "Initialized Jolt Physics."
+  end if
 
 
 
