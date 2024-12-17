@@ -12,6 +12,7 @@ program main
   use :: math_helpers
   use :: vector_3d
   use :: vector_2f
+  use :: constants_f90
   ! use :: jolt_physics_bindings
   use, intrinsic :: iso_c_binding
   implicit none
@@ -120,6 +121,65 @@ program main
 
     car_rotation%y = car_rotation%y + 0.01
 
+    ! I'm trying to figure what fuck I'm doing lmao.
+    ! quick q&a
+    ! Q: use a matrix
+    ! A: fuk u
+    ! Q: use box2d
+    ! A: fuk u
+
+    ! Front of the car is blue.
+    point_pos = car_pos
+    point_pos%x = point_pos%x + (cos(car_rotation%y + PI_OVER_2_F32) * car_size%y)
+    point_pos%z = point_pos%z + (sin(car_rotation%y + PI_OVER_2_F32) * car_size%y)
+    call camera_set_object_color(0.0, 0.0, 1.0)
+    call camera_set_object_matrix_f32(real(point_pos%x), real(point_pos%y), real(point_pos%z), 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+    call mesh_draw_by_name("point")
+
+
+    ! Front left point is this pink THING.
+    point_pos = car_pos
+    point_pos%x = point_pos%x + (cos(car_rotation%y - PI_F64) * car_size%x)
+    point_pos%z = point_pos%z + (sin(car_rotation%y - PI_F64) * car_size%x)
+    point_pos%x = point_pos%x + (cos(car_rotation%y + PI_OVER_2_F32) * car_size%y)
+    point_pos%z = point_pos%z + (sin(car_rotation%y + PI_OVER_2_F32) * car_size%y)
+    call camera_set_object_color(1.0, 0.0, 0.5)
+    call camera_set_object_matrix_f32(real(point_pos%x), real(point_pos%y), real(point_pos%z), 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+    call mesh_draw_by_name("point")
+
+
+    ! Front right point is this blurple.
+    point_pos = car_pos
+    point_pos%x = point_pos%x + (cos(car_rotation%y) * car_size%x)
+    point_pos%z = point_pos%z + (sin(car_rotation%y) * car_size%x)
+    point_pos%x = point_pos%x + (cos(car_rotation%y + PI_OVER_2_F32) * car_size%y)
+    point_pos%z = point_pos%z + (sin(car_rotation%y + PI_OVER_2_F32) * car_size%y)
+    call camera_set_object_color(0.6, 0.0, 0.5)
+    call camera_set_object_matrix_f32(real(point_pos%x), real(point_pos%y), real(point_pos%z), 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+    call mesh_draw_by_name("point")
+
+
+    ! Rear right point is this shmorange.
+    point_pos = car_pos
+    point_pos%x = point_pos%x + (cos(car_rotation%y) * car_size%x)
+    point_pos%z = point_pos%z + (sin(car_rotation%y) * car_size%x)
+    point_pos%x = point_pos%x + (cos(car_rotation%y - PI_OVER_2_F32) * car_size%y)
+    point_pos%z = point_pos%z + (sin(car_rotation%y - PI_OVER_2_F32) * car_size%y)
+    call camera_set_object_color(0.7, 0.3, 0.2)
+    call camera_set_object_matrix_f32(real(point_pos%x), real(point_pos%y), real(point_pos%z), 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+    call mesh_draw_by_name("point")
+
+
+    ! Rear left point is this grayp.
+    point_pos = car_pos
+    point_pos%x = point_pos%x + (cos(car_rotation%y - PI_F64) * car_size%x)
+    point_pos%z = point_pos%z + (sin(car_rotation%y - PI_F64) * car_size%x)
+    point_pos%x = point_pos%x + (cos(car_rotation%y - PI_OVER_2_F32) * car_size%y)
+    point_pos%z = point_pos%z + (sin(car_rotation%y - PI_OVER_2_F32) * car_size%y)
+    call camera_set_object_color(0.5, 0.5, 0.8)
+    call camera_set_object_matrix_f32(real(point_pos%x), real(point_pos%y), real(point_pos%z), 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+    call mesh_draw_by_name("point")
+
 
     blah = blah + delta_get_f32() * 2.0
     call camera_set_object_color(clamp_f32(cos(cos(mod(blah, 6.28))), 0.0, 1.0), clamp_f32(tan(mod(blah, 6.28)), 0.2, 1.0), clamp_f32(sin(mod(blah, 6.28)), 0.1, 1.0))
@@ -127,9 +187,7 @@ program main
     call camera_set_object_matrix_f64(car_pos%x, car_pos%y, car_pos%z, car_rotation%x, car_rotation%y, car_rotation%z, 1.0_8, 1.0_8, 1.0_8)
     call mesh_draw_by_name("car")
 
-    call camera_set_object_color(1.0, 0.0, 0.5)
-    call camera_set_object_matrix_f32(real(point_pos%x), real(point_pos%y), real(point_pos%z), 0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
-    call mesh_draw_by_name("point")
+
 
 
     call camera_set_object_color(0.5, 0.5, 0.5)
