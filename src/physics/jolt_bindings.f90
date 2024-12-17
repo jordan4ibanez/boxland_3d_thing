@@ -1013,7 +1013,14 @@ module jolt_bindings
       integer(c_int32_t) :: errorres
     end function
 
-! JPH_CAPI JPH_BodyInterface* JPH_PhysicsSystem_GetBodyInterface(JPH_PhysicsSystem* system)
+
+    function JPH_PhysicsSystem_GetBodyInterface(system) result(BodyInterface) bind(c, name = "JPH_PhysicsSystem_GetBodyInterface")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system
+      type(c_ptr) :: bodyInterface    
+    end function 
 
 ! JPH_CAPI JPH_BodyInterface* JPH_PhysicsSystem_GetBodyInterfaceNoLock(JPH_PhysicsSystem* system)
 
