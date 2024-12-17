@@ -47,25 +47,24 @@ integer(c_int32_t), parameter :: JPH_BodyType_Count = int(z"7fffffff")
 integer(c_int32_t), parameter :: JPH_BodyType_Force32 = int(z"7fffffff")
 ! } JPH_BodyType;
 
-typedef enum JPH_MotionType {
-	JPH_MotionType_Static = 0,
-	JPH_MotionType_Kinematic = 1,
-	JPH_MotionType_Dynamic = 2,
+! typedef enum JPH_MotionType {
+integer(c_int32_t), parameter :: JPH_MotionType_Static = 0
+integer(c_int32_t), parameter :: JPH_MotionType_Kinematic = 1
+integer(c_int32_t), parameter :: JPH_MotionType_Dynamic = 2
 
-	_JPH_MotionType_Count,
-	_JPH_MotionType_Force32 = 0x7fffffff
-} JPH_MotionType;
+integer(c_int32_t), parameter :: JPH_MotionType_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_MotionType_Force32 = int(z"7fffffff")
+! } JPH_MotionType;
 
-typedef enum JPH_Activation
-{
-	JPH_Activation_Activate = 0,
-	JPH_Activation_DontActivate = 1,
+! typedef enum JPH_Activation {
+integer(c_int32_t), parameter :: JPH_Activation_Activate = 0
+integer(c_int32_t), parameter :: JPH_Activation_DontActivate = 1
 
-	_JPH_Activation_Count,
-	_JPH_Activation_Force32 = 0x7fffffff
-} JPH_Activation;
+integer(c_int32_t), parameter :: JPH_Activation_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_Activation_Force32 = int(z"7fffffff")
+! } JPH_Activation;
 
-typedef enum JPH_ValidateResult {
+! typedef enum JPH_ValidateResult {
 	JPH_ValidateResult_AcceptAllContactsForThisBodyPair = 0,
 	JPH_ValidateResult_AcceptContact = 1,
 	JPH_ValidateResult_RejectContact = 2,
@@ -73,7 +72,7 @@ typedef enum JPH_ValidateResult {
 
 	_JPH_ValidateResult_Count,
 	_JPH_ValidateResult_Force32 = 0x7fffffff
-} JPH_ValidateResult;
+! } JPH_ValidateResult;
 
 typedef enum JPH_ShapeType {
 	JPH_ShapeType_Convex = 0,
