@@ -650,9 +650,9 @@ module jolt_bindings
 ! typedef struct JPH_DebugRenderer                    JPH_DebugRenderer
 
   type, bind(c) :: JPH_BodyLockRead
-    const JPH_BodyLockInterface* lockInterface
-    JPH_SharedMutex* mutex
-    const JPH_Body* body
+    type(c_ptr) :: lockInterface = c_null_ptr
+    type(c_ptr) :: mutex  = c_null_ptr
+    type(c_ptr) :: body = c_null_ptr
   end type JPH_BodyLockRead
 
   type, bind(c) :: JPH_BodyLockWrite
