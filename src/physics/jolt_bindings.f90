@@ -1335,13 +1335,41 @@ module jolt_bindings
       integer(c_int64_t), intent(in), value :: userdata
     end subroutine
 
-! JPH_CAPI bool JPH_Shape_MustBeStatic(const JPH_Shape* shape)
 
-! JPH_CAPI void JPH_Shape_GetCenterOfMass(const JPH_Shape* shape, JPH_Vec3* result)
+    function JPH_Shape_MustBeStatic(shape) result(must) bind(c, name = "JPH_Shape_MustBeStatic")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
-! JPH_CAPI void JPH_Shape_GetLocalBounds(const JPH_Shape* shape, JPH_AABox* result)
+      type(c_ptr), intent(in), value :: shape
+      logical(c_bool) :: must
+    end function
 
-! JPH_CAPI uint32_t JPH_Shape_GetSubShapeIDBitsRecursive(const JPH_Shape* shape)
+
+    subroutine JPH_Shape_GetCenterOfMass(shape, resultvec3) bind(c, name = "JPH_Shape_GetCenterOfMass")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      type(c_ptr), intent(in), value :: resultvec3
+    end subroutine
+
+
+    subroutine  JPH_Shape_GetLocalBounds(shape, resultaab) bind(c, name = " JPH_Shape_GetLocalBounds")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      type(c_ptr), intent(in), value :: resultaab
+    end subroutine
+
+
+    function JPH_Shape_GetSubShapeIDBitsRecursive(shape) result(idbits) bind(c, name = "JPH_Shape_GetSubShapeIDBitsRecursive")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      integer(c_int32_t) :: idbits
+    end function
 
 ! JPH_CAPI void JPH_Shape_GetWorldSpaceBounds(const JPH_Shape* shape, JPH_RMatrix4x4* centerOfMassTransform, JPH_Vec3* scale, JPH_AABox* result)
 
