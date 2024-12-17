@@ -1001,7 +1001,17 @@ module jolt_bindings
       type(c_ptr), intent(in), value :: system
     end subroutine
 
-! JPH_CAPI JPH_PhysicsUpdateError JPH_PhysicsSystem_Update(JPH_PhysicsSystem* system, float deltaTime, int collisionSteps, JPH_JobSystem* jobSystem)
+
+    function JPH_PhysicsSystem_Update(system, deltaTime, collisionSteps, jobSystem) result(errorres) bind(c, name = "JPH_PhysicsSystem_Update")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system, jobSystem
+      real(c_float), intent(in), value :: deltaTime
+      integer(c_int32_t), intent(in), value :: collisionSteps
+
+      integer(c_int32_t) :: errorres
+    end function
 
 ! JPH_CAPI JPH_BodyInterface* JPH_PhysicsSystem_GetBodyInterface(JPH_PhysicsSystem* system)
 
