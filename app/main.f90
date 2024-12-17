@@ -10,11 +10,14 @@ program main
   use :: mouse
   use :: keyboard
   use :: math_helpers
+  use :: vector_3d
   ! use :: jolt_physics_bindings
   use, intrinsic :: iso_c_binding
   implicit none
 
   real :: blah = 0.0
+  real, parameter :: gravity = 10.0
+  type(vec3d) :: ground_pos, car_pos
 
   call glfw_set_error_callback()
   if (.not. glfw_init()) then
@@ -57,14 +60,16 @@ program main
   ! Time to draw le square.
   call mesh_create_3d_named("car", &
     [ &
-    -0.5, -0.5, 0.0, &
-    -0.5, 0.5, 0.0, &
-    0.5, 0.5, 0.0, &
-    0.5, -0.5, 0.0  &
+    -0.5, 0.0, -0.5, &
+    -0.5, 0.0, 0.5, &
+    0.5, 0.0, 0.5, &
+    0.5, 0.0, -0.5  &
     ], &
     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], &
     [0,1,2, 2,3,0] &
     )
+
+  car_pos = [0.0, 1.0, 0.0]
 
 
   call mesh_create_3d_named("ground", &
@@ -77,6 +82,11 @@ program main
     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], &
     [0,1,2, 2,3,0] &
     )
+
+  ground_pos = [0.0, 0.0, 0.0]
+
+  call camera_set_position_f32(0.0, 2.0, -1.0)
+  call camera_set_rotation_f32(3.14 / 4.0, 0.0, 0.0)
 
 
   do while (.not. glfw_window_should_close())
@@ -92,7 +102,7 @@ program main
 
     call camera_set_object_color(clamp_f32(cos(cos(mod(blah, 6.28))), 0.0, 1.0), clamp_f32(tan(mod(blah, 6.28)), 0.2, 1.0), clamp_f32(sin(mod(blah, 6.28)), 0.1, 1.0))
 
-    call camera_set_object_matrix_f32(0.0, sin(blah) / 2.21, 1.0, 0.0, blah, 0.0, 1.0, 1.0, 1.0)
+    call camera_set_object_matrix_f64(car_pos%x, car_pos%y, car_pos%z, 0.0_8, 0.0_8, 0.0_8, 1.0_8, 1.0_8, 1.0_8)
 
     call mesh_draw_by_name("car")
 

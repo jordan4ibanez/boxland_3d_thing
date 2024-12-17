@@ -19,6 +19,8 @@ module camera
   public :: camera_set_position_f32
   public :: camera_set_position_f64
   public :: camera_set_position_vec3d
+  public :: camera_set_rotation_f32
+  public :: camera_set_rotation_f64
   public :: camera_set_object_matrix_f32
   public :: camera_set_object_matrix_f64
   public :: camera_set_gui_matrix_f32
@@ -82,6 +84,28 @@ contains
 
     camera_position = new_position
   end subroutine camera_set_position_vec3d
+
+
+  subroutine camera_set_rotation_f32(x, y, z)
+    implicit none
+
+    real(c_float), intent(in), value :: x, y, z
+
+    camera_rotation%x = x
+    camera_rotation%y = y
+    camera_rotation%z = z
+  end subroutine camera_set_rotation_f32
+
+
+  subroutine camera_set_rotation_f64(x, y, z)
+    implicit none
+
+    real(c_double), intent(in), value :: x, y, z
+
+    camera_rotation%x = x
+    camera_rotation%y = y
+    camera_rotation%z = z
+  end subroutine camera_set_rotation_f64
 
 
   subroutine camera_rotate(x, y, z)
