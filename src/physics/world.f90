@@ -21,7 +21,7 @@ module world
   type(c_ptr) :: object_layer_pair_filter_table
   type(c_ptr) :: broad_phase_layer_interface_table
   type(c_ptr) :: object_vs_broad_phase_layer_filter
-
+  type(jph_physics_system_settings), target :: settings
 
 contains
 
@@ -52,6 +52,15 @@ contains
 
     ! 	JPH_ObjectVsBroadPhaseLayerFilter* objectVsBroadPhaseLayerFilter = JPH_ObjectVsBroadPhaseLayerFilterTable_Create(broadPhaseLayerInterfaceTable, 2, objectLayerPairFilterTable, 2);
     object_vs_broad_phase_layer_filter = jph_object_vs_broad_phase_layer_filter_table_create(broad_phase_layer_interface_table, 2, object_layer_pair_filter_table, 2)
+
+    settings%max_bodies = 65536
+    settings%num_body_mutexes = 0
+    settings%max_body_pairs = 65536
+    settings%max_contact_constraints = 65536
+    settings%broad_phase_layer_interface = broad_phase_layer_interface_table
+    settings%object_layer_pair_filter = object_layer_pair_filter_table
+    settings%object_vs_broad_phase_layer_filter = object_vs_broad_phase_layer_filter
+
 
     print"(A)","World created."
   end subroutine world_create
