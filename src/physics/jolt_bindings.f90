@@ -3,6 +3,12 @@ module jolt_bindings
   implicit none
 
 
+  ! typedef uint32_t JPH_BodyID;
+  ! typedef uint32_t JPH_SubShapeID;
+  ! typedef uint16_t JPH_ObjectLayer;
+  ! typedef uint8_t  JPH_BroadPhaseLayer;
+
+
   interface
 
 
@@ -46,6 +52,14 @@ module jolt_bindings
       type(c_ptr) :: object_layer_pair_filters
     end function jph_object_layer_pair_filter_table_create
 
+
+    subroutine jph_object_layer_pair_filter_table_enable_collision(object_filter, layer_1, layer_2) bind(c, name = "JPH_ObjectLayerPairFilterTable_EnableCollision")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: object_filter
+      integer(c_int16_t), intent(in), value :: layer_1, layer_2
+    end subroutine jph_object_layer_pair_filter_table_enable_collision
 
   end interface
 

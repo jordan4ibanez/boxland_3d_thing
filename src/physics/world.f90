@@ -9,8 +9,8 @@ module world
   ! So I literally have no idea what I'm doing.
 
 
-  integer(c_int32_t), parameter :: NON_MOVING = 0
-  integer(c_int32_t), parameter :: MOVING = 1
+  integer(c_int16_t), parameter :: NON_MOVING = 0
+  integer(c_int16_t), parameter :: MOVING = 1
   integer(c_int32_t), parameter :: NUM_LAYERS = 2
 
 
