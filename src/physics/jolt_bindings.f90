@@ -1371,11 +1371,30 @@ module jolt_bindings
       integer(c_int32_t) :: idbits
     end function
 
-! JPH_CAPI void JPH_Shape_GetWorldSpaceBounds(const JPH_Shape* shape, JPH_RMatrix4x4* centerOfMassTransform, JPH_Vec3* scale, JPH_AABox* result)
 
-! JPH_CAPI float JPH_Shape_GetInnerRadius(const JPH_Shape* shape)
+    subroutine JPH_Shape_GetWorldSpaceBounds(shape, centerOfMassTransformmat4x4, scalevec3, resultaab) bind(c, name = "JPH_Shape_GetWorldSpaceBounds")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
-! JPH_CAPI void JPH_Shape_GetMassProperties(const JPH_Shape* shape, JPH_MassProperties* result)
+      type(c_ptr), intent(in), value :: shape, centerOfMassTransformmat4x4, scalevec3, resultaab
+    end subroutine
+
+
+    function JPH_Shape_GetInnerRadius(shape) result(rad) bind(c, name = "JPH_Shape_GetInnerRadius")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      real(c_float) :: rad
+    end function
+
+
+    subroutine JPH_Shape_GetMassProperties(shape, resultmass) bind(c, name = "JPH_Shape_GetMassProperties")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape, resultmass
+    end subroutine
 
 ! JPH_CAPI const JPH_Shape* JPH_Shape_GetLeafShape(const JPH_Shape* shape, JPH_SubShapeID subShapeID, JPH_SubShapeID* remainder)
 
