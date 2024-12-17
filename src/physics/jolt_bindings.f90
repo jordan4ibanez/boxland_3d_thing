@@ -1317,9 +1317,23 @@ module jolt_bindings
       integer(c_int32_t) :: subshapetype
     end function
 
-! JPH_CAPI uint64_t JPH_Shape_GetUserData(const JPH_Shape* shape)
 
-! JPH_CAPI void JPH_Shape_SetUserData(JPH_Shape* shape, uint64_t userData)
+    function JPH_Shape_GetUserData(shape) result(userdata) bind(c, name = "JPH_Shape_GetUserData")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      integer(c_int64_t) :: userdata
+    end function
+
+
+    subroutine JPH_Shape_SetUserData(shape, userdata) bind(c, name = "JPH_Shape_SetUserData")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      integer(c_int64_t), intent(in), value :: userdata
+    end subroutine
 
 ! JPH_CAPI bool JPH_Shape_MustBeStatic(const JPH_Shape* shape)
 
