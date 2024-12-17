@@ -1271,7 +1271,7 @@ module jolt_bindings
       type(c_ptr), intent(in), value :: settings
     end subroutine
 
-! JPH_CAPI uint64_t JPH_ShapeSettings_GetUserData(const JPH_ShapeSettings* settings)
+
     function JPH_ShapeSettings_GetUserData(settings) result(userdata) bind(c, name = "JPH_ShapeSettings_GetUserData")
       use, intrinsic :: iso_c_binding
       implicit none
@@ -1280,7 +1280,14 @@ module jolt_bindings
       integer(c_int64_t) :: userdata
     end function
 
-! JPH_CAPI void JPH_ShapeSettings_SetUserData(JPH_ShapeSettings* settings, uint64_t userData)
+
+    subroutine JPH_ShapeSettings_SetUserData(settings, userData) bind(c, name = "JPH_ShapeSettings_SetUserData")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: settings
+      integer(c_int64_t), intent(in), value :: userdata
+    end subroutine
 
     !* Shape.
 ! JPH_CAPI void JPH_Shape_Destroy(JPH_Shape* shape)
