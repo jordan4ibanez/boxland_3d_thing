@@ -663,20 +663,20 @@ module jolt_bindings
 
 
   type, bind(c) :: JPH_ExtendedUpdateSettings
-    JPH_Vec3  stickToFloorStepDown
-    JPH_Vec3  walkStairsStepUp
-    float    walkStairsMinStepForward
-    float    walkStairsStepForwardTest
-    float    walkStairsCosAngleForwardContact
-    JPH_Vec3  walkStairsStepDownExtra
+    type(JPH_Vec3) ::  stickToFloorStepDown
+    type(JPH_Vec3) ::  walkStairsStepUp
+    real(c_float) ::    walkStairsMinStepForward = 0.0
+    real(c_float) ::    walkStairsStepForwardTest = 0.0
+    real(c_float) ::    walkStairsCosAngleForwardContact = 0.0
+    type(JPH_Vec3) ::  walkStairsStepDownExtra
   end type JPH_ExtendedUpdateSettings
 
   type, bind(c) :: JPH_CharacterBaseSettings
-    JPH_Vec3 up
-    JPH_Plane supportingVolume
-    float maxSlopeAngle
-    logical(c_bool) :: enhancedInternalEdgeRemoval
-    const JPH_Shape* shape
+    type(JPH_Vec3) :: up
+    type(JPH_Plane) :: supportingVolume
+    real(c_float) :: maxSlopeAngle = 0.0
+    logical(c_bool) :: enhancedInternalEdgeRemoval = .false.
+    type(c_ptr) :: shape = c_null_ptr
   end type JPH_CharacterBaseSettings
 
 !* CharacterBase.
@@ -684,11 +684,11 @@ module jolt_bindings
 
 !* Character.
   type, bind(c) :: JPH_CharacterSettings
-    JPH_CharacterBaseSettings           base     !* Inherics JPH_CharacterBaseSettings */
-    JPH_ObjectLayer            layer
-    float                mass
-    float                friction
-    float                gravityFactor
+    type(JPH_CharacterBaseSettings) ::           base     !* Inherics JPH_CharacterBaseSettings */
+    type(JPH_ObjectLayer) ::            layer
+    real(c_float) ::                mass = 0.0
+    real(c_float) ::                friction = 0.0
+    real(c_float) ::                gravityFactor = 0.0
   end type JPH_CharacterSettings
 
 ! type, bind(c) :: JPH_Character                        JPH_Character   !* Inherics JPH_CharacterBase */
@@ -696,19 +696,19 @@ module jolt_bindings
 !* CharacterVirtual.
   type, bind(c) :: JPH_CharacterVirtualSettings
     JPH_CharacterBaseSettings           base     !* Inherics JPH_CharacterBaseSettings */
-    float                mass
-    float                maxStrength
+    real(c_float) ::                mass
+    real(c_float) ::                maxStrength
     JPH_Vec3              shapeOffset
     JPH_BackFaceMode          backFaceMode
-    float                predictiveContactDistance
+    real(c_float) ::                predictiveContactDistance
     integer(c_int32_t) :: maxCollisionIterations
     integer(c_int32_t) :: maxConstraintIterations
-    float                minTimeRemaining
-    float                collisionTolerance
-    float                characterPadding
+    real(c_float) ::                minTimeRemaining
+    real(c_float) ::                collisionTolerance
+    real(c_float) ::                characterPadding
     integer(c_int32_t) :: maxNumHits
-    float                hitReductionCosMaxAngle
-    float                penetrationRecoverySpeed
+    real(c_float) ::                hitReductionCosMaxAngle
+    real(c_float) ::                penetrationRecoverySpeed
     const JPH_Shape* innerBodyShape
     JPH_ObjectLayer            innerBodyLayer
   end type JPH_CharacterVirtualSettings
@@ -796,22 +796,22 @@ module jolt_bindings
     int maxInFlightBodyPairs
     int stepListenersBatchSize
     int stepListenerBatchesPerJob
-    float baumgarte
-    float speculativeContactDistance
-    float penetrationSlop
-    float linearCastThreshold
-    float linearCastMaxPenetration
-    float manifoldToleranceSq
-    float maxPenetrationDistance
-    float bodyPairCacheMaxDeltaPositionSq
-    float bodyPairCacheCosMaxDeltaRotationDiv2
-    float contactNormalCosMaxDeltaRotation
-    float contactPointPreserveLambdaMaxDistSq
+    real(c_float) :: baumgarte
+    real(c_float) :: speculativeContactDistance
+    real(c_float) :: penetrationSlop
+    real(c_float) :: linearCastThreshold
+    real(c_float) :: linearCastMaxPenetration
+    real(c_float) :: manifoldToleranceSq
+    real(c_float) :: maxPenetrationDistance
+    real(c_float) :: bodyPairCacheMaxDeltaPositionSq
+    real(c_float) :: bodyPairCacheCosMaxDeltaRotationDiv2
+    real(c_float) :: contactNormalCosMaxDeltaRotation
+    real(c_float) :: contactPointPreserveLambdaMaxDistSq
     uint32_t numVelocitySteps
     uint32_t numPositionSteps
-    float minVelocityForRestitution
-    float timeBeforeSleep
-    float pointVelocitySleepThreshold
+    real(c_float) :: minVelocityForRestitution
+    real(c_float) :: timeBeforeSleep
+    real(c_float) :: pointVelocitySleepThreshold
     bool deterministicSimulation
     bool constraintWarmStart
     bool useBodyPairContactCache
