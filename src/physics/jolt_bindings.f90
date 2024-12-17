@@ -952,7 +952,13 @@ module jolt_bindings
       type(c_ptr) :: ObjectVsBroadPhaseLayerFilter
     end function
 
-! JPH_CAPI void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings)
+
+    subroutine JPH_DrawSettings_InitDefault(settings) bind(c, name = "JPH_DrawSettings_InitDefault")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: settings
+    end subroutine
 
 
 ! JPH_CAPI JPH_PhysicsSystem* JPH_PhysicsSystem_Create(const JPH_PhysicsSystemSettings* settings)
