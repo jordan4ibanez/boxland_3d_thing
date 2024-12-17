@@ -1261,11 +1261,24 @@ module jolt_bindings
       integer(c_int32_t) :: color
     end function
 
-    
+
     !* ShapeSettings.
-! JPH_CAPI void JPH_ShapeSettings_Destroy(JPH_ShapeSettings* settings)
+
+    subroutine JPH_ShapeSettings_Destroy(settings) bind(c, name = "JPH_ShapeSettings_Destroy")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: settings
+    end subroutine
 
 ! JPH_CAPI uint64_t JPH_ShapeSettings_GetUserData(const JPH_ShapeSettings* settings)
+    function JPH_ShapeSettings_GetUserData(settings) result(userdata) bind(c, name = "JPH_ShapeSettings_GetUserData")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: settings
+      integer(c_int64_t) :: userdata
+    end function
 
 ! JPH_CAPI void JPH_ShapeSettings_SetUserData(JPH_ShapeSettings* settings, uint64_t userData)
 
