@@ -70,8 +70,8 @@ integer(c_int32_t), parameter :: JPH_Activation_Force32 = int(z"7fffffff")
   JPH_ValidateResult_RejectContact = 2,
   JPH_ValidateResult_RejectAllContactsForThisBodyPair = 3,
 
-  _JPH_ValidateResult_Count,
-  _JPH_ValidateResult_Force32 = 0x7fffffff
+  JPH_ValidateResult_Count,
+  JPH_ValidateResult_Force32 = 0x7fffffff
 ! } JPH_ValidateResult;
 
 typedef enum JPH_ShapeType {
@@ -87,8 +87,8 @@ typedef enum JPH_ShapeType {
   JPH_ShapeType_User3 = 8,
   JPH_ShapeType_User4 = 9,
 
-  _JPH_ShapeType_Count,
-  _JPH_ShapeType_Force32 = 0x7fffffff
+  JPH_ShapeType_Count,
+  JPH_ShapeType_Force32 = 0x7fffffff
 } JPH_ShapeType;
 
 typedef enum JPH_ShapeSubType {
@@ -108,16 +108,16 @@ typedef enum JPH_ShapeSubType {
   JPH_ShapeSubType_HeightField = 13,
   JPH_ShapeSubType_SoftBody = 14,
 
-  _JPH_ShapeSubType_Count,
-  _JPH_ShapeSubType_Force32 = 0x7fffffff
+  JPH_ShapeSubType_Count,
+  JPH_ShapeSubType_Force32 = 0x7fffffff
 } JPH_ShapeSubType;
 
 typedef enum JPH_ConstraintType {
   JPH_ConstraintType_Constraint = 0,
   JPH_ConstraintType_TwoBodyConstraint = 1,
 
-  _JPH_ConstraintType_Count,
-  _JPH_ConstraintType_Force32 = 0x7fffffff
+  JPH_ConstraintType_Count,
+  JPH_ConstraintType_Force32 = 0x7fffffff
 } JPH_ConstraintType;
 
 typedef enum JPH_ConstraintSubType {
@@ -140,24 +140,24 @@ typedef enum JPH_ConstraintSubType {
   JPH_ConstraintSubType_User3 = 15,
   JPH_ConstraintSubType_User4 = 16,
 
-  _JPH_ConstraintSubType_Count,
-  _JPH_ConstraintSubType_Force32 = 0x7fffffff
+  JPH_ConstraintSubType_Count,
+  JPH_ConstraintSubType_Force32 = 0x7fffffff
 } JPH_ConstraintSubType;
 
 typedef enum JPH_ConstraintSpace {
   JPH_ConstraintSpace_LocalToBodyCOM = 0,
   JPH_ConstraintSpace_WorldSpace = 1,
 
-  _JPH_ConstraintSpace_Count,
-  _JPH_ConstraintSpace_Force32 = 0x7fffffff
+  JPH_ConstraintSpace_Count,
+  JPH_ConstraintSpace_Force32 = 0x7fffffff
 } JPH_ConstraintSpace;
 
 typedef enum JPH_MotionQuality {
   JPH_MotionQuality_Discrete = 0,
   JPH_MotionQuality_LinearCast = 1,
 
-  _JPH_MotionQuality_Count,
-  _JPH_MotionQuality_Force32 = 0x7fffffff
+  JPH_MotionQuality_Count,
+  JPH_MotionQuality_Force32 = 0x7fffffff
 } JPH_MotionQuality;
 
 typedef enum JPH_AllowedDOFs {
@@ -170,8 +170,8 @@ typedef enum JPH_AllowedDOFs {
   JPH_AllowedDOFs_RotationZ = 0b100000,
   JPH_AllowedDOFs_Plane2D = JPH_AllowedDOFs_TranslationX | JPH_AllowedDOFs_TranslationY | JPH_AllowedDOFs_RotationZ,
 
-  _JPH_AllowedDOFs_Count,
-  _JPH_AllowedDOFs_Force32 = 0x7FFFFFFF
+  JPH_AllowedDOFs_Count,
+  JPH_AllowedDOFs_Force32 = 0x7FFFFFFF
 } JPH_AllowedDOFs;
 
 typedef enum JPH_GroundState {
@@ -180,32 +180,32 @@ typedef enum JPH_GroundState {
   JPH_GroundState_NotSupported = 2,
   JPH_GroundState_InAir = 3,
 
-  _JPH_GroundState_Count,
-  _JPH_GroundState_Force32 = 0x7FFFFFFF
+  JPH_GroundState_Count,
+  JPH_GroundState_Force32 = 0x7FFFFFFF
 } JPH_GroundState;
 
 typedef enum JPH_BackFaceMode {
   JPH_BackFaceMode_IgnoreBackFaces,
   JPH_BackFaceMode_CollideWithBackFaces,
 
-  _JPH_BackFaceMode_Count,
-  _JPH_BackFaceMode_Force32 = 0x7FFFFFFF
+  JPH_BackFaceMode_Count,
+  JPH_BackFaceMode_Force32 = 0x7FFFFFFF
 } JPH_BackFaceMode;
 
 typedef enum JPH_ActiveEdgeMode {
   JPH_ActiveEdgeMode_CollideOnlyWithActive,
   JPH_ActiveEdgeMode_CollideWithAll,
 
-  _JPH_ActiveEdgeMode_Count,
-  _JPH_ActiveEdgeMode_Force32 = 0x7FFFFFFF
+  JPH_ActiveEdgeMode_Count,
+  JPH_ActiveEdgeMode_Force32 = 0x7FFFFFFF
 } JPH_ActiveEdgeMode;
 
 typedef enum JPH_CollectFacesMode {
   JPH_CollectFacesMode_CollectFaces,
   JPH_CollectFacesMode_NoFaces,
 
-  _JPH_CollectFacesMode_Count,
-  _JPH_CollectFacesMode_Force32 = 0x7FFFFFFF
+  JPH_CollectFacesMode_Count,
+  JPH_CollectFacesMode_Force32 = 0x7FFFFFFF
 } JPH_CollectFacesMode;
 
 typedef enum JPH_MotorState {
@@ -213,8 +213,8 @@ typedef enum JPH_MotorState {
   JPH_MotorState_Velocity = 1,
   JPH_MotorState_Position = 2,
 
-  _JPH_MotorState_Count,
-  _JPH_MotorState_Force32 = 0x7FFFFFFF
+  JPH_MotorState_Count,
+  JPH_MotorState_Force32 = 0x7FFFFFFF
 } JPH_MotorState;
 
 typedef enum JPH_CollisionCollectorType {
@@ -223,8 +223,8 @@ typedef enum JPH_CollisionCollectorType {
   JPH_CollisionCollectorType_ClosestHit = 2,
   JPH_CollisionCollectorType_AnyHit = 3,
 
-  _JPH_CollisionCollectorType_Count,
-  _JPH_CollisionCollectorType_Force32 = 0x7FFFFFFF
+  JPH_CollisionCollectorType_Count,
+  JPH_CollisionCollectorType_Force32 = 0x7FFFFFFF
 } JPH_CollisionCollectorType;
 
 typedef enum JPH_SixDOFConstraintAxis {
@@ -236,16 +236,16 @@ typedef enum JPH_SixDOFConstraintAxis {
   JPH_SixDOFConstraintAxis_RotationY,
   JPH_SixDOFConstraintAxis_RotationZ,
 
-  _JPH_SixDOFConstraintAxis_Count,
-  _JPH_SixDOFConstraintAxis_Force32 = 0x7FFFFFFF
+  JPH_SixDOFConstraintAxis_Count,
+  JPH_SixDOFConstraintAxis_Force32 = 0x7FFFFFFF
 } JPH_SixDOFConstraintAxis;
 
 typedef enum JPH_SpringMode {
   JPH_SpringMode_FrequencyAndDamping = 0,
   JPH_SpringMode_StiffnessAndDamping = 1,
 
-  _JPH_SpringMode_Count,
-  _JPH_SpringMode_Force32 = 0x7FFFFFFF
+  JPH_SpringMode_Count,
+  JPH_SpringMode_Force32 = 0x7FFFFFFF
 } JPH_SpringMode;
 
 !* Defines how to color soft body constraints
@@ -255,8 +255,8 @@ typedef enum JPH_SoftBodyConstraintColor
   JPH_SoftBodyConstraintColor_ConstraintGroup,      !* Draw constraints in the same group in the same color, non-parallel group will be red
   JPH_SoftBodyConstraintColor_ConstraintOrder,      !* Draw constraints in the same group in the same color, non-parallel group will be red, and order within each group will be indicated with gradient
 
-  _JPH_SoftBodyConstraintColor_Count,
-  _JPH_SoftBodyConstraintColor_Force32 = 0x7FFFFFFF
+  JPH_SoftBodyConstraintColor_Count,
+  JPH_SoftBodyConstraintColor_Force32 = 0x7FFFFFFF
 } JPH_SoftBodyConstraintColor;
 
 typedef enum JPH_BodyManager_ShapeColor
@@ -268,24 +268,24 @@ typedef enum JPH_BodyManager_ShapeColor
   JPH_BodyManager_ShapeColor_IslandColor,        !*< Static = grey, active = random color per island, sleeping = light grey
   JPH_BodyManager_ShapeColor_MaterialColor,        !*< Color as defined by the PhysicsMaterial of the shape
 
-  _JPH_BodyManager_ShapeColor_Count,
-  _JPH_BodyManager_ShapeColor_Force32 = 0x7FFFFFFF
+  JPH_BodyManager_ShapeColor_Count,
+  JPH_BodyManager_ShapeColor_Force32 = 0x7FFFFFFF
 } JPH_BodyManager_ShapeColor;
 
 typedef enum JPH_DebugRenderer_CastShadow {
   JPH_DebugRenderer_CastShadow_On = 0,    !*< This shape should cast a shadow
   JPH_DebugRenderer_CastShadow_Off = 1,   !*< This shape should not cast a shadow
 
-  _JPH_DebugRenderer_CastShadow_Count,
-  _JPH_DebugRenderer_CastShadow_Force32 = 0x7FFFFFFF
+  JPH_DebugRenderer_CastShadow_Count,
+  JPH_DebugRenderer_CastShadow_Force32 = 0x7FFFFFFF
 } JPH_DebugRenderer_CastShadow;
 
 typedef enum JPH_DebugRenderer_DrawMode {
   JPH_DebugRenderer_DrawMode_Solid = 0,       !*< Draw as a solid shape
   JPH_DebugRenderer_DrawMode_Wireframe = 1,   !*< Draw as wireframe
 
-  _JPH_DebugRenderer_JPH_DebugRenderer_DrawMode_Count,
-  _JPH_DebugRenderer_JPH_DebugRenderer_DrawMode_Force32 = 0x7FFFFFFF
+  JPH_DebugRendererJPH_DebugRenderer_DrawMode_Count,
+  JPH_DebugRendererJPH_DebugRenderer_DrawMode_Force32 = 0x7FFFFFFF
 } JPH_DebugRenderer_DrawMode;
 
 typedef struct JPH_Vec3 {
