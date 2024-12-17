@@ -14,17 +14,21 @@ module jolt_bindings
   integer(c_int32_t), parameter :: JPH_MAX_PHYSICS_JOBS = (2048) ! int cMaxPhysicsJobs = 2048
   integer(c_int32_t), parameter :: JPH_MAX_PHYSICS_BARRIERS = (2048) ! int cMaxPhysicsBarriers = 8
 
+
   type, bind(c) :: JPH_BodyID
     integer(c_int32_t) :: data = 0
   end type JPH_BodyID
+
 
   type, bind(c) :: JPH_SubShapeID
     integer(c_int32_t) :: data = 0
   end type JPH_SubShapeID
 
+
   type, bind(c) :: JPH_ObjectLayer
     integer(c_int16_t) :: data = 0
   end type JPH_ObjectLayer
+
 
   type, bind(c) :: JPH_BroadPhaseLayer
     integer(c_int8_t) :: data = 0
@@ -37,7 +41,6 @@ module jolt_bindings
   integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_ContactConstraintsFull = shiftl(1, 2)
   integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_Force32 = int(z"7fffffff")
-
 
 
   integer(c_int32_t), parameter :: JPH_BodyType_Rigid = 0
@@ -208,7 +211,7 @@ module jolt_bindings
   integer(c_int32_t), parameter :: JPH_SpringMode_Force32 = int(z"7fffffff")
 
 
-!* Defines how to color soft body constraints
+  !* Defines how to color soft body constraints
   integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_ConstraintType = 0        !* Draw different types of constraints in different colors
   integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_ConstraintGroup = 1       !* Draw constraints in the same group in the same color, non-parallel group will be red
   integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_ConstraintOrder = 2       !* Draw constraints in the same group in the same color, non-parallel group will be red, and order within each group will be indicated with gradient
@@ -244,12 +247,14 @@ module jolt_bindings
     real(c_float) :: z = 0.0
   end type JPH_Vec3
 
+
   type, bind(c) :: JPH_Vec4
     real(c_float) :: x = 0.0
     real(c_float) :: y = 0.0
     real(c_float) :: z = 0.0
     real(c_float) :: w = 0.0
   end type JPH_Vec4
+
 
   type, bind(c) :: JPH_Quat
     real(c_float) :: x = 0.0
@@ -258,10 +263,12 @@ module jolt_bindings
     real(c_float) :: w = 0.0
   end type JPH_Quat
 
+
   type, bind(c) :: JPH_Plane
     type(JPH_Vec3) :: normal
     real(c_float) :: distance = 0.0
   end type JPH_Plane
+
 
   type, bind(c) :: JPH_Matrix4x4
     real(c_float) :: m11 = 0.0
@@ -282,11 +289,13 @@ module jolt_bindings
     real(c_float) :: m44 = 0.0
   end type JPH_Matrix4x4
 
+
   type, bind(c) :: JPH_RVec3
     real(c_double) :: x = 0.0
     real(c_double) :: y = 0.0
     real(c_double) :: z = 0.0
   end type JPH_RVec3
+
 
   type, bind(c) :: JPH_RMatrix4x4
     real(c_float) :: m11 = 0.0
@@ -307,6 +316,7 @@ module jolt_bindings
     real(c_float) :: m44 = 0.0
   end type JPH_RMatrix4x4
 
+
   type, bind(c) :: JPH_Color
     integer(c_int32_t) :: JPH_Color = 0
   end type JPH_Color
@@ -317,6 +327,7 @@ module jolt_bindings
     type(JPH_Vec3) :: max
   end type JPH_AABox
 
+
   type, bind(c) :: JPH_Triangle
     type(JPH_Vec3) :: v1
     type(JPH_Vec3) :: v2
@@ -324,11 +335,13 @@ module jolt_bindings
     integer(c_int32_t) :: materialIndex = 0
   end type JPH_Triangle
 
+
   type, bind(c) :: JPH_IndexedTriangleNoMaterial
     integer(c_int32_t) :: i1 = 0
     integer(c_int32_t) :: i2 = 0
     integer(c_int32_t) :: i3 = 0
   end type JPH_IndexedTriangleNoMaterial
+
 
   type, bind(c) :: JPH_IndexedTriangle
     integer(c_int32_t) :: i1 = 0
@@ -338,10 +351,12 @@ module jolt_bindings
     integer(c_int32_t) :: userData = 0
   end type JPH_IndexedTriangle
 
+
   type, bind(c) :: JPH_MassProperties
     real(c_float) :: mass = 0.0
     type(JPH_Matrix4x4) :: inertia
   end type JPH_MassProperties
+
 
   type, bind(c) :: JPH_CollideSettingsBase
     !* How active edges (edges that a moving object should bump into) are handled
@@ -359,6 +374,7 @@ module jolt_bindings
     !* When mActiveEdgeMode is CollideOnlyWithActive a movement direction can be provided. When hitting an inactive edge, the system will select the triangle normal as penetration depth only if it impedes the movement less than with the calculated penetration depth.
     type(JPH_Vec3) ::          activeEdgeMovementDirection !* = Vec3::sZero()*/
   end type JPH_CollideSettingsBase
+
 
   !* CollideShapeSettings.
   type, bind(c) :: JPH_CollideShapeSettings
@@ -388,6 +404,7 @@ module jolt_bindings
     logical(c_bool) ::            returnDeepestPoint = .false. !* = false*/
   end type JPH_ShapeCastSettings
 
+
   type, bind(c) :: JPH_RayCastSettings
     !* How backfacing triangles should be treated (should we report back facing hits for triangle based shapes, e.g. MeshShape/HeightFieldShape?)
     integer(c_int32_t) :: backFaceModeTriangles = JPH_BackFaceMode_IgnoreBackFaces !* = JPH_BackFaceMode_IgnoreBackFaces*/
@@ -399,11 +416,13 @@ module jolt_bindings
     logical(c_bool) :: treatConvexAsSolid  = .true. !* = true*/
   end type JPH_RayCastSettings
 
+
   type, bind(c) :: JPH_SpringSettings
     integer(c_int32_t) :: mode = 0
     real(c_float) :: frequencyOrStiffness = 0.0
     real(c_float) :: damping = 0.0
   end type JPH_SpringSettings
+
 
   type, bind(c) :: JPH_MotorSettings
     TYPE(JPH_SpringSettings) :: springSettings
@@ -413,6 +432,7 @@ module jolt_bindings
     real(c_float) :: maxTorqueLimit = 0.0
   end type JPH_MotorSettings
 
+
   type, bind(c) :: JPH_SubShapeIDPair
     type(JPH_BodyID) ::     Body1ID
     type(JPH_SubShapeID) :: subShapeID1
@@ -420,10 +440,12 @@ module jolt_bindings
     type(JPH_SubShapeID) :: subShapeID2
   end type JPH_SubShapeIDPair
 
+
   type, bind(c) :: JPH_BroadPhaseCastResult
     type(JPH_BodyID) ::     bodyID
     real(c_float) :: fraction = 0.0
   end type JPH_BroadPhaseCastResult
+
 
   type, bind(c) :: JPH_RayCastResult
     type(JPH_BodyID) ::     bodyID
@@ -431,10 +453,12 @@ module jolt_bindings
     type(JPH_SubShapeID) :: subShapeID2
   end type JPH_RayCastResult
 
+
   type, bind(c) :: JPH_CollidePointResult
     type(JPH_BodyID) :: bodyID
     type(JPH_SubShapeID) :: subShapeID2
   end type JPH_CollidePointResult
+
 
   type, bind(c) :: JPH_CollideShapeResult
     type(JPH_Vec3) ::           contactPointOn1
@@ -445,6 +469,7 @@ module jolt_bindings
     type(JPH_SubShapeID) ::     subShapeID2
     type(JPH_BodyID) ::         bodyID2
   end type JPH_CollideShapeResult
+
 
   type, bind(c) :: JPH_ShapeCastResult
     type(JPH_Vec3) ::           contactPointOn1
@@ -457,6 +482,7 @@ module jolt_bindings
     real(c_float) :: fraction = 0.0
     logical(c_bool) ::         isBackFaceHit = .false.
   end type JPH_ShapeCastResult
+
 
   type, bind(c) :: JPH_DrawSettings
     logical(c_bool) ::          drawGetSupportFunction        !*< Draw the GetSupport() function, used for convex collision detection
@@ -482,7 +508,7 @@ module jolt_bindings
     integer(c_int32_t )::  drawSoftBodyConstraintColor = 0        !*< Coloring scheme to use for soft body constraints
   end type JPH_DrawSettings
 
-!! TODO: hmmMMmmmMMMm
+
 ! typedef void JPH_CastRayResultCallback(void* context, const JPH_RayCastResult* result)
 ! typedef void JPH_RayCastBodyResultCallback(void* context, const JPH_BroadPhaseCastResult* result)
 ! typedef void JPH_CollideShapeBodyResultCallback(void* context, const JPH_BodyID result)
@@ -604,6 +630,7 @@ module jolt_bindings
     type(c_ptr) :: body = c_null_ptr
   end type JPH_BodyLockRead
 
+
   type, bind(c) :: JPH_BodyLockWrite
     type(c_ptr) :: lockInterface = c_null_ptr
     type(c_ptr) :: mutex = c_null_ptr
@@ -620,6 +647,7 @@ module jolt_bindings
     type(JPH_Vec3) ::  walkStairsStepDownExtra
   end type JPH_ExtendedUpdateSettings
 
+
   type, bind(c) :: JPH_CharacterBaseSettings
     type(JPH_Vec3) :: up
     type(JPH_Plane) :: supportingVolume
@@ -628,10 +656,8 @@ module jolt_bindings
     type(c_ptr) :: shape = c_null_ptr
   end type JPH_CharacterBaseSettings
 
-!* CharacterBase.
-! type, bind(c) :: JPH_CharacterBase                    JPH_CharacterBase
 
-!* Character.
+  !* Character.
   type, bind(c) :: JPH_CharacterSettings
     type(JPH_CharacterBaseSettings) ::           base     !* Inherics JPH_CharacterBaseSettings */
     type(JPH_ObjectLayer) ::            layer
@@ -640,9 +666,8 @@ module jolt_bindings
     real(c_float) ::                gravityFactor = 0.0
   end type JPH_CharacterSettings
 
-! type, bind(c) :: JPH_Character                        JPH_Character   !* Inherics JPH_CharacterBase */
 
-!* CharacterVirtual.
+  !* CharacterVirtual.
   type, bind(c) :: JPH_CharacterVirtualSettings
     type(JPH_CharacterBaseSettings) ::           base     !* Inherics JPH_CharacterBaseSettings */
     real(c_float) ::                mass = 0.0
@@ -662,20 +687,12 @@ module jolt_bindings
     type(JPH_ObjectLayer) ::            innerBodyLayer
   end type JPH_CharacterVirtualSettings
 
+
   type, bind(c) :: JPH_CharacterContactSettings
     logical(c_bool) :: canPushCharacter = .false.
     logical(c_bool) :: canReceiveImpulses = .false.
   end type JPH_CharacterContactSettings
 
-! typedef struct JPH_CharacterContactListener      JPH_CharacterContactListener
-! typedef struct JPH_CharacterVirtual                 JPH_CharacterVirtual   !* Inherics JPH_CharacterBase */
-
-! typedef void(JPH_API_CALL* JPH_TraceFunc)(const char* mssage)
-! typedef bool(JPH_API_CALL* JPH_AssertFailureFunc)(const char* expression, const char* mssage, const char* file, uint32_t line)
-
-! typedef void JPH_JobFunction(void* arg)
-! typedef void JPH_QueueJobCallback(void* context, JPH_JobFunction* job, void* arg)
-! typedef void JPH_QueueJobsCallback(void* context, JPH_JobFunction* job, void** args, uint32_t count)
 
   type, bind(c) :: JobSystemThreadPoolConfig
     integer(c_int32_t) :: maxJobs = 0
@@ -691,7 +708,61 @@ module jolt_bindings
     integer(c_int32_t) :: maxBarriers = 0
   end type JPH_JobSystemConfig
 
+
+!* JPH_PhysicsSystem.
+  type, bind(c) :: JPH_PhysicsSystemSettings
+    integer(c_int32_t) :: maxBodies = 10240  !* 10240 */
+    integer(c_int32_t) :: numBodyMutexes = 0  !* 0 */
+    integer(c_int32_t) :: maxBodyPairs = 65536  !* 65536 */
+    integer(c_int32_t) :: maxContactConstraints = 10240  !* 10240 */
+    integer(c_int32_t) :: padding = 0
+    type(c_ptr) :: broadPhaseLayerInterface = c_null_ptr
+    type(c_ptr) :: objectLayerPairFilter = c_null_ptr
+    type(c_ptr) :: objectVsBroadPhaseLayerFilter = c_null_ptr
+  end type JPH_PhysicsSystemSettings
+
+
+  type, bind(c) :: JPH_PhysicsSettings
+    integer(c_int32_t) :: maxInFlightBodyPairs = 0
+    integer(c_int32_t) :: stepListenersBatchSize = 0
+    integer(c_int32_t) :: stepListenerBatchesPerJob = 0
+    real(c_float) :: baumgarte = 0.0
+    real(c_float) :: speculativeContactDistance = 0.0
+    real(c_float) :: penetrationSlop = 0.0
+    real(c_float) :: linearCastThreshold = 0.0
+    real(c_float) :: linearCastMaxPenetration = 0.0
+    real(c_float) :: manifoldToleranceSq = 0.0
+    real(c_float) :: maxPenetrationDistance = 0.0
+    real(c_float) :: bodyPairCacheMaxDeltaPositionSq = 0.0
+    real(c_float) :: bodyPairCacheCosMaxDeltaRotationDiv2 = 0.0
+    real(c_float) :: contactNormalCosMaxDeltaRotation = 0.0
+    real(c_float) :: contactPointPreserveLambdaMaxDistSq = 0.0
+    integer(c_int32_t) :: numVelocitySteps = 0
+    integer(c_int32_t) :: numPositionSteps = 0
+    real(c_float) :: minVelocityForRestitution = 0.0
+    real(c_float) :: timeBeforeSleep = 0.0
+    real(c_float) :: pointVelocitySleepThreshold = 0.0
+    logical(c_bool) :: deterministicSimulation = .false.
+    logical(c_bool) :: constraintWarmStart = .false.
+    logical(c_bool) :: useBodyPairContactCache = .false.
+    logical(c_bool) :: useManifoldReduction = .false.
+    logical(c_bool) :: useLargeIslandSplitter = .false.
+    logical(c_bool) :: allowSleeping = .false.
+    logical(c_bool) :: checkActiveEdges = .false.
+  end type JPH_PhysicsSettings
+
 ! type, bind(c) :: JPH_JobSystem JPH_JobSystem
+
+
+  ! typedef struct JPH_CharacterContactListener      JPH_CharacterContactListener
+! typedef struct JPH_CharacterVirtual                 JPH_CharacterVirtual   !* Inherics JPH_CharacterBase */
+
+! typedef void(JPH_API_CALL* JPH_TraceFunc)(const char* mssage)
+! typedef bool(JPH_API_CALL* JPH_AssertFailureFunc)(const char* expression, const char* mssage, const char* file, uint32_t line)
+
+! typedef void JPH_JobFunction(void* arg)
+! typedef void JPH_QueueJobCallback(void* context, JPH_JobFunction* job, void* arg)
+! typedef void JPH_QueueJobsCallback(void* context, JPH_JobFunction* job, void** args, uint32_t count)
 
 ! JPH_CAPI JPH_JobSystem* JPH_JobSystemThreadPool_Create(const JobSystemThreadPoolConfig* config)
 ! JPH_CAPI JPH_JobSystem* JPH_JobSystemCallback_Create(const JPH_JobSystemConfig* config)
@@ -729,46 +800,6 @@ module jolt_bindings
 
 ! JPH_CAPI void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings)
 
-!* JPH_PhysicsSystem.
-  type, bind(c) :: JPH_PhysicsSystemSettings
-    integer(c_int32_t) :: maxBodies = 10240  !* 10240 */
-    integer(c_int32_t) :: numBodyMutexes = 0  !* 0 */
-    integer(c_int32_t) :: maxBodyPairs = 65536  !* 65536 */
-    integer(c_int32_t) :: maxContactConstraints = 10240  !* 10240 */
-    integer(c_int32_t) :: padding = 0
-    type(c_ptr) :: broadPhaseLayerInterface = c_null_ptr
-    type(c_ptr) :: objectLayerPairFilter = c_null_ptr
-    type(c_ptr) :: objectVsBroadPhaseLayerFilter = c_null_ptr
-  end type JPH_PhysicsSystemSettings
-
-  type, bind(c) :: JPH_PhysicsSettings
-    integer(c_int32_t) :: maxInFlightBodyPairs = 0
-    integer(c_int32_t) :: stepListenersBatchSize = 0
-    integer(c_int32_t) :: stepListenerBatchesPerJob = 0
-    real(c_float) :: baumgarte = 0.0
-    real(c_float) :: speculativeContactDistance = 0.0
-    real(c_float) :: penetrationSlop = 0.0
-    real(c_float) :: linearCastThreshold = 0.0
-    real(c_float) :: linearCastMaxPenetration = 0.0
-    real(c_float) :: manifoldToleranceSq = 0.0
-    real(c_float) :: maxPenetrationDistance = 0.0
-    real(c_float) :: bodyPairCacheMaxDeltaPositionSq = 0.0
-    real(c_float) :: bodyPairCacheCosMaxDeltaRotationDiv2 = 0.0
-    real(c_float) :: contactNormalCosMaxDeltaRotation = 0.0
-    real(c_float) :: contactPointPreserveLambdaMaxDistSq = 0.0
-    integer(c_int32_t) :: numVelocitySteps = 0
-    integer(c_int32_t) :: numPositionSteps = 0
-    real(c_float) :: minVelocityForRestitution = 0.0
-    real(c_float) :: timeBeforeSleep = 0.0
-    real(c_float) :: pointVelocitySleepThreshold = 0.0
-    logical(c_bool) :: deterministicSimulation = .false.
-    logical(c_bool) :: constraintWarmStart = .false.
-    logical(c_bool) :: useBodyPairContactCache = .false.
-    logical(c_bool) :: useManifoldReduction = .false.
-    logical(c_bool) :: useLargeIslandSplitter = .false.
-    logical(c_bool) :: allowSleeping = .false.
-    logical(c_bool) :: checkActiveEdges = .false.
-  end type JPH_PhysicsSettings
 
 ! JPH_CAPI JPH_PhysicsSystem* JPH_PhysicsSystem_Create(const JPH_PhysicsSystemSettings* settings)
 ! JPH_CAPI void JPH_PhysicsSystem_Destroy(JPH_PhysicsSystem* system)
