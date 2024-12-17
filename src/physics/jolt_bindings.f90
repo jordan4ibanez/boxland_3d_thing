@@ -651,14 +651,14 @@ module jolt_bindings
 
   type, bind(c) :: JPH_BodyLockRead
     type(c_ptr) :: lockInterface = c_null_ptr
-    type(c_ptr) :: mutex  = c_null_ptr
+    type(c_ptr) :: mutex = c_null_ptr
     type(c_ptr) :: body = c_null_ptr
   end type JPH_BodyLockRead
 
   type, bind(c) :: JPH_BodyLockWrite
-    const JPH_BodyLockInterface* lockInterface
-    JPH_SharedMutex* mutex
-    JPH_Body* body
+    type(c_ptr) :: lockInterface = c_null_ptr
+    type(c_ptr) :: mutex = c_null_ptr
+    type(c_ptr) :: body = c_null_ptr
   end type JPH_BodyLockWrite
 
 
