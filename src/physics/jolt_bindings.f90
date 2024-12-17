@@ -1528,11 +1528,34 @@ module jolt_bindings
 
 
     !* BoxShape.
-! JPH_CAPI JPH_BoxShapeSettings* JPH_BoxShapeSettings_Create(const JPH_Vec3* halfExtent, float convexRadius)
 
-! JPH_CAPI JPH_BoxShape* JPH_BoxShapeSettings_CreateShape(const JPH_BoxShapeSettings* settings)
+    function JPH_BoxShapeSettings_Create(halfextent, convexradius) result(settings) bind(c, name = "JPH_BoxShapeSettings_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
-! JPH_CAPI JPH_BoxShape* JPH_BoxShape_Create(const JPH_Vec3* halfExtent, float convexRadius)
+      type(c_ptr), intent(in), value :: halfextent
+      real(c_float), intent(in), value :: convexradius
+      type(c_ptr) :: settings
+    end function
+
+
+    function JPH_BoxShapeSettings_CreateShape(settings) result(boxshape) bind(c, name = "JPH_BoxShapeSettings_CreateShape")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: settings
+      type(c_ptr) :: boxshape
+    end function
+
+
+    function JPH_BoxShape_Create(halfextentvec3d, convexradius) result(boxshape) bind(c, name = "JPH_BoxShape_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: halfextentvec3d
+      real(c_float), intent(in), value :: convexradius
+      type(c_ptr) :: boxshape
+    end function
 
 ! JPH_CAPI void JPH_BoxShape_GetHalfExtent(const JPH_BoxShape* shape, JPH_Vec3* halfExtent)
 
