@@ -37,29 +37,29 @@ contains
 
     call jph_set_trace_handler(c_funloc(trace_output_handler))
 
-    job_system_threadpool = jph_job_system_threadpool_create(c_null_ptr)
+    job_system_threadpool = JPH_JobSystemThreadPool_Create(c_null_ptr)
 
     ! We're only using 2 layers.
     ! One for non-moving, one for moving.
-    object_layer_pair_filter_table = jph_object_layer_pair_filter_table_create(2)
+    object_layer_pair_filter_table = JPH_ObjectLayerPairFilterTable_Create(2)
     call jph_object_layer_pair_filter_table_enable_collision(object_layer_pair_filter_table, LAYERS_NON_MOVING, LAYERS_MOVING)
     call jph_object_layer_pair_filter_table_enable_collision(object_layer_pair_filter_table, LAYERS_MOVING, LAYERS_NON_MOVING)
 
     ! We use a 1 to 1 mapping between object layers and broadphase layers.
-    broad_phase_layer_interface_table = jph_broad_phase_layer_interface_table_create(2, 2)
+    broad_phase_layer_interface_table = JPH_BroadPhaseLayerInterfaceTable_Create(2, 2)
     call jph_broadphaselayer_interfacetable_map_object_tobroadphaselayer(broad_phase_layer_interface_table, LAYERS_NON_MOVING, BROAD_PHASE_LAYERS_NON_MOVING)
     call jph_broadphaselayer_interfacetable_map_object_tobroadphaselayer(broad_phase_layer_interface_table, LAYERS_MOVING, BROAD_PHASE_LAYERS_MOVING)
 
     ! 	JPH_ObjectVsBroadPhaseLayerFilter* objectVsBroadPhaseLayerFilter = JPH_ObjectVsBroadPhaseLayerFilterTable_Create(broadPhaseLayerInterfaceTable, 2, objectLayerPairFilterTable, 2);
-    object_vs_broad_phase_layer_filter = jph_object_vs_broad_phase_layer_filter_table_create(broad_phase_layer_interface_table, 2, object_layer_pair_filter_table, 2)
+    object_vs_broad_phase_layer_filter = JPH_ObjectVsBroadPhaseLayerFilterTable_Create(broad_phase_layer_interface_table, 2, object_layer_pair_filter_table, 2)
 
-    settings%max_bodies = 65536
-    settings%num_body_mutexes = 0
-    settings%max_body_pairs = 65536
-    settings%max_contact_constraints = 65536
-    settings%broad_phase_layer_interface = broad_phase_layer_interface_table
-    settings%object_layer_pair_filter = object_layer_pair_filter_table
-    settings%object_vs_broad_phase_layer_filter = object_vs_broad_phase_layer_filter
+    settings%maxBodies = 65536
+    settings%numBodyMutexes = 0
+    settings%maxBodyPairs = 65536
+    settings%maxContactConstraints = 65536
+    settings%broadPhaseLayerInterface = broad_phase_layer_interface_table
+    settings%objectLayerPairFilter= object_layer_pair_filter_table
+    settings%objectVsBroadPhaseLayerFilter = object_vs_broad_phase_layer_filter
 
 
     print"(A)","World created."
