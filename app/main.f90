@@ -11,6 +11,7 @@ program main
   use :: keyboard
   use :: math_helpers
   use :: vector_3d
+  use :: vector_2f
   ! use :: jolt_physics_bindings
   use, intrinsic :: iso_c_binding
   implicit none
@@ -18,6 +19,7 @@ program main
   real :: blah = 0.0
   real, parameter :: gravity = 10.0
   type(vec3d) :: ground_pos, car_pos, car_velocity, car_rotation
+  type(vec2f) :: car_size
   real :: size = 0.05
 
   call glfw_set_error_callback()
@@ -57,14 +59,15 @@ program main
   call mesh_module_initialize()
   call mouse_initialize()
 
+  car_size = [0.5, 1.0]
 
   ! Time to draw le square.
   call mesh_create_3d_named("car", &
     [ &
-    -0.5, 0.0, -0.5, &
-    -0.5, 0.0, 0.5, &
-    0.5, 0.0, 0.5, &
-    0.5, 0.0, -0.5  &
+    -car_size%x, 0.0, -car_size%y, &
+    -car_size%x, 0.0, car_size%y, &
+    car_size%x, 0.0, car_size%y, &
+    car_size%x, 0.0, -car_size%y  &
     ], &
     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], &
     [0,1,2, 2,3,0] &
@@ -116,8 +119,6 @@ program main
 
 
     car_rotation%x = car_rotation%x + 0.01
-
-
 
 
     blah = blah + delta_get_f32() * 2.0
