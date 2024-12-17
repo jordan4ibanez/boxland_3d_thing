@@ -14,6 +14,13 @@ module jolt_bindings
     end function jph_init
 
 
+    subroutine jph_shutdown() bind(c, name = "JPH_Shutdown")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+    end subroutine jph_shutdown
+
+
   end interface
 
 

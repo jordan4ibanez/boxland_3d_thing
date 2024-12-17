@@ -214,6 +214,10 @@ program main
     call glfw_swap_buffers()
     call glfw_poll_events()
   end do
+
+  call jph_shutdown()
+  print"(A)", "Shutdown Jolt Physics."
+
   call texture_destroy_database()
   call mesh_destroy_database()
   call shader_destroy_database()
