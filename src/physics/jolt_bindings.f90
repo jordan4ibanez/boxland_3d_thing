@@ -926,10 +926,19 @@ module jolt_bindings
 
       type(c_ptr), intent(in), value :: objectFilter
       integer(c_int16_t), intent(in), value :: layer1, layer2
+      logical(c_bool) :: should
     end function
 
-!  !* JPH_ObjectVsBroadPhaseLayerFilter */
-! JPH_CAPI JPH_ObjectVsBroadPhaseLayerFilter* JPH_ObjectVsBroadPhaseLayerFilterMask_Create(const JPH_BroadPhaseLayerInterface* broadPhaseLayerInterface)
+
+    !* JPH_ObjectVsBroadPhaseLayerFilter
+
+    function JPH_ObjectVsBroadPhaseLayerFilterMask_Create(broadPhaseLayerInterface) result(ObjectVsBroadPhaseLayerFilter) bind(c, name = "JPH_ObjectVsBroadPhaseLayerFilterMask_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value ::broadPhaseLayerInterface
+      type(c_ptr) :: ObjectVsBroadPhaseLayerFilter
+    end function
 
 ! JPH_CAPI JPH_ObjectVsBroadPhaseLayerFilter* JPH_ObjectVsBroadPhaseLayerFilterTable_Create(
 !   JPH_BroadPhaseLayerInterface* broadPhaseLayerInterface, uint32_t numBroadPhaseLayers,
