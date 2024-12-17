@@ -754,10 +754,6 @@ module jolt_bindings
 
   interface
 
-
-    ! typedef struct JPH_CharacterContactListener      JPH_CharacterContactListener
-! typedef struct JPH_CharacterVirtual                 JPH_CharacterVirtual   !* Inherics JPH_CharacterBase */
-
 ! typedef void(JPH_API_CALL* JPH_TraceFunc)(const char* mssage)
 ! typedef bool(JPH_API_CALL* JPH_AssertFailureFunc)(const char* expression, const char* mssage, const char* file, uint32_t line)
 
@@ -765,31 +761,45 @@ module jolt_bindings
 ! typedef void JPH_QueueJobCallback(void* context, JPH_JobFunction* job, void* arg)
 ! typedef void JPH_QueueJobsCallback(void* context, JPH_JobFunction* job, void** args, uint32_t count)
 
-! JPH_CAPI JPH_JobSystem* JPH_JobSystemThreadPool_Create(const JobSystemThreadPoolConfig* config)
+
+!  JPH_JobSystem* JPH_JobSystemThreadPool_Create(const JobSystemThreadPoolConfig* config)
+
 ! JPH_CAPI JPH_JobSystem* JPH_JobSystemCallback_Create(const JPH_JobSystemConfig* config)
+
 ! JPH_CAPI void JPH_JobSystem_Destroy(JPH_JobSystem* jobSystem)
 
 ! JPH_CAPI bool JPH_Init(void)
+
 ! JPH_CAPI void JPH_Shutdown(void)
+
 ! JPH_CAPI void JPH_SetTraceHandler(JPH_TraceFunc handler)
+
 ! JPH_CAPI void JPH_SetAssertFailureHandler(JPH_AssertFailureFunc handler)
 
 !  !* JPH_BroadPhaseLayerInterface */
 ! JPH_CAPI JPH_BroadPhaseLayerInterface* JPH_BroadPhaseLayerInterfaceMask_Create(uint32_t numBroadPhaseLayers)
+
 ! JPH_CAPI void JPH_BroadPhaseLayerInterfaceMask_ConfigureLayer(JPH_BroadPhaseLayerInterface* bpInterface, JPH_BroadPhaseLayer broadPhaseLayer, uint32_t groupsToInclude, uint32_t groupsToExclude)
 
 ! JPH_CAPI JPH_BroadPhaseLayerInterface* JPH_BroadPhaseLayerInterfaceTable_Create(uint32_t numObjectLayers, uint32_t numBroadPhaseLayers)
+
 ! JPH_CAPI void JPH_BroadPhaseLayerInterfaceTable_MapObjectToBroadPhaseLayer(JPH_BroadPhaseLayerInterface* bpInterface, JPH_ObjectLayer objectLayer, JPH_BroadPhaseLayer broadPhaseLayer)
 
 !  !* JPH_ObjectLayerPairFilter */
 ! JPH_CAPI JPH_ObjectLayerPairFilter* JPH_ObjectLayerPairFilterMask_Create(void)
+
 ! JPH_CAPI JPH_ObjectLayer JPH_ObjectLayerPairFilterMask_GetObjectLayer(uint32_t group, uint32_t mask)
+
 ! JPH_CAPI uint32_t JPH_ObjectLayerPairFilterMask_GetGroup(JPH_ObjectLayer layer)
+
 ! JPH_CAPI uint32_t JPH_ObjectLayerPairFilterMask_GetMask(JPH_ObjectLayer layer)
 
 ! JPH_CAPI JPH_ObjectLayerPairFilter* JPH_ObjectLayerPairFilterTable_Create(uint32_t numObjectLayers)
+
 ! JPH_CAPI void JPH_ObjectLayerPairFilterTable_DisableCollision(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
+
 ! JPH_CAPI void JPH_ObjectLayerPairFilterTable_EnableCollision(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
+  
 ! JPH_CAPI bool JPH_ObjectLayerPairFilterTable_ShouldCollide(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
 
 !  !* JPH_ObjectVsBroadPhaseLayerFilter */
