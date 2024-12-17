@@ -8,6 +8,7 @@ module jolt_bindings
   ! typedef uint16_t JPH_ObjectLayer;
   ! typedef uint8_t  JPH_BroadPhaseLayer;
 
+  ! Ahem: aldkfjlsfasklf is how most of these functions look but I assure you they are just very explicit.
 
   interface
 
@@ -79,6 +80,16 @@ module jolt_bindings
       integer(c_int16_t), intent(in), value :: object_layer
       integer(c_int8_t), intent(in), value :: broad_phase_layer
     end subroutine jph_broadphaselayer_interfacetable_map_object_tobroadphaselayer
+
+
+    function jph_object_vs_broad_phase_layer_filter_table_create(broad_phase_layer_interface, num_broad_phase_layers, object_layer_pair_filter, num_object_layers) result(object_vs_broadphase_layer_filter) bind(c, name = "JPH_ObjectVsBroadPhaseLayerFilterTable_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: broad_phase_layer_interface, object_layer_pair_filter
+      integer(c_int32_t), intent(in), value :: num_broad_phase_layers, num_object_layers
+      type(c_ptr) :: object_vs_broadphase_layer_filter
+    end function jph_object_vs_broad_phase_layer_filter_table_create
 
 
   end interface
