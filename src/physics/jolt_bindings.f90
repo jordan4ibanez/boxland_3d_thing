@@ -1040,7 +1040,14 @@ module jolt_bindings
       type(c_ptr) :: bodyLockInterface
     end function
 
-! JPH_CAPI const JPH_BodyLockInterface* JPH_PhysicsSystem_GetBodyLockInterfaceNoLock(const JPH_PhysicsSystem* system)
+
+    function JPH_PhysicsSystem_GetBodyLockInterfaceNoLock(system) result(BodyLockInterface) bind(c, name = "JPH_PhysicsSystem_GetBodyLockInterfaceNoLock")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system
+      type(c_ptr) :: bodyLockInterface
+    end function
 
 ! JPH_CAPI const JPH_BroadPhaseQuery* JPH_PhysicsSystem_GetBroadPhaseQuery(const JPH_PhysicsSystem* system)
 
