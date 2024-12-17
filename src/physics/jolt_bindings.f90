@@ -1308,6 +1308,7 @@ module jolt_bindings
       integer(c_int32_t) :: shapetype
     end function
 
+
     function JPH_Shape_GetSubType(shape) result(subshapetype) bind(c, name = "JPH_Shape_GetSubType")
       use, intrinsic :: iso_c_binding
       implicit none
