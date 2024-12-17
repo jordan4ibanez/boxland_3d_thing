@@ -1049,7 +1049,14 @@ module jolt_bindings
       type(c_ptr) :: bodyLockInterface
     end function
 
-! JPH_CAPI const JPH_BroadPhaseQuery* JPH_PhysicsSystem_GetBroadPhaseQuery(const JPH_PhysicsSystem* system)
+
+    function JPH_PhysicsSystem_GetBroadPhaseQuery(system) result(BroadPhaseQuery) bind(c, name = "JPH_PhysicsSystem_GetBroadPhaseQuery")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system
+      type(c_ptr) :: BroadPhaseQuery
+    end function
 
 ! JPH_CAPI const JPH_NarrowPhaseQuery* JPH_PhysicsSystem_GetNarrowPhaseQuery(const JPH_PhysicsSystem* system)
 
