@@ -919,7 +919,14 @@ module jolt_bindings
       integer(c_int16_t), intent(in), value :: layer1, layer2
     end subroutine
 
-! JPH_CAPI bool JPH_ObjectLayerPairFilterTable_ShouldCollide(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
+
+    function JPH_ObjectLayerPairFilterTable_ShouldCollide(objectFilter, layer1, layer2) result(should) bind(c, name = "JPH_ObjectLayerPairFilterTable_ShouldCollide")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: objectFilter
+      integer(c_int16_t), intent(in), value :: layer1, layer2
+    end function
 
 !  !* JPH_ObjectVsBroadPhaseLayerFilter */
 ! JPH_CAPI JPH_ObjectVsBroadPhaseLayerFilter* JPH_ObjectVsBroadPhaseLayerFilterMask_Create(const JPH_BroadPhaseLayerInterface* broadPhaseLayerInterface)
