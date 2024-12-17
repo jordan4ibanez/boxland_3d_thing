@@ -854,8 +854,16 @@ module jolt_bindings
       integer(c_int8_t), intent(in), value :: broadPhaseLayer
     end subroutine
 
-!  !* JPH_ObjectLayerPairFilter */
-! JPH_CAPI JPH_ObjectLayerPairFilter* JPH_ObjectLayerPairFilterMask_Create(void)
+
+    !* JPH_ObjectLayerPairFilter.
+
+
+    function JPH_ObjectLayerPairFilterMask_Create() result(ObjectLayerPairFilter) bind(c, name = "JPH_ObjectLayerPairFilterMask_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr) :: ObjectLayerPairFilter
+    end function
 
 ! JPH_CAPI JPH_ObjectLayer JPH_ObjectLayerPairFilterMask_GetObjectLayer(uint32_t group, uint32_t mask)
 
