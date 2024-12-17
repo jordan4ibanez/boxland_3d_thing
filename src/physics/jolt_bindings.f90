@@ -1452,25 +1452,79 @@ module jolt_bindings
       type(c_ptr), intent(in), value :: shape, scale, result
     end subroutine
 
-! JPH_CAPI JPH_Shape* JPH_Shape_ScaleShape(const JPH_Shape* shape, const JPH_Vec3* scale)
 
-! JPH_CAPI bool JPH_Shape_CastRay(const JPH_Shape* shape, const JPH_Vec3* origin, const JPH_Vec3* direction, JPH_RayCastResult* hit)
+    function JPH_Shape_ScaleShape(shape, scale) result(scaleshape) bind(c, name = "JPH_Shape_ScaleShape")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape, scale
+      type(c_ptr) :: scaleshape
+    end function
+
+
+    function JPH_Shape_CastRay(shape, originvec3, directionvec3, hitraycastresult) result(hitsomething) bind(c, name = "JPH_Shape_CastRay")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape, originvec3, directionvec3, hitraycastresult
+      logical(c_bool) :: hitsomething
+    end function
 
 ! JPH_CAPI bool JPH_Shape_CastRay2(const JPH_Shape* shape, const JPH_Vec3* origin, const JPH_Vec3* direction, const JPH_RayCastSettings* rayCastSettings, JPH_CollisionCollectorType collectorType, JPH_CastRayResultCallback* callback, void* userData, const JPH_ShapeFilter* shapeFilter)
+    ! function JPH_Shape_CastRay2(shape, origin, direction, raycastsettings, collectortype) result(hitsomething) bind(c, name = "JPH_Shape_CastRay2")
+    !   use, intrinsic :: iso_c_binding
+    !   implicit none
 
-! JPH_CAPI bool JPH_Shape_CollidePoint(const JPH_Shape* shape, const JPH_Vec3* point, const JPH_ShapeFilter* shapeFilter)
+    ! end function
+
+
+    function JPH_Shape_CollidePoint(shape, point, shapefilter) result(hit) bind(c, name = "JPH_Shape_CollidePoint")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape, point, shapefilter
+      logical(c_bool) :: hit
+    end function
 
 ! JPH_CAPI bool JPH_Shape_CollidePoint2(const JPH_Shape* shape, const JPH_Vec3* point, JPH_CollisionCollectorType collectorType, JPH_CollidePointResultCallback* callback, void* userData, const JPH_ShapeFilter* shapeFilter)
 
 
     !* JPH_ConvexShape.
-! JPH_CAPI float JPH_ConvexShapeSettings_GetDensity(const JPH_ConvexShapeSettings* shape)
+
+    function JPH_ConvexShapeSettings_GetDensity(shape) result(f) bind(c, name = "JPH_ConvexShapeSettings_GetDensity")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      real(c_float) :: f
+    end function
 
 ! JPH_CAPI void JPH_ConvexShapeSettings_SetDensity(JPH_ConvexShapeSettings* shape, float value)
+    subroutine JPH_ConvexShapeSettings_SetDensity(shape, val) bind(c, name = "JPH_ConvexShapeSettings_SetDensity")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
-! JPH_CAPI float JPH_ConvexShape_GetDensity(const JPH_ConvexShape* shape)
+      type(c_ptr), intent(in), value :: shape
+      real(c_float), intent(in), value :: val
+    end subroutine
 
-! JPH_CAPI void JPH_ConvexShape_SetDensity(JPH_ConvexShape* shape, float inDensity)
+
+    function JPH_ConvexShape_GetDensity(shape) result(de) bind(c, name = "JPH_ConvexShape_GetDensity")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      real(c_float) :: de
+    end function
+
+
+    subroutine JPH_ConvexShape_SetDensity(shape, dens) bind(c, name = "JPH_ConvexShape_SetDensity")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      real(c_float), intent(in), value :: dens
+    end subroutine
 
 
     !* BoxShape.
