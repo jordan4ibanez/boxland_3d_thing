@@ -910,7 +910,14 @@ module jolt_bindings
       integer(c_int16_t), intent(in), value :: layer1, layer2
     end subroutine
 
-! JPH_CAPI void JPH_ObjectLayerPairFilterTable_EnableCollision(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
+
+    subroutine JPH_ObjectLayerPairFilterTable_EnableCollision(objectFilter, layer1, layer2) bind(c, name = "JPH_ObjectLayerPairFilterTable_EnableCollision")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: objectFilter
+      integer(c_int16_t), intent(in), value :: layer1, layer2
+    end subroutine
 
 ! JPH_CAPI bool JPH_ObjectLayerPairFilterTable_ShouldCollide(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
 
