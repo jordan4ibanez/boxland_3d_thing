@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "../Collision/BroadPhase/BroadPhaseLayer.h"
-#include "../Collision/ObjectLayerPairFilterMask.h"
+#include "../../Collision/BroadPhase/BroadPhaseLayer.h"
+#include "../../Collision/ObjectLayerPairFilterMask.h"
 
 JPH_NAMESPACE_BEGIN
 

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../Collision/BroadPhase/BroadPhaseLayer.h"
+#include "../../Collision/BroadPhase/BroadPhaseLayer.h"
 
 JPH_NAMESPACE_BEGIN
 

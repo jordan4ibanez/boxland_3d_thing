@@ -7,29 +7,29 @@
 __pragma(warning(push, 0))
 #endif
 
-#include <Jolt/Jolt.h>
-#include <Jolt/RegisterTypes.h>
-#include <Jolt/Core/Factory.h>
-#include <Jolt/Core/TempAllocator.h>
-#include <Jolt/Core/JobSystemThreadPool.h>
-#include <Jolt/Physics/PhysicsSettings.h>
-#include <Jolt/Physics/PhysicsSystem.h>
-#include <Jolt/Physics/Collision/CollideShape.h>
-#include <Jolt/Physics/Collision/Shape/BoxShape.h>
-#include <Jolt/Physics/Collision/Shape/SphereShape.h>
-#include <Jolt/Physics/Collision/Shape/TriangleShape.h>
-#include <Jolt/Physics/Collision/Shape/CapsuleShape.h>
-#include <Jolt/Physics/Collision/Shape/TaperedCapsuleShape.h>
-#include <Jolt/Physics/Collision/Shape/CylinderShape.h>
-#include <Jolt/Physics/Collision/Shape/ConvexHullShape.h>
-#include <Jolt/Physics/Collision/CastResult.h>
-#include <Jolt/Physics/Body/BodyCreationSettings.h>
-#include <Jolt/Physics/Body/BodyActivationListener.h>
-#include <Jolt/Physics/Body/AllowedDOFs.h>
-#include <Jolt/Physics/Constraints/SixDOFConstraint.h>
-#include <Jolt/Physics/Character/CharacterBase.h>
+#include "../Jolt/Jolt.h"
+#include "../Jolt/RegisterTypes.h"
+#include "../Jolt/Core/Factory.h"
+#include "../Jolt/Core/TempAllocator.h"
+#include "../Jolt/Core/JobSystemThreadPool.h"
+#include "../Jolt/Physics/PhysicsSettings.h"
+#include "../Jolt/Physics/PhysicsSystem.h"
+#include "../Jolt/Physics/Collision/CollideShape.h"
+#include "../Jolt/Physics/Collision/Shape/BoxShape.h"
+#include "../Jolt/Physics/Collision/Shape/SphereShape.h"
+#include "../Jolt/Physics/Collision/Shape/TriangleShape.h"
+#include "../Jolt/Physics/Collision/Shape/CapsuleShape.h"
+#include "../Jolt/Physics/Collision/Shape/TaperedCapsuleShape.h"
+#include "../Jolt/Physics/Collision/Shape/CylinderShape.h"
+#include "../Jolt/Physics/Collision/Shape/ConvexHullShape.h"
+#include "../Jolt/Physics/Collision/CastResult.h"
+#include "../Jolt/Physics/Body/BodyCreationSettings.h"
+#include "../Jolt/Physics/Body/BodyActivationListener.h"
+#include "../Jolt/Physics/Body/AllowedDOFs.h"
+#include "../Jolt/Physics/Constraints/SixDOFConstraint.h"
+#include "../Jolt/Physics/Character/CharacterBase.h"
 #ifdef JPH_DEBUG_RENDERER
-#include <Jolt/Renderer/DebugRendererSimple.h>
+#include "../Jolt/Renderer/DebugRendererSimple.h"
 #endif // JPH_DEBUG_RENDERER
 
 #ifdef _MSC_VER

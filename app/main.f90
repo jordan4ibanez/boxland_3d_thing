@@ -62,7 +62,7 @@ program main
   call mouse_initialize()
 
 
-  call createEmptyDynamicsWorld()
+  ! call createEmptyDynamicsWorld()
 
 
 
