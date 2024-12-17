@@ -1189,9 +1189,23 @@ module jolt_bindings
       integer(c_int32_t), intent(in), value :: count
     end subroutine
 
-! JPH_CAPI void JPH_PhysicsSystem_GetBodies(const JPH_PhysicsSystem* system, JPH_BodyID* ids, uint32_t count)
 
-! JPH_CAPI void JPH_PhysicsSystem_GetConstraints(const JPH_PhysicsSystem* system, const JPH_Constraint** constraints, uint32_t count)
+    subroutine JPH_PhysicsSystem_GetBodies(system, ids, count) bind(c, name = "JPH_PhysicsSystem_GetBodies")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system, ids
+      integer(c_int32_t), intent(in), value :: count
+    end subroutine
+
+
+    subroutine JPH_PhysicsSystem_GetConstraints(system, constraints, count) bind(c, name = "JPH_PhysicsSystem_GetConstraints")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system, constraints
+      integer(c_int32_t), intent(in), value :: count
+    end subroutine
 
 ! JPH_CAPI void JPH_PhysicsSystem_DrawBodies(JPH_PhysicsSystem* system, const JPH_DrawSettings* settings, JPH_DebugRenderer* renderer, const JPH_BodyDrawFilter* bodyFilter  !* = nullptr */)
 
