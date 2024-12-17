@@ -1444,7 +1444,13 @@ module jolt_bindings
       logical(c_bool) :: valid
     end function
 
-! JPH_CAPI void JPH_Shape_MakeScaleValid(const JPH_Shape* shape, const JPH_Vec3* scale, JPH_Vec3* result)
+
+    subroutine JPH_Shape_MakeScaleValid(shape, scale, result) bind(c, name = "JPH_Shape_MakeScaleValid")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape, scale, result
+    end subroutine
 
 ! JPH_CAPI JPH_Shape* JPH_Shape_ScaleShape(const JPH_Shape* shape, const JPH_Vec3* scale)
 
