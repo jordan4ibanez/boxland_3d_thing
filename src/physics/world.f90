@@ -1,6 +1,7 @@
 module world
   use :: jolt_bindings
   use :: string_f90
+  use :: vector_3f
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -24,12 +25,17 @@ module world
   type(JPH_PhysicsSystemSettings), target :: settings
   type(c_ptr) :: system
   type(c_ptr) :: body_interface
+  integer(c_int32_t) :: body_id
+  type(c_ptr) :: floor_shape
+  type(c_ptr) :: floor_settings
 
 contains
 
 
   subroutine world_create()
     implicit none
+
+    type(vec3f), target :: box_half_extents, floor_position
 
     if (.not. jph_init()) then
       error stop "Failed to initialize Jolt Physics."
@@ -64,6 +70,15 @@ contains
     settings%objectVsBroadPhaseLayerFilter = object_vs_broad_phase_layer_filter
     system = JPH_PhysicsSystem_Create(c_loc(settings))
     body_interface = JPH_PhysicsSystem_GetBodyInterface(system)
+
+    box_half_extents = [100.0, 1.0, 100.0]
+    floor_shape = JPH_BoxShape_Create(c_loc(box_half_extents), JPH_DEFAULT_CONVEX_RADIUS)
+
+    floor_position = [0.0, -1.0, 0.0]
+
+    floor_settings = JPH_BodyCreationSettings_Create3()
+
+
 
     print"(A)","World created."
   end subroutine world_create

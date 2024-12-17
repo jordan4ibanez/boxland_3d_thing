@@ -1809,11 +1809,16 @@ module jolt_bindings
 !   JPH_MotionType motionType,
 !   JPH_ObjectLayer objectLayer)
 
-! JPH_CAPI JPH_BodyCreationSettings* JPH_BodyCreationSettings_Create3(const JPH_Shape* shape,
-!   const JPH_RVec3* position,
-!   const JPH_Quat* rotation,
-!   JPH_MotionType motionType,
-!   JPH_ObjectLayer objectLayer)
+    function JPH_BodyCreationSettings_Create3(shape, position, rotation, motiontype, objectlayer) result(set) bind(c, name = "JPH_BodyCreationSettings_Create3")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape, position, rotation
+      integer(c_int32_t) :: motiontype
+      integer(c_int16_t) :: objectlayer
+
+      type(c_ptr) :: set
+    end function
 
 ! JPH_CAPI void JPH_BodyCreationSettings_Destroy(JPH_BodyCreationSettings* settings)
 
