@@ -794,9 +794,20 @@ module jolt_bindings
       logical(c_bool) :: success
     end function JPH_Init
 
-! JPH_CAPI void JPH_Shutdown(void)
 
-! JPH_CAPI void JPH_SetTraceHandler(JPH_TraceFunc handler)
+    subroutine JPH_Shutdown() bind(c, name = "JPH_Shutdown")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+    end subroutine JPH_Shutdown
+
+
+    subroutine JPH_SetTraceHandler(handler) bind(c, name = "JPH_SetTraceHandler")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_funptr), intent(in), value :: handler
+    end subroutine
 
 ! JPH_CAPI void JPH_SetAssertFailureHandler(JPH_AssertFailureFunc handler)
 
