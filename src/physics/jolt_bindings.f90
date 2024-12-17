@@ -2264,7 +2264,15 @@ module jolt_bindings
     !* BodyInterface.
 ! JPH_CAPI void JPH_BodyInterface_DestroyBody(JPH_BodyInterface* interface, JPH_BodyID bodyID)
 
-! JPH_CAPI JPH_BodyID JPH_BodyInterface_CreateAndAddBody(JPH_BodyInterface* interface, const JPH_BodyCreationSettings* settings, JPH_Activation activationMode)
+
+    function JPH_BodyInterface_CreateAndAddBody(interface, settings, activationMode) result(bodid) bind(c, name = "JPH_BodyInterface_CreateAndAddBody")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: interface, settings
+      integer(c_int32_t), intent(in), value :: activationMode
+      integer(c_int32_t) :: bodid
+    end function
 
 ! JPH_CAPI JPH_Body* JPH_BodyInterface_CreateBody(JPH_BodyInterface* interface, const JPH_BodyCreationSettings* settings)
 

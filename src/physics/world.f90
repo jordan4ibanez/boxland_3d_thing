@@ -25,7 +25,7 @@ module world
   type(JPH_PhysicsSystemSettings), target :: settings
   type(c_ptr) :: system
   type(c_ptr) :: body_interface
-  integer(c_int32_t) :: body_id
+  integer(c_int32_t) :: body_id, floor_id
   type(c_ptr) :: floor_shape
   type(c_ptr) :: floor_settings
 
@@ -68,16 +68,21 @@ contains
     settings%broadPhaseLayerInterface = broad_phase_layer_interface_table
     settings%objectLayerPairFilter= object_layer_pair_filter_table
     settings%objectVsBroadPhaseLayerFilter = object_vs_broad_phase_layer_filter
+
     system = JPH_PhysicsSystem_Create(c_loc(settings))
+
     body_interface = JPH_PhysicsSystem_GetBodyInterface(system)
 
     box_half_extents = [100.0, 1.0, 100.0]
+
     floor_shape = JPH_BoxShape_Create(c_loc(box_half_extents), JPH_DEFAULT_CONVEX_RADIUS)
 
     floor_position = [0.0, -1.0, 0.0]
 
-    floor_settings = JPH_BodyCreationSettings_Create3()
+    floor_settings = JPH_BodyCreationSettings_Create3(floor_shape, c_loc(floor_position), c_null_ptr, JPH_MotionType_Static, LAYERS_NON_MOVING)
 
+    ! Create the actual rigidbody.
+    floor_id = JPH_BodyInterface_CreateAndAddBody(body_interface, floor_settings, JPH_Activation_DontActivate)
 
 
     print"(A)","World created."
