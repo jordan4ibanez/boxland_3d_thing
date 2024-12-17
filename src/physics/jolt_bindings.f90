@@ -1396,9 +1396,26 @@ module jolt_bindings
       type(c_ptr), intent(in), value :: shape, resultmass
     end subroutine
 
-! JPH_CAPI const JPH_Shape* JPH_Shape_GetLeafShape(const JPH_Shape* shape, JPH_SubShapeID subShapeID, JPH_SubShapeID* remainder)
 
-! JPH_CAPI const JPH_PhysicsMaterial* JPH_Shape_GetMaterial(const JPH_Shape* shape, JPH_SubShapeID subShapeID)
+    function JPH_Shape_GetLeafShape(shape, subShapeID, remaindersubshapeid) result(shapeout) bind(c, name = "JPH_Shape_GetLeafShape")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape, remaindersubshapeid
+      integer(c_int32_t), intent(in), value :: subShapeID
+      type(c_ptr) :: shapeout
+
+    end function
+
+
+    function JPH_Shape_GetMaterial(shape, subShapeID) result(mat) bind(c, name = "JPH_Shape_GetMaterial")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      integer(c_int32_t), intent(in), value :: subShapeID
+      type(c_ptr) :: mat
+    end function
 
 ! JPH_CAPI void JPH_Shape_GetSurfaceNormal(const JPH_Shape* shape, JPH_SubShapeID subShapeID, JPH_Vec3* localPosition, JPH_Vec3* normal)
 
