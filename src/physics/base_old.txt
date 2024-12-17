@@ -112,3 +112,16 @@ module jolt_bindings
 
 
 end module jolt_bindings
+
+
+function blankhere() result() bind(c, name = "")
+  use, intrinsic :: iso_c_binding
+  implicit none
+
+end function 
+
+subroutine blankhere() bind(c, name = "")
+  use, intrinsic :: iso_c_binding
+  implicit none
+
+end subroutine
