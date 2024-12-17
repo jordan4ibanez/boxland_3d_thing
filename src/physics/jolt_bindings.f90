@@ -5,29 +5,39 @@ module jolt_bindings
 ! Copyright (c) Amer Koleci and Contributors.
 ! Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+  !? Implementation note: I'm not going to be transferring my camelcasing as I want this to be a direct translation.
+
   !! DO NOT HIT SAVE LOL!
 
 real(c_float), parameter :: JPH_DEFAULT_COLLISION_TOLERANCE = real(1.0e0 - 4.0) ! float cDefaultCollisionTolerance = 1.0e-4f
-real(c_float), parameter ::  JPH_DEFAULT_PENETRATION_TOLERANCE (1.0e-4f) ! float cDefaultPenetrationTolerance = 1.0e-4f
-real(c_float), parameter ::  JPH_DEFAULT_CONVEX_RADIUS (0.05f) ! float cDefaultConvexRadius = 0.05f
-real(c_float), parameter ::  JPH_CAPSULE_PROJECTION_SLOP (0.02f) ! float cCapsuleProjectionSlop = 0.02f
-integer(c_int32_t), parameter :: JPH_MAX_PHYSICS_JOBS (2048) ! int cMaxPhysicsJobs = 2048
-integer(c_int32_t), parameter ::  JPH_MAX_PHYSICS_BARRIERS (2048) ! int cMaxPhysicsBarriers = 8
+real(c_float), parameter ::  JPH_DEFAULT_PENETRATION_TOLERANCE = (1.0e0 - 4.0) ! float cDefaultPenetrationTolerance = 1.0e-4f
+real(c_float), parameter ::  JPH_DEFAULT_CONVEX_RADIUS = (0.05) ! float cDefaultConvexRadius = 0.05f
+real(c_float), parameter ::  JPH_CAPSULE_PROJECTION_SLOP = (0.02) ! float cCapsuleProjectionSlop = 0.02f
+integer(c_int32_t), parameter :: JPH_MAX_PHYSICS_JOBS = (2048) ! int cMaxPhysicsJobs = 2048
+integer(c_int32_t), parameter ::  JPH_MAX_PHYSICS_BARRIERS = (2048) ! int cMaxPhysicsBarriers = 8
 
-typedef uint32_t JPH_BodyID;
-typedef uint32_t JPH_SubShapeID;
-typedef uint16_t JPH_ObjectLayer;
-typedef uint8_t  JPH_BroadPhaseLayer;
+type, bind(c) :: JPH_BodyID
+integer(c_int32_t) :: data = 0
+end type JPH_BodyID
+type, bind(c) :: JPH_SubShapeID
+integer(c_int32_t) :: data = 0
+end type JPH_SubShapeID
+type, bind(c) :: JPH_ObjectLayer
+integer(c_int16_t) :: data = 0
+end type JPH_ObjectLayer
+type, bind(c) :: JPH_BroadPhaseLayer
+integer(c_int8_t) :: data = 0
+end type JPH_BroadPhaseLayer
 
-typedef enum JPH_PhysicsUpdateError {
-	JPH_PhysicsUpdateError_None = 0,
-	JPH_PhysicsUpdateError_ManifoldCacheFull = 1 << 0,
-	JPH_PhysicsUpdateError_BodyPairCacheFull = 1 << 1,
-	JPH_PhysicsUpdateError_ContactConstraintsFull = 1 << 2,
+! typedef enum JPH_PhysicsUpdateError {
+integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_None = 0
+integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_ManifoldCacheFull = 1 << 0
+integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_BodyPairCacheFull = 1 << 1
+integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_ContactConstraintsFull = 1 << 2
 
 	_JPH_PhysicsUpdateError_Count,
 	_JPH_PhysicsUpdateError_Force32 = 0x7fffffff
-} JPH_PhysicsUpdateError;
+! } JPH_PhysicsUpdateError;
 
 typedef enum JPH_BodyType {
 	JPH_BodyType_Rigid = 0,
