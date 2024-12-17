@@ -61,6 +61,16 @@ program main
   call mesh_module_initialize()
   call mouse_initialize()
 
+
+  call createEmptyDynamicsWorld()
+
+
+
+
+
+
+
+
   car_size = [0.5, 1.0]
 
   ! Time to draw le square.

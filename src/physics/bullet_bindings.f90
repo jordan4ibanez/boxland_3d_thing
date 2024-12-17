@@ -4,6 +4,10 @@ module bullet_bindings
 
   interface
 
+    subroutine createEmptyDynamicsWorld() bind(c, name = "createEmptyDynamicsWorld")
+
+    end subroutine createEmptyDynamicsWorld
+
   end interface
 
 end module bullet_bindings
