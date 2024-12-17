@@ -1243,10 +1243,25 @@ module jolt_bindings
       type(c_ptr), intent(in), value :: material
     end subroutine
 
-! JPH_CAPI const char* JPH_PhysicsMaterial_GetDebugName(const JPH_PhysicsMaterial* material)
 
-! JPH_CAPI uint32_t JPH_PhysicsMaterial_GetDebugColor(const JPH_PhysicsMaterial * material)
+    function JPH_PhysicsMaterial_GetDebugName(material) result(name) bind(c, name = "JPH_PhysicsMaterial_GetDebugName")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
+      type(c_ptr), intent(in), value :: material
+      type(c_ptr) :: name
+    end function
+
+
+    function JPH_PhysicsMaterial_GetDebugColor(material) result(color) bind(c, name = "JPH_PhysicsMaterial_GetDebugColor")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: material
+      integer(c_int32_t) :: color
+    end function
+
+    
     !* ShapeSettings.
 ! JPH_CAPI void JPH_ShapeSettings_Destroy(JPH_ShapeSettings* settings)
 
