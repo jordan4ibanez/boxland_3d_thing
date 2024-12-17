@@ -809,12 +809,32 @@ module jolt_bindings
       type(c_funptr), intent(in), value :: handler
     end subroutine
 
-! JPH_CAPI void JPH_SetAssertFailureHandler(JPH_AssertFailureFunc handler)
+
+    subroutine JPH_SetAssertFailureHandler(handler) bind(c, name = "JPH_SetAssertFailureHandler")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_funptr), intent(in), value :: handler
+    end subroutine
 
 !  !* JPH_BroadPhaseLayerInterface */
-! JPH_CAPI JPH_BroadPhaseLayerInterface* JPH_BroadPhaseLayerInterfaceMask_Create(uint32_t numBroadPhaseLayers)
+    function JPH_BroadPhaseLayerInterfaceMask_Create(numBroadPhaseLayers) result(BroadPhaseLayerInterface) bind(c, name = "JPH_BroadPhaseLayerInterfaceMask_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int32_t), intent(in), value :: numBroadPhaseLayers
+      type(c_ptr) :: BroadPhaseLayerInterface
+    end function
 
-! JPH_CAPI void JPH_BroadPhaseLayerInterfaceMask_ConfigureLayer(JPH_BroadPhaseLayerInterface* bpInterface, JPH_BroadPhaseLayer broadPhaseLayer, uint32_t groupsToInclude, uint32_t groupsToExclude)
+
+    subroutine JPH_BroadPhaseLayerInterfaceMask_ConfigureLayer(bpInterface, broadPhaseLayer, groupsToInclude, groupsToExclude) bind(c, name = "JPH_BroadPhaseLayerInterfaceMask_ConfigureLayer")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: bpInterface
+      integer(c_int8_t), intent(in), value :: broadPhaseLayer
+      integer(c_int32_t), intent(in), value :: groupsToInclude, groupsToExclude
+    end subroutine
+
 
 ! JPH_CAPI JPH_BroadPhaseLayerInterface* JPH_BroadPhaseLayerInterfaceTable_Create(uint32_t numObjectLayers, uint32_t numBroadPhaseLayers)
 
