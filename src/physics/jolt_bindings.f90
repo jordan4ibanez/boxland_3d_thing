@@ -836,7 +836,13 @@ module jolt_bindings
     end subroutine
 
 
-! JPH_CAPI JPH_BroadPhaseLayerInterface* JPH_BroadPhaseLayerInterfaceTable_Create(uint32_t numObjectLayers, uint32_t numBroadPhaseLayers)
+    function JPH_BroadPhaseLayerInterfaceTable_Create(numObjectLayers, numBroadPhaseLayers) result(BroadPhaseLayerInterface) bind(c, name = "JPH_BroadPhaseLayerInterfaceTable_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      integer(c_int32_t), intent(in), value :: numObjectLayers, numBroadPhaseLayers
+      type(c_ptr) :: BroadPhaseLayerInterface
+    end function
 
 ! JPH_CAPI void JPH_BroadPhaseLayerInterfaceTable_MapObjectToBroadPhaseLayer(JPH_BroadPhaseLayerInterface* bpInterface, JPH_ObjectLayer objectLayer, JPH_BroadPhaseLayer broadPhaseLayer)
 
