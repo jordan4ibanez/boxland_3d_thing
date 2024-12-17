@@ -13,7 +13,7 @@ program main
   use :: vector_3d
   use :: vector_2f
   use :: constants_f90
-  use :: jolt_bindings
+  use :: world
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -61,13 +61,7 @@ program main
   call mouse_initialize()
 
 
-  ! call createEmptyDynamicsWorld()
-
-  if (.not. jph_init()) then
-    error stop "Failed to initialize Jolt Physics."
-  else
-    print"(A)", "Initialized Jolt Physics."
-  end if
+  call world_create()
 
 
 
@@ -215,8 +209,7 @@ program main
     call glfw_poll_events()
   end do
 
-  call jph_shutdown()
-  print"(A)", "Shutdown Jolt Physics."
+  call world_destroy()
 
   call texture_destroy_database()
   call mesh_destroy_database()
