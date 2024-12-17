@@ -993,7 +993,13 @@ module jolt_bindings
       type(c_ptr), intent(in), value :: system, result
     end subroutine
 
-! JPH_CAPI void JPH_PhysicsSystem_OptimizeBroadPhase(JPH_PhysicsSystem* system)
+
+    subroutine JPH_PhysicsSystem_OptimizeBroadPhase(system) bind(c, name = "JPH_PhysicsSystem_OptimizeBroadPhase")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system
+    end subroutine
 
 ! JPH_CAPI JPH_PhysicsUpdateError JPH_PhysicsSystem_Update(JPH_PhysicsSystem* system, float deltaTime, int collisionSteps, JPH_JobSystem* jobSystem)
 
