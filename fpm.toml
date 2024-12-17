@@ -11,7 +11,17 @@ auto-tests = true
 auto-examples = true
 module-naming = false
 
-link = ["glfw", "luajit-5.1"]
+# This is just for fedora.
+link = [
+  "glfw",
+  "Bullet3Collision",
+  "Bullet3Common",
+  "Bullet3Dynamics",
+  "Bullet3Geometry",
+  "Bullet3Collision",
+  "Bullet3Dynamics",
+  "LinearMath",
+]
 
 [dependencies]
 forthread = { git = "https://github.com/jordan4ibanez/forthread" }

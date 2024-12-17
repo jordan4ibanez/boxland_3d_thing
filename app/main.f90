@@ -13,6 +13,7 @@ program main
   use :: vector_3d
   use :: vector_2f
   use :: constants_f90
+  use :: bullet_bindings
   ! use :: jolt_physics_bindings
   use, intrinsic :: iso_c_binding
   implicit none
