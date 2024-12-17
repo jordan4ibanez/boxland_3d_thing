@@ -20,6 +20,7 @@ module world
   type(c_ptr) :: job_system_threadpool
   type(c_ptr) :: object_layer_pair_filter_table
   type(c_ptr) :: broad_phase_layer_interface_table
+  type(c_ptr) :: object_vs_broad_phase_layer_filter
 
 
 contains
@@ -48,6 +49,9 @@ contains
     broad_phase_layer_interface_table = jph_broad_phase_layer_interface_table_create(2, 2)
     call jph_broadphaselayer_interfacetable_map_object_tobroadphaselayer(broad_phase_layer_interface_table, LAYERS_NON_MOVING, BROAD_PHASE_LAYERS_NON_MOVING)
     call jph_broadphaselayer_interfacetable_map_object_tobroadphaselayer(broad_phase_layer_interface_table, LAYERS_MOVING, BROAD_PHASE_LAYERS_MOVING)
+
+    ! 	JPH_ObjectVsBroadPhaseLayerFilter* objectVsBroadPhaseLayerFilter = JPH_ObjectVsBroadPhaseLayerFilterTable_Create(broadPhaseLayerInterfaceTable, 2, objectLayerPairFilterTable, 2);
+    object_vs_broad_phase_layer_filter = jph_object_vs_broad_phase_layer_filter_table_create(broad_phase_layer_interface_table, 2, object_layer_pair_filter_table, 2)
 
     print"(A)","World created."
   end subroutine world_create
