@@ -65,124 +65,124 @@ integer(c_int32_t), parameter :: JPH_Activation_Force32 = int(z"7fffffff")
 ! } JPH_Activation;
 
 ! typedef enum JPH_ValidateResult {
-  JPH_ValidateResult_AcceptAllContactsForThisBodyPair = 0,
-  JPH_ValidateResult_AcceptContact = 1,
-  JPH_ValidateResult_RejectContact = 2,
-  JPH_ValidateResult_RejectAllContactsForThisBodyPair = 3,
+integer(c_int32_t), parameter :: JPH_ValidateResult_AcceptAllContactsForThisBodyPair = 0
+integer(c_int32_t), parameter :: JPH_ValidateResult_AcceptContact = 1
+integer(c_int32_t), parameter :: JPH_ValidateResult_RejectContact = 2
+integer(c_int32_t), parameter :: JPH_ValidateResult_RejectAllContactsForThisBodyPair = 3
 
-  JPH_ValidateResult_Count = int(z"7fffffff"),
-  JPH_ValidateResult_Force32 = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_ValidateResult_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_ValidateResult_Force32 = int(z"7fffffff")
 ! } JPH_ValidateResult;
 
-typedef enum JPH_ShapeType {
-  JPH_ShapeType_Convex = 0,
-  JPH_ShapeType_Compound = 1,
-  JPH_ShapeType_Decorated = 2,
-  JPH_ShapeType_Mesh = 3,
-  JPH_ShapeType_HeightField = 4,
-  JPH_ShapeType_SoftBody = 5,
+! typedef enum JPH_ShapeType {
+integer(c_int32_t), parameter :: JPH_ShapeType_Convex = 0
+integer(c_int32_t), parameter :: JPH_ShapeType_Compound = 1
+integer(c_int32_t), parameter :: JPH_ShapeType_Decorated = 2
+integer(c_int32_t), parameter :: JPH_ShapeType_Mesh = 3
+integer(c_int32_t), parameter :: JPH_ShapeType_HeightField = 4
+integer(c_int32_t), parameter :: JPH_ShapeType_SoftBody = 5
 
-  JPH_ShapeType_User1 = 6,
-  JPH_ShapeType_User2 = 7,
-  JPH_ShapeType_User3 = 8,
-  JPH_ShapeType_User4 = 9,
+integer(c_int32_t), parameter :: JPH_ShapeType_User1 = 6
+integer(c_int32_t), parameter :: JPH_ShapeType_User2 = 7
+integer(c_int32_t), parameter :: JPH_ShapeType_User3 = 8
+integer(c_int32_t), parameter :: JPH_ShapeType_User4 = 9
 
-  JPH_ShapeType_Count = int(z"7fffffff"),
-  JPH_ShapeType_Force32 = int(z"7fffffff")
-} JPH_ShapeType;
+integer(c_int32_t), parameter :: JPH_ShapeType_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_ShapeType_Force32 = int(z"7fffffff")
+! } JPH_ShapeType;
 
-typedef enum JPH_ShapeSubType {
-  JPH_ShapeSubType_Sphere = 0,
-  JPH_ShapeSubType_Box = 1,
-  JPH_ShapeSubType_Triangle = 2,
-  JPH_ShapeSubType_Capsule = 3,
-  JPH_ShapeSubType_TaperedCapsule = 4,
-  JPH_ShapeSubType_Cylinder = 5,
-  JPH_ShapeSubType_ConvexHull = 6,
-  JPH_ShapeSubType_StaticCompound = 7,
-  JPH_ShapeSubType_MutableCompound = 8,
-  JPH_ShapeSubType_RotatedTranslated = 9,
-  JPH_ShapeSubType_Scaled = 10,
-  JPH_ShapeSubType_OffsetCenterOfMass = 11,
-  JPH_ShapeSubType_Mesh = 12,
-  JPH_ShapeSubType_HeightField = 13,
-  JPH_ShapeSubType_SoftBody = 14,
+! typedef enum JPH_ShapeSubType {
+integer(c_int32_t), parameter :: JPH_ShapeSubType_Sphere = 0
+integer(c_int32_t), parameter :: JPH_ShapeSubType_Box = 1
+integer(c_int32_t), parameter :: JPH_ShapeSubType_Triangle = 2
+integer(c_int32_t), parameter :: JPH_ShapeSubType_Capsule = 3
+integer(c_int32_t), parameter :: JPH_ShapeSubType_TaperedCapsule = 4
+integer(c_int32_t), parameter :: JPH_ShapeSubType_Cylinder = 5
+integer(c_int32_t), parameter :: JPH_ShapeSubType_ConvexHull = 6
+integer(c_int32_t), parameter :: JPH_ShapeSubType_StaticCompound = 7
+integer(c_int32_t), parameter :: JPH_ShapeSubType_MutableCompound = 8
+integer(c_int32_t), parameter :: JPH_ShapeSubType_RotatedTranslated = 9
+integer(c_int32_t), parameter :: JPH_ShapeSubType_Scaled = 10
+integer(c_int32_t), parameter :: JPH_ShapeSubType_OffsetCenterOfMass = 11
+integer(c_int32_t), parameter :: JPH_ShapeSubType_Mesh = 12
+integer(c_int32_t), parameter :: JPH_ShapeSubType_HeightField = 13
+integer(c_int32_t), parameter :: JPH_ShapeSubType_SoftBody = 14
 
-  JPH_ShapeSubType_Count = int(z"7fffffff"),
-  JPH_ShapeSubType_Force32 = int(z"7fffffff")
-} JPH_ShapeSubType;
+integer(c_int32_t), parameter :: JPH_ShapeSubType_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_ShapeSubType_Force32 = int(z"7fffffff")
+! } JPH_ShapeSubType;
 
-typedef enum JPH_ConstraintType {
-  JPH_ConstraintType_Constraint = 0,
-  JPH_ConstraintType_TwoBodyConstraint = 1,
+! typedef enum JPH_ConstraintType {
+integer(c_int32_t), parameter :: JPH_ConstraintType_Constraint = 0
+integer(c_int32_t), parameter :: JPH_ConstraintType_TwoBodyConstraint = 1
 
-  JPH_ConstraintType_Count = int(z"7fffffff"),
-  JPH_ConstraintType_Force32 = int(z"7fffffff")
-} JPH_ConstraintType;
+integer(c_int32_t), parameter :: JPH_ConstraintType_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_ConstraintType_Force32 = int(z"7fffffff")
+! } JPH_ConstraintType;
 
-typedef enum JPH_ConstraintSubType {
-  JPH_ConstraintSubType_Fixed = 0,
-  JPH_ConstraintSubType_Point = 1,
-  JPH_ConstraintSubType_Hinge = 2,
-  JPH_ConstraintSubType_Slider = 3,
-  JPH_ConstraintSubType_Distance = 4,
-  JPH_ConstraintSubType_Cone = 5,
-  JPH_ConstraintSubType_SwingTwist = 6,
-  JPH_ConstraintSubType_SixDOF = 7,
-  JPH_ConstraintSubType_Path = 8,
-  JPH_ConstraintSubType_Vehicle = 9,
-  JPH_ConstraintSubType_RackAndPinion = 10,
-  JPH_ConstraintSubType_Gear = 11,
-  JPH_ConstraintSubType_Pulley = 12,
+! typedef enum JPH_ConstraintSubType {
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Fixed = 0
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Point = 1
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Hinge = 2
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Slider = 3
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Distance = 4
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Cone = 5
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_SwingTwist = 6
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_SixDOF = 7
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Path = 8
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Vehicle = 9
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_RackAndPinion = 10
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Gear = 11
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Pulley = 12
 
-  JPH_ConstraintSubType_User1 = 13,
-  JPH_ConstraintSubType_User2 = 14,
-  JPH_ConstraintSubType_User3 = 15,
-  JPH_ConstraintSubType_User4 = 16,
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_User1 = 13
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_User2 = 14
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_User3 = 15
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_User4 = 16
 
-  JPH_ConstraintSubType_Count = int(z"7fffffff"),
-  JPH_ConstraintSubType_Force32 = int(z"7fffffff")
-} JPH_ConstraintSubType;
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_ConstraintSubType_Force32 = int(z"7fffffff")
+! } JPH_ConstraintSubType;
 
-typedef enum JPH_ConstraintSpace {
-  JPH_ConstraintSpace_LocalToBodyCOM = 0,
-  JPH_ConstraintSpace_WorldSpace = 1,
+! typedef enum JPH_ConstraintSpace {
+integer(c_int32_t), parameter :: JPH_ConstraintSpace_LocalToBodyCOM = 0
+integer(c_int32_t), parameter :: JPH_ConstraintSpace_WorldSpace = 1
 
-  JPH_ConstraintSpace_Count = int(z"7fffffff"),
-  JPH_ConstraintSpace_Force32 = int(z"7fffffff")
-} JPH_ConstraintSpace;
+integer(c_int32_t), parameter :: JPH_ConstraintSpace_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_ConstraintSpace_Force32 = int(z"7fffffff")
+! } JPH_ConstraintSpace;
 
-typedef enum JPH_MotionQuality {
-  JPH_MotionQuality_Discrete = 0,
-  JPH_MotionQuality_LinearCast = 1,
+! typedef enum JPH_MotionQuality {
+integer(c_int32_t), parameter :: JPH_MotionQuality_Discrete = 0
+integer(c_int32_t), parameter :: JPH_MotionQuality_LinearCast = 1
 
-  JPH_MotionQuality_Count = int(z"7fffffff"),
-  JPH_MotionQuality_Force32 = int(z"7fffffff")
-} JPH_MotionQuality;
+integer(c_int32_t), parameter :: JPH_MotionQuality_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_MotionQuality_Force32 = int(z"7fffffff")
+! } JPH_MotionQuality;
 
-typedef enum JPH_AllowedDOFs {
-  JPH_AllowedDOFs_All = 0b111111,
-  JPH_AllowedDOFs_TranslationX = 0b000001,
-  JPH_AllowedDOFs_TranslationY = 0b000010,
-  JPH_AllowedDOFs_TranslationZ = 0b000100,
-  JPH_AllowedDOFs_RotationX = 0b001000,
-  JPH_AllowedDOFs_RotationY = 0b010000,
-  JPH_AllowedDOFs_RotationZ = 0b100000,
-  JPH_AllowedDOFs_Plane2D = JPH_AllowedDOFs_TranslationX | JPH_AllowedDOFs_TranslationY | JPH_AllowedDOFs_RotationZ,
+! typedef enum JPH_AllowedDOFs {
+integer(c_int32_t), parameter :: JPH_AllowedDOFs_All = int(z"0b111111")
+integer(c_int32_t), parameter :: JPH_AllowedDOFs_TranslationX = int(z"0b000001")
+integer(c_int32_t), parameter :: JPH_AllowedDOFs_TranslationY = int(z"0b000010")
+integer(c_int32_t), parameter :: JPH_AllowedDOFs_TranslationZ = int(z"0b000100")
+integer(c_int32_t), parameter :: JPH_AllowedDOFs_RotationX = int(z"0b001000")
+integer(c_int32_t), parameter :: JPH_AllowedDOFs_RotationY = int(z"0b010000")
+integer(c_int32_t), parameter :: JPH_AllowedDOFs_RotationZ = int(z"0b100000")
+integer(c_int32_t), parameter :: JPH_AllowedDOFs_Plane2D = ior(JPH_AllowedDOFs_TranslationX, ior(JPH_AllowedDOFs_TranslationY, JPH_AllowedDOFs_RotationZ))
 
-  JPH_AllowedDOFs_Count = int(z"7fffffff"),
-  JPH_AllowedDOFs_Force32 = int(z"7fffffff")
-} JPH_AllowedDOFs;
+integer(c_int32_t), parameter :: JPH_AllowedDOFs_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_AllowedDOFs_Force32 = int(z"7fffffff")
+! } JPH_AllowedDOFs;
 
-typedef enum JPH_GroundState {
-  JPH_GroundState_OnGround = 0,
-  JPH_GroundState_OnSteepGround = 1,
-  JPH_GroundState_NotSupported = 2,
-  JPH_GroundState_InAir = 3,
+! typedef enum JPH_GroundState {
+integer(c_int32_t), parameter :: JPH_GroundState_OnGround = 0
+integer(c_int32_t), parameter :: JPH_GroundState_OnSteepGround = 1
+integer(c_int32_t), parameter :: JPH_GroundState_NotSupported = 2
+integer(c_int32_t), parameter :: JPH_GroundState_InAir = 3
 
-  JPH_GroundState_Count = int(z"7fffffff"),
-  JPH_GroundState_Force32 = int(z"7fffffff")
-} JPH_GroundState;
+integer(c_int32_t), parameter :: JPH_GroundState_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_GroundState_Force32 = int(z"7fffffff")
+! } JPH_GroundState;
 
 typedef enum JPH_BackFaceMode {
   JPH_BackFaceMode_IgnoreBackFaces,
