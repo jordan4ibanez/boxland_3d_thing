@@ -16,6 +16,7 @@ module world
 
   type(c_ptr) :: job_system_threadpool
   type(c_ptr) :: object_layer_pair_filter_table
+  type(c_ptr) :: broad_phase_layer_interface_table
 
 
 contains
@@ -37,8 +38,14 @@ contains
     ! We're only using 2 layers.
     ! One for non-moving, one for moving.
     object_layer_pair_filter_table = jph_object_layer_pair_filter_table_create(2)
+    call jph_object_layer_pair_filter_table_enable_collision(object_layer_pair_filter_table, NON_MOVING, MOVING)
+    call jph_object_layer_pair_filter_table_enable_collision(object_layer_pair_filter_table, MOVING, NON_MOVING)
+
+    ! We use a 1 to 1 mapping between object layers and broadphase layers.
+    broad_phase_layer_interface_table = jph_broad_phase_layer_interface_table_create(2, 2)
 
 
+    print"(A)","World created."
   end subroutine world_create
 
 

@@ -61,6 +61,26 @@ module jolt_bindings
       integer(c_int16_t), intent(in), value :: layer_1, layer_2
     end subroutine jph_object_layer_pair_filter_table_enable_collision
 
+
+    function jph_broad_phase_layer_interface_table_create(num_object_layers, num_broad_phase_layers) result(broad_phase_layer_interface) bind(c, name = "JPH_BroadPhaseLayerInterfaceTable_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      integer(c_int32_t), intent(in), value :: num_object_layers, num_broad_phase_layers
+      type(c_ptr) :: broad_phase_layer_interface
+    end function jph_broad_phase_layer_interface_table_create
+
+
+    subroutine jph_broadphaselayer_interfacetable_map_object_tobroadphaselayer(bp_interface, object_layer, broad_phase_layer) bind(c, name = "JPH_BroadPhaseLayerInterfaceTable_MapObjectToBroadPhaseLayer")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: bp_interface
+      integer(c_int16_t), intent(in), value :: object_layer
+      integer(c_int8_t), intent(in), value :: broad_phase_layer
+    end subroutine jph_broadphaselayer_interfacetable_map_object_tobroadphaselayer
+
+
   end interface
 
 
