@@ -2,62 +2,56 @@ module tiny_physics_engine
   use, intrinsic :: iso_c_binding
   implicit none
 
-#ifndef _TINYPHYSICSENGINE_H
-#define _TINYPHYSICSENGINE_H
+  !* tinyphysicsengine (TPE)
 
-  /**
-  tinyphysicsengine (TPE)
+  !* Simple/suckless header-only hybrid 3D physics engine with no floating point,
+  !* only 32 bit int arithmetic, similar to e.g. small3dlib.
 
-  Simple/suckless header-only hybrid 3D physics engine with no floating point,
-  only 32 bit int arithmetic, similar to e.g. small3dlib.
+  !* Conventions and formats are the same or similar to those of small3dlib so as
+  !* to make them easily integrate with each other.
 
-  Conventions and formats are the same or similar to those of small3dlib so as
-  to make them easily integrate with each other.
+  !* The library works with bodies made of spheres connected by elastic springs,
+  !* i.e. soft bodies which however behave as "stiff" bodies by default and can
+  !* be used to fake rigid body physics as well. Bodies are placed in environemnts
+  !* specified by a distance function that allows to implement any mathematical
+  !* shape.
 
-  The library works with bodies made of spheres connected by elastic springs,
-  i.e. soft bodies which however behave as "stiff" bodies by default and can
-  be used to fake rigid body physics as well. Bodies are placed in environemnts
-  specified by a distance function that allows to implement any mathematical
-  shape.
+  !* Orientations/rotations are in extrinsic Euler angles in the ZXY order (by Z,
+  !* then by X, then by Y), if not mentioned otherwise. Angles are in integer(c_int32_t)s,
+  !* TPE_FRACTIONS_PER_UNIT is full angle (2 PI). Sometimes rotations can also be
+  !* specified in the "about axis" format: here the object is rotated CW by given
+  !* axis by an angle that's specified by the magnitude of the vector.
 
-  Orientations/rotations are in extrinsic Euler angles in the ZXY order (by Z,
-  then by X, then by Y), if not mentioned otherwise. Angles are in TPE_Units,
-  TPE_FRACTIONS_PER_UNIT is full angle (2 PI). Sometimes rotations can also be
-  specified in the "about axis" format: here the object is rotated CW by given
-  axis by an angle that's specified by the magnitude of the vector.
+  !* Where it matters (e.g. rotations about axes) we consider a left-handed coord.
+  !* system (x right, y up, z forward).
 
-  Where it matters (e.g. rotations about axes) we consider a left-handed coord.
-  system (x right, y up, z forward).
+  !* ------------------------------------------------------------------------------
 
-  ------------------------------------------------------------------------------
+  !* by drummyfish, 2022
 
-  by drummyfish, 2022
+  !* version 0.8d
 
-  version 0.8d
+  !* This work's goal is to never be encumbered by any exclusive intellectual
+  !* property rights. The work is therefore provided under CC0 1.0
+  !* (https://creativecommons.org/publicdomain/zero/1.0/) + additional WAIVER OF
+  !* ALL INTELLECTUAL PROPERTY RIGHTS that waives the rest of intellectual property
+  !* rights not already waived by CC0 1.0. The WAIVER OF ALL INTELLECTUAL PROPERTY
+  !* RGHTS is as follows:
 
-  This work's goal is to never be encumbered by any exclusive intellectual
-  property rights. The work is therefore provided under CC0 1.0
-  (https://creativecommons.org/publicdomain/zero/1.0/) + additional WAIVER OF
-  ALL INTELLECTUAL PROPERTY RIGHTS that waives the rest of intellectual property
-  rights not already waived by CC0 1.0. The WAIVER OF ALL INTELLECTUAL PROPERTY
-  RGHTS is as follows:
+  !* Each contributor to this work agrees that they waive any exclusive rights,
+  !* including but not limited to copyright, patents, trademark, trade dress,
+  !* industrial design, plant varieties and trade secrets, to any and all ideas,
+  !* concepts, processes, discoveries, improvements and inventions conceived,
+  !* discovered, made, designed, researched or developed by the contributor either
+  !* solely or jointly with others, which relate to this work or result from this
+  !* work. Should any waiver of such right be judged legally invalid or
+  !* ineffective under applicable law, the contributor hereby grants to each
+  !* affected person a royalty-free, non transferable, non sublicensable, non
+  !* exclusive, irrevocable and unconditional license to this right.
 
-  Each contributor to this work agrees that they waive any exclusive rights,
-  including but not limited to copyright, patents, trademark, trade dress,
-  industrial design, plant varieties and trade secrets, to any and all ideas,
-  concepts, processes, discoveries, improvements and inventions conceived,
-  discovered, made, designed, researched or developed by the contributor either
-  solely or jointly with others, which relate to this work or result from this
-  work. Should any waiver of such right be judged legally invalid or
-  ineffective under applicable law, the contributor hereby grants to each
-  affected person a royalty-free, non transferable, non sublicensable, non
-  exclusive, irrevocable and unconditional license to this right.
-  */
 
-#include <stdint.h>
-
-  typedef int32_t TPE_Unit;               ///< Basic fixed point unit type.
-    typedef int16_t TPE_UnitReduced;        ///< Like TPE_Unit but saving space
+  typedef int32_t integer(c_int32_t) !               ///< Basic fixed point unit type.
+    typedef int16_t integer(c_int16_t); !        ///< Like integer(c_int32_t) but saving space
 
 #define TPE_FRACTIONS_PER_UNIT 512      ///< one fixed point unit, don't change
 #define TPE_F TPE_FRACTIONS_PER_UNIT    ///< short for TPE_FRACTIONS_PER_UNIT
@@ -88,13 +82,13 @@ module tiny_physics_engine
 #endif
 
 #ifndef TPE_LOW_SPEED
-      /** Speed, in TPE_Units per ticks, that is considered low (used e.g. for auto
+      /** Speed, in integer(c_int32_t)s per ticks, that is considered low (used e.g. for auto
       deactivation of bodies). */
 #define TPE_LOW_SPEED 30
 #endif
 
 #ifndef TPE_RESHAPE_TENSION_LIMIT
-      /** Tension limit, in TPE_Units, after which a non-soft body will be reshaped.
+      /** Tension limit, in integer(c_int32_t)s, after which a non-soft body will be reshaped.
       Smaller number will keep more stable shapes but will cost more performance. */
 #define TPE_RESHAPE_TENSION_LIMIT 20
 #endif
@@ -149,7 +143,7 @@ module tiny_physics_engine
 #endif
 
 #ifndef TPE_COLLISION_RESOLUTION_MARGIN
-      /** Margin, in TPE_Units, by which a body will be shifted back to get out of
+      /** Margin, in integer(c_int32_t)s, by which a body will be shifted back to get out of
       collision. */
 #define TPE_COLLISION_RESOLUTION_MARGIN (TPE_F / 64)
 #endif
@@ -171,9 +165,9 @@ module tiny_physics_engine
 
       typedef struct
         {
-        TPE_Unit x;
-        TPE_Unit y;
-        TPE_Unit z;
+        integer(c_int32_t) x;
+        integer(c_int32_t) y;
+        integer(c_int32_t) z;
         } TPE_Vec3;
 
         /** Keeps given point within specified axis-aligned box. This can be used e.g.
@@ -182,49 +176,49 @@ module tiny_physics_engine
         TPE_Vec3 boxMaxVect);
 
         TPE_Vec3 TPE_vec3KeepWithinDistanceBand(TPE_Vec3 point, TPE_Vec3 center,
-        TPE_Unit minDistance, TPE_Unit maxDistance);
+        integer(c_int32_t) minDistance, integer(c_int32_t) maxDistance);
 
-        TPE_Vec3 TPE_vec3(TPE_Unit x, TPE_Unit y, TPE_Unit z);
+        TPE_Vec3 TPE_vec3(integer(c_int32_t) x, integer(c_int32_t) y, integer(c_int32_t) z);
         TPE_Vec3 TPE_vec3Minus(TPE_Vec3 v1, TPE_Vec3 v2);
         TPE_Vec3 TPE_vec3Plus(TPE_Vec3 v1, TPE_Vec3 v2);
         TPE_Vec3 TPE_vec3Cross(TPE_Vec3 v1, TPE_Vec3 v2);
         TPE_Vec3 TPE_vec3Project(TPE_Vec3 v, TPE_Vec3 base);
         TPE_Vec3 TPE_vec3ProjectNormalized(TPE_Vec3 v, TPE_Vec3 baseNormalized);
-        TPE_Vec3 TPE_vec3Times(TPE_Vec3 v, TPE_Unit units);
-        TPE_Vec3 TPE_vec3TimesPlain(TPE_Vec3 v, TPE_Unit q);
+        TPE_Vec3 TPE_vec3Times(TPE_Vec3 v, integer(c_int32_t) units);
+        TPE_Vec3 TPE_vec3TimesPlain(TPE_Vec3 v, integer(c_int32_t) q);
         TPE_Vec3 TPE_vec3Normalized(TPE_Vec3 v);
 
-        TPE_Unit TPE_vec3Dot(TPE_Vec3 v1, TPE_Vec3 v2);
-        TPE_Unit TPE_vec3Len(TPE_Vec3 v);
-        TPE_Unit TPE_vec3LenApprox(TPE_Vec3 v);
+        integer(c_int32_t) TPE_vec3Dot(TPE_Vec3 v1, TPE_Vec3 v2);
+        integer(c_int32_t) TPE_vec3Len(TPE_Vec3 v);
+        integer(c_int32_t) TPE_vec3LenApprox(TPE_Vec3 v);
 
-        /** Returns an angle in TPE_Units (see angle conventions) of a 2D vector with
+        /** Returns an angle in integer(c_int32_t)s (see angle conventions) of a 2D vector with
         the X axis, CCW. */
-        TPE_Unit TPE_vec2Angle(TPE_Unit x, TPE_Unit y);
+        integer(c_int32_t) TPE_vec2Angle(integer(c_int32_t) x, integer(c_int32_t) y);
 
         /** Keeps given value within specified range. This can be used e.g. for movement
         smoothing. */
-        TPE_Unit TPE_keepInRange(TPE_Unit x, TPE_Unit xMin, TPE_Unit xMax);
+        integer(c_int32_t) TPE_keepInRange(integer(c_int32_t) x, integer(c_int32_t) xMin, integer(c_int32_t) xMax);
 
-        static inline TPE_Unit TPE_abs(TPE_Unit x);
-        static inline TPE_Unit TPE_max(TPE_Unit a, TPE_Unit b);
-        static inline TPE_Unit TPE_min(TPE_Unit a, TPE_Unit b);
-        static inline TPE_Unit TPE_nonZero(TPE_Unit x);
-        static inline TPE_Unit TPE_dist(TPE_Vec3 p1, TPE_Vec3 p2);
-        static inline TPE_Unit TPE_distApprox(TPE_Vec3 p1, TPE_Vec3 p2);
-        TPE_Unit TPE_sqrt(TPE_Unit x);
+        static inline integer(c_int32_t) TPE_abs(integer(c_int32_t) x);
+        static inline integer(c_int32_t) TPE_max(integer(c_int32_t) a, integer(c_int32_t) b);
+        static inline integer(c_int32_t) TPE_min(integer(c_int32_t) a, integer(c_int32_t) b);
+        static inline integer(c_int32_t) TPE_nonZero(integer(c_int32_t) x);
+        static inline integer(c_int32_t) TPE_dist(TPE_Vec3 p1, TPE_Vec3 p2);
+        static inline integer(c_int32_t) TPE_distApprox(TPE_Vec3 p1, TPE_Vec3 p2);
+        integer(c_int32_t) TPE_sqrt(integer(c_int32_t) x);
 
         /** Compute sine, TPE_FRACTIONS_PER_UNIT as argument corresponds to 2 * PI
         radians. Returns a number from -TPE_FRACTIONS_PER_UNIT to
         TPE_FRACTIONS_PER_UNIT. */
-        TPE_Unit TPE_sin(TPE_Unit x);
-        TPE_Unit TPE_cos(TPE_Unit x);
-        TPE_Unit TPE_atan(TPE_Unit x);
+        integer(c_int32_t) TPE_sin(integer(c_int32_t) x);
+        integer(c_int32_t) TPE_cos(integer(c_int32_t) x);
+        integer(c_int32_t) TPE_atan(integer(c_int32_t) x);
 
         typedef struct
           {
           TPE_Vec3 position;
-          TPE_UnitReduced velocity[3]; ///< not TPE_Vec3 to save size
+          integer(c_int16_t) velocity[3]; ///< not TPE_Vec3 to save size
           uint8_t sizeDivided; /**< size (radius, ...), for saving space divided by
           TPE_JOINT_SIZE_MULTIPLIER */
           } TPE_Joint;
@@ -262,7 +256,7 @@ module tiny_physics_engine
             the solid environment volume from P will be returned, except for a case when
             this closest point would be further away than D, in which case any arbitrary
             point further away than D may be returned (this allows for optimizations). */
-            typedef TPE_Vec3 (*TPE_ClosestPointFunction)(TPE_Vec3, TPE_Unit);
+            typedef TPE_Vec3 (*TPE_ClosestPointFunction)(TPE_Vec3, integer(c_int32_t));
 
               /** Function that can be used as a joint-joint or joint-environment collision
               callback, parameters are following: body1 index, joint1 index, body2 index,
@@ -286,9 +280,9 @@ module tiny_physics_engine
                     uint8_t jointCount;
                     TPE_Connection *connections;
                     uint8_t connectionCount;
-                    TPE_UnitReduced jointMass;       ///< mass of a single joint
-                    TPE_UnitReduced friction;        ///< friction of each joint
-                    TPE_UnitReduced elasticity;      ///< elasticity of each joint
+                    integer(c_int16_t) jointMass;       ///< mass of a single joint
+                    integer(c_int16_t) friction;        ///< friction of each joint
+                    integer(c_int16_t) elasticity;      ///< elasticity of each joint
                     uint8_t flags;
                     uint8_t deactivateCount;
                     } TPE_Body;
@@ -317,12 +311,12 @@ module tiny_physics_engine
                       is 0 in which case it is ignored). */
                       uint8_t TPE_testClosestPointFunction(TPE_ClosestPointFunction f,
                       TPE_Vec3 cornerFrom, TPE_Vec3 cornerTo, uint8_t gridResolution,
-                      TPE_UnitReduced allowedError, TPE_Vec3 *errorPoint);
+                      integer(c_int16_t) allowedError, TPE_Vec3 *errorPoint);
 
                       void TPE_bodyInit(TPE_Body *body,
                       TPE_Joint *joints, uint8_t jointCount,
                       TPE_Connection *connections, uint8_t connectionCount,
-                      TPE_Unit mass);
+                      integer(c_int32_t) mass);
 
                       void TPE_worldInit(TPE_World *world,
                       TPE_Body *bodies, uint16_t bodyCount,
@@ -347,16 +341,16 @@ module tiny_physics_engine
 
                       /** Returns a connection tension, i.e. a signed percentage difference against
                       desired length (TPE_FRACTIONS_PER_UNIT means 100%). */
-                      static inline TPE_Unit TPE_connectionTension(TPE_Unit length,
-                      TPE_Unit desiredLength);
+                      static inline integer(c_int32_t) TPE_connectionTension(integer(c_int32_t) length,
+                      integer(c_int32_t) desiredLength);
 
                       /** Rotates a rotation specified in Euler angles by given axis + angle (see
                       rotation conventions). Returns a rotation in Eurler angles. */
                       TPE_Vec3 TPE_rotationRotateByAxis(TPE_Vec3 rotation, TPE_Vec3 rotationByAxis);
 
                       /** Computes the formula of a 1D collision of rigid bodies. */
-                      void TPE_getVelocitiesAfterCollision(TPE_Unit *v1, TPE_Unit *v2, TPE_Unit m1,
-                      TPE_Unit m2, TPE_Unit elasticity);
+                      void TPE_getVelocitiesAfterCollision(integer(c_int32_t) *v1, integer(c_int32_t) *v2, integer(c_int32_t) m1,
+                      integer(c_int32_t) m2, integer(c_int32_t) elasticity);
 
                       /** Computes orientation/rotation (see docs for orientation format) from two
                       vectors (which should be at least close to being perpendicular and do NOT
@@ -364,20 +358,20 @@ module tiny_physics_engine
                       from a relative position of its joints. */
                       TPE_Vec3 TPE_rotationFromVecs(TPE_Vec3 forward, TPE_Vec3 right);
 
-                      TPE_Joint TPE_joint(TPE_Vec3 position, TPE_Unit size);
+                      TPE_Joint TPE_joint(TPE_Vec3 position, integer(c_int32_t) size);
 
                       /** Mostly for internal use, resolves a potential collision of two joints in a
                       way that keeps the joints outside provided environment (if the function
                       pointer is not 0). Returns 1 if joints collided or 0 otherwise. */
                       uint8_t TPE_jointsResolveCollision(TPE_Joint *j1, TPE_Joint *j2,
-                      TPE_Unit mass1, TPE_Unit mass2, TPE_Unit elasticity, TPE_Unit friction,
+                      integer(c_int32_t) mass1, integer(c_int32_t) mass2, integer(c_int32_t) elasticity, integer(c_int32_t) friction,
                       TPE_ClosestPointFunction env);
 
                       /** Mostly for internal use, tests and potentially resolves a collision between
                       a joint and environment, returns 0 if no collision happened, 1 if it happened
                       and was resolved normally and 2 if it couldn't be resolved normally. */
-                      uint8_t TPE_jointEnvironmentResolveCollision(TPE_Joint *joint, TPE_Unit
-                      elasticity, TPE_Unit friction, TPE_ClosestPointFunction env);
+                      uint8_t TPE_jointEnvironmentResolveCollision(TPE_Joint *joint, integer(c_int32_t)
+                      elasticity, integer(c_int32_t) friction, TPE_ClosestPointFunction env);
 
                       /** Tests whether a body is currently colliding with the environment. */
                       uint8_t TPE_bodyEnvironmentCollide(const TPE_Body *body,
@@ -396,12 +390,12 @@ module tiny_physics_engine
                       /** Computes a bounding sphere of a body which is not minimal but faster to
                       compute than the minimum bounding sphere. */
                       void TPE_bodyGetFastBSphere(const TPE_Body *body, TPE_Vec3 *center,
-                      TPE_Unit *radius);
+                      integer(c_int32_t) *radius);
 
                       /** Computes the minimum bounding sphere of a body (there is another function
                       for a faster approximate bounding sphere). */
                       void TPE_bodyGetBSphere(const TPE_Body *body, TPE_Vec3 *center,
-                      TPE_Unit *radius);
+                      integer(c_int32_t) *radius);
 
                       uint8_t TPE_checkOverlapAABB(TPE_Vec3 v1Min, TPE_Vec3 v1Max, TPE_Vec3 v2Min,
                       TPE_Vec3 v2Max);
@@ -422,7 +416,7 @@ module tiny_physics_engine
                       isn't rotating at all. Returns a rotation in the "about axis" format (see
                       library conventions). */
                       TPE_Vec3 TPE_fakeSphereRotation(TPE_Vec3 position1, TPE_Vec3 position2,
-                      TPE_Unit radius);
+                      integer(c_int32_t) radius);
 
                       /** Casts a ray against environment and returns the closest hit of a surface. If
                       no surface was hit, a vector with all elements equal to TPE_INFINITY will be
@@ -439,8 +433,8 @@ module tiny_physics_engine
                       a point inside (not guaranteed) the environment just before the hit
                       surface. */
                       TPE_Vec3 TPE_castEnvironmentRay(TPE_Vec3 rayPos, TPE_Vec3 rayDir,
-                      TPE_ClosestPointFunction environment, TPE_Unit insideStepSize,
-                      TPE_Unit rayMarchMaxStep, uint32_t maxSteps);
+                      TPE_ClosestPointFunction environment, integer(c_int32_t) insideStepSize,
+                      integer(c_int32_t) rayMarchMaxStep, uint32_t maxSteps);
 
                       /** Casts a ray against bodies in a world (ignoring the environment), returns
                       the position of the closest hit as well as the hit body's index in bodyIndex
@@ -462,12 +456,12 @@ module tiny_physics_engine
                       void TPE_worldDeactivateAll(TPE_World *world);
                       void TPE_worldActivateAll(TPE_World *world);
 
-                      TPE_Unit TPE_worldGetNetSpeed(const TPE_World *world);
-                      TPE_Unit TPE_bodyGetNetSpeed(const TPE_Body *body);
-                      TPE_Unit TPE_bodyGetAverageSpeed(const TPE_Body *body);
-                      void TPE_bodyMultiplyNetSpeed(TPE_Body *body, TPE_Unit factor);
-                      void TPE_bodyLimitAverageSpeed(TPE_Body *body, TPE_Unit speedMin,
-                      TPE_Unit speedMax);
+                      integer(c_int32_t) TPE_worldGetNetSpeed(const TPE_World *world);
+                      integer(c_int32_t) TPE_bodyGetNetSpeed(const TPE_Body *body);
+                      integer(c_int32_t) TPE_bodyGetAverageSpeed(const TPE_Body *body);
+                      void TPE_bodyMultiplyNetSpeed(TPE_Body *body, integer(c_int32_t) factor);
+                      void TPE_bodyLimitAverageSpeed(TPE_Body *body, integer(c_int32_t) speedMin,
+                      integer(c_int32_t) speedMax);
 
                       /** Deactivates a body (puts it to sleep until another collision or force wake
                       up). */
@@ -503,7 +497,7 @@ module tiny_physics_engine
                       /** Adds velocity to a soft body. */
                       void TPE_bodyAccelerate(TPE_Body *body, TPE_Vec3 velocity);
 
-                      void TPE_bodyApplyGravity(TPE_Body *body, TPE_Unit downwardsAccel);
+                      void TPE_bodyApplyGravity(TPE_Body *body, integer(c_int32_t) downwardsAccel);
 
                       /** Adds angular velocity to a soft body. The rotation vector specifies the axis
                       of rotation by its direction and angular velocity by its magnitude (magnitude
@@ -533,15 +527,15 @@ module tiny_physics_engine
                       different types of objects (joints, connections, environemnt). camPos, camRot
                       and camView should match the camera settings of your main renderer. CamView.x
                       is horizontal resolution in pixels, camView.y is the vertical resolution,
-                      CamView.z says the camera focal length (~FOV) in TPE_Units (0 means
+                      CamView.z says the camera focal length (~FOV) in integer(c_int32_t)s (0 means
                       orthographic projection). envGridRes is the resolution of an environment probe
                       grid (the function will probe points in space and draw borders of the physics
-                      environemnt), envGridSize is the size (int TPE_Units) of the grid cell. Note
+                      environemnt), envGridSize is the size (int integer(c_int32_t)s) of the grid cell. Note
                       the function may be slow (reducing envGridRes can help, workable value can be
                       e.g. 16). */
                       void TPE_worldDebugDraw(TPE_World *world, TPE_DebugDrawFunction drawFunc,
                       TPE_Vec3 camPos, TPE_Vec3 camRot, TPE_Vec3 camView, uint16_t envGridRes,
-                      TPE_Unit envGridSize);
+                      integer(c_int32_t) envGridSize);
 
 #define TPE_DEBUG_COLOR_CONNECTION 0
 #define TPE_DEBUG_COLOR_JOINT 1
@@ -560,19 +554,19 @@ module tiny_physics_engine
                       // FUNCTIONS FOR GENERATING BODIES
 
                       void TPE_makeBox(TPE_Joint joints[8], TPE_Connection connections[16],
-                      TPE_Unit width, TPE_Unit depth, TPE_Unit height, TPE_Unit jointSize);
+                      integer(c_int32_t) width, integer(c_int32_t) depth, integer(c_int32_t) height, integer(c_int32_t) jointSize);
                       void TPE_makeCenterBox(TPE_Joint joints[9], TPE_Connection connections[18],
-                      TPE_Unit width, TPE_Unit depth, TPE_Unit height, TPE_Unit jointSize);
+                      integer(c_int32_t) width, integer(c_int32_t) depth, integer(c_int32_t) height, integer(c_int32_t) jointSize);
                       void TPE_makeRect(TPE_Joint joints[4], TPE_Connection connections[6],
-                      TPE_Unit width, TPE_Unit depth, TPE_Unit jointSize);
+                      integer(c_int32_t) width, integer(c_int32_t) depth, integer(c_int32_t) jointSize);
                       void TPE_makeTriangle(TPE_Joint joints[3], TPE_Connection connections[3],
-                      TPE_Unit sideLength, TPE_Unit jointSize);
+                      integer(c_int32_t) sideLength, integer(c_int32_t) jointSize);
                       void TPE_makeCenterRect(TPE_Joint joints[5], TPE_Connection connections[8],
-                      TPE_Unit width, TPE_Unit depth, TPE_Unit jointSize);
+                      integer(c_int32_t) width, integer(c_int32_t) depth, integer(c_int32_t) jointSize);
                       void TPE_makeCenterRectFull(TPE_Joint joints[5], TPE_Connection connections[10],
-                      TPE_Unit width, TPE_Unit depth, TPE_Unit jointSize);
+                      integer(c_int32_t) width, integer(c_int32_t) depth, integer(c_int32_t) jointSize);
                       void TPE_make2Line(TPE_Joint joints[2], TPE_Connection connections[1],
-                      TPE_Unit length, TPE_Unit jointSize);
+                      integer(c_int32_t) length, integer(c_int32_t) jointSize);
 
                       // FUNCTIONS FOR BUILDING ENVIRONMENT
 
@@ -580,19 +574,19 @@ module tiny_physics_engine
                       TPE_Vec3 TPE_envAABox(TPE_Vec3 point, TPE_Vec3 center, TPE_Vec3 maxCornerVec);
                       TPE_Vec3 TPE_envBox(TPE_Vec3 point, TPE_Vec3 center, TPE_Vec3 maxCornerVec,
                       TPE_Vec3 rotation);
-                      TPE_Vec3 TPE_envSphere(TPE_Vec3 point, TPE_Vec3 center, TPE_Unit radius);
-                      TPE_Vec3 TPE_envSphereInside(TPE_Vec3 point, TPE_Vec3 center, TPE_Unit radius);
+                      TPE_Vec3 TPE_envSphere(TPE_Vec3 point, TPE_Vec3 center, integer(c_int32_t) radius);
+                      TPE_Vec3 TPE_envSphereInside(TPE_Vec3 point, TPE_Vec3 center, integer(c_int32_t) radius);
                       TPE_Vec3 TPE_envHalfPlane(TPE_Vec3 point, TPE_Vec3 center, TPE_Vec3 normal);
-                      TPE_Vec3 TPE_envGround(TPE_Vec3 point, TPE_Unit height);
+                      TPE_Vec3 TPE_envGround(TPE_Vec3 point, integer(c_int32_t) height);
                       TPE_Vec3 TPE_envInfiniteCylinder(TPE_Vec3 point, TPE_Vec3 center, TPE_Vec3
-                      direction, TPE_Unit radius);
+                      direction, integer(c_int32_t) radius);
                       TPE_Vec3 TPE_envCylinder(TPE_Vec3 point, TPE_Vec3 center, TPE_Vec3 direction,
-                      TPE_Unit radius);
+                      integer(c_int32_t) radius);
                       TPE_Vec3 TPE_envCone(TPE_Vec3 point, TPE_Vec3 center, TPE_Vec3 direction,
-                      TPE_Unit radius);
+                      integer(c_int32_t) radius);
                       TPE_Vec3 TPE_envLineSegment(TPE_Vec3 point, TPE_Vec3 a, TPE_Vec3 b);
-                      TPE_Vec3 TPE_envHeightmap(TPE_Vec3 point, TPE_Vec3 center, TPE_Unit gridSize,
-                      TPE_Unit (*heightFunction)(int32_t x, int32_t y), TPE_Unit maxDist);
+                      TPE_Vec3 TPE_envHeightmap(TPE_Vec3 point, TPE_Vec3 center, integer(c_int32_t) gridSize,
+                      integer(c_int32_t) (*heightFunction)(int32_t x, int32_t y), integer(c_int32_t) maxDist);
 
                       /** Environment function for triagnular prism, e.g. for ramps. The sides array
                       contains three 2D coordinates of points of the triangle in given plane with
@@ -600,13 +594,13 @@ module tiny_physics_engine
                       clowckwise direction! The direction var specified axis direction (0, 1 or
                       2).*/
                       TPE_Vec3 TPE_envAATriPrism(TPE_Vec3 point, TPE_Vec3 center,
-                      const TPE_Unit sides[6], TPE_Unit depth, uint8_t direction);
+                      const integer(c_int32_t) sides[6], integer(c_int32_t) depth, uint8_t direction);
 
                       /* The following are helper macros for creating a union of shapes inside an
                       environment function and accelerating them with bounding volumes. */
 
 #define TPE_ENV_START(test,point) TPE_Vec3 _pBest = test, _pTest; \
-  TPE_Unit _dBest = TPE_DISTANCE(_pBest,point), _dTest; \
+  integer(c_int32_t) _dBest = TPE_DISTANCE(_pBest,point), _dTest; \
   (void)(_pBest); (void)(_dBest); (void)(_dTest); (void)(_pTest); // supress war
 
 #define TPE_ENV_NEXT(test,point) \
@@ -631,19 +625,19 @@ module tiny_physics_engine
                       uint16_t _TPE_body1Index, _TPE_body2Index, _TPE_joint1Index, _TPE_joint2Index;
                       TPE_CollisionCallback _TPE_collisionCallback;
 
-                      static inline TPE_Unit TPE_nonZero(TPE_Unit x)
+                      static inline integer(c_int32_t) TPE_nonZero(integer(c_int32_t) x)
                       {
                       return x != 0 ? x : 1;
                       }
 
-                      static inline TPE_Unit TPE_connectionTension(TPE_Unit length,
-                      TPE_Unit desiredLength)
+                      static inline integer(c_int32_t) TPE_connectionTension(integer(c_int32_t) length,
+                      integer(c_int32_t) desiredLength)
                       {
                       return (length * TPE_F) / desiredLength
                       - TPE_F;
                       }
 
-                      TPE_Joint TPE_joint(TPE_Vec3 position, TPE_Unit size)
+                      TPE_Joint TPE_joint(TPE_Vec3 position, integer(c_int32_t) size)
                       {
                       TPE_Joint result;
 
@@ -665,7 +659,7 @@ module tiny_physics_engine
                       return result;
                       }
 
-                      TPE_Vec3 TPE_vec3(TPE_Unit x, TPE_Unit y, TPE_Unit z)
+                      TPE_Vec3 TPE_vec3(integer(c_int32_t) x, integer(c_int32_t) y, integer(c_int32_t) z)
                       {
                       TPE_Vec3 r;
 
@@ -676,7 +670,7 @@ module tiny_physics_engine
                       return r;
                       }
 
-                      TPE_Unit TPE_sqrt(TPE_Unit x)
+                      integer(c_int32_t) TPE_sqrt(integer(c_int32_t) x)
                       {
                       int8_t sign = 1;
 
@@ -708,7 +702,7 @@ module tiny_physics_engine
                       return result * sign;
                       }
 
-                      TPE_Unit TPE_vec3Len(TPE_Vec3 v)
+                      integer(c_int32_t) TPE_vec3Len(TPE_Vec3 v)
                       {
 #define ANTI_OVERFLOW 25000
                       if  (v.x < ANTI_OVERFLOW && v.x > -1 * ANTI_OVERFLOW &&
@@ -725,7 +719,7 @@ module tiny_physics_engine
 #undef ANTI_OVERFLOW
                       }
 
-                      TPE_Unit TPE_vec3LenApprox(TPE_Vec3 v)
+                      integer(c_int32_t) TPE_vec3LenApprox(TPE_Vec3 v)
                       {
                       // 48 sided polyhedron approximation
 
@@ -771,13 +765,13 @@ module tiny_physics_engine
                       return (893 * v.x + 446 * v.y + 223 * v.z) / 1024;
                       }
 
-                      TPE_Unit TPE_dist(TPE_Vec3 p1, TPE_Vec3 p2)
+                      integer(c_int32_t) TPE_dist(TPE_Vec3 p1, TPE_Vec3 p2)
                       {
                       p1 = TPE_vec3Minus(p1,p2);
                       return TPE_vec3Len(p1);
                       }
 
-                      TPE_Unit TPE_distApprox(TPE_Vec3 p1, TPE_Vec3 p2)
+                      integer(c_int32_t) TPE_distApprox(TPE_Vec3 p1, TPE_Vec3 p2)
                       {
                       p1 = TPE_vec3Minus(p1,p2);
                       return TPE_vec3LenApprox(p1);
@@ -786,7 +780,7 @@ module tiny_physics_engine
                       void TPE_bodyInit(TPE_Body *body,
                       TPE_Joint *joints, uint8_t jointCount,
                       TPE_Connection *connections, uint8_t connectionCount,
-                      TPE_Unit mass)
+                      integer(c_int32_t) mass)
                       {
                       body->joints = joints;
                       body->jointCount = jointCount;
@@ -800,7 +794,7 @@ module tiny_physics_engine
 
                       for (uint32_t i = 0; i < connectionCount; ++i)
                       {
-                      TPE_Unit d = TPE_DISTANCE(
+                      integer(c_int32_t) d = TPE_DISTANCE(
                       joints[connections[i].joint1].position,
                       joints[connections[i].joint2].position);
 
@@ -825,7 +819,7 @@ module tiny_physics_engine
 #define C(n,a,b) connections[n].joint1 = a; connections[n].joint2 = b;
 
                       void TPE_make2Line(TPE_Joint joints[2], TPE_Connection connections[1],
-                      TPE_Unit length, TPE_Unit jointSize)
+                      integer(c_int32_t) length, integer(c_int32_t) jointSize)
                       {
                       joints[0] = TPE_joint(TPE_vec3(length / 2,0,0),jointSize);
                       joints[1] = TPE_joint(TPE_vec3(length / -2,0,0),jointSize);
@@ -833,7 +827,7 @@ module tiny_physics_engine
                       }
 
                       void TPE_makeRect(TPE_Joint joints[4], TPE_Connection connections[6],
-                      TPE_Unit width, TPE_Unit depth,  TPE_Unit jointSize)
+                      integer(c_int32_t) width, integer(c_int32_t) depth,  integer(c_int32_t) jointSize)
                       {
                       width /= 2;
                       depth /= 2;
@@ -847,7 +841,7 @@ module tiny_physics_engine
                       }
 
                       void TPE_makeCenterRect(TPE_Joint joints[5], TPE_Connection connections[8],
-                      TPE_Unit width, TPE_Unit depth, TPE_Unit jointSize)
+                      integer(c_int32_t) width, integer(c_int32_t) depth, integer(c_int32_t) jointSize)
                       {
                       TPE_makeRect(joints,connections,width,depth,jointSize);
 
@@ -857,14 +851,14 @@ module tiny_physics_engine
                       }
 
                       void TPE_makeCenterRectFull(TPE_Joint joints[5], TPE_Connection connections[10],
-                      TPE_Unit width, TPE_Unit depth, TPE_Unit jointSize)
+                      integer(c_int32_t) width, integer(c_int32_t) depth, integer(c_int32_t) jointSize)
                       {
                       TPE_makeCenterRect(joints,connections,width,depth,jointSize);
                       C(8, 1,4) C(9, 2,4)
                       }
 
                       void TPE_makeTriangle(TPE_Joint joints[3], TPE_Connection connections[3],
-                      TPE_Unit sideLength, TPE_Unit jointSize)
+                      integer(c_int32_t) sideLength, integer(c_int32_t) jointSize)
                       {
                       joints[0] = TPE_joint(TPE_vec3(sideLength / 2,0,
                       TPE_sqrt((sideLength * sideLength) / 2) / 2),jointSize);
@@ -877,7 +871,7 @@ module tiny_physics_engine
                       }
 
                       void TPE_makeBox(TPE_Joint joints[8], TPE_Connection connections[16],
-                      TPE_Unit width, TPE_Unit depth, TPE_Unit height, TPE_Unit jointSize)
+                      integer(c_int32_t) width, integer(c_int32_t) depth, integer(c_int32_t) height, integer(c_int32_t) jointSize)
                       {
                       width /= 2;
                       depth /= 2;
@@ -898,7 +892,7 @@ module tiny_physics_engine
                       }
 
                       void TPE_makeCenterBox(TPE_Joint joints[9], TPE_Connection connections[18],
-                      TPE_Unit width, TPE_Unit depth, TPE_Unit height, TPE_Unit jointSize)
+                      integer(c_int32_t) width, integer(c_int32_t) depth, integer(c_int32_t) height, integer(c_int32_t) jointSize)
                       {
                       TPE_makeBox(joints,connections,width,depth,height,jointSize);
 
@@ -980,7 +974,7 @@ module tiny_physics_engine
                       }
                       else // normal, rotating bodies
                       {
-                      TPE_Unit bodyTension = 0;
+                      integer(c_int32_t) bodyTension = 0;
 
                       for (uint16_t j = 0; j < body->connectionCount; ++j) // joint tension
                       {
@@ -989,7 +983,7 @@ module tiny_physics_engine
 
                       TPE_Vec3 dir = TPE_vec3Minus(joint2->position,joint->position);
 
-                      TPE_Unit tension = TPE_connectionTension(TPE_LENGTH(dir),
+                      integer(c_int32_t) tension = TPE_connectionTension(TPE_LENGTH(dir),
                       connection->length);
 
                       bodyTension += tension > 0 ? tension : -tension;
@@ -1104,7 +1098,7 @@ module tiny_physics_engine
                       }
                       }
 
-                      TPE_Unit TPE_bodyGetNetSpeed(const TPE_Body *body)
+                      integer(c_int32_t) TPE_bodyGetNetSpeed(const TPE_Body *body)
                       {
 #if TPE_APPROXIMATE_NET_SPEED
                       TPE_Vec3 netV = TPE_vec3(0,0,0);
@@ -1122,7 +1116,7 @@ module tiny_physics_engine
 
                       return TPE_vec3LenApprox(netV);
 #else
-                      TPE_Unit velocity = 0;
+                      integer(c_int32_t) velocity = 0;
 
                       const TPE_Joint *joint = body->joints;
 
@@ -1138,12 +1132,12 @@ module tiny_physics_engine
 #endif
                       }
 
-                      TPE_Unit TPE_bodyGetAverageSpeed(const TPE_Body *body)
+                      integer(c_int32_t) TPE_bodyGetAverageSpeed(const TPE_Body *body)
                       {
                       return TPE_bodyGetNetSpeed(body) / body->jointCount;
                       }
 
-                      void TPE_bodyMultiplyNetSpeed(TPE_Body *body, TPE_Unit factor)
+                      void TPE_bodyMultiplyNetSpeed(TPE_Body *body, integer(c_int32_t) factor)
                       {
                       TPE_Joint *joint = body->joints;
 
@@ -1151,24 +1145,24 @@ module tiny_physics_engine
                       {
                       for (uint8_t k = 0; k < 3; ++k)
                       joint->velocity[k] =
-                      (((TPE_Unit) joint->velocity[k]) * factor) /
+                      (((integer(c_int32_t)) joint->velocity[k]) * factor) /
                       TPE_F;
 
                       joint++;
                       }
                       }
 
-                      void TPE_bodyLimitAverageSpeed(TPE_Body *body, TPE_Unit speedMin,
-                      TPE_Unit speedMax)
+                      void TPE_bodyLimitAverageSpeed(TPE_Body *body, integer(c_int32_t) speedMin,
+                      integer(c_int32_t) speedMax)
                       {
                       for (uint8_t i = 0; i < 16; ++i)
                       {
-                      TPE_Unit speed = TPE_bodyGetAverageSpeed(body);
+                      integer(c_int32_t) speed = TPE_bodyGetAverageSpeed(body);
 
                       if (speed >= speedMin && speed <= speedMax)
                       return;
 
-                      TPE_Unit fraction =
+                      integer(c_int32_t) fraction =
                       (((speedMax + speedMin) / 2) * TPE_F) /
                       TPE_nonZero(speed);
 
@@ -1187,13 +1181,13 @@ module tiny_physics_engine
 
                       TPE_Vec3 dir = TPE_vec3Minus(j2->position,j1->position);
 
-                      TPE_Unit len = TPE_nonZero(TPE_LENGTH(dir));
+                      integer(c_int32_t) len = TPE_nonZero(TPE_LENGTH(dir));
 
                       uint8_t cancel = 1;
 
                       if (strong)
                       {
-                      TPE_Unit tension = TPE_connectionTension(len,c->length);
+                      integer(c_int32_t) tension = TPE_connectionTension(len,c->length);
 
                       cancel = tension <= TPE_TENSION_ACCELERATION_THRESHOLD &&
                         tension >= -1 * TPE_TENSION_ACCELERATION_THRESHOLD;
@@ -1310,7 +1304,7 @@ module tiny_physics_engine
 
                       void TPE_vec3Normalize(TPE_Vec3 *v)
                       {
-                      TPE_Unit l = TPE_LENGTH(*v);
+                      integer(c_int32_t) l = TPE_LENGTH(*v);
 
                       if (l == 0)
                       *v = TPE_vec3(TPE_F,0,0);
@@ -1387,7 +1381,7 @@ module tiny_physics_engine
                       TPE_bodySpinWithCenter(body,rotation,TPE_bodyGetCenterOfMass(body));
                       }
 
-                      TPE_Vec3 _TPE_rotateByAxis(TPE_Vec3 p, TPE_Vec3 axisNormalized, TPE_Unit angle)
+                      TPE_Vec3 _TPE_rotateByAxis(TPE_Vec3 p, TPE_Vec3 axisNormalized, integer(c_int32_t) angle)
                       {
                       TPE_Vec3 projected = TPE_vec3ProjectNormalized(p,axisNormalized);
 
@@ -1406,7 +1400,7 @@ module tiny_physics_engine
                       void TPE_bodyRotateByAxis(TPE_Body *body, TPE_Vec3 rotation)
                       {
                       TPE_Vec3 bodyCenter = TPE_bodyGetCenterOfMass(body);
-                      TPE_Unit angle = TPE_LENGTH(rotation);
+                      integer(c_int32_t) angle = TPE_LENGTH(rotation);
 
                       TPE_vec3Normalize(&rotation);
 
@@ -1433,7 +1427,7 @@ module tiny_physics_engine
                       {
                       TPE_Vec3 r;
 
-                      TPE_Unit p = TPE_vec3Dot(v,baseNormalized);
+                      integer(c_int32_t) p = TPE_vec3Dot(v,baseNormalized);
 
                       r.x = (p * baseNormalized.x) / TPE_F;
                       r.y = (p * baseNormalized.y) / TPE_F;
@@ -1456,7 +1450,7 @@ module tiny_physics_engine
                       offset);
                       }
 
-                      void TPE_bodyApplyGravity(TPE_Body *body, TPE_Unit downwardsAccel)
+                      void TPE_bodyApplyGravity(TPE_Body *body, integer(c_int32_t) downwardsAccel)
                       {
                       if ((body->flags & TPE_BODY_FLAG_DEACTIVATED) ||
                       (body->flags & TPE_BODY_FLAG_DISABLED))
@@ -1504,17 +1498,17 @@ module tiny_physics_engine
                       }
                       }
 
-                      TPE_Unit TPE_vec3Dot(TPE_Vec3 v1, TPE_Vec3 v2)
+                      integer(c_int32_t) TPE_vec3Dot(TPE_Vec3 v1, TPE_Vec3 v2)
                       {
                       return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z) / TPE_F;
                       }
 
-                      TPE_Unit TPE_cos(TPE_Unit x)
+                      integer(c_int32_t) TPE_cos(integer(c_int32_t) x)
                       {
                       return TPE_sin(x + TPE_F / 4);
                       }
 
-                      TPE_Unit TPE_sin(TPE_Unit x)
+                      integer(c_int32_t) TPE_sin(integer(c_int32_t) x)
                       {
                       int8_t sign = 1;
 
@@ -1532,7 +1526,7 @@ module tiny_physics_engine
                       sign *= -1;
                       }
 
-                      TPE_Unit tmp = TPE_F - 2 * x;
+                      integer(c_int32_t) tmp = TPE_F - 2 * x;
 
 #define _PI2 5053 // 9.8696044 * TPE_F
                       return sign * // Bhaskara's approximation
@@ -1574,12 +1568,12 @@ module tiny_physics_engine
                       }
 
                       uint8_t TPE_jointsResolveCollision(TPE_Joint *j1, TPE_Joint *j2,
-                      TPE_Unit mass1, TPE_Unit mass2, TPE_Unit elasticity, TPE_Unit friction,
+                      integer(c_int32_t) mass1, integer(c_int32_t) mass2, integer(c_int32_t) elasticity, integer(c_int32_t) friction,
                       TPE_ClosestPointFunction env)
                       {
                       TPE_Vec3 dir = TPE_vec3Minus(j2->position,j1->position);
 
-                      TPE_Unit d = TPE_LENGTH(dir) - TPE_JOINT_SIZE(*j1) - TPE_JOINT_SIZE(*j2);
+                      integer(c_int32_t) d = TPE_LENGTH(dir) - TPE_JOINT_SIZE(*j1) - TPE_JOINT_SIZE(*j2);
 
                       if (d < 0) // collision?
                       {
@@ -1598,10 +1592,10 @@ module tiny_physics_engine
 
                       TPE_vec3Normalize(&dir);
 
-                      TPE_Unit ratio = (mass2 * TPE_F) /
+                      integer(c_int32_t) ratio = (mass2 * TPE_F) /
                       TPE_nonZero(mass1 + mass2);
 
-                      TPE_Unit shiftDistance = (ratio * d) / TPE_F;
+                      integer(c_int32_t) shiftDistance = (ratio * d) / TPE_F;
 
                       TPE_Vec3 shift = TPE_vec3Times(dir,shiftDistance);
 
@@ -1615,7 +1609,7 @@ module tiny_physics_engine
 
                       // compute new velocities:
 
-                      TPE_Unit v1, v2;
+                      integer(c_int32_t) v1, v2;
 
                       TPE_Vec3 vel = TPE_vec3(j1->velocity[0],j1->velocity[1],j1->velocity[2]);
 
@@ -1687,7 +1681,7 @@ module tiny_physics_engine
                       return 0;
                       }
 
-                      TPE_Vec3 TPE_vec3Times(TPE_Vec3 v, TPE_Unit units)
+                      TPE_Vec3 TPE_vec3Times(TPE_Vec3 v, integer(c_int32_t) units)
                       {
                       v.x = (v.x * units) / TPE_F;
                       v.y = (v.y * units) / TPE_F;
@@ -1696,7 +1690,7 @@ module tiny_physics_engine
                       return v;
                       }
 
-                      TPE_Vec3 TPE_vec3TimesPlain(TPE_Vec3 v, TPE_Unit q)
+                      TPE_Vec3 TPE_vec3TimesPlain(TPE_Vec3 v, integer(c_int32_t) q)
                       {
                       v.x *= q;
                       v.y *= q;
@@ -1705,16 +1699,16 @@ module tiny_physics_engine
                       return v;
                       }
 
-                      void TPE_getVelocitiesAfterCollision(TPE_Unit *v1, TPE_Unit *v2,
-                      TPE_Unit m1, TPE_Unit m2, TPE_Unit elasticity)
+                      void TPE_getVelocitiesAfterCollision(integer(c_int32_t) *v1, integer(c_int32_t) *v2,
+                      integer(c_int32_t) m1, integer(c_int32_t) m2, integer(c_int32_t) elasticity)
                       {
                       /* In the following a lot of TPE_F cancel out, feel free to
                       check if confused. */
 
-                      TPE_Unit m1Pm2 = TPE_nonZero(m1 + m2);
-                      TPE_Unit v2Mv1 = TPE_nonZero(*v2 - *v1);
+                      integer(c_int32_t) m1Pm2 = TPE_nonZero(m1 + m2);
+                      integer(c_int32_t) v2Mv1 = TPE_nonZero(*v2 - *v1);
 
-                      TPE_Unit m1v1Pm2v2 = ((m1 * *v1) + (m2 * *v2));
+                      integer(c_int32_t) m1v1Pm2v2 = ((m1 * *v1) + (m2 * *v2));
 
                       *v1 = (((elasticity * m2 / TPE_F) * v2Mv1)
                       + m1v1Pm2v2) / m1Pm2;
@@ -1724,12 +1718,12 @@ module tiny_physics_engine
                       }
 
                       uint8_t TPE_jointEnvironmentResolveCollision(TPE_Joint *joint,
-                      TPE_Unit elasticity, TPE_Unit friction, TPE_ClosestPointFunction env)
+                      integer(c_int32_t) elasticity, integer(c_int32_t) friction, TPE_ClosestPointFunction env)
                       {
                       TPE_Vec3 toJoint =
                       TPE_vec3Minus(joint->position,env(joint->position,TPE_JOINT_SIZE(*joint)));
 
-                      TPE_Unit len = TPE_LENGTH(toJoint);
+                      integer(c_int32_t) len = TPE_LENGTH(toJoint);
 
                       if (len <= TPE_JOINT_SIZE(*joint))
                       {
@@ -1846,7 +1840,7 @@ module tiny_physics_engine
                       {
                       const TPE_Joint *joint = body->joints + i;
 
-                      TPE_Unit size = TPE_JOINT_SIZE(*joint);
+                      integer(c_int32_t) size = TPE_JOINT_SIZE(*joint);
 
                       if (TPE_DISTANCE(joint->position,env(joint->position,size)) <= size)
                       return 1;
@@ -1856,7 +1850,7 @@ module tiny_physics_engine
                       }
 
                       void TPE_bodyGetFastBSphere(const TPE_Body *body, TPE_Vec3 *center,
-                      TPE_Unit *radius)
+                      integer(c_int32_t) *radius)
                       {
                       TPE_Vec3 b;
 
@@ -1870,7 +1864,7 @@ module tiny_physics_engine
                       }
 
                       void TPE_bodyGetBSphere(const TPE_Body *body, TPE_Vec3 *center,
-                      TPE_Unit *radius)
+                      integer(c_int32_t) *radius)
                       {
                       *radius = TPE_INFINITY;
                       *center = TPE_bodyGetCenterOfMass(body);
@@ -1881,7 +1875,7 @@ module tiny_physics_engine
                       {
                       TPE_Vec3 diff;
 
-                      TPE_Unit js = TPE_JOINT_SIZE(*j);
+                      integer(c_int32_t) js = TPE_JOINT_SIZE(*j);
 
                       /* Sadly we have to have these conditions here which slow this down. If we
                       were only computing a BB sphere of a point cloud, we wouldn't have to
@@ -1897,7 +1891,7 @@ module tiny_physics_engine
                       diff.z = ((center->z > j->position.z) ?
                       (center->z - j->position.z) : (j->position.z - center->z)) + js;
 
-                      TPE_Unit distSquared =
+                      integer(c_int32_t) distSquared =
                       diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
 
                       if (distSquared < *radius)
@@ -1913,7 +1907,7 @@ module tiny_physics_engine
                       TPE_ClosestPointFunction env)
                       {
                       TPE_Vec3 c;
-                      TPE_Unit d;
+                      integer(c_int32_t) d;
 
                       TPE_bodyGetFastBSphere(body,&c,&d);
 
@@ -1951,12 +1945,12 @@ module tiny_physics_engine
                       return v;
                       }
 
-                      TPE_Unit TPE_atan(TPE_Unit x)
+                      integer(c_int32_t) TPE_atan(integer(c_int32_t) x)
                       {
                       /* atan approximation by polynomial
                       WARNING: this will break with different value of TPE_FRACTIONS_PER_UNIT */
 
-                      TPE_Unit sign = 1, x2 = x * x;
+                      integer(c_int32_t) sign = 1, x2 = x * x;
 
                       if (x < 0)
                       {
@@ -1971,20 +1965,20 @@ module tiny_physics_engine
                       (307 * x + x2) / ((267026 + 633 * x + x2) / 128);
                       }
 
-                      void _TPE_vec2Rotate(TPE_Unit *x, TPE_Unit *y, TPE_Unit angle)
+                      void _TPE_vec2Rotate(integer(c_int32_t) *x, integer(c_int32_t) *y, integer(c_int32_t) angle)
                       {
-                      TPE_Unit tmp = *x;
+                      integer(c_int32_t) tmp = *x;
 
-                      TPE_Unit s = TPE_sin(angle);
-                      TPE_Unit c = TPE_cos(angle);
+                      integer(c_int32_t) s = TPE_sin(angle);
+                      integer(c_int32_t) c = TPE_cos(angle);
 
                       *x = (c * *x - s * *y) / TPE_F;
                       *y = (s * tmp + c * *y) / TPE_F;
                       }
 
-                      TPE_Unit TPE_vec2Angle(TPE_Unit x, TPE_Unit y)
+                      integer(c_int32_t) TPE_vec2Angle(integer(c_int32_t) x, integer(c_int32_t) y)
                       {
-                      TPE_Unit r = 0;
+                      integer(c_int32_t) r = 0;
 
                       if (x != 0)
                       {
@@ -2069,7 +2063,7 @@ module tiny_physics_engine
                       }
 
                       void _TPE_drawDebugPixel(
-                      TPE_Unit x, TPE_Unit y, TPE_Unit w, TPE_Unit h, uint8_t c,
+                      integer(c_int32_t) x, integer(c_int32_t) y, integer(c_int32_t) w, integer(c_int32_t) h, uint8_t c,
                       TPE_DebugDrawFunction f)
                       {
                       if (x >= 0 && x < w && y >= 0 && y < h)
@@ -2078,7 +2072,7 @@ module tiny_physics_engine
 
                       void TPE_worldDebugDraw(TPE_World *world, TPE_DebugDrawFunction drawFunc,
                       TPE_Vec3 camPos, TPE_Vec3 camRot, TPE_Vec3 camView, uint16_t envGridRes,
-                      TPE_Unit envGridSize)
+                      integer(c_int32_t) envGridSize)
                       {
 #define Z_LIMIT 250
                       if (world->environmentFunction != 0)
@@ -2087,7 +2081,7 @@ module tiny_physics_engine
 
                       TPE_Vec3 testPoint;
 
-                      TPE_Unit gridHalfSize = (envGridSize * envGridRes) / 2;
+                      integer(c_int32_t) gridHalfSize = (envGridSize * envGridRes) / 2;
 
                       TPE_Vec3 center;
 
@@ -2185,7 +2179,7 @@ module tiny_physics_engine
 
                       _TPE_drawDebugPixel(p.x,p.y,camView.x,camView.y,color,drawFunc);
 
-                      TPE_Unit size = TPE_JOINT_SIZE(world->bodies[i].joints[j]);
+                      integer(c_int32_t) size = TPE_JOINT_SIZE(world->bodies[i].joints[j]);
 
                       if (camView.z != 0) // not ortho?
                       {
@@ -2197,7 +2191,7 @@ module tiny_physics_engine
 #define SEGS 4
                       for (uint8_t k = 0; k < SEGS + 1; ++k)
                       {
-                      TPE_Unit
+                      integer(c_int32_t)
                       dx = (TPE_sin(TPE_F * k / (8 * SEGS)) * size)
                       / TPE_F,
                       dy = (TPE_cos(TPE_F * k / (8 * SEGS)) * size)
@@ -2327,11 +2321,11 @@ module tiny_physics_engine
                       return point;
                       }
 
-                      TPE_Vec3 TPE_envSphereInside(TPE_Vec3 point, TPE_Vec3 center, TPE_Unit radius)
+                      TPE_Vec3 TPE_envSphereInside(TPE_Vec3 point, TPE_Vec3 center, integer(c_int32_t) radius)
                       {
                       TPE_Vec3 shifted = TPE_vec3Minus(point,center);
 
-                      TPE_Unit l = TPE_LENGTH(shifted);
+                      integer(c_int32_t) l = TPE_LENGTH(shifted);
 
                       if (l >= radius)
                       return point;
@@ -2343,11 +2337,11 @@ module tiny_physics_engine
                       return TPE_vec3Plus(center,TPE_vec3Times(shifted,radius));
                       }
 
-                      TPE_Vec3 TPE_envSphere(TPE_Vec3 point, TPE_Vec3 center, TPE_Unit radius)
+                      TPE_Vec3 TPE_envSphere(TPE_Vec3 point, TPE_Vec3 center, integer(c_int32_t) radius)
                       {
                       TPE_Vec3 dir = TPE_vec3Minus(point,center);
 
-                      TPE_Unit l = TPE_LENGTH(dir);
+                      integer(c_int32_t) l = TPE_LENGTH(dir);
 
                       if (l <= radius)
                       return point;
@@ -2363,13 +2357,13 @@ module tiny_physics_engine
                       {
                       TPE_Vec3 point2 = TPE_vec3Minus(point,center);
 
-                      TPE_Unit tmp =
+                      integer(c_int32_t) tmp =
                       point2.x * normal.x + point2.y * normal.y + point2.z * normal.z;
 
                       if (tmp < 0)
                       return point;
 
-                      TPE_Unit l = TPE_LENGTH(normal);
+                      integer(c_int32_t) l = TPE_LENGTH(normal);
 
                       tmp /= l;
 
@@ -2384,7 +2378,7 @@ module tiny_physics_engine
                       uint8_t TPE_checkOverlapAABB(TPE_Vec3 v1Min, TPE_Vec3 v1Max, TPE_Vec3 v2Min,
                       TPE_Vec3 v2Max)
                       {
-                      TPE_Unit dist;
+                      integer(c_int32_t) dist;
 
 #define test(c) \
   dist = v1Min.c + v1Max.c - v2Max.c - v2Min.c; \
@@ -2405,7 +2399,7 @@ module tiny_physics_engine
                       *vMin = body->joints[0].position;
                       *vMax = *vMin;
 
-                      TPE_Unit js = TPE_JOINT_SIZE(body->joints[0]);
+                      integer(c_int32_t) js = TPE_JOINT_SIZE(body->joints[0]);
 
                       vMin->x -= js;
                       vMin->y -= js;
@@ -2417,7 +2411,7 @@ module tiny_physics_engine
 
                       for (uint16_t i = 1; i < body->jointCount; ++i)
                       {
-                      TPE_Unit v;
+                      integer(c_int32_t) v;
 
                       js = TPE_JOINT_SIZE(body->joints[i]);
 
@@ -2484,7 +2478,7 @@ module tiny_physics_engine
                       TPE_Vec3 f = TPE_pointRotate(TPE_vec3(0,0,TPE_F),rotation);
                       TPE_Vec3 r = TPE_pointRotate(TPE_vec3(TPE_F,0,0),rotation);
 
-                      TPE_Unit a = TPE_LENGTH(rotationByAxis);
+                      integer(c_int32_t) a = TPE_LENGTH(rotationByAxis);
                       TPE_vec3Normalize(&rotationByAxis);
 
                       f = _TPE_rotateByAxis(f,rotationByAxis,a);
@@ -2493,17 +2487,17 @@ module tiny_physics_engine
                       return TPE_rotationFromVecs(f,r);
                       }
 
-                      TPE_Unit TPE_keepInRange(TPE_Unit x, TPE_Unit xMin, TPE_Unit xMax)
+                      integer(c_int32_t) TPE_keepInRange(integer(c_int32_t) x, integer(c_int32_t) xMin, integer(c_int32_t) xMax)
                       {
                       return x > xMin ? (x < xMax ? x : xMax) : xMin;
                       }
 
                       TPE_Vec3 TPE_vec3KeepWithinDistanceBand(TPE_Vec3 point, TPE_Vec3 center,
-                      TPE_Unit minDistance, TPE_Unit maxDistance)
+                      integer(c_int32_t) minDistance, integer(c_int32_t) maxDistance)
                       {
                       TPE_Vec3 toPoint = TPE_vec3Minus(point,center);
 
-                      TPE_Unit l = TPE_LENGTH(toPoint);
+                      integer(c_int32_t) l = TPE_LENGTH(toPoint);
 
                       if (l <= maxDistance)
                       {
@@ -2535,12 +2529,12 @@ module tiny_physics_engine
                       }
 
                       TPE_Vec3 TPE_envInfiniteCylinder(TPE_Vec3 point, TPE_Vec3 center, TPE_Vec3
-                      direction, TPE_Unit radius)
+                      direction, integer(c_int32_t) radius)
                       {
                       TPE_Vec3 d = TPE_vec3Minus(point,center);
                       d = TPE_vec3Minus(d,TPE_vec3Project(d,direction));
 
-                      TPE_Unit l = TPE_LENGTH(d);
+                      integer(c_int32_t) l = TPE_LENGTH(d);
 
                       if (l <= radius)
                       return point;
@@ -2555,7 +2549,7 @@ module tiny_physics_engine
                       }
 
                       TPE_Vec3 TPE_envCylinder(TPE_Vec3 point, TPE_Vec3 center, TPE_Vec3 direction,
-                      TPE_Unit radius)
+                      integer(c_int32_t) radius)
                       {
                       point = TPE_vec3Minus(point,center);
 
@@ -2563,9 +2557,9 @@ module tiny_physics_engine
 
                       point = TPE_envInfiniteCylinder(point,TPE_vec3(0,0,0),direction,radius);
 
-                      TPE_Unit lDir = TPE_nonZero(TPE_LENGTH(direction));
+                      integer(c_int32_t) lDir = TPE_nonZero(TPE_LENGTH(direction));
 
-                      TPE_Unit lDiff = TPE_LENGTH(projected) - lDir;
+                      integer(c_int32_t) lDiff = TPE_LENGTH(projected) - lDir;
 
                       if (lDiff > 0)
                       {
@@ -2581,7 +2575,7 @@ module tiny_physics_engine
                       }
 
                       TPE_Vec3 TPE_fakeSphereRotation(TPE_Vec3 position1, TPE_Vec3 position2,
-                      TPE_Unit radius)
+                      integer(c_int32_t) radius)
                       {
                       TPE_Vec3 m;
 
@@ -2589,12 +2583,12 @@ module tiny_physics_engine
                       m.y = 0;
                       m.z = position2.x - position1.x;
 
-                      TPE_Unit l = TPE_sqrt(m.x * m.x + m.z * m.z);
+                      integer(c_int32_t) l = TPE_sqrt(m.x * m.x + m.z * m.z);
 
                       if (l == 0)
                       return TPE_vec3(0,0,0);
 
-                      TPE_Unit d = (TPE_DISTANCE(position1,position2) *
+                      integer(c_int32_t) d = (TPE_DISTANCE(position1,position2) *
                       TPE_F) / (radius * 4);
 
                       m.x = (m.x * d) / l;
@@ -2604,12 +2598,12 @@ module tiny_physics_engine
                       }
 
                       TPE_Vec3 TPE_castEnvironmentRay(TPE_Vec3 rayPos, TPE_Vec3 rayDir,
-                      TPE_ClosestPointFunction environment, TPE_Unit insideStepSize,
-                      TPE_Unit rayMarchMaxStep, uint32_t maxSteps)
+                      TPE_ClosestPointFunction environment, integer(c_int32_t) insideStepSize,
+                      integer(c_int32_t) rayMarchMaxStep, uint32_t maxSteps)
                       {
                       TPE_Vec3 p = rayPos;
                       TPE_Vec3 p2 = environment(rayPos,rayMarchMaxStep);
-                      TPE_Unit totalD = 0;
+                      integer(c_int32_t) totalD = 0;
 
                       TPE_vec3Normalize(&rayDir);
 
@@ -2621,7 +2615,7 @@ module tiny_physics_engine
 
                       for (uint32_t i = 0; i < maxSteps; ++i)
                       {
-                      TPE_Unit d = TPE_DISTANCE(p,p2);
+                      integer(c_int32_t) d = TPE_DISTANCE(p,p2);
 
                       if (d > rayMarchMaxStep)
                       d = rayMarchMaxStep;
@@ -2707,7 +2701,7 @@ module tiny_physics_engine
                       const TPE_World *world, int16_t *bodyIndex, int16_t *jointIndex)
                       {
                       TPE_Vec3 bestP = TPE_vec3(TPE_INFINITY,TPE_INFINITY,TPE_INFINITY);
-                      TPE_Unit bestD = TPE_INFINITY;
+                      integer(c_int32_t) bestD = TPE_INFINITY;
 
                       if (bodyIndex != 0)
                       *bodyIndex = -1;
@@ -2720,7 +2714,7 @@ module tiny_physics_engine
                       for (uint16_t i = 0; i < world->bodyCount; ++i)
                       {
                       TPE_Vec3 c, p;
-                      TPE_Unit r, d;
+                      integer(c_int32_t) r, d;
 
                       TPE_bodyGetFastBSphere(&world->bodies[i],&c,&r);
 
@@ -2746,7 +2740,7 @@ module tiny_physics_engine
                       if (TPE_vec3Dot(p,rayDir) >= 0)
                       {
                       d = TPE_DISTANCE(p,c);
-                      TPE_Unit js = TPE_JOINT_SIZE(*joint);
+                      integer(c_int32_t) js = TPE_JOINT_SIZE(*joint);
 
                       if (d <= js)
                       {
@@ -2767,7 +2761,7 @@ module tiny_physics_engine
                       i2 = TPE_vec3Minus(p,c);
 
                       d = TPE_DISTANCE(rayPos,i1);
-                      TPE_Unit d2 = TPE_DISTANCE(rayPos,i2);
+                      integer(c_int32_t) d2 = TPE_DISTANCE(rayPos,i2);
 
                       if (d2 < d) // take the closer one
                       {
@@ -2804,9 +2798,9 @@ module tiny_physics_engine
                       TPE_bodyActivate(&world->bodies[i]);
                       }
 
-                      TPE_Unit TPE_worldGetNetSpeed(const TPE_World *world)
+                      integer(c_int32_t) TPE_worldGetNetSpeed(const TPE_World *world)
                       {
-                      TPE_Unit result = 0;
+                      integer(c_int32_t) result = 0;
 
                       for (uint16_t i = 0; i < world->bodyCount; ++i)
                       result += TPE_bodyGetNetSpeed(world->bodies + i);
@@ -2820,7 +2814,7 @@ module tiny_physics_engine
 
                       for (uint16_t i = 0; i < body->jointCount; ++i)
                       {
-                      TPE_UnitReduced *v = body->joints[i].velocity;
+                      integer(c_int16_t) *v = body->joints[i].velocity;
                       r = TPE_vec3Plus(r,TPE_vec3(v[0],v[1],v[2]));
                       }
 
@@ -2831,35 +2825,35 @@ module tiny_physics_engine
                       return r;
                       }
 
-                      TPE_Unit TPE_abs(TPE_Unit x)
+                      integer(c_int32_t) TPE_abs(integer(c_int32_t) x)
                       {
                       return x >= 0 ? x : (-1 * x);
                       }
 
-                      TPE_Unit TPE_max(TPE_Unit a, TPE_Unit b)
+                      integer(c_int32_t) TPE_max(integer(c_int32_t) a, integer(c_int32_t) b)
                       {
                       return (a > b) ? a : b;
                       }
 
-                      TPE_Unit TPE_min(TPE_Unit a, TPE_Unit b)
+                      integer(c_int32_t) TPE_min(integer(c_int32_t) a, integer(c_int32_t) b)
                       {
                       return (a < b) ? a : b;
                       }
 
                       TPE_Vec3 TPE_envAATriPrism(TPE_Vec3 point, TPE_Vec3 center,
-                      const TPE_Unit sides[6], TPE_Unit depth, uint8_t direction)
+                      const integer(c_int32_t) sides[6], integer(c_int32_t) depth, uint8_t direction)
                       {
                       point = TPE_vec3Minus(point,center);
 
                       if (direction == 1)
                       {
-                      TPE_Unit tmp = point.z;
+                      integer(c_int32_t) tmp = point.z;
                       point.z = point.y;
                       point.y = tmp;
                       }
                       else if (direction == 2)
                       {
-                      TPE_Unit tmp = point.z;
+                      integer(c_int32_t) tmp = point.z;
                       point.z = point.x;
                       point.x = tmp;
                       }
@@ -2907,13 +2901,13 @@ module tiny_physics_engine
 
                       if (direction == 1)
                       {
-                      TPE_Unit tmp = point.z;
+                      integer(c_int32_t) tmp = point.z;
                       point.z = point.y;
                       point.y = tmp;
                       }
                       else if (direction == 2)
                       {
-                      TPE_Unit tmp = point.z;
+                      integer(c_int32_t) tmp = point.z;
                       point.z = point.x;
                       point.x = tmp;
                       }
@@ -2921,7 +2915,7 @@ module tiny_physics_engine
                       return TPE_vec3Plus(point,center);
                       }
 
-                      TPE_Vec3 TPE_envGround(TPE_Vec3 point, TPE_Unit height)
+                      TPE_Vec3 TPE_envGround(TPE_Vec3 point, integer(c_int32_t) height)
                       {
                       if (point.y > height)
                       point.y = height;
@@ -3000,7 +2994,7 @@ module tiny_physics_engine
 
                       uint8_t TPE_testClosestPointFunction(TPE_ClosestPointFunction f,
                       TPE_Vec3 cornerFrom, TPE_Vec3 cornerTo, uint8_t gridResolution,
-                      TPE_UnitReduced allowedError, TPE_Vec3 *errorPoint)
+                      integer(c_int16_t) allowedError, TPE_Vec3 *errorPoint)
                       {
                       TPE_Vec3 p;
 
@@ -3045,7 +3039,7 @@ module tiny_physics_engine
 
                       // now test 8 points inside the sphere of radius:
 
-                      TPE_Unit d = TPE_DISTANCE(p,p2);
+                      integer(c_int32_t) d = TPE_DISTANCE(p,p2);
 
                       p3.z = p.z - d / 2;
 
@@ -3106,13 +3100,13 @@ module tiny_physics_engine
                       return point;
                       }
 
-                      TPE_Vec3 TPE_envHeightmap(TPE_Vec3 point, TPE_Vec3 center, TPE_Unit gridSize,
-                      TPE_Unit (*heightFunction)(int32_t x, int32_t y), TPE_Unit maxDist)
+                      TPE_Vec3 TPE_envHeightmap(TPE_Vec3 point, TPE_Vec3 center, integer(c_int32_t) gridSize,
+                      integer(c_int32_t) (*heightFunction)(int32_t x, int32_t y), integer(c_int32_t) maxDist)
                       {
                       point = TPE_vec3Minus(point,center);
 
                       TPE_Vec3 closestP = TPE_vec3(TPE_INFINITY,TPE_INFINITY,TPE_INFINITY);
-                      TPE_Unit closestD = TPE_INFINITY;
+                      integer(c_int32_t) closestD = TPE_INFINITY;
 
                       int16_t startSquareX = point.x / gridSize - (point.x < 0),
                       startSquareY = point.z / gridSize - (point.z < 0);
@@ -3144,7 +3138,7 @@ module tiny_physics_engine
                       TPE_vec3Cross(TPE_vec3Minus(tl,bl),TPE_vec3Minus(br,bl)) :
                       TPE_vec3Cross(TPE_vec3Minus(br,tr),TPE_vec3Minus(tl,tr))));
 
-                      TPE_Unit testD = TPE_DISTANCE(testP,point);
+                      integer(c_int32_t) testD = TPE_DISTANCE(testP,point);
 
                       if (testD < closestD)
                       {
@@ -3235,7 +3229,7 @@ module tiny_physics_engine
                       }
 
                       TPE_Vec3 TPE_envCone(TPE_Vec3 point, TPE_Vec3 center, TPE_Vec3 direction,
-                      TPE_Unit radius)
+                      integer(c_int32_t) radius)
                       {
                       point = TPE_vec3Minus(point,center);
 
@@ -3249,7 +3243,7 @@ module tiny_physics_engine
 
                       point = TPE_envHalfPlane(point,TPE_vec3(0,0,0),direction);
 
-                      TPE_Unit dist = TPE_LENGTH(point);
+                      integer(c_int32_t) dist = TPE_LENGTH(point);
 
                       if (dist > radius)
                       {
@@ -3260,14 +3254,14 @@ module tiny_physics_engine
                       }
                     else
                       {
-                      TPE_Unit height = TPE_LENGTH(direction);
+                      integer(c_int32_t) height = TPE_LENGTH(direction);
 
                       TPE_Vec3 helper = TPE_vec3Project(point,direction);
-                      TPE_Unit y = TPE_LENGTH(helper);
+                      integer(c_int32_t) y = TPE_LENGTH(helper);
 
                       helper = TPE_vec3Minus(point,helper);
 
-                      TPE_Unit x = TPE_LENGTH(helper);
+                      integer(c_int32_t) x = TPE_LENGTH(helper);
 
                       if (x < 20)
                       {
@@ -3277,7 +3271,7 @@ module tiny_physics_engine
                       }
                     else
                       {
-                      TPE_Unit scaledRadius = radius - ((y * radius) / height);
+                      integer(c_int32_t) scaledRadius = radius - ((y * radius) / height);
 
                       if (y > height || x > scaledRadius) // outside?
                       {
