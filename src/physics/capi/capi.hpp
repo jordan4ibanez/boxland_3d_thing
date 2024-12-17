@@ -1,6 +1,4 @@
-/// note to self, use camel case, 'cause such irrelevancies, are just *loved* on reddit
-
-#include "bullet/btBulletDynamicsCommon.h"
+#include <bullet/btBulletCollisionCommon.h>
 
 // C-api only sees this as a void pointer like bullet class pointers
 /** \cond HIDDEN */
