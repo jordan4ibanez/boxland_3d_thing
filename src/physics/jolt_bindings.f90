@@ -2,10 +2,10 @@ module jolt_bindings
   use, intrinsic :: iso_c_binding
   implicit none
 
-! Copyright (c) Amer Koleci and Contributors.
-! Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
+  ! Copyright (c) Amer Koleci and Contributors.
+  ! Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
-  !? Implementation note: I'm not going to be transferring my camelcasing as I want this to be a direct translation.
+  !? Implementation note: I'm not going to be transferring my snakecasing as I want this to be a direct translation.
 
   !! DO NOT HIT SAVE LOL!
 
@@ -31,21 +31,21 @@ end type JPH_BroadPhaseLayer
 
 ! typedef enum JPH_PhysicsUpdateError {
 integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_None = 0
-integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_ManifoldCacheFull = 1 << 0
-integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_BodyPairCacheFull = 1 << 1
-integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_ContactConstraintsFull = 1 << 2
+integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_ManifoldCacheFull = shiftl(1, 0)
+integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_BodyPairCacheFull = shiftl(1, 1)
+integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_ContactConstraintsFull = shiftl(1, 2)
 
-	_JPH_PhysicsUpdateError_Count,
-	_JPH_PhysicsUpdateError_Force32 = 0x7fffffff
+integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_Force32 = int(z"7fffffff")
 ! } JPH_PhysicsUpdateError;
 
-typedef enum JPH_BodyType {
-	JPH_BodyType_Rigid = 0,
-	JPH_BodyType_Soft = 1,
+! typedef enum JPH_BodyType {
+integer(c_int32_t), parameter :: JPH_BodyType_Rigid = 0
+integer(c_int32_t), parameter :: JPH_BodyType_Soft = 1
 
-	_JPH_BodyType_Count,
-	_JPH_BodyType_Force32 = 0x7fffffff
-} JPH_BodyType;
+integer(c_int32_t), parameter :: JPH_BodyType_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_BodyType_Force32 = int(z"7fffffff")
+! } JPH_BodyType;
 
 typedef enum JPH_MotionType {
 	JPH_MotionType_Static = 0,
