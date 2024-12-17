@@ -21,6 +21,24 @@ module jolt_bindings
     end subroutine jph_shutdown
 
 
+    subroutine jph_set_trace_handler(handler) bind(c, name = "JPH_SetTraceHandler")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_funptr), intent(in), value :: handler
+    end subroutine jph_set_trace_handler
+
+
+    function jph_job_system_threadpool_create(config) result(job_system) bind(c, name = "JPH_JobSystemThreadPool_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: config
+      type(c_ptr) :: job_system
+    end function jph_job_system_threadpool_create
+
+
+
   end interface
 
 

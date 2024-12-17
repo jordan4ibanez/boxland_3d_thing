@@ -5,6 +5,9 @@ module world
   implicit none
 
 
+  type(c_ptr) :: job_system_threadpool
+
+
 contains
 
 
@@ -16,10 +19,14 @@ contains
     else
       print"(A)", "Initialized Jolt Physics."
     end if
+
+    call jph_set_trace_handler(c_funloc(trace_output_handler))
+
+    job_system_threadpool = jph_job_system_threadpool_create(c_null_ptr)
   end subroutine world_create
 
 
-  subroutine trace_implementation(raw_c_message) bind(c)
+  subroutine trace_output_handler(raw_c_message) bind(c)
     implicit none
 
     type(c_ptr), intent(in), value :: raw_c_message
