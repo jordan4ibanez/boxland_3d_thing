@@ -961,9 +961,21 @@ module jolt_bindings
     end subroutine
 
 
-! JPH_CAPI JPH_PhysicsSystem* JPH_PhysicsSystem_Create(const JPH_PhysicsSystemSettings* settings)
+    function JPH_PhysicsSystem_Create(settings) result(PhysicsSystem) bind(c, name = "JPH_PhysicsSystem_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: settings
+      type(c_ptr) :: PhysicsSystem
+    end function
 
 ! JPH_CAPI void JPH_PhysicsSystem_Destroy(JPH_PhysicsSystem* system)
+    subroutine JPH_PhysicsSystem_Destroy(system) bind(c, name = "JPH_PhysicsSystem_Destroy")
+    use, intrinsic :: iso_c_binding
+    implicit none
+
+    type(c_ptr), intent(in), value :: system
+  end subroutine
 
 ! JPH_CAPI void JPH_PhysicsSystem_SetPhysicsSettings(JPH_PhysicsSystem* system, JPH_PhysicsSettings* settings)
 
@@ -2713,7 +2725,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_DebugRenderer_DrawWireUnitSphere(JPH_DebugRenderer* renderer, const JPH_RMatrix4x4* matrix, JPH_Color color, int level)
 
 
-  end interface
+end interface
 
 
 end module jolt_bindings
