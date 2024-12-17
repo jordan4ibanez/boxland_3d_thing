@@ -1058,35 +1058,136 @@ module jolt_bindings
       type(c_ptr) :: BroadPhaseQuery
     end function
 
-! JPH_CAPI const JPH_NarrowPhaseQuery* JPH_PhysicsSystem_GetNarrowPhaseQuery(const JPH_PhysicsSystem* system)
 
-! JPH_CAPI const JPH_NarrowPhaseQuery* JPH_PhysicsSystem_GetNarrowPhaseQueryNoLock(const JPH_PhysicsSystem* system)
+    function JPH_PhysicsSystem_GetNarrowPhaseQuery(system) result(NarrowPhaseQuery) bind(c, name = "JPH_PhysicsSystem_GetNarrowPhaseQuery")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
-! JPH_CAPI void JPH_PhysicsSystem_SetContactListener(JPH_PhysicsSystem* system, JPH_ContactListener* listener)
+      type(c_ptr), intent(in), value :: system
+      type(c_ptr) :: NarrowPhaseQuery
+    end function
 
-! JPH_CAPI void JPH_PhysicsSystem_SetBodyActivationListener(JPH_PhysicsSystem* system, JPH_BodyActivationListener* listener)
 
-! JPH_CAPI bool JPH_PhysicsSystem_WereBodiesInContact(const JPH_PhysicsSystem* system, JPH_BodyID body1, JPH_BodyID body2)
+    function JPH_PhysicsSystem_GetNarrowPhaseQueryNoLock(system) result(NarrowPhaseQuery) bind(c, name = "JPH_PhysicsSystem_GetNarrowPhaseQueryNoLock")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
-! JPH_CAPI uint32_t JPH_PhysicsSystem_GetNumBodies(const JPH_PhysicsSystem* system)
+      type(c_ptr), intent(in), value :: system
+      type(c_ptr) :: NarrowPhaseQuery
+    end function
 
-! JPH_CAPI uint32_t JPH_PhysicsSystem_GetNumActiveBodies(const JPH_PhysicsSystem* system, JPH_BodyType type)
 
-! JPH_CAPI uint32_t JPH_PhysicsSystem_GetMaxBodies(const JPH_PhysicsSystem* system)
+    subroutine JPH_PhysicsSystem_SetContactListener(system, listener) bind(c, name = "JPH_PhysicsSystem_SetContactListener")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
-! JPH_CAPI uint32_t JPH_PhysicsSystem_GetNumConstraints(const JPH_PhysicsSystem* system)
+      type(c_ptr), intent(in), value :: system, listener
+    end subroutine
 
-! JPH_CAPI void JPH_PhysicsSystem_SetGravity(JPH_PhysicsSystem* system, const JPH_Vec3* value)
 
-! JPH_CAPI void JPH_PhysicsSystem_GetGravity(JPH_PhysicsSystem* system, JPH_Vec3* result)
+    subroutine JPH_PhysicsSystem_SetBodyActivationListener(system, listener) bind(c, name = "JPH_PhysicsSystem_SetBodyActivationListener")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
-! JPH_CAPI void JPH_PhysicsSystem_AddConstraint(JPH_PhysicsSystem* system, JPH_Constraint* constraint)
+      type(c_ptr), intent(in), value :: system, listener
+    end subroutine
 
-! JPH_CAPI void JPH_PhysicsSystem_RemoveConstraint(JPH_PhysicsSystem* system, JPH_Constraint* constraint)
 
-! JPH_CAPI void JPH_PhysicsSystem_AddConstraints(JPH_PhysicsSystem* system, JPH_Constraint** constraints, uint32_t count)
+    function JPH_PhysicsSystem_WereBodiesInContact(system, body1, body2) result(contact) bind(c, name = "JPH_PhysicsSystem_WereBodiesInContact")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
-! JPH_CAPI void JPH_PhysicsSystem_RemoveConstraints(JPH_PhysicsSystem* system, JPH_Constraint** constraints, uint32_t count)
+      type(c_ptr), intent(in), value :: system
+      integer(c_int32_t), intent(in), value :: body1, body2
+      logical(c_bool) :: contact
+    end function
+
+
+    function JPH_PhysicsSystem_GetNumBodies(system) result(count) bind(c, name = "JPH_PhysicsSystem_GetNumBodies")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system
+      integer(c_int32_t) :: count
+    end function
+
+
+    function JPH_PhysicsSystem_GetNumActiveBodies(system, type) result(num) bind(c, name = "JPH_PhysicsSystem_GetNumActiveBodies")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system
+      integer(c_int32_t), intent(in), value :: type
+      integer(c_int32_t) :: num
+    end function
+
+
+    function JPH_PhysicsSystem_GetMaxBodies(system) result(maxbod) bind(c, name = "JPH_PhysicsSystem_GetMaxBodies")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system
+      integer(c_int32_t) :: maxbod
+    end function
+
+
+    function JPH_PhysicsSystem_GetNumConstraints(system) result(con) bind(c, name = "JPH_PhysicsSystem_GetNumConstraints")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system
+      integer(c_int32_t) :: con
+    end function
+
+
+    subroutine JPH_PhysicsSystem_SetGravity(system, valuevec3) bind(c, name = "JPH_PhysicsSystem_SetGravity")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system, valuevec3
+    end subroutine
+
+
+    subroutine JPH_PhysicsSystem_GetGravity(system, resvec3) bind(c, name = "JPH_PhysicsSystem_GetGravity")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system, resvec3
+    end subroutine
+
+
+    subroutine JPH_PhysicsSystem_AddConstraint(system, constraint) bind(c, name = "JPH_PhysicsSystem_AddConstraint")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system, constraint
+    end subroutine
+
+
+    subroutine JPH_PhysicsSystem_RemoveConstraint(system, constraint) bind(c, name = "JPH_PhysicsSystem_RemoveConstraint")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system, constraint
+    end subroutine
+
+
+    subroutine JPH_PhysicsSystem_AddConstraints(system, constraints, count) bind(c, name = "JPH_PhysicsSystem_AddConstraints")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system, constraints
+      integer(c_int32_t), intent(in), value :: count
+    end subroutine
+
+
+    subroutine JPH_PhysicsSystem_RemoveConstraints(system, constraints, count) bind(c, name = "JPH_PhysicsSystem_RemoveConstraints")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system, constraints
+      integer(c_int32_t), intent(in), value :: count
+    end subroutine
 
 ! JPH_CAPI void JPH_PhysicsSystem_GetBodies(const JPH_PhysicsSystem* system, JPH_BodyID* ids, uint32_t count)
 
