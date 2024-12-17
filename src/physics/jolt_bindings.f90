@@ -17,16 +17,19 @@ integer(c_int32_t), parameter :: JPH_MAX_PHYSICS_JOBS = (2048) ! int cMaxPhysics
 integer(c_int32_t), parameter ::  JPH_MAX_PHYSICS_BARRIERS = (2048) ! int cMaxPhysicsBarriers = 8
 
 type, bind(c) :: JPH_BodyID
-integer(c_int32_t) :: data = 0
+  integer(c_int32_t) :: data = 0
 end type JPH_BodyID
+
 type, bind(c) :: JPH_SubShapeID
-integer(c_int32_t) :: data = 0
+  integer(c_int32_t) :: data = 0
 end type JPH_SubShapeID
+
 type, bind(c) :: JPH_ObjectLayer
-integer(c_int16_t) :: data = 0
+  integer(c_int16_t) :: data = 0
 end type JPH_ObjectLayer
+
 type, bind(c) :: JPH_BroadPhaseLayer
-integer(c_int8_t) :: data = 0
+  integer(c_int8_t) :: data = 0
 end type JPH_BroadPhaseLayer
 
 ! typedef enum JPH_PhysicsUpdateError {
@@ -184,109 +187,107 @@ integer(c_int32_t), parameter :: JPH_GroundState_Count = int(z"7fffffff")
 integer(c_int32_t), parameter :: JPH_GroundState_Force32 = int(z"7fffffff")
 ! } JPH_GroundState;
 
-typedef enum JPH_BackFaceMode {
-  JPH_BackFaceMode_IgnoreBackFaces,
-  JPH_BackFaceMode_CollideWithBackFaces,
+! typedef enum JPH_BackFaceMode {
+integer(c_int32_t), parameter :: JPH_BackFaceMode_IgnoreBackFaces = 0
+integer(c_int32_t), parameter :: JPH_BackFaceMode_CollideWithBackFaces = 1
 
-  JPH_BackFaceMode_Count = int(z"7fffffff"),
-  JPH_BackFaceMode_Force32 = int(z"7fffffff")
-} JPH_BackFaceMode;
+integer(c_int32_t), parameter :: JPH_BackFaceMode_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_BackFaceMode_Force32 = int(z"7fffffff")
+! } JPH_BackFaceMode;
 
-typedef enum JPH_ActiveEdgeMode {
-  JPH_ActiveEdgeMode_CollideOnlyWithActive,
-  JPH_ActiveEdgeMode_CollideWithAll,
+! typedef enum JPH_ActiveEdgeMode {
+integer(c_int32_t), parameter :: JPH_ActiveEdgeMode_CollideOnlyWithActive = 0
+integer(c_int32_t), parameter :: JPH_ActiveEdgeMode_CollideWithAll = 1
 
-  JPH_ActiveEdgeMode_Count = int(z"7fffffff"),
-  JPH_ActiveEdgeMode_Force32 = int(z"7fffffff")
-} JPH_ActiveEdgeMode;
+integer(c_int32_t), parameter :: JPH_ActiveEdgeMode_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_ActiveEdgeMode_Force32 = int(z"7fffffff")
+! } JPH_ActiveEdgeMode;
 
-typedef enum JPH_CollectFacesMode {
-  JPH_CollectFacesMode_CollectFaces,
-  JPH_CollectFacesMode_NoFaces,
+! typedef enum JPH_CollectFacesMode {
+integer(c_int32_t), parameter :: JPH_CollectFacesMode_CollectFaces = 0
+integer(c_int32_t), parameter :: JPH_CollectFacesMode_NoFaces = 1
 
-  JPH_CollectFacesMode_Count = int(z"7fffffff"),
-  JPH_CollectFacesMode_Force32 = int(z"7fffffff")
-} JPH_CollectFacesMode;
+integer(c_int32_t), parameter :: JPH_CollectFacesMode_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_CollectFacesMode_Force32 = int(z"7fffffff")
+! } JPH_CollectFacesMode;
 
-typedef enum JPH_MotorState {
-  JPH_MotorState_Off = 0,
-  JPH_MotorState_Velocity = 1,
-  JPH_MotorState_Position = 2,
+! typedef enum JPH_MotorState {
+integer(c_int32_t), parameter :: JPH_MotorState_Off = 0
+integer(c_int32_t), parameter :: JPH_MotorState_Velocity = 1
+integer(c_int32_t), parameter :: JPH_MotorState_Position = 2
 
-  JPH_MotorState_Count = int(z"7fffffff"),
-  JPH_MotorState_Force32 = int(z"7fffffff")
-} JPH_MotorState;
+integer(c_int32_t), parameter :: JPH_MotorState_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_MotorState_Force32 = int(z"7fffffff")
+! } JPH_MotorState;
 
-typedef enum JPH_CollisionCollectorType {
-  JPH_CollisionCollectorType_AllHit = 0,
-  JPH_CollisionCollectorType_AllHitSorted = 1,
-  JPH_CollisionCollectorType_ClosestHit = 2,
-  JPH_CollisionCollectorType_AnyHit = 3,
+! typedef enum JPH_CollisionCollectorType {
+integer(c_int32_t), parameter :: JPH_CollisionCollectorType_AllHit = 0
+integer(c_int32_t), parameter :: JPH_CollisionCollectorType_AllHitSorted = 1
+integer(c_int32_t), parameter :: JPH_CollisionCollectorType_ClosestHit = 2
+integer(c_int32_t), parameter :: JPH_CollisionCollectorType_AnyHit = 3
 
-  JPH_CollisionCollectorType_Count = int(z"7fffffff"),
-  JPH_CollisionCollectorType_Force32 = int(z"7fffffff")
-} JPH_CollisionCollectorType;
+integer(c_int32_t), parameter :: JPH_CollisionCollectorType_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_CollisionCollectorType_Force32 = int(z"7fffffff")
+! } JPH_CollisionCollectorType;
 
-typedef enum JPH_SixDOFConstraintAxis {
-  JPH_SixDOFConstraintAxis_TranslationX,
-  JPH_SixDOFConstraintAxis_TranslationY,
-  JPH_SixDOFConstraintAxis_TranslationZ,
+! typedef enum JPH_SixDOFConstraintAxis {
+integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_TranslationX = 0
+integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_TranslationY = 1
+integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_TranslationZ = 2
 
-  JPH_SixDOFConstraintAxis_RotationX,
-  JPH_SixDOFConstraintAxis_RotationY,
-  JPH_SixDOFConstraintAxis_RotationZ,
+integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_RotationX = 3
+integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_RotationY = 4
+integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_RotationZ = 5
 
-  JPH_SixDOFConstraintAxis_Count = int(z"7fffffff"),
-  JPH_SixDOFConstraintAxis_Force32 = int(z"7fffffff")
-} JPH_SixDOFConstraintAxis;
+integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_Force32 = int(z"7fffffff")
+! } JPH_SixDOFConstraintAxis;
 
-typedef enum JPH_SpringMode {
-  JPH_SpringMode_FrequencyAndDamping = 0,
-  JPH_SpringMode_StiffnessAndDamping = 1,
+! typedef enum JPH_SpringMode {
+integer(c_int32_t), parameter :: JPH_SpringMode_FrequencyAndDamping = 0
+integer(c_int32_t), parameter :: JPH_SpringMode_StiffnessAndDamping = 1
 
-  JPH_SpringMode_Count = int(z"7fffffff"),
-  JPH_SpringMode_Force32 = int(z"7fffffff")
-} JPH_SpringMode;
+integer(c_int32_t), parameter :: JPH_SpringMode_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_SpringMode_Force32 = int(z"7fffffff")
+! } JPH_SpringMode;
 
 !* Defines how to color soft body constraints
-typedef enum JPH_SoftBodyConstraintColor
-{
-  JPH_SoftBodyConstraintColor_ConstraintType,        !* Draw different types of constraints in different colors
-  JPH_SoftBodyConstraintColor_ConstraintGroup,      !* Draw constraints in the same group in the same color, non-parallel group will be red
-  JPH_SoftBodyConstraintColor_ConstraintOrder,      !* Draw constraints in the same group in the same color, non-parallel group will be red, and order within each group will be indicated with gradient
+! typedef enum JPH_SoftBodyConstraintColor {
+integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_ConstraintType = 0        !* Draw different types of constraints in different colors
+integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_ConstraintGroup = 1       !* Draw constraints in the same group in the same color, non-parallel group will be red
+integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_ConstraintOrder = 2       !* Draw constraints in the same group in the same color, non-parallel group will be red, and order within each group will be indicated with gradient
 
-  JPH_SoftBodyConstraintColor_Count = int(z"7fffffff"),
-  JPH_SoftBodyConstraintColor_Force32 = int(z"7fffffff")
-} JPH_SoftBodyConstraintColor;
+integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_Force32 = int(z"7fffffff")
+! } JPH_SoftBodyConstraintColor;
 
-typedef enum JPH_BodyManager_ShapeColor
-{
-  JPH_BodyManager_ShapeColor_InstanceColor,        !*< Random color per instance
-  JPH_BodyManager_ShapeColor_ShapeTypeColor,        !*< Convex = green, scaled = yellow, compound = orange, mesh = red
-  JPH_BodyManager_ShapeColor_MotionTypeColor,      !*< Static = grey, keyframed = green, dynamic = random color per instance
-  JPH_BodyManager_ShapeColor_SleepColor,          !*< Static = grey, keyframed = green, dynamic = yellow, sleeping = red
-  JPH_BodyManager_ShapeColor_IslandColor,        !*< Static = grey, active = random color per island, sleeping = light grey
-  JPH_BodyManager_ShapeColor_MaterialColor,        !*< Color as defined by the PhysicsMaterial of the shape
+! typedef enum JPH_BodyManager_ShapeColor {
+integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_InstanceColor = 0        !*< Random color per instance
+integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_ShapeTypeColor = 1        !*< Convex = green, scaled = yellow, compound = orange, mesh = red
+integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_MotionTypeColor = 2      !*< Static = grey, keyframed = green, dynamic = random color per instance
+integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_SleepColor = 3          !*< Static = grey, keyframed = green, dynamic = yellow, sleeping = red
+integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_IslandColor = 4        !*< Static = grey, active = random color per island, sleeping = light grey
+integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_MaterialColor = 5        !*< Color as defined by the PhysicsMaterial of the shape
 
-  JPH_BodyManager_ShapeColor_Count = int(z"7fffffff"),
-  JPH_BodyManager_ShapeColor_Force32 = int(z"7fffffff")
-} JPH_BodyManager_ShapeColor;
+integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_Force32 = int(z"7fffffff")
+! } JPH_BodyManager_ShapeColor;
 
-typedef enum JPH_DebugRenderer_CastShadow {
-  JPH_DebugRenderer_CastShadow_On = 0,    !*< This shape should cast a shadow
-  JPH_DebugRenderer_CastShadow_Off = 1,   !*< This shape should not cast a shadow
+! typedef enum JPH_DebugRenderer_CastShadow {
+integer(c_int32_t), parameter :: JPH_DebugRenderer_CastShadow_On = 0    !*< This shape should cast a shadow
+integer(c_int32_t), parameter :: JPH_DebugRenderer_CastShadow_Off = 1   !*< This shape should not cast a shadow
 
-  JPH_DebugRenderer_CastShadow_Count = int(z"7fffffff"),
-  JPH_DebugRenderer_CastShadow_Force32 = int(z"7fffffff")
-} JPH_DebugRenderer_CastShadow;
+integer(c_int32_t), parameter :: JPH_DebugRenderer_CastShadow_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_DebugRenderer_CastShadow_Force32 = int(z"7fffffff")
+! } JPH_DebugRenderer_CastShadow;
 
-typedef enum JPH_DebugRenderer_DrawMode {
-  JPH_DebugRenderer_DrawMode_Solid = 0,       !*< Draw as a solid shape
-  JPH_DebugRenderer_DrawMode_Wireframe = 1,   !*< Draw as wireframe
+! typedef enum JPH_DebugRenderer_DrawMode {
+integer(c_int32_t), parameter :: JPH_DebugRenderer_DrawMode_Solid = 0       !*< Draw as a solid shape
+integer(c_int32_t), parameter :: JPH_DebugRenderer_DrawMode_Wireframe = 1   !*< Draw as wireframe
 
-  JPH_DebugRendererJPH_DebugRenderer_DrawMode_Count = int(z"7fffffff"),
-  JPH_DebugRendererJPH_DebugRenderer_DrawMode_Force32 = int(z"7fffffff")
-} JPH_DebugRenderer_DrawMode;
+integer(c_int32_t), parameter :: JPH_DebugRendererJPH_DebugRenderer_DrawMode_Count = int(z"7fffffff")
+integer(c_int32_t), parameter :: JPH_DebugRendererJPH_DebugRenderer_DrawMode_Force32 = int(z"7fffffff")
+! } JPH_DebugRenderer_DrawMode;
 
 typedef struct JPH_Vec3 {
   float x;
