@@ -893,7 +893,14 @@ module jolt_bindings
     end function
 
 
-! JPH_CAPI JPH_ObjectLayerPairFilter* JPH_ObjectLayerPairFilterTable_Create(uint32_t numObjectLayers)
+    function JPH_ObjectLayerPairFilterTable_Create(numObjectLayers) result(ObjectLayerPairFilter) bind(c, name = "JPH_ObjectLayerPairFilterTable_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      integer(c_int32_t), intent(in), value :: numObjectLayers
+      type(c_ptr) :: ObjectLayerPairFilter
+    end function
+
 
 ! JPH_CAPI void JPH_ObjectLayerPairFilterTable_DisableCollision(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
 
