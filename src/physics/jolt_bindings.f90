@@ -768,7 +768,7 @@ module jolt_bindings
 
       type(c_ptr), intent(in), value :: JobSystemThreadPoolConf
       type(c_ptr) :: JPH_JobSystem
-    end function
+    end function JPH_JobSystemThreadPool_Create
 
 
     function JPH_JobSystemCallback_Create(JPH_JobSystemConf) result(JPH_JobSystem) bind(c, name = "JPH_JobSystemCallback_Create")
@@ -777,21 +777,22 @@ module jolt_bindings
 
       type(c_ptr), intent(in), value :: JPH_JobSystemConf
       type(c_ptr) :: JPH_JobSystem
-    end function
+    end function JPH_JobSystemCallback_Create
 
     subroutine JPH_JobSystem_Destroy(jobSystem) bind(c, name = "JPH_JobSystem_Destroy")
       use, intrinsic :: iso_c_binding
       implicit none
 
       type(c_ptr), intent(in), value :: jobSystem
-    end subroutine
+    end subroutine JPH_JobSystem_Destroy
 
-! JPH_CAPI bool JPH_Init(void)
-    subroutine blankhere() bind(c, name = "")
+
+    function JPH_Init() result(success) bind(c, name = "JPH_Init")
       use, intrinsic :: iso_c_binding
       implicit none
-    
-    end subroutine
+
+      logical(c_bool) :: success
+    end function JPH_Init
 
 ! JPH_CAPI void JPH_Shutdown(void)
 
