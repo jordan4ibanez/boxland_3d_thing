@@ -1308,7 +1308,13 @@ module jolt_bindings
       integer(c_int32_t) :: shapetype
     end function
 
-! JPH_CAPI JPH_ShapeSubType JPH_Shape_GetSubType(const JPH_Shape* shape)
+    function JPH_Shape_GetSubType(shape) result(subshapetype) bind(c, name = "JPH_Shape_GetSubType")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      integer(c_int32_t) :: subshapetype
+    end function
 
 ! JPH_CAPI uint64_t JPH_Shape_GetUserData(const JPH_Shape* shape)
 
