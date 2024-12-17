@@ -985,7 +985,13 @@ module jolt_bindings
       type(c_ptr), intent(in), value :: system, settings
     end subroutine
 
-! JPH_CAPI void JPH_PhysicsSystem_GetPhysicsSettings(JPH_PhysicsSystem* system, JPH_PhysicsSettings* result)
+
+    subroutine JPH_PhysicsSystem_GetPhysicsSettings(system, result) bind(c, name = "JPH_PhysicsSystem_GetPhysicsSettings")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: system, result
+    end subroutine
 
 ! JPH_CAPI void JPH_PhysicsSystem_OptimizeBroadPhase(JPH_PhysicsSystem* system)
 
