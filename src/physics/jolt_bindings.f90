@@ -38,6 +38,14 @@ module jolt_bindings
     end function jph_job_system_threadpool_create
 
 
+    function jph_object_layer_pair_filter_table_create(num_object_layers) result(object_layer_pair_filters) bind(c, name = "JPH_ObjectLayerPairFilterTable_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      integer(c_int32_t), intent(in), value :: num_object_layers
+      type(c_ptr) :: object_layer_pair_filters
+    end function jph_object_layer_pair_filter_table_create
+
 
   end interface
 

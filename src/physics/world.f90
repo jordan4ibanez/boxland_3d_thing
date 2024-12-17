@@ -5,7 +5,17 @@ module world
   implicit none
 
 
+  ! Please keep in mind, I am learning how to use jolt physics.
+  ! So I literally have no idea what I'm doing.
+
+
+  integer(c_int32_t), parameter :: NON_MOVING = 0
+  integer(c_int32_t), parameter :: MOVING = 1
+  integer(c_int32_t), parameter :: NUM_LAYERS = 2
+
+
   type(c_ptr) :: job_system_threadpool
+  type(c_ptr) :: object_layer_pair_filter_table
 
 
 contains
@@ -23,6 +33,12 @@ contains
     call jph_set_trace_handler(c_funloc(trace_output_handler))
 
     job_system_threadpool = jph_job_system_threadpool_create(c_null_ptr)
+
+    ! We're only using 2 layers.
+    ! One for non-moving, one for moving.
+    object_layer_pair_filter_table = jph_object_layer_pair_filter_table_create(2)
+
+
   end subroutine world_create
 
 
