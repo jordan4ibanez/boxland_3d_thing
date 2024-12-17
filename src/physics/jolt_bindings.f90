@@ -1426,9 +1426,23 @@ module jolt_bindings
       integer(c_int32_t), intent(in), value :: subShapeID
     end subroutine
 
-! JPH_CAPI float JPH_Shape_GetVolume(const JPH_Shape* shape)
 
-! JPH_CAPI bool JPH_Shape_IsValidScale(const JPH_Shape* shape, const JPH_Vec3* scale)
+    function JPH_Shape_GetVolume(shape) result(volume) bind(c, name = "JPH_Shape_GetVolume")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape
+      real(c_float) :: volume
+    end function
+
+
+    function JPH_Shape_IsValidScale(shape, scale) result(valid) bind(c, name = "JPH_Shape_IsValidScale")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: shape, scale
+      logical(c_bool) :: valid
+    end function
 
 ! JPH_CAPI void JPH_Shape_MakeScaleValid(const JPH_Shape* shape, const JPH_Vec3* scale, JPH_Vec3* result)
 
