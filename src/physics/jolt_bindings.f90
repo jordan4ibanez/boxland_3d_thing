@@ -751,10 +751,11 @@ module jolt_bindings
     logical(c_bool) :: checkActiveEdges = .false.
   end type JPH_PhysicsSettings
 
-! type, bind(c) :: JPH_JobSystem JPH_JobSystem
+
+  interface
 
 
-  ! typedef struct JPH_CharacterContactListener      JPH_CharacterContactListener
+    ! typedef struct JPH_CharacterContactListener      JPH_CharacterContactListener
 ! typedef struct JPH_CharacterVirtual                 JPH_CharacterVirtual   !* Inherics JPH_CharacterBase */
 
 ! typedef void(JPH_API_CALL* JPH_TraceFunc)(const char* mssage)
@@ -1939,7 +1940,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_DebugRenderer_DrawWireSphere(JPH_DebugRenderer* renderer, const JPH_RVec3* center, float radius, JPH_Color color, int level)
 ! JPH_CAPI void JPH_DebugRenderer_DrawWireUnitSphere(JPH_DebugRenderer* renderer, const JPH_RMatrix4x4* matrix, JPH_Color color, int level)
 
-! #endif  !* JOLT_C_H_ */
+  end interface
 
 
 end module jolt_bindings
