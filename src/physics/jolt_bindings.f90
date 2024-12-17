@@ -45,12 +45,12 @@ module jolt_bindings
 ! #include <stdint.h>
 ! #include <stddef.h>
 
-#define JPH_DEFAULT_COLLISION_TOLERANCE (1.0e-4f) // float cDefaultCollisionTolerance = 1.0e-4f
-#define JPH_DEFAULT_PENETRATION_TOLERANCE (1.0e-4f) // float cDefaultPenetrationTolerance = 1.0e-4f
-#define JPH_DEFAULT_CONVEX_RADIUS (0.05f) // float cDefaultConvexRadius = 0.05f
-#define JPH_CAPSULE_PROJECTION_SLOP (0.02f) // float cCapsuleProjectionSlop = 0.02f
-#define JPH_MAX_PHYSICS_JOBS (2048) // int cMaxPhysicsJobs = 2048
-#define JPH_MAX_PHYSICS_BARRIERS (2048) // int cMaxPhysicsBarriers = 8
+real(c_float), parameter :: JPH_DEFAULT_COLLISION_TOLERANCE = real(1.0e0 - 4.0) ! float cDefaultCollisionTolerance = 1.0e-4f
+#define JPH_DEFAULT_PENETRATION_TOLERANCE (1.0e-4f) ! float cDefaultPenetrationTolerance = 1.0e-4f
+#define JPH_DEFAULT_CONVEX_RADIUS (0.05f) ! float cDefaultConvexRadius = 0.05f
+#define JPH_CAPSULE_PROJECTION_SLOP (0.02f) ! float cCapsuleProjectionSlop = 0.02f
+#define JPH_MAX_PHYSICS_JOBS (2048) ! int cMaxPhysicsJobs = 2048
+#define JPH_MAX_PHYSICS_BARRIERS (2048) ! int cMaxPhysicsBarriers = 8
 
 typedef uint32_t JPH_BodyID;
 typedef uint32_t JPH_SubShapeID;
@@ -277,12 +277,12 @@ typedef enum JPH_SpringMode {
 	_JPH_SpringMode_Force32 = 0x7FFFFFFF
 } JPH_SpringMode;
 
-/// Defines how to color soft body constraints
+!* Defines how to color soft body constraints
 typedef enum JPH_SoftBodyConstraintColor
 {
-	JPH_SoftBodyConstraintColor_ConstraintType,				/// Draw different types of constraints in different colors
-	JPH_SoftBodyConstraintColor_ConstraintGroup,			/// Draw constraints in the same group in the same color, non-parallel group will be red
-	JPH_SoftBodyConstraintColor_ConstraintOrder,			/// Draw constraints in the same group in the same color, non-parallel group will be red, and order within each group will be indicated with gradient
+	JPH_SoftBodyConstraintColor_ConstraintType,				!* Draw different types of constraints in different colors
+	JPH_SoftBodyConstraintColor_ConstraintGroup,			!* Draw constraints in the same group in the same color, non-parallel group will be red
+	JPH_SoftBodyConstraintColor_ConstraintOrder,			!* Draw constraints in the same group in the same color, non-parallel group will be red, and order within each group will be indicated with gradient
 
 	_JPH_SoftBodyConstraintColor_Count,
 	_JPH_SoftBodyConstraintColor_Force32 = 0x7FFFFFFF
@@ -290,28 +290,28 @@ typedef enum JPH_SoftBodyConstraintColor
 
 typedef enum JPH_BodyManager_ShapeColor
 {
-	JPH_BodyManager_ShapeColor_InstanceColor,				///< Random color per instance
-	JPH_BodyManager_ShapeColor_ShapeTypeColor,				///< Convex = green, scaled = yellow, compound = orange, mesh = red
-	JPH_BodyManager_ShapeColor_MotionTypeColor,			///< Static = grey, keyframed = green, dynamic = random color per instance
-	JPH_BodyManager_ShapeColor_SleepColor,					///< Static = grey, keyframed = green, dynamic = yellow, sleeping = red
-	JPH_BodyManager_ShapeColor_IslandColor,				///< Static = grey, active = random color per island, sleeping = light grey
-	JPH_BodyManager_ShapeColor_MaterialColor,				///< Color as defined by the PhysicsMaterial of the shape
+	JPH_BodyManager_ShapeColor_InstanceColor,				!*< Random color per instance
+	JPH_BodyManager_ShapeColor_ShapeTypeColor,				!*< Convex = green, scaled = yellow, compound = orange, mesh = red
+	JPH_BodyManager_ShapeColor_MotionTypeColor,			!*< Static = grey, keyframed = green, dynamic = random color per instance
+	JPH_BodyManager_ShapeColor_SleepColor,					!*< Static = grey, keyframed = green, dynamic = yellow, sleeping = red
+	JPH_BodyManager_ShapeColor_IslandColor,				!*< Static = grey, active = random color per island, sleeping = light grey
+	JPH_BodyManager_ShapeColor_MaterialColor,				!*< Color as defined by the PhysicsMaterial of the shape
 
 	_JPH_BodyManager_ShapeColor_Count,
 	_JPH_BodyManager_ShapeColor_Force32 = 0x7FFFFFFF
 } JPH_BodyManager_ShapeColor;
 
 typedef enum JPH_DebugRenderer_CastShadow {
-	JPH_DebugRenderer_CastShadow_On = 0,    ///< This shape should cast a shadow
-	JPH_DebugRenderer_CastShadow_Off = 1,   ///< This shape should not cast a shadow
+	JPH_DebugRenderer_CastShadow_On = 0,    !*< This shape should cast a shadow
+	JPH_DebugRenderer_CastShadow_Off = 1,   !*< This shape should not cast a shadow
 
 	_JPH_DebugRenderer_CastShadow_Count,
 	_JPH_DebugRenderer_CastShadow_Force32 = 0x7FFFFFFF
 } JPH_DebugRenderer_CastShadow;
 
 typedef enum JPH_DebugRenderer_DrawMode {
-	JPH_DebugRenderer_DrawMode_Solid = 0,       ///< Draw as a solid shape
-	JPH_DebugRenderer_DrawMode_Wireframe = 1,   ///< Draw as wireframe
+	JPH_DebugRenderer_DrawMode_Solid = 0,       !*< Draw as a solid shape
+	JPH_DebugRenderer_DrawMode_Wireframe = 1,   !*< Draw as wireframe
 
 	_JPH_DebugRenderer_JPH_DebugRenderer_DrawMode_Count,
 	_JPH_DebugRenderer_JPH_DebugRenderer_DrawMode_Force32 = 0x7FFFFFFF
@@ -401,29 +401,29 @@ typedef struct JPH_MassProperties {
 } JPH_MassProperties;
 
 typedef struct JPH_CollideSettingsBase {
-	/// How active edges (edges that a moving object should bump into) are handled
+	!* How active edges (edges that a moving object should bump into) are handled
 	JPH_ActiveEdgeMode			activeEdgeMode/* = JPH_ActiveEdgeMode_CollideOnlyWithActive*/;
 
-	/// If colliding faces should be collected or only the collision point
+	!* If colliding faces should be collected or only the collision point
 	JPH_CollectFacesMode		collectFacesMode/* = JPH_CollectFacesMode_NoFaces*/;
 
-	/// If objects are closer than this distance, they are considered to be colliding (used for GJK) (unit: meter)
+	!* If objects are closer than this distance, they are considered to be colliding (used for GJK) (unit: meter)
 	float						collisionTolerance/* = JPH_DEFAULT_COLLISION_TOLERANCE*/;
 
-	/// A factor that determines the accuracy of the penetration depth calculation. If the change of the squared distance is less than tolerance * current_penetration_depth^2 the algorithm will terminate. (unit: dimensionless)
+	!* A factor that determines the accuracy of the penetration depth calculation. If the change of the squared distance is less than tolerance * current_penetration_depth^2 the algorithm will terminate. (unit: dimensionless)
 	float						penetrationTolerance/* = JPH_DEFAULT_PENETRATION_TOLERANCE*/;
 
-	/// When mActiveEdgeMode is CollideOnlyWithActive a movement direction can be provided. When hitting an inactive edge, the system will select the triangle normal as penetration depth only if it impedes the movement less than with the calculated penetration depth.
+	!* When mActiveEdgeMode is CollideOnlyWithActive a movement direction can be provided. When hitting an inactive edge, the system will select the triangle normal as penetration depth only if it impedes the movement less than with the calculated penetration depth.
 	JPH_Vec3					activeEdgeMovementDirection/* = Vec3::sZero()*/;
 } JPH_CollideSettingsBase;
 
 /* CollideShapeSettings */
 typedef struct JPH_CollideShapeSettings {
 	JPH_CollideSettingsBase     base;    /* Inherics JPH_CollideSettingsBase */
-	/// When > 0 contacts in the vicinity of the query shape can be found. All nearest contacts that are not further away than this distance will be found (unit: meter)
+	!* When > 0 contacts in the vicinity of the query shape can be found. All nearest contacts that are not further away than this distance will be found (unit: meter)
 	float						maxSeparationDistance/* = 0.0f*/;
 
-	/// How backfacing triangles should be treated
+	!* How backfacing triangles should be treated
 	JPH_BackFaceMode			backFaceMode/* = JPH_BackFaceMode_IgnoreBackFaces*/;
 } JPH_CollideShapeSettings;
 
@@ -432,27 +432,27 @@ typedef struct JPH_CollideShapeSettings {
 typedef struct JPH_ShapeCastSettings {
 	JPH_CollideSettingsBase     base;    /* Inherics JPH_CollideSettingsBase */
 
-	/// How backfacing triangles should be treated (should we report moving from back to front for triangle based shapes, e.g. for MeshShape/HeightFieldShape?)
+	!* How backfacing triangles should be treated (should we report moving from back to front for triangle based shapes, e.g. for MeshShape/HeightFieldShape?)
 	JPH_BackFaceMode			backFaceModeTriangles/* = JPH_BackFaceMode_IgnoreBackFaces*/;
 
-	/// How backfacing convex objects should be treated (should we report starting inside an object and moving out?)
+	!* How backfacing convex objects should be treated (should we report starting inside an object and moving out?)
 	JPH_BackFaceMode			backFaceModeConvex/* = JPH_BackFaceMode_IgnoreBackFaces*/;
 
-	/// Indicates if we want to shrink the shape by the convex radius and then expand it again. This speeds up collision detection and gives a more accurate normal at the cost of a more 'rounded' shape.
+	!* Indicates if we want to shrink the shape by the convex radius and then expand it again. This speeds up collision detection and gives a more accurate normal at the cost of a more 'rounded' shape.
 	bool						useShrunkenShapeAndConvexRadius/* = false*/;
 
-	/// When true, and the shape is intersecting at the beginning of the cast (fraction = 0) then this will calculate the deepest penetration point (costing additional CPU time)
+	!* When true, and the shape is intersecting at the beginning of the cast (fraction = 0) then this will calculate the deepest penetration point (costing additional CPU time)
 	bool						returnDeepestPoint/* = false*/;
 } JPH_ShapeCastSettings;
 
 typedef struct JPH_RayCastSettings {
-	/// How backfacing triangles should be treated (should we report back facing hits for triangle based shapes, e.g. MeshShape/HeightFieldShape?)
+	!* How backfacing triangles should be treated (should we report back facing hits for triangle based shapes, e.g. MeshShape/HeightFieldShape?)
 	JPH_BackFaceMode backFaceModeTriangles/* = JPH_BackFaceMode_IgnoreBackFaces*/;
 
-	/// How backfacing convex objects should be treated (should we report back facing hits for convex shapes?)
+	!* How backfacing convex objects should be treated (should we report back facing hits for convex shapes?)
 	JPH_BackFaceMode backFaceModeConvex/* = JPH_BackFaceMode_IgnoreBackFaces*/;
 
-	/// If convex shapes should be treated as solid. When true, a ray starting inside a convex shape will generate a hit at fraction 0.
+	!* If convex shapes should be treated as solid. When true, a ray starting inside a convex shape will generate a hit at fraction 0.
 	bool treatConvexAsSolid/* = true*/;
 } JPH_RayCastSettings;
 
@@ -519,27 +519,27 @@ typedef struct JPH_ShapeCastResult
 
 typedef struct JPH_DrawSettings
 {
-	bool					drawGetSupportFunction;				///< Draw the GetSupport() function, used for convex collision detection
-	bool					drawSupportDirection;				///< When drawing the support function, also draw which direction mapped to a specific support point
-	bool					drawGetSupportingFace;				///< Draw the faces that were found colliding during collision detection
-	bool					drawShape;							///< Draw the shapes of all bodies
-	bool					drawShapeWireframe;					///< When mDrawShape is true and this is true, the shapes will be drawn in wireframe instead of solid.
-	JPH_BodyManager_ShapeColor	drawShapeColor;                     ///< Coloring scheme to use for shapes
-	bool					drawBoundingBox;					///< Draw a bounding box per body
-	bool					drawCenterOfMassTransform;			///< Draw the center of mass for each body
-	bool					drawWorldTransform;					///< Draw the world transform (which can be different than the center of mass) for each body
-	bool					drawVelocity;						///< Draw the velocity vector for each body
-	bool					drawMassAndInertia;					///< Draw the mass and inertia (as the box equivalent) for each body
-	bool					drawSleepStats;						///< Draw stats regarding the sleeping algorithm of each body
-	bool					drawSoftBodyVertices;				///< Draw the vertices of soft bodies
-	bool					drawSoftBodyVertexVelocities;		///< Draw the velocities of the vertices of soft bodies
-	bool					drawSoftBodyEdgeConstraints;		///< Draw the edge constraints of soft bodies
-	bool					drawSoftBodyBendConstraints;		///< Draw the bend constraints of soft bodies
-	bool					drawSoftBodyVolumeConstraints;		///< Draw the volume constraints of soft bodies
-	bool					drawSoftBodySkinConstraints;		///< Draw the skin constraints of soft bodies
-	bool					drawSoftBodyLRAConstraints;	        ///< Draw the LRA constraints of soft bodies
-	bool					drawSoftBodyPredictedBounds;		///< Draw the predicted bounds of soft bodies
-	JPH_SoftBodyConstraintColor	drawSoftBodyConstraintColor;        ///< Coloring scheme to use for soft body constraints
+	bool					drawGetSupportFunction;				!*< Draw the GetSupport() function, used for convex collision detection
+	bool					drawSupportDirection;				!*< When drawing the support function, also draw which direction mapped to a specific support point
+	bool					drawGetSupportingFace;				!*< Draw the faces that were found colliding during collision detection
+	bool					drawShape;							!*< Draw the shapes of all bodies
+	bool					drawShapeWireframe;					!*< When mDrawShape is true and this is true, the shapes will be drawn in wireframe instead of solid.
+	JPH_BodyManager_ShapeColor	drawShapeColor;                     !*< Coloring scheme to use for shapes
+	bool					drawBoundingBox;					!*< Draw a bounding box per body
+	bool					drawCenterOfMassTransform;			!*< Draw the center of mass for each body
+	bool					drawWorldTransform;					!*< Draw the world transform (which can be different than the center of mass) for each body
+	bool					drawVelocity;						!*< Draw the velocity vector for each body
+	bool					drawMassAndInertia;					!*< Draw the mass and inertia (as the box equivalent) for each body
+	bool					drawSleepStats;						!*< Draw stats regarding the sleeping algorithm of each body
+	bool					drawSoftBodyVertices;				!*< Draw the vertices of soft bodies
+	bool					drawSoftBodyVertexVelocities;		!*< Draw the velocities of the vertices of soft bodies
+	bool					drawSoftBodyEdgeConstraints;		!*< Draw the edge constraints of soft bodies
+	bool					drawSoftBodyBendConstraints;		!*< Draw the bend constraints of soft bodies
+	bool					drawSoftBodyVolumeConstraints;		!*< Draw the volume constraints of soft bodies
+	bool					drawSoftBodySkinConstraints;		!*< Draw the skin constraints of soft bodies
+	bool					drawSoftBodyLRAConstraints;	        !*< Draw the LRA constraints of soft bodies
+	bool					drawSoftBodyPredictedBounds;		!*< Draw the predicted bounds of soft bodies
+	JPH_SoftBodyConstraintColor	drawSoftBodyConstraintColor;        !*< Coloring scheme to use for soft body constraints
 } JPH_DrawSettings;
 
 typedef void JPH_CastRayResultCallback(void* context, const JPH_RayCastResult* result);
@@ -1170,7 +1170,7 @@ JPH_CAPI void JPH_DistanceConstraintSettings_GetPoint1(JPH_DistanceConstraintSet
 JPH_CAPI void JPH_DistanceConstraintSettings_SetPoint1(JPH_DistanceConstraintSettings* settings, const JPH_RVec3* value);
 JPH_CAPI void JPH_DistanceConstraintSettings_GetPoint2(JPH_DistanceConstraintSettings* settings, JPH_RVec3* result);
 JPH_CAPI void JPH_DistanceConstraintSettings_SetPoint2(JPH_DistanceConstraintSettings* settings, const JPH_RVec3* value);
-JPH_CAPI JPH_DistanceConstraint* JPH_DistanceConstraintSettings_CreateConstraint(JPH_DistanceConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2); // binding for DistanceConstraintSettings::Create()
+JPH_CAPI JPH_DistanceConstraint* JPH_DistanceConstraintSettings_CreateConstraint(JPH_DistanceConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2); ! binding for DistanceConstraintSettings::Create()
 
 /* JPH_DistanceConstraint */
 JPH_CAPI void JPH_DistanceConstraint_SetDistance(JPH_DistanceConstraint* constraint, float minDistance, float maxDistance);
@@ -1188,7 +1188,7 @@ JPH_CAPI void JPH_PointConstraintSettings_GetPoint1(JPH_PointConstraintSettings*
 JPH_CAPI void JPH_PointConstraintSettings_SetPoint1(JPH_PointConstraintSettings* settings, const JPH_RVec3* value);
 JPH_CAPI void JPH_PointConstraintSettings_GetPoint2(JPH_PointConstraintSettings* settings, JPH_RVec3* result);
 JPH_CAPI void JPH_PointConstraintSettings_SetPoint2(JPH_PointConstraintSettings* settings, const JPH_RVec3* value);
-JPH_CAPI JPH_PointConstraint* JPH_PointConstraintSettings_CreateConstraint(JPH_PointConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2); // binding for PointConstraintSettings::Create()
+JPH_CAPI JPH_PointConstraint* JPH_PointConstraintSettings_CreateConstraint(JPH_PointConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2); ! binding for PointConstraintSettings::Create()
 
 /* JPH_PointConstraint */
 JPH_CAPI void JPH_PointConstraint_SetPoint1(JPH_PointConstraint* constraint, JPH_ConstraintSpace space, JPH_RVec3* value);
@@ -1209,7 +1209,7 @@ JPH_CAPI void JPH_HingeConstraintSettings_SetHingeAxis2(JPH_HingeConstraintSetti
 JPH_CAPI void JPH_HingeConstraintSettings_GetHingeAxis2(JPH_HingeConstraintSettings* settings, JPH_Vec3* result);
 JPH_CAPI void JPH_HingeConstraintSettings_SetNormalAxis2(JPH_HingeConstraintSettings* settings, const JPH_Vec3* value);
 JPH_CAPI void JPH_HingeConstraintSettings_GetNormalAxis2(JPH_HingeConstraintSettings* settings, JPH_Vec3* result);
-JPH_CAPI JPH_HingeConstraint* JPH_HingeConstraintSettings_CreateConstraint(JPH_HingeConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2); // binding for HingeConstraintSettings::Create()
+JPH_CAPI JPH_HingeConstraint* JPH_HingeConstraintSettings_CreateConstraint(JPH_HingeConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2); ! binding for HingeConstraintSettings::Create()
 
 /* JPH_HingeConstraint */
 JPH_CAPI JPH_HingeConstraintSettings* JPH_HingeConstraint_GetSettings(JPH_HingeConstraint* constraint);
@@ -1252,7 +1252,7 @@ JPH_CAPI void JPH_SliderConstraintSettings_SetSliderAxis2(JPH_SliderConstraintSe
 JPH_CAPI void JPH_SliderConstraintSettings_GetSliderAxis2(JPH_SliderConstraintSettings* settings, JPH_Vec3* result);
 JPH_CAPI void JPH_SliderConstraintSettings_SetNormalAxis2(JPH_SliderConstraintSettings* settings, const JPH_Vec3* value);
 JPH_CAPI void JPH_SliderConstraintSettings_GetNormalAxis2(JPH_SliderConstraintSettings* settings, JPH_Vec3* result);
-JPH_CAPI JPH_SliderConstraint* JPH_SliderConstraintSettings_CreateConstraint(JPH_SliderConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2); // binding for SliderConstraintSettings::Create()
+JPH_CAPI JPH_SliderConstraint* JPH_SliderConstraintSettings_CreateConstraint(JPH_SliderConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2); ! binding for SliderConstraintSettings::Create()
 
 /* JPH_SliderConstraint */
 JPH_CAPI JPH_SliderConstraintSettings* JPH_SliderConstraint_GetSettings(JPH_SliderConstraint* constraint);
@@ -1429,18 +1429,18 @@ JPH_CAPI const JPH_PhysicsMaterial* JPH_BodyInterface_GetMaterial(JPH_BodyInterf
 
 JPH_CAPI void JPH_BodyInterface_InvalidateContactCache(JPH_BodyInterface* interface, JPH_BodyID bodyId);
 
-//--------------------------------------------------------------------------------------------------
-// JPH_BodyLockInterface
-//--------------------------------------------------------------------------------------------------
+!--------------------------------------------------------------------------------------------------
+! JPH_BodyLockInterface
+!--------------------------------------------------------------------------------------------------
 JPH_CAPI void JPH_BodyLockInterface_LockRead(const JPH_BodyLockInterface* lockInterface, JPH_BodyID bodyID, JPH_BodyLockRead* outLock);
 JPH_CAPI void JPH_BodyLockInterface_UnlockRead(const JPH_BodyLockInterface* lockInterface, JPH_BodyLockRead* ioLock);
 
 JPH_CAPI void JPH_BodyLockInterface_LockWrite(const JPH_BodyLockInterface* lockInterface, JPH_BodyID bodyID, JPH_BodyLockWrite* outLock);
 JPH_CAPI void JPH_BodyLockInterface_UnlockWrite(const JPH_BodyLockInterface* lockInterface, JPH_BodyLockWrite* ioLock);
 
-//--------------------------------------------------------------------------------------------------
-// JPH_MotionProperties
-//--------------------------------------------------------------------------------------------------
+!--------------------------------------------------------------------------------------------------
+! JPH_MotionProperties
+!--------------------------------------------------------------------------------------------------
 JPH_CAPI JPH_AllowedDOFs JPH_MotionProperties_GetAllowedDOFs(const JPH_MotionProperties* properties);
 JPH_CAPI void JPH_MotionProperties_SetLinearDamping(JPH_MotionProperties* properties, float damping);
 JPH_CAPI float JPH_MotionProperties_GetLinearDamping(const JPH_MotionProperties* properties);
@@ -1454,26 +1454,26 @@ JPH_CAPI void JPH_MotionProperties_GetInertiaRotation(JPH_MotionProperties* prop
 JPH_CAPI void JPH_MotionProperties_SetInverseInertia(JPH_MotionProperties* properties, JPH_Vec3* diagonal, JPH_Quat* rot);
 JPH_CAPI void JPH_MotionProperties_ScaleToMass(JPH_MotionProperties* properties, float mass);
 
-//--------------------------------------------------------------------------------------------------
-// JPH_MassProperties
-//--------------------------------------------------------------------------------------------------
+!--------------------------------------------------------------------------------------------------
+! JPH_MassProperties
+!--------------------------------------------------------------------------------------------------
 JPH_CAPI void JPH_MassProperties_DecomposePrincipalMomentsOfInertia(JPH_MassProperties* properties, JPH_Matrix4x4* rotation, JPH_Vec3* diagonal);
 JPH_CAPI void JPH_MassProperties_ScaleToMass(JPH_MassProperties* properties, float mass);
 JPH_CAPI void JPH_MassProperties_GetEquivalentSolidBoxSize(float mass, const JPH_Vec3* inertiaDiagonal, JPH_Vec3* result);
 
-//--------------------------------------------------------------------------------------------------
-// JPH_CollideShapeSettings
-//--------------------------------------------------------------------------------------------------
+!--------------------------------------------------------------------------------------------------
+! JPH_CollideShapeSettings
+!--------------------------------------------------------------------------------------------------
 JPH_CAPI void JPH_CollideShapeSettings_Init(JPH_CollideShapeSettings* settings);
 
-//--------------------------------------------------------------------------------------------------
-// JPH_ShapeCastSettings
-//--------------------------------------------------------------------------------------------------
+!--------------------------------------------------------------------------------------------------
+! JPH_ShapeCastSettings
+!--------------------------------------------------------------------------------------------------
 JPH_CAPI void JPH_ShapeCastSettings_Init(JPH_ShapeCastSettings* settings);
 
-//--------------------------------------------------------------------------------------------------
-// JPH_BroadPhaseQuery
-//--------------------------------------------------------------------------------------------------
+!--------------------------------------------------------------------------------------------------
+! JPH_BroadPhaseQuery
+!--------------------------------------------------------------------------------------------------
 JPH_CAPI bool JPH_BroadPhaseQuery_CastRay(const JPH_BroadPhaseQuery* query,
 	const JPH_Vec3* origin, const JPH_Vec3* direction,
 	JPH_RayCastBodyCollector* callback, void* userData,
@@ -1502,9 +1502,9 @@ JPH_CAPI bool JPH_BroadPhaseQuery_CollidePoint(const JPH_BroadPhaseQuery* query,
 	JPH_BroadPhaseLayerFilter* broadPhaseLayerFilter,
 	JPH_ObjectLayerFilter* objectLayerFilter);
 
-//--------------------------------------------------------------------------------------------------
-// JPH_NarrowPhaseQuery
-//--------------------------------------------------------------------------------------------------
+!--------------------------------------------------------------------------------------------------
+! JPH_NarrowPhaseQuery
+!--------------------------------------------------------------------------------------------------
 JPH_CAPI bool JPH_NarrowPhaseQuery_CastRay(const JPH_NarrowPhaseQuery* query,
 	const JPH_RVec3* origin, const JPH_Vec3* direction,
 	JPH_RayCastResult* hit,
@@ -1592,9 +1592,9 @@ JPH_CAPI bool JPH_NarrowPhaseQuery_CastShape2(const JPH_NarrowPhaseQuery* query,
 	const JPH_BodyFilter* bodyFilter,
 	const JPH_ShapeFilter* shapeFilter);
 
-//--------------------------------------------------------------------------------------------------
-// JPH_Body
-//--------------------------------------------------------------------------------------------------
+!--------------------------------------------------------------------------------------------------
+! JPH_Body
+!--------------------------------------------------------------------------------------------------
 JPH_CAPI JPH_BodyID JPH_Body_GetID(const JPH_Body* body);
 JPH_CAPI JPH_BodyType JPH_Body_GetBodyType(const JPH_Body* body);
 JPH_CAPI bool JPH_Body_IsRigidBody(const JPH_Body* body);
