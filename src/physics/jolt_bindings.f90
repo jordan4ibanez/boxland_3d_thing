@@ -5,12 +5,14 @@ module jolt_bindings
 ! Copyright (c) Amer Koleci and Contributors.
 ! Licensed under the MIT License (MIT). See LICENSE in the repository root for more information.
 
+  !! DO NOT HIT SAVE LOL!
+
 real(c_float), parameter :: JPH_DEFAULT_COLLISION_TOLERANCE = real(1.0e0 - 4.0) ! float cDefaultCollisionTolerance = 1.0e-4f
-#define JPH_DEFAULT_PENETRATION_TOLERANCE (1.0e-4f) ! float cDefaultPenetrationTolerance = 1.0e-4f
-#define JPH_DEFAULT_CONVEX_RADIUS (0.05f) ! float cDefaultConvexRadius = 0.05f
-#define JPH_CAPSULE_PROJECTION_SLOP (0.02f) ! float cCapsuleProjectionSlop = 0.02f
-#define JPH_MAX_PHYSICS_JOBS (2048) ! int cMaxPhysicsJobs = 2048
-#define JPH_MAX_PHYSICS_BARRIERS (2048) ! int cMaxPhysicsBarriers = 8
+real(c_float), parameter ::  JPH_DEFAULT_PENETRATION_TOLERANCE (1.0e-4f) ! float cDefaultPenetrationTolerance = 1.0e-4f
+real(c_float), parameter ::  JPH_DEFAULT_CONVEX_RADIUS (0.05f) ! float cDefaultConvexRadius = 0.05f
+real(c_float), parameter ::  JPH_CAPSULE_PROJECTION_SLOP (0.02f) ! float cCapsuleProjectionSlop = 0.02f
+integer(c_int32_t), parameter :: JPH_MAX_PHYSICS_JOBS (2048) ! int cMaxPhysicsJobs = 2048
+integer(c_int32_t), parameter ::  JPH_MAX_PHYSICS_BARRIERS (2048) ! int cMaxPhysicsBarriers = 8
 
 typedef uint32_t JPH_BodyID;
 typedef uint32_t JPH_SubShapeID;
