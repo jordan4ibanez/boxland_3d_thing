@@ -844,7 +844,15 @@ module jolt_bindings
       type(c_ptr) :: BroadPhaseLayerInterface
     end function
 
-! JPH_CAPI void JPH_BroadPhaseLayerInterfaceTable_MapObjectToBroadPhaseLayer(JPH_BroadPhaseLayerInterface* bpInterface, JPH_ObjectLayer objectLayer, JPH_BroadPhaseLayer broadPhaseLayer)
+
+    subroutine JPH_BroadPhaseLayerInterfaceTable_MapObjectToBroadPhaseLayer(bpInterface, objectLayer, broadPhaseLayer) bind(c, name = "JPH_BroadPhaseLayerInterfaceTable_MapObjectToBroadPhaseLayer")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: bpInterface
+      integer(c_int16_t), intent(in), value :: objectLayer
+      integer(c_int8_t), intent(in), value :: broadPhaseLayer
+    end subroutine
 
 !  !* JPH_ObjectLayerPairFilter */
 ! JPH_CAPI JPH_ObjectLayerPairFilter* JPH_ObjectLayerPairFilterMask_Create(void)

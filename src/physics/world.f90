@@ -21,7 +21,7 @@ module world
   type(c_ptr) :: object_layer_pair_filter_table
   type(c_ptr) :: broad_phase_layer_interface_table
   type(c_ptr) :: object_vs_broad_phase_layer_filter
-  type(jph_physics_system_settings), target :: settings
+  type(JPH_PhysicsSystemSettings), target :: settings
 
 contains
 
