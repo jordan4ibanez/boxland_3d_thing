@@ -940,9 +940,17 @@ module jolt_bindings
       type(c_ptr) :: ObjectVsBroadPhaseLayerFilter
     end function
 
-! JPH_CAPI JPH_ObjectVsBroadPhaseLayerFilter* JPH_ObjectVsBroadPhaseLayerFilterTable_Create(
-!   JPH_BroadPhaseLayerInterface* broadPhaseLayerInterface, uint32_t numBroadPhaseLayers,
-!   JPH_ObjectLayerPairFilter* objectLayerPairFilter, uint32_t numObjectLayers)
+
+    function JPH_ObjectVsBroadPhaseLayerFilterTable_Create(broadPhaseLayerInterface, numBroadPhaseLayers, objectLayerPairFilter, numObjectLayers) result(ObjectVsBroadPhaseLayerFilter) bind(c, name = "JPH_ObjectVsBroadPhaseLayerFilterTable_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: broadPhaseLayerInterface
+      integer(c_int32_t), intent(in), value :: numBroadPhaseLayers
+      type(c_ptr), intent(in), value :: objectLayerPairFilter
+      integer(c_int32_t), intent(in), value :: numObjectLayers
+      type(c_ptr) :: ObjectVsBroadPhaseLayerFilter
+    end function
 
 ! JPH_CAPI void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings)
 
