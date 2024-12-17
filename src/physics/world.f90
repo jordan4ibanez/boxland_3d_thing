@@ -35,20 +35,20 @@ contains
       print"(A)", "Initialized Jolt Physics."
     end if
 
-    call jph_set_trace_handler(c_funloc(trace_output_handler))
+    call JPH_SetTraceHandler(c_funloc(trace_output_handler))
 
     job_system_threadpool = JPH_JobSystemThreadPool_Create(c_null_ptr)
 
     ! We're only using 2 layers.
     ! One for non-moving, one for moving.
     object_layer_pair_filter_table = JPH_ObjectLayerPairFilterTable_Create(2)
-    call jph_object_layer_pair_filter_table_enable_collision(object_layer_pair_filter_table, LAYERS_NON_MOVING, LAYERS_MOVING)
-    call jph_object_layer_pair_filter_table_enable_collision(object_layer_pair_filter_table, LAYERS_MOVING, LAYERS_NON_MOVING)
+    call JPH_ObjectLayerPairFilterTable_EnableCollision(object_layer_pair_filter_table, LAYERS_NON_MOVING, LAYERS_MOVING)
+    call JPH_ObjectLayerPairFilterTable_EnableCollision(object_layer_pair_filter_table, LAYERS_MOVING, LAYERS_NON_MOVING)
 
     ! We use a 1 to 1 mapping between object layers and broadphase layers.
     broad_phase_layer_interface_table = JPH_BroadPhaseLayerInterfaceTable_Create(2, 2)
-    call jph_broadphaselayer_interfacetable_map_object_tobroadphaselayer(broad_phase_layer_interface_table, LAYERS_NON_MOVING, BROAD_PHASE_LAYERS_NON_MOVING)
-    call jph_broadphaselayer_interfacetable_map_object_tobroadphaselayer(broad_phase_layer_interface_table, LAYERS_MOVING, BROAD_PHASE_LAYERS_MOVING)
+    call JPH_BroadPhaseLayerInterfaceTable_MapObjectToBroadPhaseLayer(broad_phase_layer_interface_table, LAYERS_NON_MOVING, BROAD_PHASE_LAYERS_NON_MOVING)
+    call JPH_BroadPhaseLayerInterfaceTable_MapObjectToBroadPhaseLayer(broad_phase_layer_interface_table, LAYERS_MOVING, BROAD_PHASE_LAYERS_MOVING)
 
     ! 	JPH_ObjectVsBroadPhaseLayerFilter* objectVsBroadPhaseLayerFilter = JPH_ObjectVsBroadPhaseLayerFilterTable_Create(broadPhaseLayerInterfaceTable, 2, objectLayerPairFilterTable, 2);
     object_vs_broad_phase_layer_filter = JPH_ObjectVsBroadPhaseLayerFilterTable_Create(broad_phase_layer_interface_table, 2, object_layer_pair_filter_table, 2)

@@ -12,16 +12,7 @@ auto-examples = true
 module-naming = false
 
 # This is just for fedora.
-link = [
-  "glfw",
-  "Bullet3Collision",
-  "Bullet3Common",
-  "Bullet3Dynamics",
-  "Bullet3Geometry",
-  "Bullet3Collision",
-  "Bullet3Dynamics",
-  "LinearMath",
-]
+link = ["glfw"]
 
 [dependencies]
 forthread = { git = "https://github.com/jordan4ibanez/forthread" }
