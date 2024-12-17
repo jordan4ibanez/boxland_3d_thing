@@ -762,19 +762,36 @@ module jolt_bindings
   interface
 
 
-  function JPH_JobSystemThreadPool_Create(JobSystemThreadPoolConf) result(JPH_JobSystem) bind(c, name = "JPH_JobSystemThreadPool_Create")
-    use, intrinsic :: iso_c_binding
-    implicit none
+    function JPH_JobSystemThreadPool_Create(JobSystemThreadPoolConf) result(JPH_JobSystem) bind(c, name = "JPH_JobSystemThreadPool_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
 
-    type(c_ptr), intent(in), value :: JobSystemThreadPoolConf
-    type(c_ptr) :: JPH_JobSystem
-  end function 
+      type(c_ptr), intent(in), value :: JobSystemThreadPoolConf
+      type(c_ptr) :: JPH_JobSystem
+    end function
 
-! JPH_CAPI JPH_JobSystem* JPH_JobSystemCallback_Create(const JPH_JobSystemConfig* config)
 
-! JPH_CAPI void JPH_JobSystem_Destroy(JPH_JobSystem* jobSystem)
+    function JPH_JobSystemCallback_Create(JPH_JobSystemConf) result(JPH_JobSystem) bind(c, name = "JPH_JobSystemCallback_Create")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: JPH_JobSystemConf
+      type(c_ptr) :: JPH_JobSystem
+    end function
+
+    subroutine JPH_JobSystem_Destroy(jobSystem) bind(c, name = "JPH_JobSystem_Destroy")
+      use, intrinsic :: iso_c_binding
+      implicit none
+
+      type(c_ptr), intent(in), value :: jobSystem
+    end subroutine
 
 ! JPH_CAPI bool JPH_Init(void)
+    subroutine blankhere() bind(c, name = "")
+      use, intrinsic :: iso_c_binding
+      implicit none
+    
+    end subroutine
 
 ! JPH_CAPI void JPH_Shutdown(void)
 
