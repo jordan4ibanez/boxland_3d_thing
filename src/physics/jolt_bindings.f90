@@ -7,8 +7,6 @@ module jolt_bindings
 
   !? Implementation note: I'm not going to be transferring my snakecasing as I want this to be a direct translation.
 
-  !! DO NOT HIT SAVE LOL!
-
   real(c_float), parameter :: JPH_DEFAULT_COLLISION_TOLERANCE = real(1.0e0 - 4.0) ! float cDefaultCollisionTolerance = 1.0e-4f
   real(c_float), parameter :: JPH_DEFAULT_PENETRATION_TOLERANCE = (1.0e0 - 4.0) ! float cDefaultPenetrationTolerance = 1.0e-4f
   real(c_float), parameter :: JPH_DEFAULT_CONVEX_RADIUS = (0.05) ! float cDefaultConvexRadius = 0.05f
@@ -32,69 +30,57 @@ module jolt_bindings
     integer(c_int8_t) :: data = 0
   end type JPH_BroadPhaseLayer
 
-! typedef enum JPH_PhysicsUpdateError {
+
   integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_None = 0
   integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_ManifoldCacheFull = shiftl(1, 0)
   integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_BodyPairCacheFull = shiftl(1, 1)
   integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_ContactConstraintsFull = shiftl(1, 2)
-
   integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_PhysicsUpdateError_Force32 = int(z"7fffffff")
-! } JPH_PhysicsUpdateError
 
-! typedef enum JPH_BodyType {
+
+
   integer(c_int32_t), parameter :: JPH_BodyType_Rigid = 0
   integer(c_int32_t), parameter :: JPH_BodyType_Soft = 1
-
   integer(c_int32_t), parameter :: JPH_BodyType_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_BodyType_Force32 = int(z"7fffffff")
-! } JPH_BodyType
 
-! typedef enum JPH_MotionType {
+
   integer(c_int32_t), parameter :: JPH_MotionType_Static = 0
   integer(c_int32_t), parameter :: JPH_MotionType_Kinematic = 1
   integer(c_int32_t), parameter :: JPH_MotionType_Dynamic = 2
-
   integer(c_int32_t), parameter :: JPH_MotionType_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_MotionType_Force32 = int(z"7fffffff")
-! } JPH_MotionType
 
-! typedef enum JPH_Activation {
+
   integer(c_int32_t), parameter :: JPH_Activation_Activate = 0
   integer(c_int32_t), parameter :: JPH_Activation_DontActivate = 1
-
   integer(c_int32_t), parameter :: JPH_Activation_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_Activation_Force32 = int(z"7fffffff")
-! } JPH_Activation
 
-! typedef enum JPH_ValidateResult {
+
   integer(c_int32_t), parameter :: JPH_ValidateResult_AcceptAllContactsForThisBodyPair = 0
   integer(c_int32_t), parameter :: JPH_ValidateResult_AcceptContact = 1
   integer(c_int32_t), parameter :: JPH_ValidateResult_RejectContact = 2
   integer(c_int32_t), parameter :: JPH_ValidateResult_RejectAllContactsForThisBodyPair = 3
-
   integer(c_int32_t), parameter :: JPH_ValidateResult_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_ValidateResult_Force32 = int(z"7fffffff")
-! } JPH_ValidateResult
 
-! typedef enum JPH_ShapeType {
+
   integer(c_int32_t), parameter :: JPH_ShapeType_Convex = 0
   integer(c_int32_t), parameter :: JPH_ShapeType_Compound = 1
   integer(c_int32_t), parameter :: JPH_ShapeType_Decorated = 2
   integer(c_int32_t), parameter :: JPH_ShapeType_Mesh = 3
   integer(c_int32_t), parameter :: JPH_ShapeType_HeightField = 4
   integer(c_int32_t), parameter :: JPH_ShapeType_SoftBody = 5
-
   integer(c_int32_t), parameter :: JPH_ShapeType_User1 = 6
   integer(c_int32_t), parameter :: JPH_ShapeType_User2 = 7
   integer(c_int32_t), parameter :: JPH_ShapeType_User3 = 8
   integer(c_int32_t), parameter :: JPH_ShapeType_User4 = 9
-
   integer(c_int32_t), parameter :: JPH_ShapeType_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_ShapeType_Force32 = int(z"7fffffff")
-! } JPH_ShapeType
 
-! typedef enum JPH_ShapeSubType {
+
   integer(c_int32_t), parameter :: JPH_ShapeSubType_Sphere = 0
   integer(c_int32_t), parameter :: JPH_ShapeSubType_Box = 1
   integer(c_int32_t), parameter :: JPH_ShapeSubType_Triangle = 2
@@ -110,20 +96,16 @@ module jolt_bindings
   integer(c_int32_t), parameter :: JPH_ShapeSubType_Mesh = 12
   integer(c_int32_t), parameter :: JPH_ShapeSubType_HeightField = 13
   integer(c_int32_t), parameter :: JPH_ShapeSubType_SoftBody = 14
-
   integer(c_int32_t), parameter :: JPH_ShapeSubType_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_ShapeSubType_Force32 = int(z"7fffffff")
-! } JPH_ShapeSubType
 
-! typedef enum JPH_ConstraintType {
+
   integer(c_int32_t), parameter :: JPH_ConstraintType_Constraint = 0
   integer(c_int32_t), parameter :: JPH_ConstraintType_TwoBodyConstraint = 1
-
   integer(c_int32_t), parameter :: JPH_ConstraintType_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_ConstraintType_Force32 = int(z"7fffffff")
-! } JPH_ConstraintType
 
-! typedef enum JPH_ConstraintSubType {
+
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_Fixed = 0
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_Point = 1
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_Hinge = 2
@@ -137,33 +119,26 @@ module jolt_bindings
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_RackAndPinion = 10
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_Gear = 11
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_Pulley = 12
-
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_User1 = 13
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_User2 = 14
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_User3 = 15
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_User4 = 16
-
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_ConstraintSubType_Force32 = int(z"7fffffff")
-! } JPH_ConstraintSubType
 
-! typedef enum JPH_ConstraintSpace {
+
   integer(c_int32_t), parameter :: JPH_ConstraintSpace_LocalToBodyCOM = 0
   integer(c_int32_t), parameter :: JPH_ConstraintSpace_WorldSpace = 1
-
   integer(c_int32_t), parameter :: JPH_ConstraintSpace_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_ConstraintSpace_Force32 = int(z"7fffffff")
-! } JPH_ConstraintSpace
 
-! typedef enum JPH_MotionQuality {
+
   integer(c_int32_t), parameter :: JPH_MotionQuality_Discrete = 0
   integer(c_int32_t), parameter :: JPH_MotionQuality_LinearCast = 1
-
   integer(c_int32_t), parameter :: JPH_MotionQuality_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_MotionQuality_Force32 = int(z"7fffffff")
-! } JPH_MotionQuality
 
-! typedef enum JPH_AllowedDOFs {
+
   integer(c_int32_t), parameter :: JPH_AllowedDOFs_All = int(z"0b111111")
   integer(c_int32_t), parameter :: JPH_AllowedDOFs_TranslationX = int(z"0b000001")
   integer(c_int32_t), parameter :: JPH_AllowedDOFs_TranslationY = int(z"0b000010")
@@ -172,122 +147,96 @@ module jolt_bindings
   integer(c_int32_t), parameter :: JPH_AllowedDOFs_RotationY = int(z"0b010000")
   integer(c_int32_t), parameter :: JPH_AllowedDOFs_RotationZ = int(z"0b100000")
   integer(c_int32_t), parameter :: JPH_AllowedDOFs_Plane2D = ior(JPH_AllowedDOFs_TranslationX, ior(JPH_AllowedDOFs_TranslationY, JPH_AllowedDOFs_RotationZ))
-
   integer(c_int32_t), parameter :: JPH_AllowedDOFs_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_AllowedDOFs_Force32 = int(z"7fffffff")
-! } JPH_AllowedDOFs
 
-! typedef enum JPH_GroundState {
+
   integer(c_int32_t), parameter :: JPH_GroundState_OnGround = 0
   integer(c_int32_t), parameter :: JPH_GroundState_OnSteepGround = 1
   integer(c_int32_t), parameter :: JPH_GroundState_NotSupported = 2
   integer(c_int32_t), parameter :: JPH_GroundState_InAir = 3
-
   integer(c_int32_t), parameter :: JPH_GroundState_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_GroundState_Force32 = int(z"7fffffff")
-! } JPH_GroundState
 
-! typedef enum JPH_BackFaceMode {
+
   integer(c_int32_t), parameter :: JPH_BackFaceMode_IgnoreBackFaces = 0
   integer(c_int32_t), parameter :: JPH_BackFaceMode_CollideWithBackFaces = 1
-
   integer(c_int32_t), parameter :: JPH_BackFaceMode_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_BackFaceMode_Force32 = int(z"7fffffff")
-! } JPH_BackFaceMode
 
-! typedef enum JPH_ActiveEdgeMode {
+
   integer(c_int32_t), parameter :: JPH_ActiveEdgeMode_CollideOnlyWithActive = 0
   integer(c_int32_t), parameter :: JPH_ActiveEdgeMode_CollideWithAll = 1
-
   integer(c_int32_t), parameter :: JPH_ActiveEdgeMode_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_ActiveEdgeMode_Force32 = int(z"7fffffff")
-! } JPH_ActiveEdgeMode
 
-! typedef enum JPH_CollectFacesMode {
+
   integer(c_int32_t), parameter :: JPH_CollectFacesMode_CollectFaces = 0
   integer(c_int32_t), parameter :: JPH_CollectFacesMode_NoFaces = 1
-
   integer(c_int32_t), parameter :: JPH_CollectFacesMode_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_CollectFacesMode_Force32 = int(z"7fffffff")
-! } JPH_CollectFacesMode
 
-! typedef enum JPH_MotorState {
+
   integer(c_int32_t), parameter :: JPH_MotorState_Off = 0
   integer(c_int32_t), parameter :: JPH_MotorState_Velocity = 1
   integer(c_int32_t), parameter :: JPH_MotorState_Position = 2
-
   integer(c_int32_t), parameter :: JPH_MotorState_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_MotorState_Force32 = int(z"7fffffff")
-! } JPH_MotorState
 
-! typedef enum JPH_CollisionCollectorType {
+
   integer(c_int32_t), parameter :: JPH_CollisionCollectorType_AllHit = 0
   integer(c_int32_t), parameter :: JPH_CollisionCollectorType_AllHitSorted = 1
   integer(c_int32_t), parameter :: JPH_CollisionCollectorType_ClosestHit = 2
   integer(c_int32_t), parameter :: JPH_CollisionCollectorType_AnyHit = 3
-
   integer(c_int32_t), parameter :: JPH_CollisionCollectorType_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_CollisionCollectorType_Force32 = int(z"7fffffff")
-! } JPH_CollisionCollectorType
 
-! typedef enum JPH_SixDOFConstraintAxis {
+
   integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_TranslationX = 0
   integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_TranslationY = 1
   integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_TranslationZ = 2
-
   integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_RotationX = 3
   integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_RotationY = 4
   integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_RotationZ = 5
-
   integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_SixDOFConstraintAxis_Force32 = int(z"7fffffff")
-! } JPH_SixDOFConstraintAxis
 
-! typedef enum JPH_SpringMode {
+
   integer(c_int32_t), parameter :: JPH_SpringMode_FrequencyAndDamping = 0
   integer(c_int32_t), parameter :: JPH_SpringMode_StiffnessAndDamping = 1
-
   integer(c_int32_t), parameter :: JPH_SpringMode_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_SpringMode_Force32 = int(z"7fffffff")
-! } JPH_SpringMode
+
 
 !* Defines how to color soft body constraints
-! typedef enum JPH_SoftBodyConstraintColor {
   integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_ConstraintType = 0        !* Draw different types of constraints in different colors
   integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_ConstraintGroup = 1       !* Draw constraints in the same group in the same color, non-parallel group will be red
   integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_ConstraintOrder = 2       !* Draw constraints in the same group in the same color, non-parallel group will be red, and order within each group will be indicated with gradient
-
   integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_SoftBodyConstraintColor_Force32 = int(z"7fffffff")
-! } JPH_SoftBodyConstraintColor
 
-! typedef enum JPH_BodyManager_ShapeColor {
+
   integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_InstanceColor = 0        !*< Random color per instance
   integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_ShapeTypeColor = 1        !*< Convex = green, scaled = yellow, compound = orange, mesh = red
   integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_MotionTypeColor = 2      !*< Static = grey, keyframed = green, dynamic = random color per instance
   integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_SleepColor = 3          !*< Static = grey, keyframed = green, dynamic = yellow, sleeping = red
   integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_IslandColor = 4        !*< Static = grey, active = random color per island, sleeping = light grey
   integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_MaterialColor = 5        !*< Color as defined by the PhysicsMaterial of the shape
-
   integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_BodyManager_ShapeColor_Force32 = int(z"7fffffff")
-! } JPH_BodyManager_ShapeColor
 
-! typedef enum JPH_DebugRenderer_CastShadow {
+
   integer(c_int32_t), parameter :: JPH_DebugRenderer_CastShadow_On = 0    !*< This shape should cast a shadow
   integer(c_int32_t), parameter :: JPH_DebugRenderer_CastShadow_Off = 1   !*< This shape should not cast a shadow
-
   integer(c_int32_t), parameter :: JPH_DebugRenderer_CastShadow_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_DebugRenderer_CastShadow_Force32 = int(z"7fffffff")
-! } JPH_DebugRenderer_CastShadow
 
-! typedef enum JPH_DebugRenderer_DrawMode {
+
   integer(c_int32_t), parameter :: JPH_DebugRenderer_DrawMode_Solid = 0       !*< Draw as a solid shape
   integer(c_int32_t), parameter :: JPH_DebugRenderer_DrawMode_Wireframe = 1   !*< Draw as wireframe
-
   integer(c_int32_t), parameter :: JPH_DebugRendererJPH_DebugRenderer_DrawMode_Count = int(z"7fffffff")
   integer(c_int32_t), parameter :: JPH_DebugRendererJPH_DebugRenderer_DrawMode_Force32 = int(z"7fffffff")
-! } JPH_DebugRenderer_DrawMode
+
 
   type, bind(c) :: JPH_Vec3
     real(c_float) :: x = 0.0
@@ -411,7 +360,7 @@ module jolt_bindings
     type(JPH_Vec3) ::          activeEdgeMovementDirection !* = Vec3::sZero()*/
   end type JPH_CollideSettingsBase
 
-!* CollideShapeSettings.
+  !* CollideShapeSettings.
   type, bind(c) :: JPH_CollideShapeSettings
     type(JPH_CollideSettingsBase) ::     base     !* Inherics JPH_CollideSettingsBase */
     !* When > 0 contacts in the vicinity of the query shape can be found. All nearest contacts that are not further away than this distance will be found (unit: meter)
