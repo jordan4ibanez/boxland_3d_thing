@@ -695,27 +695,27 @@ module jolt_bindings
 
 !* CharacterVirtual.
   type, bind(c) :: JPH_CharacterVirtualSettings
-    JPH_CharacterBaseSettings           base     !* Inherics JPH_CharacterBaseSettings */
-    real(c_float) ::                mass
-    real(c_float) ::                maxStrength
-    JPH_Vec3              shapeOffset
-    JPH_BackFaceMode          backFaceMode
-    real(c_float) ::                predictiveContactDistance
-    integer(c_int32_t) :: maxCollisionIterations
-    integer(c_int32_t) :: maxConstraintIterations
-    real(c_float) ::                minTimeRemaining
-    real(c_float) ::                collisionTolerance
-    real(c_float) ::                characterPadding
-    integer(c_int32_t) :: maxNumHits
-    real(c_float) ::                hitReductionCosMaxAngle
-    real(c_float) ::                penetrationRecoverySpeed
-    const JPH_Shape* innerBodyShape
-    JPH_ObjectLayer            innerBodyLayer
+    type(JPH_CharacterBaseSettings) ::           base     !* Inherics JPH_CharacterBaseSettings */
+    real(c_float) ::                mass = 0.0
+    real(c_float) ::                maxStrength = 0.0
+    type(JPH_Vec3) ::              shapeOffset
+    integer(c_int32_t) ::          backFaceMode = 0
+    real(c_float) ::                predictiveContactDistance = 0.0
+    integer(c_int32_t) :: maxCollisionIterations = 0
+    integer(c_int32_t) :: maxConstraintIterations = 0
+    real(c_float) ::                minTimeRemaining = 0.0
+    real(c_float) ::                collisionTolerance = 0.0
+    real(c_float) ::                characterPadding = 0.0
+    integer(c_int32_t) :: maxNumHits = 0
+    real(c_float) ::                hitReductionCosMaxAngle = 0.0
+    real(c_float) ::                penetrationRecoverySpeed = 0.0
+    type(c_ptr) :: innerBodyShape = c_null_ptr
+    type(JPH_ObjectLayer) ::            innerBodyLayer
   end type JPH_CharacterVirtualSettings
 
   type, bind(c) :: JPH_CharacterContactSettings
-    logical(c_bool) :: canPushCharacter
-    logical(c_bool) :: canReceiveImpulses
+    logical(c_bool) :: canPushCharacter = .false.
+    logical(c_bool) :: canReceiveImpulses = .false.
   end type JPH_CharacterContactSettings
 
 ! typedef struct JPH_CharacterContactListener      JPH_CharacterContactListener
@@ -729,17 +729,17 @@ module jolt_bindings
 ! typedef void JPH_QueueJobsCallback(void* context, JPH_JobFunction* job, void** args, uint32_t count)
 
   type, bind(c) :: JobSystemThreadPoolConfig
-    uint32_t maxJobs
-    uint32_t maxBarriers
-    int32_t numThreads
+    integer(c_int32_t) :: maxJobs = 0
+    integer(c_int32_t) :: maxBarriers = 0
+    integer(c_int32_t) :: numThreads = 0
   end type JobSystemThreadPoolConfig
 
   type, bind(c) :: JPH_JobSystemConfig
-    void* context
-    JPH_QueueJobCallback* queueJob
-    JPH_QueueJobsCallback* queueJobs
-    uint32_t maxConcurrency
-    uint32_t maxBarriers
+    type(c_ptr) :: context
+    type(c_ptr) :: queueJob
+    type(c_ptr) :: queueJobs
+    integer(c_int32_t) :: maxConcurrency = 0
+    integer(c_int32_t) :: maxBarriers = 0
   end type JPH_JobSystemConfig
 
 ! type, bind(c) :: JPH_JobSystem JPH_JobSystem
@@ -782,43 +782,43 @@ module jolt_bindings
 
 !* JPH_PhysicsSystem.
   type, bind(c) :: JPH_PhysicsSystemSettings
-    uint32_t maxBodies  !* 10240 */
-    uint32_t numBodyMutexes  !* 0 */
-    uint32_t maxBodyPairs  !* 65536 */
-    uint32_t maxContactConstraints  !* 10240 */
-    uint32_t _padding
-    JPH_BroadPhaseLayerInterface* broadPhaseLayerInterface
-    JPH_ObjectLayerPairFilter* objectLayerPairFilter
-    JPH_ObjectVsBroadPhaseLayerFilter* objectVsBroadPhaseLayerFilter
+    integer(c_int32_t) :: maxBodies = 10240  !* 10240 */
+    integer(c_int32_t) :: numBodyMutexes = 0  !* 0 */
+    integer(c_int32_t) :: maxBodyPairs = 65536  !* 65536 */
+    integer(c_int32_t) :: maxContactConstraints = 10240  !* 10240 */
+    integer(c_int32_t) :: padding = 0
+    type(c_ptr) :: broadPhaseLayerInterface = c_null_ptr
+    type(c_ptr) :: objectLayerPairFilter = c_null_ptr
+    type(c_ptr) :: objectVsBroadPhaseLayerFilter = c_null_ptr
   end type JPH_PhysicsSystemSettings
 
   type, bind(c) :: JPH_PhysicsSettings
-    int maxInFlightBodyPairs
-    int stepListenersBatchSize
-    int stepListenerBatchesPerJob
-    real(c_float) :: baumgarte
-    real(c_float) :: speculativeContactDistance
-    real(c_float) :: penetrationSlop
-    real(c_float) :: linearCastThreshold
-    real(c_float) :: linearCastMaxPenetration
-    real(c_float) :: manifoldToleranceSq
-    real(c_float) :: maxPenetrationDistance
-    real(c_float) :: bodyPairCacheMaxDeltaPositionSq
-    real(c_float) :: bodyPairCacheCosMaxDeltaRotationDiv2
-    real(c_float) :: contactNormalCosMaxDeltaRotation
-    real(c_float) :: contactPointPreserveLambdaMaxDistSq
-    uint32_t numVelocitySteps
-    uint32_t numPositionSteps
-    real(c_float) :: minVelocityForRestitution
-    real(c_float) :: timeBeforeSleep
-    real(c_float) :: pointVelocitySleepThreshold
-    bool deterministicSimulation
-    bool constraintWarmStart
-    bool useBodyPairContactCache
-    bool useManifoldReduction
-    bool useLargeIslandSplitter
-    bool allowSleeping
-    bool checkActiveEdges
+    integer(c_int32_t) :: maxInFlightBodyPairs = 0
+    integer(c_int32_t) :: stepListenersBatchSize = 0
+    integer(c_int32_t) :: stepListenerBatchesPerJob = 0
+    real(c_float) :: baumgarte = 0.0
+    real(c_float) :: speculativeContactDistance = 0.0
+    real(c_float) :: penetrationSlop = 0.0
+    real(c_float) :: linearCastThreshold = 0.0
+    real(c_float) :: linearCastMaxPenetration = 0.0
+    real(c_float) :: manifoldToleranceSq = 0.0
+    real(c_float) :: maxPenetrationDistance = 0.0
+    real(c_float) :: bodyPairCacheMaxDeltaPositionSq = 0.0
+    real(c_float) :: bodyPairCacheCosMaxDeltaRotationDiv2 = 0.0
+    real(c_float) :: contactNormalCosMaxDeltaRotation = 0.0
+    real(c_float) :: contactPointPreserveLambdaMaxDistSq = 0.0
+    integer(c_int32_t) :: numVelocitySteps = 0
+    integer(c_int32_t) :: numPositionSteps = 0
+    real(c_float) :: minVelocityForRestitution = 0.0
+    real(c_float) :: timeBeforeSleep = 0.0
+    real(c_float) :: pointVelocitySleepThreshold = 0.0
+    logical(c_bool) :: deterministicSimulation = .false.
+    logical(c_bool) :: constraintWarmStart = .false.
+    logical(c_bool) :: useBodyPairContactCache = .false.
+    logical(c_bool) :: useManifoldReduction = .false.
+    logical(c_bool) :: useLargeIslandSplitter = .false.
+    logical(c_bool) :: allowSleeping = .false.
+    logical(c_bool) :: checkActiveEdges = .false.
   end type JPH_PhysicsSettings
 
 ! JPH_CAPI JPH_PhysicsSystem* JPH_PhysicsSystem_Create(const JPH_PhysicsSystemSettings* settings)
