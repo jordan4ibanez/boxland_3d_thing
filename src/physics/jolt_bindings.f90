@@ -10,11 +10,11 @@ module jolt_bindings
   !! DO NOT HIT SAVE LOL!
 
   real(c_float), parameter :: JPH_DEFAULT_COLLISION_TOLERANCE = real(1.0e0 - 4.0) ! float cDefaultCollisionTolerance = 1.0e-4f
-  real(c_float), parameter ::  JPH_DEFAULT_PENETRATION_TOLERANCE = (1.0e0 - 4.0) ! float cDefaultPenetrationTolerance = 1.0e-4f
-  real(c_float), parameter ::  JPH_DEFAULT_CONVEX_RADIUS = (0.05) ! float cDefaultConvexRadius = 0.05f
-  real(c_float), parameter ::  JPH_CAPSULE_PROJECTION_SLOP = (0.02) ! float cCapsuleProjectionSlop = 0.02f
+  real(c_float), parameter :: JPH_DEFAULT_PENETRATION_TOLERANCE = (1.0e0 - 4.0) ! float cDefaultPenetrationTolerance = 1.0e-4f
+  real(c_float), parameter :: JPH_DEFAULT_CONVEX_RADIUS = (0.05) ! float cDefaultConvexRadius = 0.05f
+  real(c_float), parameter :: JPH_CAPSULE_PROJECTION_SLOP = (0.02) ! float cCapsuleProjectionSlop = 0.02f
   integer(c_int32_t), parameter :: JPH_MAX_PHYSICS_JOBS = (2048) ! int cMaxPhysicsJobs = 2048
-  integer(c_int32_t), parameter ::  JPH_MAX_PHYSICS_BARRIERS = (2048) ! int cMaxPhysicsBarriers = 8
+  integer(c_int32_t), parameter :: JPH_MAX_PHYSICS_BARRIERS = (2048) ! int cMaxPhysicsBarriers = 8
 
   type, bind(c) :: JPH_BodyID
     integer(c_int32_t) :: data = 0
@@ -335,191 +335,203 @@ module jolt_bindings
 
   type, bind(c) :: JPH_RVec3
     real(c_double) :: x = 0.0
-    double y
-      double z
-      end type JPH_RVec3
+    real(c_double) :: y = 0.0
+    real(c_double) :: z = 0.0
+  end type JPH_RVec3
 
-      type, bind(c) :: JPH_RMatrix4x4
-        float m11, m12, m13, m14
-        float m21, m22, m23, m24
-        float m31, m32, m33, m34
-        double m41, m42, m43, m44
-        end type JPH_RMatrix4x4
+  type, bind(c) :: JPH_RMatrix4x4
+    real(c_float) :: m11 = 0.0
+    real(c_float) :: m12 = 0.0
+    real(c_float) :: m13 = 0.0
+    real(c_float) :: m14 = 0.0
+    real(c_float) :: m21 = 0.0
+    real(c_float) :: m22 = 0.0
+    real(c_float) :: m23 = 0.0
+    real(c_float) :: m24 = 0.0
+    real(c_float) :: m31 = 0.0
+    real(c_float) :: m32 = 0.0
+    real(c_float) :: m33 = 0.0
+    real(c_float) :: m34 = 0.0
+    real(c_float) :: m41 = 0.0
+    real(c_float) :: m42 = 0.0
+    real(c_float) :: m43 = 0.0
+    real(c_float) :: m44 = 0.0
+  end type JPH_RMatrix4x4
 
-        type, bind(c) :: JPH_Color
-          integer(c_int32_t) :: JPH_Color = 0
-        end type JPH_Color
+  type, bind(c) :: JPH_Color
+    integer(c_int32_t) :: JPH_Color = 0
+  end type JPH_Color
 
 
-        type, bind(c) :: JPH_AABox
-          JPH_Vec3 min
-          JPH_Vec3 max
-        end type JPH_AABox
+  type, bind(c) :: JPH_AABox
+    type(JPH_Vec3) :: min
+    type(JPH_Vec3) :: max
+  end type JPH_AABox
 
-        type, bind(c) :: JPH_Triangle
-          JPH_Vec3 v1
-          JPH_Vec3 v2
-          JPH_Vec3 v3
-          uint32_t materialIndex
-        end type JPH_Triangle
+  type, bind(c) :: JPH_Triangle
+    type(JPH_Vec3) :: v1
+    type(JPH_Vec3) :: v2
+    type(JPH_Vec3) :: v3
+    integer(c_int32_t) :: materialIndex = 0
+  end type JPH_Triangle
 
-        type, bind(c) :: JPH_IndexedTriangleNoMaterial
-          uint32_t i1
-          uint32_t i2
-          uint32_t i3
-        end type JPH_IndexedTriangleNoMaterial
+  type, bind(c) :: JPH_IndexedTriangleNoMaterial
+    integer(c_int32_t) :: i1 = 0
+    integer(c_int32_t) :: i2 = 0
+    integer(c_int32_t) :: i3 = 0
+  end type JPH_IndexedTriangleNoMaterial
 
-        type, bind(c) :: JPH_IndexedTriangle
-          uint32_t i1
-          uint32_t i2
-          uint32_t i3
-          uint32_t materialIndex
-          uint32_t userData
-        end type JPH_IndexedTriangle
+  type, bind(c) :: JPH_IndexedTriangle
+    integer(c_int32_t) :: i1 = 0
+    integer(c_int32_t) :: i2 = 0
+    integer(c_int32_t) :: i3 = 0
+    integer(c_int32_t) :: materialIndex = 0
+    integer(c_int32_t) :: userData = 0
+  end type JPH_IndexedTriangle
 
-        type, bind(c) :: JPH_MassProperties
-          float mass
-          JPH_Matrix4x4 inertia
-        end type JPH_MassProperties
+  type, bind(c) :: JPH_MassProperties
+    real(c_float) :: mass = 0.0
+    type(JPH_Matrix4x4) :: inertia
+  end type JPH_MassProperties
 
-        type, bind(c) :: JPH_CollideSettingsBase
-          !* How active edges (edges that a moving object should bump into) are handled
-          JPH_ActiveEdgeMode      activeEdgeMode/* = JPH_ActiveEdgeMode_CollideOnlyWithActive*/
+  type, bind(c) :: JPH_CollideSettingsBase
+    !* How active edges (edges that a moving object should bump into) are handled
+    integer(c_int32_t) ::      activeEdgeMode = JPH_ActiveEdgeMode_CollideOnlyWithActive !* = JPH_ActiveEdgeMode_CollideOnlyWithActive*/
 
-          !* If colliding faces should be collected or only the collision point
-          JPH_CollectFacesMode    collectFacesMode/* = JPH_CollectFacesMode_NoFaces*/
+    !* If colliding faces should be collected or only the collision point
+    integer(c_int32_t) ::    collectFacesMode = JPH_CollectFacesMode_NoFaces !* = JPH_CollectFacesMode_NoFaces*/
 
-          !* If objects are closer than this distance, they are considered to be colliding (used for GJK) (unit: meter)
-          float            collisionTolerance/* = JPH_DEFAULT_COLLISION_TOLERANCE*/
+    !* If objects are closer than this distance, they are considered to be colliding (used for GJK) (unit: meter)
+    real(c_float) :: collisionTolerance = JPH_DEFAULT_COLLISION_TOLERANCE !* = JPH_DEFAULT_COLLISION_TOLERANCE*/
 
-          !* A factor that determines the accuracy of the penetration depth calculation. If the change of the squared distance is less than tolerance * current_penetration_depth^2 the algorithm will terminate. (unit: dimensionless)
-          float            penetrationTolerance/* = JPH_DEFAULT_PENETRATION_TOLERANCE*/
+    !* A factor that determines the accuracy of the penetration depth calculation. If the change of the squared distance is less than tolerance * current_penetration_depth^2 the algorithm will terminate. (unit: dimensionless)
+    real(c_float) :: penetrationTolerance = JPH_DEFAULT_PENETRATION_TOLERANCE !* = JPH_DEFAULT_PENETRATION_TOLERANCE*/
 
-          !* When mActiveEdgeMode is CollideOnlyWithActive a movement direction can be provided. When hitting an inactive edge, the system will select the triangle normal as penetration depth only if it impedes the movement less than with the calculated penetration depth.
-          JPH_Vec3          activeEdgeMovementDirection/* = Vec3::sZero()*/
-        end type JPH_CollideSettingsBase
+    !* When mActiveEdgeMode is CollideOnlyWithActive a movement direction can be provided. When hitting an inactive edge, the system will select the triangle normal as penetration depth only if it impedes the movement less than with the calculated penetration depth.
+    type(JPH_Vec3) ::          activeEdgeMovementDirection !* = Vec3::sZero()*/
+  end type JPH_CollideSettingsBase
 
 !* CollideShapeSettings.
-        type, bind(c) :: JPH_CollideShapeSettings
-          JPH_CollideSettingsBase     base    /* Inherics JPH_CollideSettingsBase */
-          !* When > 0 contacts in the vicinity of the query shape can be found. All nearest contacts that are not further away than this distance will be found (unit: meter)
-          float            maxSeparationDistance/* = 0.0f*/
+  type, bind(c) :: JPH_CollideShapeSettings
+    type(JPH_CollideSettingsBase) ::     base     !* Inherics JPH_CollideSettingsBase */
+    !* When > 0 contacts in the vicinity of the query shape can be found. All nearest contacts that are not further away than this distance will be found (unit: meter)
+    real(c_float) :: maxSeparationDistance = 0.0 !* = 0.0f*/
 
-          !* How backfacing triangles should be treated
-          JPH_BackFaceMode      backFaceMode/* = JPH_BackFaceMode_IgnoreBackFaces*/
-        end type JPH_CollideShapeSettings
+    !* How backfacing triangles should be treated
+    integer(c_int32_t) ::      backFaceMode = JPH_BackFaceMode_IgnoreBackFaces !* = JPH_BackFaceMode_IgnoreBackFaces*/
+  end type JPH_CollideShapeSettings
 
 
-        /* ShapeCastSettings */
-        type, bind(c) :: JPH_ShapeCastSettings
-          JPH_CollideSettingsBase     base    /* Inherics JPH_CollideSettingsBase */
+  !* ShapeCastSettings */
+  type, bind(c) :: JPH_ShapeCastSettings
+    type(JPH_CollideSettingsBase) ::     base    !* Inherics JPH_CollideSettingsBase */
 
-          !* How backfacing triangles should be treated (should we report moving from back to front for triangle based shapes, e.g. for MeshShape/HeightFieldShape?)
-          JPH_BackFaceMode      backFaceModeTriangles/* = JPH_BackFaceMode_IgnoreBackFaces*/
+    !* How backfacing triangles should be treated (should we report moving from back to front for triangle based shapes, e.g. for MeshShape/HeightFieldShape?)
+    integer(c_int32_t) ::      backFaceModeTriangles = JPH_BackFaceMode_IgnoreBackFaces !* = JPH_BackFaceMode_IgnoreBackFaces*/
 
-          !* How backfacing convex objects should be treated (should we report starting inside an object and moving out?)
-          JPH_BackFaceMode      backFaceModeConvex/* = JPH_BackFaceMode_IgnoreBackFaces*/
+    !* How backfacing convex objects should be treated (should we report starting inside an object and moving out?)
+    integer(c_int32_t) ::      backFaceModeConvex = JPH_BackFaceMode_IgnoreBackFaces !* = JPH_BackFaceMode_IgnoreBackFaces*/
 
-          !* Indicates if we want to shrink the shape by the convex radius and then expand it again. This speeds up collision detection and gives a more accurate normal at the cost of a more 'rounded' shape.
-          bool            useShrunkenShapeAndConvexRadius/* = false*/
+    !* Indicates if we want to shrink the shape by the convex radius and then expand it again. This speeds up collision detection and gives a more accurate normal at the cost of a more 'rounded' shape.
+    logical(c_bool) ::            useShrunkenShapeAndConvexRadius = .false. !* = false*/
 
-          !* When true, and the shape is intersecting at the beginning of the cast (fraction = 0) then this will calculate the deepest penetration point (costing additional CPU time)
-          bool            returnDeepestPoint/* = false*/
-        end type JPH_ShapeCastSettings
+    !* When true, and the shape is intersecting at the beginning of the cast (fraction = 0) then this will calculate the deepest penetration point (costing additional CPU time)
+    logical(c_bool) ::            returnDeepestPoint = .false. !* = false*/
+  end type JPH_ShapeCastSettings
 
-        type, bind(c) :: JPH_RayCastSettings
-          !* How backfacing triangles should be treated (should we report back facing hits for triangle based shapes, e.g. MeshShape/HeightFieldShape?)
-          JPH_BackFaceMode backFaceModeTriangles/* = JPH_BackFaceMode_IgnoreBackFaces*/
+  type, bind(c) :: JPH_RayCastSettings
+    !* How backfacing triangles should be treated (should we report back facing hits for triangle based shapes, e.g. MeshShape/HeightFieldShape?)
+    integer(c_int32_t) :: backFaceModeTriangles = JPH_BackFaceMode_IgnoreBackFaces !* = JPH_BackFaceMode_IgnoreBackFaces*/
 
-          !* How backfacing convex objects should be treated (should we report back facing hits for convex shapes?)
-          JPH_BackFaceMode backFaceModeConvex/* = JPH_BackFaceMode_IgnoreBackFaces*/
+    !* How backfacing convex objects should be treated (should we report back facing hits for convex shapes?)
+    integer(c_int32_t) :: backFaceModeConvex = JPH_BackFaceMode_IgnoreBackFaces !* = JPH_BackFaceMode_IgnoreBackFaces*/
 
-          !* If convex shapes should be treated as solid. When true, a ray starting inside a convex shape will generate a hit at fraction 0.
-          bool treatConvexAsSolid/* = true*/
-        end type JPH_RayCastSettings
+    !* If convex shapes should be treated as solid. When true, a ray starting inside a convex shape will generate a hit at fraction 0.
+    logical(c_bool) :: treatConvexAsSolid  = .true. !* = true*/
+  end type JPH_RayCastSettings
 
-        type, bind(c) :: JPH_SpringSettings
-          JPH_SpringMode mode
-          float frequencyOrStiffness
-          float damping
-        end type JPH_SpringSettings
+  type, bind(c) :: JPH_SpringSettings
+    integer(c_int32_t) :: mode = 0
+    real(c_float) :: frequencyOrStiffness = 0.0
+    real(c_float) :: damping = 0.0
+  end type JPH_SpringSettings
 
-        type, bind(c) :: JPH_MotorSettings
-          JPH_SpringSettings springSettings
-          float minForceLimit
-          float maxForceLimit
-          float minTorqueLimit
-          float maxTorqueLimit
-        end type JPH_MotorSettings
+  type, bind(c) :: JPH_MotorSettings
+    TYPE(JPH_SpringSettings) :: springSettings
+    real(c_float) :: minForceLimit = 0.0
+    real(c_float) :: maxForceLimit = 0.0
+    real(c_float) :: minTorqueLimit = 0.0
+    real(c_float) :: maxTorqueLimit = 0.0
+  end type JPH_MotorSettings
 
-        type, bind(c) :: JPH_SubShapeIDPair
-          JPH_BodyID     Body1ID
-          JPH_SubShapeID subShapeID1
-          JPH_BodyID     Body2ID
-          JPH_SubShapeID subShapeID2
-        end type JPH_SubShapeIDPair
+  type, bind(c) :: JPH_SubShapeIDPair
+    type(JPH_BodyID) ::     Body1ID
+    type(JPH_SubShapeID) :: subShapeID1
+    type(JPH_BodyID) ::     Body2ID
+    type(JPH_SubShapeID) :: subShapeID2
+  end type JPH_SubShapeIDPair
 
-        type, bind(c) :: JPH_BroadPhaseCastResult
-          JPH_BodyID     bodyID
-          float          fraction
-        end type JPH_BroadPhaseCastResult
+  type, bind(c) :: JPH_BroadPhaseCastResult
+    type(JPH_BodyID) ::     bodyID
+    real(c_float) :: fraction = 0.0
+  end type JPH_BroadPhaseCastResult
 
-        type, bind(c) :: JPH_RayCastResult
-          JPH_BodyID     bodyID
-          float          fraction
-          JPH_SubShapeID subShapeID2
-        end type JPH_RayCastResult
+  type, bind(c) :: JPH_RayCastResult
+    type(JPH_BodyID) ::     bodyID
+    real(c_float) :: fraction = 0.0
+    type(JPH_SubShapeID) :: subShapeID2
+  end type JPH_RayCastResult
 
-        type, bind(c) :: JPH_CollidePointResult
-          JPH_BodyID bodyID
-          JPH_SubShapeID subShapeID2
-        end type JPH_CollidePointResult
+  type, bind(c) :: JPH_CollidePointResult
+    type(JPH_BodyID) :: bodyID
+    type(JPH_SubShapeID) :: subShapeID2
+  end type JPH_CollidePointResult
 
-        type, bind(c) :: JPH_CollideShapeResult
-          JPH_Vec3           contactPointOn1
-          JPH_Vec3           contactPointOn2
-          JPH_Vec3           penetrationAxis
-          float              penetrationDepth
-          JPH_SubShapeID     subShapeID1
-          JPH_SubShapeID     subShapeID2
-          JPH_BodyID         bodyID2
-        end type JPH_CollideShapeResult
+  type, bind(c) :: JPH_CollideShapeResult
+    type(JPH_Vec3) ::           contactPointOn1
+    type(JPH_Vec3) ::           contactPointOn2
+    type(JPH_Vec3) ::           penetrationAxis
+    real(c_float) :: penetrationDepth = 0.0
+    type(JPH_SubShapeID) ::     subShapeID1
+    type(JPH_SubShapeID) ::     subShapeID2
+    type(JPH_BodyID) ::         bodyID2
+  end type JPH_CollideShapeResult
 
-        type, bind(c) :: JPH_ShapeCastResult
-          JPH_Vec3           contactPointOn1
-          JPH_Vec3           contactPointOn2
-          JPH_Vec3           penetrationAxis
-          float              penetrationDepth
-          JPH_SubShapeID     subShapeID1
-          JPH_SubShapeID     subShapeID2
-          JPH_BodyID         bodyID2
-          float              fraction
-          bool         isBackFaceHit
-        end type JPH_ShapeCastResult
+  type, bind(c) :: JPH_ShapeCastResult
+    type(JPH_Vec3) ::           contactPointOn1
+    type(JPH_Vec3) ::           contactPointOn2
+    type(JPH_Vec3) ::           penetrationAxis
+    real(c_float) :: penetrationDepth
+    type(JPH_SubShapeID) ::     subShapeID1
+    type(JPH_SubShapeID) ::     subShapeID2
+    type(JPH_BodyID) ::         bodyID2
+    real(c_float) :: fraction = 0.0
+    logical(c_bool) ::         isBackFaceHit = .false.
+  end type JPH_ShapeCastResult
 
-        type, bind(c) :: JPH_DrawSettings
-          bool          drawGetSupportFunction        !*< Draw the GetSupport() function, used for convex collision detection
-          bool          drawSupportDirection        !*< When drawing the support function, also draw which direction mapped to a specific support point
-          bool          drawGetSupportingFace        !*< Draw the faces that were found colliding during collision detection
-          bool          drawShape              !*< Draw the shapes of all bodies
-          bool          drawShapeWireframe          !*< When mDrawShape is true and this is true, the shapes will be drawn in wireframe instead of solid.
-          JPH_BodyManager_ShapeColor  drawShapeColor                     !*< Coloring scheme to use for shapes
-          bool          drawBoundingBox          !*< Draw a bounding box per body
-          bool          drawCenterOfMassTransform      !*< Draw the center of mass for each body
-          bool          drawWorldTransform          !*< Draw the world transform (which can be different than the center of mass) for each body
-          bool          drawVelocity            !*< Draw the velocity vector for each body
-          bool          drawMassAndInertia          !*< Draw the mass and inertia (as the box equivalent) for each body
-          bool          drawSleepStats            !*< Draw stats regarding the sleeping algorithm of each body
-          bool          drawSoftBodyVertices        !*< Draw the vertices of soft bodies
-          bool          drawSoftBodyVertexVelocities    !*< Draw the velocities of the vertices of soft bodies
-          bool          drawSoftBodyEdgeConstraints    !*< Draw the edge constraints of soft bodies
-          bool          drawSoftBodyBendConstraints    !*< Draw the bend constraints of soft bodies
-          bool          drawSoftBodyVolumeConstraints    !*< Draw the volume constraints of soft bodies
-          bool          drawSoftBodySkinConstraints    !*< Draw the skin constraints of soft bodies
-          bool          drawSoftBodyLRAConstraints          !*< Draw the LRA constraints of soft bodies
-          bool          drawSoftBodyPredictedBounds    !*< Draw the predicted bounds of soft bodies
-          JPH_SoftBodyConstraintColor  drawSoftBodyConstraintColor        !*< Coloring scheme to use for soft body constraints
-        end type JPH_DrawSettings
+  type, bind(c) :: JPH_DrawSettings
+    logical(c_bool) ::          drawGetSupportFunction        !*< Draw the GetSupport() function, used for convex collision detection
+    logical(c_bool) ::          drawSupportDirection        !*< When drawing the support function, also draw which direction mapped to a specific support point
+    logical(c_bool) ::          drawGetSupportingFace        !*< Draw the faces that were found colliding during collision detection
+    logical(c_bool) ::          drawShape              !*< Draw the shapes of all bodies
+    logical(c_bool) ::          drawShapeWireframe          !*< When mDrawShape is true and this is true, the shapes will be drawn in wireframe instead of solid.
+    integer(c_int32_t) ::  drawShapeColor = 0                     !*< Coloring scheme to use for shapes
+    logical(c_bool) ::          drawBoundingBox          !*< Draw a bounding box per body
+    logical(c_bool) ::          drawCenterOfMassTransform      !*< Draw the center of mass for each body
+    logical(c_bool) ::          drawWorldTransform          !*< Draw the world transform (which can be different than the center of mass) for each body
+    logical(c_bool) ::          drawVelocity            !*< Draw the velocity vector for each body
+    logical(c_bool) ::          drawMassAndInertia          !*< Draw the mass and inertia (as the box equivalent) for each body
+    logical(c_bool) ::          drawSleepStats            !*< Draw stats regarding the sleeping algorithm of each body
+    logical(c_bool) ::          drawSoftBodyVertices        !*< Draw the vertices of soft bodies
+    logical(c_bool) ::          drawSoftBodyVertexVelocities    !*< Draw the velocities of the vertices of soft bodies
+    logical(c_bool) ::          drawSoftBodyEdgeConstraints    !*< Draw the edge constraints of soft bodies
+    logical(c_bool) ::          drawSoftBodyBendConstraints    !*< Draw the bend constraints of soft bodies
+    logical(c_bool) ::          drawSoftBodyVolumeConstraints    !*< Draw the volume constraints of soft bodies
+    logical(c_bool) ::          drawSoftBodySkinConstraints    !*< Draw the skin constraints of soft bodies
+    logical(c_bool) ::          drawSoftBodyLRAConstraints          !*< Draw the LRA constraints of soft bodies
+    logical(c_bool) ::          drawSoftBodyPredictedBounds    !*< Draw the predicted bounds of soft bodies
+    integer(c_int32_t )::  drawSoftBodyConstraintColor = 0        !*< Coloring scheme to use for soft body constraints
+  end type JPH_DrawSettings
 
 !! TODO: hmmMMmmmMMMm
 ! typedef void JPH_CastRayResultCallback(void* context, const JPH_RayCastResult* result)
@@ -637,77 +649,77 @@ module jolt_bindings
 
 ! typedef struct JPH_DebugRenderer                    JPH_DebugRenderer
 
-        type, bind(c) :: JPH_BodyLockRead
-          const JPH_BodyLockInterface* lockInterface
-          JPH_SharedMutex* mutex
-          const JPH_Body* body
-        end type JPH_BodyLockRead
+  type, bind(c) :: JPH_BodyLockRead
+    const JPH_BodyLockInterface* lockInterface
+    JPH_SharedMutex* mutex
+    const JPH_Body* body
+  end type JPH_BodyLockRead
 
-        type, bind(c) :: JPH_BodyLockWrite
-          const JPH_BodyLockInterface* lockInterface
-          JPH_SharedMutex* mutex
-          JPH_Body* body
-        end type JPH_BodyLockWrite
+  type, bind(c) :: JPH_BodyLockWrite
+    const JPH_BodyLockInterface* lockInterface
+    JPH_SharedMutex* mutex
+    JPH_Body* body
+  end type JPH_BodyLockWrite
 
 
-        type, bind(c) :: JPH_ExtendedUpdateSettings
-          JPH_Vec3  stickToFloorStepDown
-          JPH_Vec3  walkStairsStepUp
-          float    walkStairsMinStepForward
-          float    walkStairsStepForwardTest
-          float    walkStairsCosAngleForwardContact
-          JPH_Vec3  walkStairsStepDownExtra
-        end type JPH_ExtendedUpdateSettings
+  type, bind(c) :: JPH_ExtendedUpdateSettings
+    JPH_Vec3  stickToFloorStepDown
+    JPH_Vec3  walkStairsStepUp
+    float    walkStairsMinStepForward
+    float    walkStairsStepForwardTest
+    float    walkStairsCosAngleForwardContact
+    JPH_Vec3  walkStairsStepDownExtra
+  end type JPH_ExtendedUpdateSettings
 
-        type, bind(c) :: JPH_CharacterBaseSettings
-          JPH_Vec3 up
-          JPH_Plane supportingVolume
-          float maxSlopeAngle
-          bool enhancedInternalEdgeRemoval
-          const JPH_Shape* shape
-        end type JPH_CharacterBaseSettings
+  type, bind(c) :: JPH_CharacterBaseSettings
+    JPH_Vec3 up
+    JPH_Plane supportingVolume
+    float maxSlopeAngle
+    logical(c_bool) :: enhancedInternalEdgeRemoval
+    const JPH_Shape* shape
+  end type JPH_CharacterBaseSettings
 
 !* CharacterBase.
 ! type, bind(c) :: JPH_CharacterBase                    JPH_CharacterBase
 
 !* Character.
-        type, bind(c) :: JPH_CharacterSettings
-          JPH_CharacterBaseSettings           base    /* Inherics JPH_CharacterBaseSettings */
-          JPH_ObjectLayer            layer
-          float                mass
-          float                friction
-          float                gravityFactor
-        end type JPH_CharacterSettings
+  type, bind(c) :: JPH_CharacterSettings
+    JPH_CharacterBaseSettings           base     !* Inherics JPH_CharacterBaseSettings */
+    JPH_ObjectLayer            layer
+    float                mass
+    float                friction
+    float                gravityFactor
+  end type JPH_CharacterSettings
 
-! type, bind(c) :: JPH_Character                        JPH_Character  /* Inherics JPH_CharacterBase */
+! type, bind(c) :: JPH_Character                        JPH_Character   !* Inherics JPH_CharacterBase */
 
 !* CharacterVirtual.
-        type, bind(c) :: JPH_CharacterVirtualSettings
-          JPH_CharacterBaseSettings           base    /* Inherics JPH_CharacterBaseSettings */
-          float                mass
-          float                maxStrength
-          JPH_Vec3              shapeOffset
-          JPH_BackFaceMode          backFaceMode
-          float                predictiveContactDistance
-          uint32_t              maxCollisionIterations
-          uint32_t              maxConstraintIterations
-          float                minTimeRemaining
-          float                collisionTolerance
-          float                characterPadding
-          uint32_t              maxNumHits
-          float                hitReductionCosMaxAngle
-          float                penetrationRecoverySpeed
-          const JPH_Shape* innerBodyShape
-          JPH_ObjectLayer            innerBodyLayer
-        end type JPH_CharacterVirtualSettings
+  type, bind(c) :: JPH_CharacterVirtualSettings
+    JPH_CharacterBaseSettings           base     !* Inherics JPH_CharacterBaseSettings */
+    float                mass
+    float                maxStrength
+    JPH_Vec3              shapeOffset
+    JPH_BackFaceMode          backFaceMode
+    float                predictiveContactDistance
+    integer(c_int32_t) :: maxCollisionIterations
+    integer(c_int32_t) :: maxConstraintIterations
+    float                minTimeRemaining
+    float                collisionTolerance
+    float                characterPadding
+    integer(c_int32_t) :: maxNumHits
+    float                hitReductionCosMaxAngle
+    float                penetrationRecoverySpeed
+    const JPH_Shape* innerBodyShape
+    JPH_ObjectLayer            innerBodyLayer
+  end type JPH_CharacterVirtualSettings
 
-        type, bind(c) :: JPH_CharacterContactSettings
-          bool canPushCharacter
-          bool canReceiveImpulses
-        end type JPH_CharacterContactSettings
+  type, bind(c) :: JPH_CharacterContactSettings
+    logical(c_bool) :: canPushCharacter
+    logical(c_bool) :: canReceiveImpulses
+  end type JPH_CharacterContactSettings
 
 ! typedef struct JPH_CharacterContactListener      JPH_CharacterContactListener
-! typedef struct JPH_CharacterVirtual                 JPH_CharacterVirtual  /* Inherics JPH_CharacterBase */
+! typedef struct JPH_CharacterVirtual                 JPH_CharacterVirtual   !* Inherics JPH_CharacterBase */
 
 ! typedef void(JPH_API_CALL* JPH_TraceFunc)(const char* mssage)
 ! typedef bool(JPH_API_CALL* JPH_AssertFailureFunc)(const char* expression, const char* mssage, const char* file, uint32_t line)
@@ -716,19 +728,19 @@ module jolt_bindings
 ! typedef void JPH_QueueJobCallback(void* context, JPH_JobFunction* job, void* arg)
 ! typedef void JPH_QueueJobsCallback(void* context, JPH_JobFunction* job, void** args, uint32_t count)
 
-        type, bind(c) :: JobSystemThreadPoolConfig
-          uint32_t maxJobs
-          uint32_t maxBarriers
-          int32_t numThreads
-        end type JobSystemThreadPoolConfig
+  type, bind(c) :: JobSystemThreadPoolConfig
+    uint32_t maxJobs
+    uint32_t maxBarriers
+    int32_t numThreads
+  end type JobSystemThreadPoolConfig
 
-        type, bind(c) :: JPH_JobSystemConfig
-          void* context
-          JPH_QueueJobCallback* queueJob
-          JPH_QueueJobsCallback* queueJobs
-          uint32_t maxConcurrency
-          uint32_t maxBarriers
-        end type JPH_JobSystemConfig
+  type, bind(c) :: JPH_JobSystemConfig
+    void* context
+    JPH_QueueJobCallback* queueJob
+    JPH_QueueJobsCallback* queueJobs
+    uint32_t maxConcurrency
+    uint32_t maxBarriers
+  end type JPH_JobSystemConfig
 
 ! type, bind(c) :: JPH_JobSystem JPH_JobSystem
 
@@ -741,14 +753,14 @@ module jolt_bindings
 ! JPH_CAPI void JPH_SetTraceHandler(JPH_TraceFunc handler)
 ! JPH_CAPI void JPH_SetAssertFailureHandler(JPH_AssertFailureFunc handler)
 
-! /* JPH_BroadPhaseLayerInterface */
+!  !* JPH_BroadPhaseLayerInterface */
 ! JPH_CAPI JPH_BroadPhaseLayerInterface* JPH_BroadPhaseLayerInterfaceMask_Create(uint32_t numBroadPhaseLayers)
 ! JPH_CAPI void JPH_BroadPhaseLayerInterfaceMask_ConfigureLayer(JPH_BroadPhaseLayerInterface* bpInterface, JPH_BroadPhaseLayer broadPhaseLayer, uint32_t groupsToInclude, uint32_t groupsToExclude)
 
 ! JPH_CAPI JPH_BroadPhaseLayerInterface* JPH_BroadPhaseLayerInterfaceTable_Create(uint32_t numObjectLayers, uint32_t numBroadPhaseLayers)
 ! JPH_CAPI void JPH_BroadPhaseLayerInterfaceTable_MapObjectToBroadPhaseLayer(JPH_BroadPhaseLayerInterface* bpInterface, JPH_ObjectLayer objectLayer, JPH_BroadPhaseLayer broadPhaseLayer)
 
-! /* JPH_ObjectLayerPairFilter */
+!  !* JPH_ObjectLayerPairFilter */
 ! JPH_CAPI JPH_ObjectLayerPairFilter* JPH_ObjectLayerPairFilterMask_Create(void)
 ! JPH_CAPI JPH_ObjectLayer JPH_ObjectLayerPairFilterMask_GetObjectLayer(uint32_t group, uint32_t mask)
 ! JPH_CAPI uint32_t JPH_ObjectLayerPairFilterMask_GetGroup(JPH_ObjectLayer layer)
@@ -759,7 +771,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_ObjectLayerPairFilterTable_EnableCollision(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
 ! JPH_CAPI bool JPH_ObjectLayerPairFilterTable_ShouldCollide(JPH_ObjectLayerPairFilter* objectFilter, JPH_ObjectLayer layer1, JPH_ObjectLayer layer2)
 
-! /* JPH_ObjectVsBroadPhaseLayerFilter */
+!  !* JPH_ObjectVsBroadPhaseLayerFilter */
 ! JPH_CAPI JPH_ObjectVsBroadPhaseLayerFilter* JPH_ObjectVsBroadPhaseLayerFilterMask_Create(const JPH_BroadPhaseLayerInterface* broadPhaseLayerInterface)
 
 ! JPH_CAPI JPH_ObjectVsBroadPhaseLayerFilter* JPH_ObjectVsBroadPhaseLayerFilterTable_Create(
@@ -769,45 +781,45 @@ module jolt_bindings
 ! JPH_CAPI void JPH_DrawSettings_InitDefault(JPH_DrawSettings* settings)
 
 !* JPH_PhysicsSystem.
-        type, bind(c) :: JPH_PhysicsSystemSettings
-          uint32_t maxBodies /* 10240 */
-          uint32_t numBodyMutexes /* 0 */
-          uint32_t maxBodyPairs /* 65536 */
-          uint32_t maxContactConstraints /* 10240 */
-          uint32_t _padding
-          JPH_BroadPhaseLayerInterface* broadPhaseLayerInterface
-          JPH_ObjectLayerPairFilter* objectLayerPairFilter
-          JPH_ObjectVsBroadPhaseLayerFilter* objectVsBroadPhaseLayerFilter
-        end type JPH_PhysicsSystemSettings
+  type, bind(c) :: JPH_PhysicsSystemSettings
+    uint32_t maxBodies  !* 10240 */
+    uint32_t numBodyMutexes  !* 0 */
+    uint32_t maxBodyPairs  !* 65536 */
+    uint32_t maxContactConstraints  !* 10240 */
+    uint32_t _padding
+    JPH_BroadPhaseLayerInterface* broadPhaseLayerInterface
+    JPH_ObjectLayerPairFilter* objectLayerPairFilter
+    JPH_ObjectVsBroadPhaseLayerFilter* objectVsBroadPhaseLayerFilter
+  end type JPH_PhysicsSystemSettings
 
-        type, bind(c) :: JPH_PhysicsSettings
-          int maxInFlightBodyPairs
-          int stepListenersBatchSize
-          int stepListenerBatchesPerJob
-          float baumgarte
-          float speculativeContactDistance
-          float penetrationSlop
-          float linearCastThreshold
-          float linearCastMaxPenetration
-          float manifoldToleranceSq
-          float maxPenetrationDistance
-          float bodyPairCacheMaxDeltaPositionSq
-          float bodyPairCacheCosMaxDeltaRotationDiv2
-          float contactNormalCosMaxDeltaRotation
-          float contactPointPreserveLambdaMaxDistSq
-          uint32_t numVelocitySteps
-          uint32_t numPositionSteps
-          float minVelocityForRestitution
-          float timeBeforeSleep
-          float pointVelocitySleepThreshold
-          bool deterministicSimulation
-          bool constraintWarmStart
-          bool useBodyPairContactCache
-          bool useManifoldReduction
-          bool useLargeIslandSplitter
-          bool allowSleeping
-          bool checkActiveEdges
-        end type JPH_PhysicsSettings
+  type, bind(c) :: JPH_PhysicsSettings
+    int maxInFlightBodyPairs
+    int stepListenersBatchSize
+    int stepListenerBatchesPerJob
+    float baumgarte
+    float speculativeContactDistance
+    float penetrationSlop
+    float linearCastThreshold
+    float linearCastMaxPenetration
+    float manifoldToleranceSq
+    float maxPenetrationDistance
+    float bodyPairCacheMaxDeltaPositionSq
+    float bodyPairCacheCosMaxDeltaRotationDiv2
+    float contactNormalCosMaxDeltaRotation
+    float contactPointPreserveLambdaMaxDistSq
+    uint32_t numVelocitySteps
+    uint32_t numPositionSteps
+    float minVelocityForRestitution
+    float timeBeforeSleep
+    float pointVelocitySleepThreshold
+    bool deterministicSimulation
+    bool constraintWarmStart
+    bool useBodyPairContactCache
+    bool useManifoldReduction
+    bool useLargeIslandSplitter
+    bool allowSleeping
+    bool checkActiveEdges
+  end type JPH_PhysicsSettings
 
 ! JPH_CAPI JPH_PhysicsSystem* JPH_PhysicsSystem_Create(const JPH_PhysicsSystemSettings* settings)
 ! JPH_CAPI void JPH_PhysicsSystem_Destroy(JPH_PhysicsSystem* system)
@@ -851,26 +863,26 @@ module jolt_bindings
 ! JPH_CAPI void JPH_PhysicsSystem_GetBodies(const JPH_PhysicsSystem* system, JPH_BodyID* ids, uint32_t count)
 ! JPH_CAPI void JPH_PhysicsSystem_GetConstraints(const JPH_PhysicsSystem* system, const JPH_Constraint** constraints, uint32_t count)
 
-! JPH_CAPI void JPH_PhysicsSystem_DrawBodies(JPH_PhysicsSystem* system, const JPH_DrawSettings* settings, JPH_DebugRenderer* renderer, const JPH_BodyDrawFilter* bodyFilter /* = nullptr */)
+! JPH_CAPI void JPH_PhysicsSystem_DrawBodies(JPH_PhysicsSystem* system, const JPH_DrawSettings* settings, JPH_DebugRenderer* renderer, const JPH_BodyDrawFilter* bodyFilter  !* = nullptr */)
 ! JPH_CAPI void JPH_PhysicsSystem_DrawConstraints(JPH_PhysicsSystem* system, JPH_DebugRenderer* renderer)
 ! JPH_CAPI void JPH_PhysicsSystem_DrawConstraintLimits(JPH_PhysicsSystem* system, JPH_DebugRenderer* renderer)
 ! JPH_CAPI void JPH_PhysicsSystem_DrawConstraintReferenceFrame(JPH_PhysicsSystem* system, JPH_DebugRenderer* renderer)
 
-! /* Math */
+!  !* Math */
 ! JPH_CAPI void JPH_Quaternion_FromTo(const JPH_Vec3* from, const JPH_Vec3* to, JPH_Quat* quat)
 
-! /* Material */
+!  !* Material */
 ! JPH_CAPI JPH_PhysicsMaterial* JPH_PhysicsMaterial_Create(const char* name, uint32_t color)
 ! JPH_CAPI void JPH_PhysicsMaterial_Destroy(JPH_PhysicsMaterial* material)
 ! JPH_CAPI const char* JPH_PhysicsMaterial_GetDebugName(const JPH_PhysicsMaterial* material)
 ! JPH_CAPI uint32_t JPH_PhysicsMaterial_GetDebugColor(const JPH_PhysicsMaterial * material)
 
-! /* ShapeSettings */
+!  !* ShapeSettings */
 ! JPH_CAPI void JPH_ShapeSettings_Destroy(JPH_ShapeSettings* settings)
 ! JPH_CAPI uint64_t JPH_ShapeSettings_GetUserData(const JPH_ShapeSettings* settings)
 ! JPH_CAPI void JPH_ShapeSettings_SetUserData(JPH_ShapeSettings* settings, uint64_t userData)
 
-! /* Shape */
+!  !* Shape */
 ! JPH_CAPI void JPH_Shape_Destroy(JPH_Shape* shape)
 ! JPH_CAPI JPH_ShapeType JPH_Shape_GetType(const JPH_Shape* shape)
 ! JPH_CAPI JPH_ShapeSubType JPH_Shape_GetSubType(const JPH_Shape* shape)
@@ -895,13 +907,13 @@ module jolt_bindings
 ! JPH_CAPI bool JPH_Shape_CollidePoint(const JPH_Shape* shape, const JPH_Vec3* point, const JPH_ShapeFilter* shapeFilter)
 ! JPH_CAPI bool JPH_Shape_CollidePoint2(const JPH_Shape* shape, const JPH_Vec3* point, JPH_CollisionCollectorType collectorType, JPH_CollidePointResultCallback* callback, void* userData, const JPH_ShapeFilter* shapeFilter)
 
-! /* JPH_ConvexShape */
+!  !* JPH_ConvexShape */
 ! JPH_CAPI float JPH_ConvexShapeSettings_GetDensity(const JPH_ConvexShapeSettings* shape)
 ! JPH_CAPI void JPH_ConvexShapeSettings_SetDensity(JPH_ConvexShapeSettings* shape, float value)
 ! JPH_CAPI float JPH_ConvexShape_GetDensity(const JPH_ConvexShape* shape)
 ! JPH_CAPI void JPH_ConvexShape_SetDensity(JPH_ConvexShape* shape, float inDensity)
 
-! /* BoxShape */
+!  !* BoxShape */
 ! JPH_CAPI JPH_BoxShapeSettings* JPH_BoxShapeSettings_Create(const JPH_Vec3* halfExtent, float convexRadius)
 ! JPH_CAPI JPH_BoxShape* JPH_BoxShapeSettings_CreateShape(const JPH_BoxShapeSettings* settings)
 
@@ -909,7 +921,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_BoxShape_GetHalfExtent(const JPH_BoxShape* shape, JPH_Vec3* halfExtent)
 ! JPH_CAPI float JPH_BoxShape_GetConvexRadius(const JPH_BoxShape* shape)
 
-! /* SphereShape */
+!  !* SphereShape */
 ! JPH_CAPI JPH_SphereShapeSettings* JPH_SphereShapeSettings_Create(float radius)
 ! JPH_CAPI JPH_SphereShape* JPH_SphereShapeSettings_CreateShape(const JPH_SphereShapeSettings* settings)
 
@@ -918,14 +930,14 @@ module jolt_bindings
 ! JPH_CAPI JPH_SphereShape* JPH_SphereShape_Create(float radius)
 ! JPH_CAPI float JPH_SphereShape_GetRadius(const JPH_SphereShape* shape)
 
-! /* PlaneShape */
+!  !* PlaneShape */
 ! JPH_CAPI JPH_PlaneShapeSettings* JPH_PlaneShapeSettings_Create(const JPH_Plane* plane, const JPH_PhysicsMaterial* material, float halfExtent)
 ! JPH_CAPI JPH_PlaneShape* JPH_PlaneShapeSettings_CreateShape(const JPH_PlaneShapeSettings* settings)
 ! JPH_CAPI JPH_PlaneShape* JPH_PlaneShape_Create(const JPH_Plane* plane, const JPH_PhysicsMaterial* material, float halfExtent)
 ! JPH_CAPI void JPH_PlaneShape_GetPlane(const JPH_PlaneShape* shape, JPH_Plane* result)
 ! JPH_CAPI float JPH_PlaneShape_GetHalfExtent(const JPH_PlaneShape* shape)
 
-! /* TriangleShape */
+!  !* TriangleShape */
 ! JPH_CAPI JPH_TriangleShapeSettings* JPH_TriangleShapeSettings_Create(const JPH_Vec3* v1, const JPH_Vec3* v2, const JPH_Vec3* v3, float convexRadius)
 ! JPH_CAPI JPH_TriangleShape* JPH_TriangleShapeSettings_CreateShape(const JPH_TriangleShapeSettings* settings)
 
@@ -935,14 +947,14 @@ module jolt_bindings
 ! JPH_CAPI void JPH_TriangleShape_GetVertex2(const JPH_TriangleShape* shape, JPH_Vec3* result)
 ! JPH_CAPI void JPH_TriangleShape_GetVertex3(const JPH_TriangleShape* shape, JPH_Vec3* result)
 
-! /* CapsuleShape */
+!  !* CapsuleShape */
 ! JPH_CAPI JPH_CapsuleShapeSettings* JPH_CapsuleShapeSettings_Create(float halfHeightOfCylinder, float radius)
 ! JPH_CAPI JPH_CapsuleShape* JPH_CapsuleShapeSettings_CreateShape(const JPH_CapsuleShapeSettings* settings)
 ! JPH_CAPI JPH_CapsuleShape* JPH_CapsuleShape_Create(float halfHeightOfCylinder, float radius)
 ! JPH_CAPI float JPH_CapsuleShape_GetRadius(const JPH_CapsuleShape* shape)
 ! JPH_CAPI float JPH_CapsuleShape_GetHalfHeightOfCylinder(const JPH_CapsuleShape* shape)
 
-! /* CylinderShape */
+!  !* CylinderShape */
 ! JPH_CAPI JPH_CylinderShapeSettings* JPH_CylinderShapeSettings_Create(float halfHeight, float radius, float convexRadius)
 ! JPH_CAPI JPH_CylinderShape* JPH_CylinderShapeSettings_CreateShape(const JPH_CylinderShapeSettings* settings)
 
@@ -950,15 +962,15 @@ module jolt_bindings
 ! JPH_CAPI float JPH_CylinderShape_GetRadius(const JPH_CylinderShape* shape)
 ! JPH_CAPI float JPH_CylinderShape_GetHalfHeight(const JPH_CylinderShape* shape)
 
-! /* TaperedCylinderShape */
-! JPH_CAPI JPH_TaperedCylinderShapeSettings* JPH_TaperedCylinderShapeSettings_Create(float halfHeightOfTaperedCylinder, float topRadius, float bottomRadius, float convexRadius/* = cDefaultConvexRadius*/, const JPH_PhysicsMaterial* material /* = NULL*/)
+!  !* TaperedCylinderShape */
+! JPH_CAPI JPH_TaperedCylinderShapeSettings* JPH_TaperedCylinderShapeSettings_Create(float halfHeightOfTaperedCylinder, float topRadius, float bottomRadius, float convexRadius !* = cDefaultConvexRadius*/, const JPH_PhysicsMaterial* material  !* = NULL*/)
 ! JPH_CAPI JPH_TaperedCylinderShape* JPH_TaperedCylinderShapeSettings_CreateShape(const JPH_TaperedCylinderShapeSettings* settings)
 ! JPH_CAPI float JPH_TaperedCylinderShape_GetTopRadius(const JPH_TaperedCylinderShape* shape)
 ! JPH_CAPI float JPH_TaperedCylinderShape_GetBottomRadius(const JPH_TaperedCylinderShape* shape)
 ! JPH_CAPI float JPH_TaperedCylinderShape_GetConvexRadius(const JPH_TaperedCylinderShape* shape)
 ! JPH_CAPI float JPH_TaperedCylinderShape_GetHalfHeight(const JPH_TaperedCylinderShape* shape)
 
-! /* ConvexHullShape */
+!  !* ConvexHullShape */
 ! JPH_CAPI JPH_ConvexHullShapeSettings* JPH_ConvexHullShapeSettings_Create(const JPH_Vec3* points, uint32_t pointsCount, float maxConvexRadius)
 ! JPH_CAPI JPH_ConvexHullShape* JPH_ConvexHullShapeSettings_CreateShape(const JPH_ConvexHullShapeSettings* settings)
 ! JPH_CAPI uint32_t JPH_ConvexHullShape_GetNumPoints(const JPH_ConvexHullShape* shape)
@@ -967,7 +979,7 @@ module jolt_bindings
 ! JPH_CAPI uint32_t JPH_ConvexHullShape_GetNumVerticesInFace(const JPH_ConvexHullShape* shape, uint32_t faceIndex)
 ! JPH_CAPI uint32_t JPH_ConvexHullShape_GetFaceVertices(const JPH_ConvexHullShape* shape, uint32_t faceIndex, uint32_t maxVertices, uint32_t* vertices)
 
-! /* MeshShape */
+!  !* MeshShape */
 ! JPH_CAPI JPH_MeshShapeSettings* JPH_MeshShapeSettings_Create(const JPH_Triangle* triangles, uint32_t triangleCount)
 ! JPH_CAPI JPH_MeshShapeSettings* JPH_MeshShapeSettings_Create2(const JPH_Vec3* vertices, uint32_t verticesCount, const JPH_IndexedTriangle* triangles, uint32_t triangleCount)
 ! JPH_CAPI bool JPH_MeshShapeSettings_GetPerTriangleUserData(const JPH_MeshShapeSettings* settings)
@@ -976,7 +988,7 @@ module jolt_bindings
 ! JPH_CAPI JPH_MeshShape* JPH_MeshShapeSettings_CreateShape(const JPH_MeshShapeSettings* settings)
 ! JPH_CAPI uint32_t JPH_MeshShape_GetTriangleUserData(const JPH_MeshShape* shape, JPH_SubShapeID id)
 
-! /* HeightFieldShape */
+!  !* HeightFieldShape */
 ! JPH_CAPI JPH_HeightFieldShapeSettings* JPH_HeightFieldShapeSettings_Create(const float* samples, const JPH_Vec3* offset, const JPH_Vec3* scale, uint32_t sampleCount)
 ! JPH_CAPI JPH_HeightFieldShape* JPH_HeightFieldShapeSettings_CreateShape(JPH_HeightFieldShapeSettings* settings)
 ! JPH_CAPI void JPH_HeightFieldShapeSettings_DetermineMinAndMaxSample(const JPH_HeightFieldShapeSettings* settings, float* pOutMinValue, float* pOutMaxValue, float* pOutQuantizationScale)
@@ -991,7 +1003,7 @@ module jolt_bindings
 ! JPH_CAPI float JPH_HeightFieldShape_GetMinHeightValue(const JPH_HeightFieldShape* shape)
 ! JPH_CAPI float JPH_HeightFieldShape_GetMaxHeightValue(const JPH_HeightFieldShape* shape)
 
-! /* TaperedCapsuleShape */
+!  !* TaperedCapsuleShape */
 ! JPH_CAPI JPH_TaperedCapsuleShapeSettings* JPH_TaperedCapsuleShapeSettings_Create(float halfHeightOfTaperedCylinder, float topRadius, float bottomRadius)
 ! JPH_CAPI JPH_TaperedCapsuleShape* JPH_TaperedCapsuleShapeSettings_CreateShape(JPH_TaperedCapsuleShapeSettings* settings)
 
@@ -999,18 +1011,18 @@ module jolt_bindings
 ! JPH_CAPI float JPH_TaperedCapsuleShape_GetBottomRadius(const JPH_TaperedCapsuleShape* shape)
 ! JPH_CAPI float JPH_TaperedCapsuleShape_GetHalfHeight(const JPH_TaperedCapsuleShape* shape)
 
-! /* CompoundShape */
+!  !* CompoundShape */
 ! JPH_CAPI void JPH_CompoundShapeSettings_AddShape(JPH_CompoundShapeSettings* settings, const JPH_Vec3* position, const JPH_Quat* rotation, const JPH_ShapeSettings* shape, uint32_t userData)
 ! JPH_CAPI void JPH_CompoundShapeSettings_AddShape2(JPH_CompoundShapeSettings* settings, const JPH_Vec3* position, const JPH_Quat* rotation, const JPH_Shape* shape, uint32_t userData)
 ! JPH_CAPI uint32_t JPH_CompoundShape_GetNumSubShapes(const JPH_CompoundShape* shape)
 ! JPH_CAPI void JPH_CompoundShape_GetSubShape(const JPH_CompoundShape* shape, uint32_t index, const JPH_Shape** subShape, JPH_Vec3* positionCOM, JPH_Quat* rotation, uint32_t* userData)
 ! JPH_CAPI uint32_t JPH_CompoundShape_GetSubShapeIndexFromID(const JPH_CompoundShape* shape, JPH_SubShapeID id, JPH_SubShapeID* remainder)
 
-! /* StaticCompoundShape */
+!  !* StaticCompoundShape */
 ! JPH_CAPI JPH_StaticCompoundShapeSettings* JPH_StaticCompoundShapeSettings_Create(void)
 ! JPH_CAPI JPH_StaticCompoundShape* JPH_StaticCompoundShape_Create(const JPH_StaticCompoundShapeSettings* settings)
 
-! /* MutableCompoundShape */
+!  !* MutableCompoundShape */
 ! JPH_CAPI JPH_MutableCompoundShapeSettings* JPH_MutableCompoundShapeSettings_Create(void)
 ! JPH_CAPI JPH_MutableCompoundShape* JPH_MutableCompoundShape_Create(const JPH_MutableCompoundShapeSettings* settings)
 
@@ -1020,10 +1032,10 @@ module jolt_bindings
 ! JPH_CAPI void JPH_MutableCompoundShape_ModifyShape2(JPH_MutableCompoundShape* shape, uint32_t index, const JPH_Vec3* position, const JPH_Quat* rotation, const JPH_Shape* newShape)
 ! JPH_CAPI void JPH_MutableCompoundShape_AdjustCenterOfMass(JPH_MutableCompoundShape* shape)
 
-! /* DecoratedShape */
+!  !* DecoratedShape */
 ! JPH_CAPI const JPH_Shape* JPH_DecoratedShape_GetInnerShape(const JPH_DecoratedShape* shape)
 
-! /* RotatedTranslatedShape */
+!  !* RotatedTranslatedShape */
 ! JPH_CAPI JPH_RotatedTranslatedShapeSettings* JPH_RotatedTranslatedShapeSettings_Create(const JPH_Vec3* position, const JPH_Quat* rotation, const JPH_ShapeSettings* shapeSettings)
 ! JPH_CAPI JPH_RotatedTranslatedShapeSettings* JPH_RotatedTranslatedShapeSettings_Create2(const JPH_Vec3* position, const JPH_Quat* rotation, const JPH_Shape* shape)
 ! JPH_CAPI JPH_RotatedTranslatedShape* JPH_RotatedTranslatedShapeSettings_CreateShape(const JPH_RotatedTranslatedShapeSettings* settings)
@@ -1031,14 +1043,14 @@ module jolt_bindings
 ! JPH_CAPI void JPH_RotatedTranslatedShape_GetPosition(const JPH_RotatedTranslatedShape* shape, JPH_Vec3* position)
 ! JPH_CAPI void JPH_RotatedTranslatedShape_GetRotation(const JPH_RotatedTranslatedShape* shape, JPH_Quat* rotation)
 
-! /* ScaledShape */
+!  !* ScaledShape */
 ! JPH_CAPI JPH_ScaledShapeSettings* JPH_ScaledShapeSettings_Create(const JPH_ShapeSettings* shapeSettings, const JPH_Vec3* scale)
 ! JPH_CAPI JPH_ScaledShapeSettings* JPH_ScaledShapeSettings_Create2(const JPH_Shape* shape, const JPH_Vec3* scale)
 ! JPH_CAPI JPH_ScaledShape* JPH_ScaledShapeSettings_CreateShape(const JPH_ScaledShapeSettings* settings)
 ! JPH_CAPI JPH_ScaledShape* JPH_ScaledShape_Create(const JPH_Shape* shape, const JPH_Vec3* scale)
 ! JPH_CAPI void JPH_ScaledShape_GetScale(const JPH_ScaledShape* shape, JPH_Vec3* result)
 
-! /* OffsetCenterOfMassShape */
+!  !* OffsetCenterOfMassShape */
 ! JPH_CAPI JPH_OffsetCenterOfMassShapeSettings* JPH_OffsetCenterOfMassShapeSettings_Create(const JPH_Vec3* offset, const JPH_ShapeSettings* shapeSettings)
 ! JPH_CAPI JPH_OffsetCenterOfMassShapeSettings* JPH_OffsetCenterOfMassShapeSettings_Create2(const JPH_Vec3* offset, const JPH_Shape* shape)
 ! JPH_CAPI JPH_OffsetCenterOfMassShape* JPH_OffsetCenterOfMassShapeSettings_CreateShape(const JPH_OffsetCenterOfMassShapeSettings* settings)
@@ -1046,11 +1058,11 @@ module jolt_bindings
 ! JPH_CAPI JPH_OffsetCenterOfMassShape* JPH_OffsetCenterOfMassShape_Create(const JPH_Vec3* offset, const JPH_Shape* shape)
 ! JPH_CAPI void JPH_OffsetCenterOfMassShape_GetOffset(const JPH_OffsetCenterOfMassShape* shape, JPH_Vec3* result)
 
-! /* EmptyShape */
+!  !* EmptyShape */
 ! JPH_CAPI JPH_EmptyShapeSettings* JPH_EmptyShapeSettings_Create(const JPH_Vec3* centerOfMass)
 ! JPH_CAPI JPH_EmptyShape* JPH_EmptyShapeSettings_CreateShape(const JPH_EmptyShapeSettings* settings)
 
-! /* JPH_BodyCreationSettings */
+!  !* JPH_BodyCreationSettings */
 ! JPH_CAPI JPH_BodyCreationSettings* JPH_BodyCreationSettings_Create(void)
 ! JPH_CAPI JPH_BodyCreationSettings* JPH_BodyCreationSettings_Create2(JPH_ShapeSettings* settings,
 !   const JPH_RVec3* position,
@@ -1085,11 +1097,11 @@ module jolt_bindings
 ! JPH_CAPI JPH_AllowedDOFs JPH_BodyCreationSettings_GetAllowedDOFs(JPH_BodyCreationSettings* settings)
 ! JPH_CAPI void JPH_BodyCreationSettings_SetAllowedDOFs(JPH_BodyCreationSettings* settings, JPH_AllowedDOFs value)
 
-! /* JPH_SoftBodyCreationSettings */
+!  !* JPH_SoftBodyCreationSettings */
 ! JPH_CAPI JPH_SoftBodyCreationSettings* JPH_SoftBodyCreationSettings_Create(void)
 ! JPH_CAPI void JPH_SoftBodyCreationSettings_Destroy(JPH_SoftBodyCreationSettings* settings)
 
-! /* JPH_ConstraintSettings */
+!  !* JPH_ConstraintSettings */
 ! JPH_CAPI void JPH_ConstraintSettings_Destroy(JPH_ConstraintSettings* settings)
 ! JPH_CAPI bool JPH_ConstraintSettings_GetEnabled(JPH_ConstraintSettings* settings)
 ! JPH_CAPI void JPH_FixedConstraintSettings_SetEnabled(JPH_ConstraintSettings* settings, bool value)
@@ -1104,7 +1116,7 @@ module jolt_bindings
 ! JPH_CAPI uint64_t JPH_ConstraintSettings_GetUserData(JPH_ConstraintSettings* settings)
 ! JPH_CAPI void JPH_ConstraintSettings_SetUserData(JPH_ConstraintSettings* settings, uint64_t value)
 
-! /* JPH_Constraint */
+!  !* JPH_Constraint */
 ! JPH_CAPI JPH_ConstraintSettings* JPH_Constraint_GetConstraintSettings(JPH_Constraint* constraint)
 ! JPH_CAPI JPH_ConstraintType JPH_Constraint_GetType(const JPH_Constraint* constraint)
 ! JPH_CAPI JPH_ConstraintSubType JPH_Constraint_GetSubType(const JPH_Constraint* constraint)
@@ -1117,7 +1129,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_Constraint_NotifyShapeChanged(JPH_Constraint* constraint, JPH_BodyID bodyID, JPH_Vec3* deltaCOM)
 ! JPH_CAPI void JPH_Constraint_Destroy(JPH_Constraint* constraint)
 
-! /* JPH_FixedConstraintSettings */
+!  !* JPH_FixedConstraintSettings */
 ! JPH_CAPI JPH_FixedConstraintSettings* JPH_FixedConstraintSettings_Create(void)
 ! JPH_CAPI JPH_ConstraintSpace JPH_FixedConstraintSettings_GetSpace(JPH_FixedConstraintSettings* settings)
 ! JPH_CAPI void JPH_FixedConstraintSettings_SetSpace(JPH_FixedConstraintSettings* settings, JPH_ConstraintSpace space)
@@ -1137,11 +1149,11 @@ module jolt_bindings
 ! JPH_CAPI void JPH_FixedConstraintSettings_SetAxisY2(JPH_FixedConstraintSettings* settings, const JPH_Vec3* value)
 ! JPH_CAPI JPH_FixedConstraint* JPH_FixedConstraintSettings_CreateConstraint(JPH_FixedConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2)
 
-! /* JPH_FixedConstraint */
+!  !* JPH_FixedConstraint */
 ! JPH_CAPI void JPH_FixedConstraint_GetTotalLambdaPosition(const JPH_FixedConstraint* constraint, JPH_Vec3* result)
 ! JPH_CAPI void JPH_FixedConstraint_GetTotalLambdaRotation(const JPH_FixedConstraint* constraint, JPH_Vec3* result)
 
-! /* JPH_DistanceConstraintSettings */
+!  !* JPH_DistanceConstraintSettings */
 ! JPH_CAPI JPH_DistanceConstraintSettings* JPH_DistanceConstraintSettings_Create(void)
 ! JPH_CAPI JPH_ConstraintSpace JPH_DistanceConstraintSettings_GetSpace(JPH_DistanceConstraintSettings* settings)
 ! JPH_CAPI void JPH_DistanceConstraintSettings_SetSpace(JPH_DistanceConstraintSettings* settings, JPH_ConstraintSpace space)
@@ -1151,7 +1163,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_DistanceConstraintSettings_SetPoint2(JPH_DistanceConstraintSettings* settings, const JPH_RVec3* value)
 ! JPH_CAPI JPH_DistanceConstraint* JPH_DistanceConstraintSettings_CreateConstraint(JPH_DistanceConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2) ! binding for DistanceConstraintSettings::Create()
 
-! /* JPH_DistanceConstraint */
+!  !* JPH_DistanceConstraint */
 ! JPH_CAPI void JPH_DistanceConstraint_SetDistance(JPH_DistanceConstraint* constraint, float minDistance, float maxDistance)
 ! JPH_CAPI float JPH_DistanceConstraint_GetMinDistance(JPH_DistanceConstraint* constraint)
 ! JPH_CAPI float JPH_DistanceConstraint_GetMaxDistance(JPH_DistanceConstraint* constraint)
@@ -1159,7 +1171,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_DistanceConstraint_SetLimitsSpringSettings(JPH_DistanceConstraint* constraint, JPH_SpringSettings* settings)
 ! JPH_CAPI float JPH_DistanceConstraint_GetTotalLambdaPosition(const JPH_DistanceConstraint* constraint)
 
-! /* JPH_PointConstraintSettings */
+!  !* JPH_PointConstraintSettings */
 ! JPH_CAPI JPH_PointConstraintSettings* JPH_PointConstraintSettings_Create(void)
 ! JPH_CAPI JPH_ConstraintSpace JPH_PointConstraintSettings_GetSpace(JPH_PointConstraintSettings* settings)
 ! JPH_CAPI void JPH_PointConstraintSettings_SetSpace(JPH_PointConstraintSettings* settings, JPH_ConstraintSpace space)
@@ -1169,12 +1181,12 @@ module jolt_bindings
 ! JPH_CAPI void JPH_PointConstraintSettings_SetPoint2(JPH_PointConstraintSettings* settings, const JPH_RVec3* value)
 ! JPH_CAPI JPH_PointConstraint* JPH_PointConstraintSettings_CreateConstraint(JPH_PointConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2) ! binding for PointConstraintSettings::Create()
 
-! /* JPH_PointConstraint */
+!  !* JPH_PointConstraint */
 ! JPH_CAPI void JPH_PointConstraint_SetPoint1(JPH_PointConstraint* constraint, JPH_ConstraintSpace space, JPH_RVec3* value)
 ! JPH_CAPI void JPH_PointConstraint_SetPoint2(JPH_PointConstraint* constraint, JPH_ConstraintSpace space, JPH_RVec3* value)
 ! JPH_CAPI void JPH_PointConstraint_GetTotalLambdaPosition(const JPH_PointConstraint* constraint, JPH_Vec3* result)
 
-! /* JPH_HingeConstraintSettings */
+!  !* JPH_HingeConstraintSettings */
 ! JPH_CAPI JPH_HingeConstraintSettings* JPH_HingeConstraintSettings_Create(void)
 ! JPH_CAPI void JPH_HingeConstraintSettings_GetPoint1(JPH_HingeConstraintSettings* settings, JPH_RVec3* result)
 ! JPH_CAPI void JPH_HingeConstraintSettings_SetPoint1(JPH_HingeConstraintSettings* settings, const JPH_RVec3* value)
@@ -1190,7 +1202,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_HingeConstraintSettings_GetNormalAxis2(JPH_HingeConstraintSettings* settings, JPH_Vec3* result)
 ! JPH_CAPI JPH_HingeConstraint* JPH_HingeConstraintSettings_CreateConstraint(JPH_HingeConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2) ! binding for HingeConstraintSettings::Create()
 
-! /* JPH_HingeConstraint */
+!  !* JPH_HingeConstraint */
 ! JPH_CAPI JPH_HingeConstraintSettings* JPH_HingeConstraint_GetSettings(JPH_HingeConstraint* constraint)
 ! JPH_CAPI float JPH_HingeConstraint_GetCurrentAngle(JPH_HingeConstraint* constraint)
 ! JPH_CAPI void JPH_HingeConstraint_SetMaxFrictionTorque(JPH_HingeConstraint* constraint, float frictionTorque)
@@ -1214,7 +1226,7 @@ module jolt_bindings
 ! JPH_CAPI float JPH_HingeConstraint_GetTotalLambdaRotationLimits(const JPH_HingeConstraint* constraint)
 ! JPH_CAPI float JPH_HingeConstraint_GetTotalLambdaMotor(const JPH_HingeConstraint* constraint)
 
-! /* JPH_SliderConstraintSettings */
+!  !* JPH_SliderConstraintSettings */
 ! JPH_CAPI JPH_SliderConstraintSettings* JPH_SliderConstraintSettings_Create(void)
 ! JPH_CAPI void JPH_SliderConstraintSettings_SetSliderAxis(JPH_SliderConstraintSettings* settings, const JPH_Vec3* axis)
 ! JPH_CAPI bool JPH_SliderConstraintSettings_GetAutoDetectPoint(JPH_SliderConstraintSettings* settings)
@@ -1233,7 +1245,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_SliderConstraintSettings_GetNormalAxis2(JPH_SliderConstraintSettings* settings, JPH_Vec3* result)
 ! JPH_CAPI JPH_SliderConstraint* JPH_SliderConstraintSettings_CreateConstraint(JPH_SliderConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2) ! binding for SliderConstraintSettings::Create()
 
-! /* JPH_SliderConstraint */
+!  !* JPH_SliderConstraint */
 ! JPH_CAPI JPH_SliderConstraintSettings* JPH_SliderConstraint_GetSettings(JPH_SliderConstraint* constraint)
 ! JPH_CAPI float JPH_SliderConstraint_GetCurrentPosition(JPH_SliderConstraint* constraint)
 ! JPH_CAPI void JPH_SliderConstraint_SetMaxFrictionForce(JPH_SliderConstraint* constraint, float frictionForce)
@@ -1257,7 +1269,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_SliderConstraint_GetTotalLambdaRotation(const JPH_SliderConstraint* constraint, JPH_Vec3* result)
 ! JPH_CAPI float JPH_SliderConstraint_GetTotalLambdaMotor(const JPH_SliderConstraint* constraint)
 
-! /* JPH_ConeConstraintSettings */
+!  !* JPH_ConeConstraintSettings */
 ! JPH_CAPI JPH_ConeConstraintSettings* JPH_ConeConstraintSettings_Create(void)
 ! JPH_CAPI void JPH_ConeConstraintSettings_GetPoint1(JPH_ConeConstraintSettings* settings, JPH_RVec3* result)
 ! JPH_CAPI void JPH_ConeConstraintSettings_SetPoint1(JPH_ConeConstraintSettings* settings, const JPH_RVec3* value)
@@ -1271,17 +1283,17 @@ module jolt_bindings
 ! JPH_CAPI float JPH_ConeConstraintSettings_GetHalfConeAngle(JPH_ConeConstraintSettings* settings)
 ! JPH_CAPI JPH_ConeConstraint* JPH_ConeConstraintSettings_CreateConstraint(JPH_ConeConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2)
 
-! /* JPH_ConeConstraint */
+!  !* JPH_ConeConstraint */
 ! JPH_CAPI void JPH_ConeConstraint_SetHalfConeAngle(JPH_ConeConstraint* constraint, float halfConeAngle)
 ! JPH_CAPI float JPH_ConeConstraint_GetCosHalfConeAngle(const JPH_ConeConstraint* constraint)
 ! JPH_CAPI void JPH_ConeConstraint_GetTotalLambdaPosition(const JPH_ConeConstraint* constraint, JPH_Vec3* result)
 ! JPH_CAPI float JPH_ConeConstraint_GetTotalLambdaRotation(const JPH_ConeConstraint* constraint)
 
-! /* JPH_SwingTwistConstraintSettings */
+!  !* JPH_SwingTwistConstraintSettings */
 ! JPH_CAPI JPH_SwingTwistConstraintSettings* JPH_SwingTwistConstraintSettings_Create(void)
 ! JPH_CAPI JPH_SwingTwistConstraint* JPH_SwingTwistConstraintSettings_CreateConstraint(JPH_SwingTwistConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2)
 
-! /* JPH_SwingTwistConstraint */
+!  !* JPH_SwingTwistConstraint */
 ! JPH_CAPI float JPH_SwingTwistConstraint_GetNormalHalfConeAngle(JPH_SwingTwistConstraint* constraint)
 ! JPH_CAPI void JPH_SwingTwistConstraint_GetTotalLambdaPosition(const JPH_SwingTwistConstraint* constraint, JPH_Vec3* result)
 ! JPH_CAPI float JPH_SwingTwistConstraint_GetTotalLambdaTwist(const JPH_SwingTwistConstraint* constraint)
@@ -1289,11 +1301,11 @@ module jolt_bindings
 ! JPH_CAPI float JPH_SwingTwistConstraint_GetTotalLambdaSwingZ(const JPH_SwingTwistConstraint* constraint)
 ! JPH_CAPI void JPH_SwingTwistConstraint_GetTotalLambdaMotor(const JPH_SwingTwistConstraint* constraint, JPH_Vec3* result)
 
-! /* JPH_SixDOFConstraintSettings */
+!  !* JPH_SixDOFConstraintSettings */
 ! JPH_CAPI JPH_SixDOFConstraintSettings* JPH_SixDOFConstraintSettings_Create(void)
 ! JPH_CAPI JPH_SixDOFConstraint* JPH_SixDOFConstraintSettings_CreateConstraint(JPH_SixDOFConstraintSettings* settings, JPH_Body* body1, JPH_Body* body2)
 
-! /* JPH_SixDOFConstraint */
+!  !* JPH_SixDOFConstraint */
 ! JPH_CAPI float JPH_SixDOFConstraint_GetLimitsMin(JPH_SixDOFConstraint* constraint, JPH_SixDOFConstraintAxis axis)
 ! JPH_CAPI float JPH_SixDOFConstraint_GetLimitsMax(JPH_SixDOFConstraint* constraint, JPH_SixDOFConstraintAxis axis)
 ! JPH_CAPI void JPH_SixDOFConstraint_GetTotalLambdaPosition(const JPH_SixDOFConstraint* constraint, JPH_Vec3* result)
@@ -1301,13 +1313,13 @@ module jolt_bindings
 ! JPH_CAPI void JPH_SixDOFConstraint_GetTotalLambdaMotorTranslation(const JPH_SixDOFConstraint* constraint, JPH_Vec3* result)
 ! JPH_CAPI void JPH_SixDOFConstraint_GetTotalLambdaMotorRotation(const JPH_SixDOFConstraint* constraint, JPH_Vec3* result)
 
-! /* JPH_TwoBodyConstraint */
+!  !* JPH_TwoBodyConstraint */
 ! JPH_CAPI JPH_Body* JPH_TwoBodyConstraint_GetBody1(JPH_TwoBodyConstraint* constraint)
 ! JPH_CAPI JPH_Body* JPH_TwoBodyConstraint_GetBody2(JPH_TwoBodyConstraint* constraint)
 ! JPH_CAPI void JPH_TwoBodyConstraint_GetConstraintToBody1Matrix(JPH_TwoBodyConstraint* constraint, JPH_Matrix4x4* result)
 ! JPH_CAPI void JPH_TwoBodyConstraint_GetConstraintToBody2Matrix(JPH_TwoBodyConstraint* constraint, JPH_Matrix4x4* result)
 
-! /* BodyInterface */
+!  !* BodyInterface */
 ! JPH_CAPI void JPH_BodyInterface_DestroyBody(JPH_BodyInterface* interface, JPH_BodyID bodyID)
 ! JPH_CAPI JPH_BodyID JPH_BodyInterface_CreateAndAddBody(JPH_BodyInterface* interface, const JPH_BodyCreationSettings* settings, JPH_Activation activationMode)
 ! JPH_CAPI JPH_Body* JPH_BodyInterface_CreateBody(JPH_BodyInterface* interface, const JPH_BodyCreationSettings* settings)
@@ -1665,7 +1677,7 @@ module jolt_bindings
 
 ! JPH_CAPI JPH_Body* JPH_Body_GetFixedToWorldBody(void)
 
-! /* JPH_BroadPhaseLayerFilter_Procs */
+!  !* JPH_BroadPhaseLayerFilter_Procs */
 ! type, bind(c) :: JPH_BroadPhaseLayerFilter_Procs {
 !   bool(JPH_API_CALL* ShouldCollide)(void* userData, JPH_BroadPhaseLayer layer)
 ! } JPH_BroadPhaseLayerFilter_Procs
@@ -1673,7 +1685,7 @@ module jolt_bindings
 ! JPH_CAPI JPH_BroadPhaseLayerFilter* JPH_BroadPhaseLayerFilter_Create(JPH_BroadPhaseLayerFilter_Procs procs, void* userData)
 ! JPH_CAPI void JPH_BroadPhaseLayerFilter_Destroy(JPH_BroadPhaseLayerFilter* filter)
 
-! /* JPH_ObjectLayerFilter */
+!  !* JPH_ObjectLayerFilter */
 ! type, bind(c) :: JPH_ObjectLayerFilter_Procs {
 !   bool(JPH_API_CALL* ShouldCollide)(void* userData, JPH_ObjectLayer layer)
 ! } JPH_ObjectLayerFilter_Procs
@@ -1681,7 +1693,7 @@ module jolt_bindings
 ! JPH_CAPI JPH_ObjectLayerFilter* JPH_ObjectLayerFilter_Create(JPH_ObjectLayerFilter_Procs procs, void* userData)
 ! JPH_CAPI void JPH_ObjectLayerFilter_Destroy(JPH_ObjectLayerFilter* filter)
 
-! /* JPH_BodyFilter */
+!  !* JPH_BodyFilter */
 ! type, bind(c) :: JPH_BodyFilter_Procs {
 !   bool(JPH_API_CALL* ShouldCollide)(void* userData, JPH_BodyID bodyID)
 !   bool(JPH_API_CALL* ShouldCollideLocked)(void* userData, const JPH_Body* bodyID)
@@ -1690,7 +1702,7 @@ module jolt_bindings
 ! JPH_CAPI JPH_BodyFilter* JPH_BodyFilter_Create(JPH_BodyFilter_Procs procs, void* userData)
 ! JPH_CAPI void JPH_BodyFilter_Destroy(JPH_BodyFilter* filter)
 
-! /* JPH_ShapeFilter */
+!  !* JPH_ShapeFilter */
 ! type, bind(c) :: JPH_ShapeFilter_Procs {
 !   bool(JPH_API_CALL* ShouldCollide)(void* userData, const JPH_Shape* shape2, const JPH_SubShapeID* subShapeIDOfShape2)
 !   bool(JPH_API_CALL* ShouldCollide2)(void* userData, const JPH_Shape* shape1, const JPH_SubShapeID* subShapeIDOfShape1, const JPH_Shape* shape2, const JPH_SubShapeID* subShapeIDOfShape2)
@@ -1701,7 +1713,7 @@ module jolt_bindings
 ! JPH_CAPI JPH_BodyID JPH_ShapeFilter_GetBodyID2(JPH_ShapeFilter* filter)
 ! JPH_CAPI void JPH_ShapeFilter_SetBodyID2(JPH_ShapeFilter* filter, JPH_BodyID id)
 
-! /* Contact listener */
+!  !* Contact listener */
 ! type, bind(c) :: JPH_ContactListener_Procs {
 !   JPH_ValidateResult(JPH_API_CALL* OnContactValidate)(void* userData,
 !     const JPH_Body* body1,
@@ -1729,7 +1741,7 @@ module jolt_bindings
 ! JPH_CAPI JPH_ContactListener* JPH_ContactListener_Create(JPH_ContactListener_Procs procs, void* userData)
 ! JPH_CAPI void JPH_ContactListener_Destroy(JPH_ContactListener* listener)
 
-! /* BodyActivationListener */
+!  !* BodyActivationListener */
 ! type, bind(c) :: JPH_BodyActivationListener_Procs {
 !   void(JPH_API_CALL* OnBodyActivated)(void* userData, JPH_BodyID bodyID, uint64_t bodyUserData)
 !   void(JPH_API_CALL* OnBodyDeactivated)(void* userData, JPH_BodyID bodyID, uint64_t bodyUserData)
@@ -1738,7 +1750,7 @@ module jolt_bindings
 ! JPH_CAPI JPH_BodyActivationListener* JPH_BodyActivationListener_Create(JPH_BodyActivationListener_Procs procs, void* userData)
 ! JPH_CAPI void JPH_BodyActivationListener_Destroy(JPH_BodyActivationListener* listener)
 
-! /* JPH_BodyDrawFilter */
+!  !* JPH_BodyDrawFilter */
 ! type, bind(c) :: JPH_BodyDrawFilter_Procs {
 !   bool(JPH_API_CALL* ShouldDraw)(void* userData, const JPH_Body* body)
 ! } JPH_BodyDrawFilter_Procs
@@ -1746,7 +1758,7 @@ module jolt_bindings
 ! JPH_CAPI JPH_BodyDrawFilter* JPH_BodyDrawFilter_Create(JPH_BodyDrawFilter_Procs procs, void* userData)
 ! JPH_CAPI void JPH_BodyDrawFilter_Destroy(JPH_BodyDrawFilter* filter)
 
-! /* ContactManifold */
+!  !* ContactManifold */
 ! JPH_CAPI void JPH_ContactManifold_GetWorldSpaceNormal(const JPH_ContactManifold* manifold, JPH_Vec3* result)
 ! JPH_CAPI float JPH_ContactManifold_GetPenetrationDepth(const JPH_ContactManifold* manifold)
 ! JPH_CAPI JPH_SubShapeID JPH_ContactManifold_GetSubShapeID1(const JPH_ContactManifold* manifold)
@@ -1755,7 +1767,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_ContactManifold_GetWorldSpaceContactPointOn1(const JPH_ContactManifold* manifold, uint32_t index, JPH_RVec3* result)
 ! JPH_CAPI void JPH_ContactManifold_GetWorldSpaceContactPointOn2(const JPH_ContactManifold* manifold, uint32_t index, JPH_RVec3* result)
 
-! /* ContactSettings */
+!  !* ContactSettings */
 ! JPH_CAPI float JPH_ContactSettings_GetFriction(JPH_ContactSettings* settings)
 ! JPH_CAPI void JPH_ContactSettings_SetFriction(JPH_ContactSettings* settings, float friction)
 ! JPH_CAPI float JPH_ContactSettings_GetRestitution(JPH_ContactSettings* settings)
@@ -1775,7 +1787,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_ContactSettings_GetRelativeAngularSurfaceVelocity(JPH_ContactSettings* settings, JPH_Vec3* result)
 ! JPH_CAPI void JPH_ContactSettings_SetRelativeAngularSurfaceVelocity(JPH_ContactSettings* settings, JPH_Vec3* velocity)
 
-! /* CharacterBase */
+!  !* CharacterBase */
 ! JPH_CAPI void JPH_CharacterBase_Destroy(JPH_CharacterBase* character)
 ! JPH_CAPI float JPH_CharacterBase_GetCosMaxSlopeAngle(JPH_CharacterBase* character)
 ! JPH_CAPI void JPH_CharacterBase_SetMaxSlopeAngle(JPH_CharacterBase* character, float maxSlopeAngle)
@@ -1794,43 +1806,43 @@ module jolt_bindings
 ! JPH_CAPI JPH_SubShapeID JPH_CharacterBase_GetGroundSubShapeId(JPH_CharacterBase* character)
 ! JPH_CAPI uint64_t JPH_CharacterBase_GetGroundUserData(JPH_CharacterBase* character)
 
-! /* CharacterSettings */
+!  !* CharacterSettings */
 ! JPH_CAPI void JPH_CharacterSettings_Init(JPH_CharacterSettings* settings)
 
-! /* Character */
+!  !* Character */
 ! JPH_CAPI JPH_Character* JPH_Character_Create(const JPH_CharacterSettings* settings,
 !   const JPH_RVec3* position,
 !   const JPH_Quat* rotation,
 !   uint64_t userData,
 !   JPH_PhysicsSystem* system)
 
-! JPH_CAPI void JPH_Character_AddToPhysicsSystem(JPH_Character* character, JPH_Activation activationMode /*= JPH_ActivationActivate */, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_RemoveFromPhysicsSystem(JPH_Character* character, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_Activate(JPH_Character* character, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_PostSimulation(JPH_Character* character, float maxSeparationDistance, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_SetLinearAndAngularVelocity(JPH_Character* character, JPH_Vec3* linearVelocity, JPH_Vec3* angularVelocity, bool lockBodies /* = true */)
+! JPH_CAPI void JPH_Character_AddToPhysicsSystem(JPH_Character* character, JPH_Activation activationMode  !*= JPH_ActivationActivate */, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_RemoveFromPhysicsSystem(JPH_Character* character, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_Activate(JPH_Character* character, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_PostSimulation(JPH_Character* character, float maxSeparationDistance, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_SetLinearAndAngularVelocity(JPH_Character* character, JPH_Vec3* linearVelocity, JPH_Vec3* angularVelocity, bool lockBodies  !* = true */)
 ! JPH_CAPI void JPH_Character_GetLinearVelocity(JPH_Character* character, JPH_Vec3* result)
-! JPH_CAPI void JPH_Character_SetLinearVelocity(JPH_Character* character, const JPH_Vec3* value, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_AddLinearVelocity(JPH_Character* character, const JPH_Vec3* value, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_AddImpulse(JPH_Character* character, const JPH_Vec3* value, bool lockBodies /* = true */)
+! JPH_CAPI void JPH_Character_SetLinearVelocity(JPH_Character* character, const JPH_Vec3* value, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_AddLinearVelocity(JPH_Character* character, const JPH_Vec3* value, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_AddImpulse(JPH_Character* character, const JPH_Vec3* value, bool lockBodies  !* = true */)
 ! JPH_CAPI JPH_BodyID JPH_Character_GetBodyID(const JPH_Character* character)
 
-! JPH_CAPI void JPH_Character_GetPositionAndRotation(JPH_Character* character, JPH_RVec3* position, JPH_Quat* rotation, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_SetPositionAndRotation(JPH_Character* character, const JPH_RVec3* position, const JPH_Quat* rotation, JPH_Activation activationMode, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_GetPosition(JPH_Character* character, JPH_RVec3* position, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_SetPosition(JPH_Character* character, const JPH_RVec3* position, JPH_Activation activationMode, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_GetRotation(JPH_Character* character, JPH_Quat* rotation, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_SetRotation(JPH_Character* character, const JPH_Quat* rotation, JPH_Activation activationMode, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_GetCenterOfMassPosition(JPH_Character* character, JPH_RVec3* result, bool lockBodies /* = true */)
-! JPH_CAPI void JPH_Character_GetWorldTransform(JPH_Character* character, JPH_RMatrix4x4* result, bool lockBodies /* = true */)
+! JPH_CAPI void JPH_Character_GetPositionAndRotation(JPH_Character* character, JPH_RVec3* position, JPH_Quat* rotation, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_SetPositionAndRotation(JPH_Character* character, const JPH_RVec3* position, const JPH_Quat* rotation, JPH_Activation activationMode, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_GetPosition(JPH_Character* character, JPH_RVec3* position, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_SetPosition(JPH_Character* character, const JPH_RVec3* position, JPH_Activation activationMode, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_GetRotation(JPH_Character* character, JPH_Quat* rotation, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_SetRotation(JPH_Character* character, const JPH_Quat* rotation, JPH_Activation activationMode, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_GetCenterOfMassPosition(JPH_Character* character, JPH_RVec3* result, bool lockBodies  !* = true */)
+! JPH_CAPI void JPH_Character_GetWorldTransform(JPH_Character* character, JPH_RMatrix4x4* result, bool lockBodies  !* = true */)
 ! JPH_CAPI JPH_ObjectLayer JPH_Character_GetLayer(const JPH_Character* character)
-! JPH_CAPI void JPH_Character_SetLayer(JPH_Character* character, JPH_ObjectLayer value, bool lockBodies /*= true*/)
-! JPH_CAPI void JPH_Character_SetShape(JPH_Character* character, const JPH_Shape* shape, float maxPenetrationDepth, bool lockBodies /*= true*/)
+! JPH_CAPI void JPH_Character_SetLayer(JPH_Character* character, JPH_ObjectLayer value, bool lockBodies  !*= true*/)
+! JPH_CAPI void JPH_Character_SetShape(JPH_Character* character, const JPH_Shape* shape, float maxPenetrationDepth, bool lockBodies  !*= true*/)
 
-! /* CharacterVirtualSettings */
+!  !* CharacterVirtualSettings */
 ! JPH_CAPI void JPH_CharacterVirtualSettings_Init(JPH_CharacterVirtualSettings* settings)
 
-! /* CharacterVirtual */
+!  !* CharacterVirtual */
 ! JPH_CAPI JPH_CharacterVirtual* JPH_CharacterVirtual_Create(const JPH_CharacterVirtualSettings* settings,
 !   const JPH_RVec3* position,
 !   const JPH_Quat* rotation,
@@ -1889,7 +1901,7 @@ module jolt_bindings
 ! JPH_CAPI bool JPH_CharacterVirtual_SetShape(JPH_CharacterVirtual* character, const JPH_Shape* shape, float maxPenetrationDepth, JPH_ObjectLayer layer, JPH_PhysicsSystem* system, const JPH_BodyFilter* bodyFilter, const JPH_ShapeFilter* shapeFilter)
 ! JPH_CAPI void JPH_CharacterVirtual_SetInnerBodyShape(JPH_CharacterVirtual* character, const JPH_Shape* shape)
 
-! /* CharacterContactListener */
+!  !* CharacterContactListener */
 ! type, bind(c) :: JPH_CharacterContactListener_Procs {
 !   void (JPH_API_CALL* OnAdjustBodyVelocity)(void* userData,
 !     const JPH_CharacterVirtual* character,
@@ -1926,7 +1938,7 @@ module jolt_bindings
 ! JPH_CAPI JPH_CharacterContactListener* JPH_CharacterContactListener_Create(JPH_CharacterContactListener_Procs procs, void* userData)
 ! JPH_CAPI void JPH_CharacterContactListener_Destroy(JPH_CharacterContactListener* listener)
 
-! /* DebugRenderer */
+!  !* DebugRenderer */
 ! type, bind(c) :: JPH_DebugRenderer_Procs {
 !   void (JPH_API_CALL* DrawLine)(void* userData, const JPH_RVec3* from, const JPH_RVec3* to, JPH_Color color)
 !   void (JPH_API_CALL* DrawTriangle)(void* userData, const JPH_RVec3* v1, const JPH_RVec3* v2, const JPH_RVec3* v3, JPH_Color color, JPH_DebugRenderer_CastShadow castShadow)
@@ -1947,7 +1959,7 @@ module jolt_bindings
 ! JPH_CAPI void JPH_DebugRenderer_DrawWireSphere(JPH_DebugRenderer* renderer, const JPH_RVec3* center, float radius, JPH_Color color, int level)
 ! JPH_CAPI void JPH_DebugRenderer_DrawWireUnitSphere(JPH_DebugRenderer* renderer, const JPH_RMatrix4x4* matrix, JPH_Color color, int level)
 
-! #endif /* JOLT_C_H_ */
+! #endif  !* JOLT_C_H_ */
 
 
-      end module jolt_bindings
+end module jolt_bindings
